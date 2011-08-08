@@ -1,0 +1,8 @@
+{
+	"window-size" : [1024,768],
+	"field-position" : [30.0,30.0],
+	"field-dimensions" : [64,64],
+	"reference-point" : [256.0,256.0],
+	"cell-size" : [10.0,10.0],
+	"arrow-length" : 10.0
+}
