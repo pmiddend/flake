@@ -14,6 +14,9 @@
 #include <sge/parse/json/path.hpp>
 #include <sge/image/color/any/convert.hpp>
 #include <sge/image/colors.hpp>
+#include <sge/input/keyboard/device.hpp>
+#include <sge/input/keyboard/key_code.hpp>
+#include <sge/input/keyboard/action.hpp>
 #include <sge/sprite/default_equal.hpp>
 #include <sge/renderer/texture/planar_ptr.hpp>
 #include <sge/line_drawer/render_to_screen.hpp>
@@ -24,6 +27,7 @@
 #include <mizuiro/color/init/luminance.hpp>
 #include <mizuiro/color/object.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/tr1/functional.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
 
@@ -82,7 +86,14 @@ flake::simulation_impl::simulation_impl(
 				density_sprite::object::dim(
 					static_cast<density_sprite::object::unit>(main_grid_.size().w()) * cell_size_.x(),
 					static_cast<density_sprite::object::unit>(main_grid_.size().h()) * cell_size_.y()))
-			.elements())
+			.elements()),
+	density_input_connection_(
+		systems_.keyboard_collector().key_callback(
+			sge::input::keyboard::action(
+				sge::input::keyboard::key_code::space,
+				std::tr1::bind(
+					&simulation_impl::density_callback,
+					this))))
 {
 	mizuiro::image::algorithm::fill_c(
 		density_grid_view_,
@@ -135,4 +146,10 @@ flake::simulation_impl::render()
 
 flake::simulation_impl::~simulation_impl()
 {
+}
+
+void
+flake::simulation_impl::density_callback()
+{
+	
 }

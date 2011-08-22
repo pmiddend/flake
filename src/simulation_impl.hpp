@@ -17,6 +17,7 @@
 #include <fcppt/math/vector/basic_impl.hpp>
 #include <fcppt/container/grid/object_impl.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/signal/scoped_connection.hpp>
 
 namespace flake
 {
@@ -49,6 +50,10 @@ private:
 	flake::source_sequence external_sources_;
 	density_sprite::system density_sprite_system_;
 	density_sprite::object density_sprite_;
+	fcppt::signal::scoped_connection density_input_connection_;
+
+	void
+	density_callback();
 };
 }
 
