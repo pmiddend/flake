@@ -1,6 +1,9 @@
 #include "vector2_grid.hpp"
 #include "generate_excentric_vector_field.hpp"
 #include "vector_field_to_lines.hpp"
+#include "scalar_store.hpp"
+#include "apply_sources.hpp"
+#include "source_sequence.hpp"
 #include "media_path.hpp"
 #include "vector2.hpp"
 #include "scalar.hpp"
@@ -22,8 +25,8 @@
 #include <sge/font/text/lit.hpp>
 #include <sge/font/text/part.hpp>
 #include <sge/font/text/string.hpp>
-#include <sge/parse/json/merge_command_line_parameters.hpp>
-#include <sge/parse/json/create_command_line_parameters.hpp>
+#include <sge/parse/json/config/merge_command_line_parameters.hpp>
+#include <sge/parse/json/config/create_command_line_parameters.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/path.hpp>
 #include <sge/parse/json/parse_file_exn.hpp>
@@ -75,7 +78,6 @@
 #include <sge/window/simple_parameters.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/exception.hpp>
-#include <fcppt/assert.hpp>
 #include <fcppt/tr1/functional.hpp>
 #include <fcppt/io/cerr.hpp>
 #include <fcppt/lexical_cast.hpp>
@@ -104,10 +106,10 @@ main(
 try
 {
 	sge::parse::json::object const config_file(
-		sge::parse::json::merge_command_line_parameters(
+		sge::parse::json::config::merge_command_line_parameters(
 			sge::parse::json::parse_file_exn(
 				flake::media_path()/FCPPT_TEXT("config.json")),
-			sge::parse::json::create_command_line_parameters(
+			sge::parse::json::config::create_command_line_parameters(
 				argc,
 				argv)));
 
@@ -133,13 +135,13 @@ try
 							FCPPT_TEXT("window-size"))))))
 		(sge::systems::input(
 				sge::systems::input_helper_field(
-					sge::systems::input_helper::mouse_collector) 
-					| sge::systems::input_helper::cursor_demuxer 
+					sge::systems::input_helper::mouse_collector)
+					| sge::systems::input_helper::cursor_demuxer
 					| sge::systems::input_helper::keyboard_collector,
 				sge::systems::cursor_option_field::null()))
 		(sge::systems::parameterless::font));
 
-	bool running = 
+	bool running =
 		true;
 
 	fcppt::signal::scoped_connection const input_connection(
@@ -169,7 +171,7 @@ try
 	sge::line_drawer::object line_drawer(
 		sys.renderer());
 
-	flake::vector2 const cell_size = 
+	flake::vector2 const cell_size =
 		sge::parse::json::find_and_convert_member<flake::vector2>(
 			config_file,
 			sge::parse::json::path(
@@ -187,12 +189,24 @@ try
 					FCPPT_TEXT("reference-point"))),
 			cell_size));
 
+	flake::scalar_store density_grid_store(
+		flake::scalar_store::dim_type(
+			static_cast<flake::scalar_store::dim_type::value_type>(
+				main_grid.size().w()),
+			static_cast<flake::scalar_store::dim_type::value_type>(
+				main_grid.size().h())));
+
+	flake::scalar_store::view_type const density_grid(
+		density_grid_store.view());
+
+	flake::source_sequence external_sources;
+
 	flake::vector_field_to_lines(
 		main_grid,
 		line_drawer,
 		sge::parse::json::find_and_convert_member<flake::vector2>(
 			config_file,
-			sge::parse::json::path(
+		sge::parse::json::path(
 				FCPPT_TEXT("field-position"))),
 		cell_size,
 		sge::parse::json::find_and_convert_member<flake::scalar>(
@@ -218,6 +232,7 @@ try
 			sys.renderer(),
 			line_drawer);
 
+#if 0
 		sge::font::text::draw(
 			*font_metrics,
 			font_drawer,
@@ -231,6 +246,7 @@ try
 			sge::font::text::align_h::left,
 			sge::font::text::align_v::top,
 			sge::font::text::flags::none);
+#endif
 
 		sge::font::text::draw(
 			*font_metrics,
@@ -249,7 +265,7 @@ try
 			sge::font::text::flags::none);
 	}
 }
- catch(
+catch(
 	fcppt::exception const &_error)
 {
 	fcppt::io::cerr

@@ -77,6 +77,9 @@ SGE_CONFIG_ADD_CUSTOM_PATH(
 SET(
 	MAIN_FILES
 	src/main.cpp
+	src/source.cpp
+	src/diffuse.cpp
+	src/apply_sources.cpp
 	src/media_path.cpp)
 
 FCPPT_UTILS_ADD_SOURCE_GROUPS("${MAIN_FILES}")
