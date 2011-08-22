@@ -4,5 +4,7 @@
 	"field-dimensions" : [64,64],
 	"reference-point" : [256.0,256.0],
 	"cell-size" : [10.0,10.0],
-	"arrow-length" : 10.0
+	"arrow-length" : 10.0,
+	"density-source-position" : [40,40],
+	"density-source-intensity" : 0.5
 }

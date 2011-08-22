@@ -1,4 +1,6 @@
 #include "diffuse.hpp"
+#include "update_boundary.hpp"
+#include "boundary_type.hpp"
 #include <mizuiro/color/channel/luminance.hpp>
 #include <fcppt/assert/pre.hpp>
 
@@ -60,6 +62,16 @@ diffuse_iteration(
 	flake::scalar_view const &destination,
 	flake::scalar const a)
 {
+	/*
+	for(
+		flake::const_scalar_view::iterator source_it =
+			source.begin();
+		source_it != source.end();
+		++source_it)
+	{
+		
+	}
+	*/
 	for(flake::scalar_view::dim_type::size_type x = 1; x < static_cast<flake::scalar_view::dim_type::size_type>(source.dim()[0]-1); ++x)
 	{
 		for(flake::scalar_view::dim_type::size_type y = 1; y < static_cast<flake::scalar_view::dim_type::size_type>(source.dim()[1]-1); ++y)
@@ -95,10 +107,12 @@ flake::diffuse(
 	unsigned const iterations = 20;
 
 	for(unsigned k = 0; k < iterations; ++k)
-	{
 		diffuse_iteration(
 			source,
 			destination,
 			a);
-	}
+
+	flake::update_boundary(
+		destination,
+		flake::boundary_type::horizontal);
 }

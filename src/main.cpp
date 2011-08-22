@@ -1,17 +1,6 @@
-#include "vector2_grid.hpp"
-#include "generate_excentric_vector_field.hpp"
-#include "vector_field_to_lines.hpp"
-#include "scalar_store.hpp"
-#include "apply_sources.hpp"
-#include "source_sequence.hpp"
 #include "media_path.hpp"
-#include "vector2.hpp"
-#include "scalar.hpp"
+#include "simulation.hpp"
 #include <sge/config/media_path.hpp>
-#include <sge/line_drawer/object.hpp>
-#include <sge/line_drawer/color.hpp>
-#include <sge/line_drawer/color_format.hpp>
-#include <sge/line_drawer/render_to_screen.hpp>
 #include <sge/font/metrics_ptr.hpp>
 #include <sge/font/rect.hpp>
 #include <sge/font/size_type.hpp>
@@ -33,8 +22,6 @@
 #include <sge/parse/json/object.hpp>
 #include <sge/parse/json/array.hpp>
 #include <sge/image/colors.hpp>
-#include <sge/image/color/any/object.hpp>
-#include <sge/image/color/any/convert.hpp>
 #include <sge/input/cursor/demuxer.hpp>
 #include <sge/input/cursor/move_event.hpp>
 #include <sge/input/cursor/button_event.hpp>
@@ -95,9 +82,6 @@
 #include <iostream>
 #include <ostream>
 #include <cstdlib>
-#include <fcppt/container/grid/object_impl.hpp>
-#include <fcppt/math/dim/basic_impl.hpp>
-#include <fcppt/math/vector/basic_impl.hpp>
 
 int
 main(
@@ -168,69 +152,21 @@ try
 
 	sge::timer::frames_counter frames_counter;
 
-	sge::line_drawer::object line_drawer(
-		sys.renderer());
-
-	flake::vector2 const cell_size =
-		sge::parse::json::find_and_convert_member<flake::vector2>(
-			config_file,
-			sge::parse::json::path(
-				FCPPT_TEXT("cell-size")));
-
-	flake::vector2_grid const main_grid(
-		flake::generate_excentric_vector_field<flake::vector2_grid>(
-			sge::parse::json::find_and_convert_member<flake::vector2_grid::dim>(
-				config_file,
-				sge::parse::json::path(
-					FCPPT_TEXT("field-dimensions"))),
-			sge::parse::json::find_and_convert_member<flake::vector2>(
-				config_file,
-				sge::parse::json::path(
-					FCPPT_TEXT("reference-point"))),
-			cell_size));
-
-	flake::scalar_store density_grid_store(
-		flake::scalar_store::dim_type(
-			static_cast<flake::scalar_store::dim_type::value_type>(
-				main_grid.size().w()),
-			static_cast<flake::scalar_store::dim_type::value_type>(
-				main_grid.size().h())));
-
-	flake::scalar_store::view_type const density_grid(
-		density_grid_store.view());
-
-	flake::source_sequence external_sources;
-
-	flake::vector_field_to_lines(
-		main_grid,
-		line_drawer,
-		sge::parse::json::find_and_convert_member<flake::vector2>(
-			config_file,
-		sge::parse::json::path(
-				FCPPT_TEXT("field-position"))),
-		cell_size,
-		sge::parse::json::find_and_convert_member<flake::scalar>(
-			config_file,
-			sge::parse::json::path(
-				FCPPT_TEXT("arrow-length"))),
-		sge::image::color::any::convert<sge::line_drawer::color_format>(
-			sge::image::colors::red()));
+	flake::simulation sim(
+		config_file,
+		sys);
 
 	while(
 		running)
 	{
 		sys.window().dispatch();
-
 		frames_counter.update();
+		sim.update();
 
 		sge::renderer::scoped_block const block(
 			sys.renderer());
 
-		// This function sets up an orthographic projection and calls
-		// render. It's just a wrapper.
-		sge::line_drawer::render_to_screen(
-			sys.renderer(),
-			line_drawer);
+		sim.render();
 
 #if 0
 		sge::font::text::draw(

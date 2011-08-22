@@ -79,7 +79,11 @@ SET(
 	src/main.cpp
 	src/source.cpp
 	src/diffuse.cpp
+	src/update_boundary.cpp
+	src/texture_from_scalar_view.cpp
 	src/apply_sources.cpp
+	src/simulation.cpp
+	src/simulation_impl.cpp
 	src/media_path.cpp)
 
 FCPPT_UTILS_ADD_SOURCE_GROUPS("${MAIN_FILES}")
