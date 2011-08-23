@@ -45,8 +45,12 @@ private:
 	flake::vector2 const field_position_;
 	flake::scalar const arrow_length_;
 	flake::vector2_grid main_grid_;
-	flake::scalar_store density_grid_store_;
-	flake::scalar_view const density_grid_view_;
+	// A ptr_array would be very ugly.
+	flake::scalar_store density_grid_store_0_;
+	flake::scalar_store density_grid_store_1_;
+	// Again, a ptr_array would be ugly
+	flake::scalar_view density_grid_view_0_;
+	flake::scalar_view density_grid_view_1_;
 	flake::source_sequence external_sources_;
 	density_sprite::system density_sprite_system_;
 	density_sprite::object density_sprite_;

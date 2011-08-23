@@ -3,6 +3,7 @@
 #include "boundary_type.hpp"
 #include <mizuiro/color/channel/luminance.hpp>
 #include <fcppt/assert/pre.hpp>
+#include <fcppt/math/clamp.hpp>
 
 namespace
 {
@@ -42,18 +43,21 @@ diffuse_iteration_pixel(
 {
 	destination[p].set(
 		mizuiro::color::channel::luminance(),
-		(
-			source[p].get(
-				mizuiro::color::channel::luminance()) +
-			a *
-			sum_von_neumann(
-				source,
-				p)
-		)
-		/
-		(
-		1.0+4.0*a
-		));
+		fcppt::math::clamp(
+			(
+				source[p].get(
+					mizuiro::color::channel::luminance()) +
+				a *
+				sum_von_neumann(
+					source,
+					p)
+			)
+			/
+			( 1.0+4.0*a ),
+			flake::scalar(
+				0.0f),
+			flake::scalar(
+				1.0f)));
 }
 
 void

@@ -1,6 +1,10 @@
 #include "simulation_impl.hpp"
 #include "vector2.hpp"
 #include "source.hpp"
+#include "advect.hpp"
+#include "diffusion_coefficient.hpp"
+#include "apply_sources.hpp"
+#include "diffuse.hpp"
 #include "vector_field_to_lines.hpp"
 #include "texture_from_scalar_view.hpp"
 #include "density_sprite/parameters.hpp"
@@ -28,8 +32,12 @@
 #include <mizuiro/color/object.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/tr1/functional.hpp>
+#include <fcppt/assign/make_array.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
+// swap
+#include <algorithm>
+#include <iostream>
 
 flake::simulation_impl::simulation_impl(
 	sge::parse::json::object const &_config_file,
@@ -65,14 +73,22 @@ flake::simulation_impl::simulation_impl(
 				sge::parse::json::path(
 					FCPPT_TEXT("reference-point"))),
 			cell_size_)),
-	density_grid_store_(
+	density_grid_store_0_(
 		flake::scalar_store::dim_type(
 			static_cast<flake::scalar_store::dim_type::value_type>(
 				main_grid_.size().w()),
 			static_cast<flake::scalar_store::dim_type::value_type>(
 				main_grid_.size().h()))),
-	density_grid_view_(
-		density_grid_store_.view()),
+	density_grid_store_1_(
+		flake::scalar_store::dim_type(
+			static_cast<flake::scalar_store::dim_type::value_type>(
+				main_grid_.size().w()),
+			static_cast<flake::scalar_store::dim_type::value_type>(
+				main_grid_.size().h()))),
+	density_grid_view_0_(
+		density_grid_store_0_.view()),
+	density_grid_view_1_(
+		density_grid_store_1_.view()),
 	external_sources_(),
 	density_sprite_system_(
 		systems_.renderer()),
@@ -95,8 +111,9 @@ flake::simulation_impl::simulation_impl(
 					&simulation_impl::density_callback,
 					this))))
 {
+	// Only the first element has to be filled.
 	mizuiro::image::algorithm::fill_c(
-		density_grid_view_,
+		density_grid_view_0_,
 		mizuiro::color::object<flake::scalar_color_format::color_format>(
 			(mizuiro::color::init::luminance = 0.0)));
 
@@ -128,20 +145,23 @@ flake::simulation_impl::update()
 void
 flake::simulation_impl::render()
 {
-	sge::line_drawer::render_to_screen(
-		systems_.renderer(),
-		line_drawer_);
-
 	density_sprite_.texture(
 		sge::texture::part_ptr(
 			fcppt::make_shared_ptr<sge::texture::part_raw>(
 				flake::texture_from_scalar_view(
 					systems_.renderer(),
 					mizuiro::image::make_const_view(
-						density_grid_view_)))));
+						density_grid_view_0_)))));
 
 	density_sprite_system_.render_all(
 		sge::sprite::default_equal());
+
+	/*
+	sge::line_drawer::render_to_screen(
+		systems_.renderer(),
+		line_drawer_);
+	*/
+
 }
 
 flake::simulation_impl::~simulation_impl()
@@ -151,5 +171,38 @@ flake::simulation_impl::~simulation_impl()
 void
 flake::simulation_impl::density_callback()
 {
-	
+	static unsigned counter = 0;
+	std::cout << counter++ << ": Updating\n";
+
+	flake::scalar_duration const time_delta(
+		0.5f);
+
+	flake::apply_sources(
+		density_grid_view_0_,
+		external_sources_,
+		time_delta);
+
+	flake::diffuse(
+		mizuiro::image::make_const_view(
+			density_grid_view_0_),
+		density_grid_view_1_,
+		flake::diffusion_coefficient(
+			0.1f),
+		time_delta);
+
+	std::swap(
+		density_grid_view_0_,
+		density_grid_view_1_);
+
+	flake::advect(
+		flake::boundary_type::horizontal,
+		mizuiro::image::make_const_view(
+			density_grid_view_0_),
+		density_grid_view_1_,
+		main_grid_,
+		time_delta);
+
+	std::swap(
+		density_grid_view_0_,
+		density_grid_view_1_);
 }

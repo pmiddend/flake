@@ -26,14 +26,14 @@ to_vector3(
 	Vector const &v)
 {
 	if(v.size() == 2)
-		return 
+		return
 			sge::renderer::vector3(
 				static_cast<sge::renderer::scalar>(
 					v[0]),
 				static_cast<sge::renderer::scalar>(
 					v[1]),
 				0.0f);
-	return 
+	return
 		sge::renderer::vector3(
 			static_cast<sge::renderer::scalar>(
 				v[0]),
@@ -59,7 +59,7 @@ vector_field_to_lines(
 	Grid::value_type
 	vector;
 
-	typedef typename 
+	typedef typename
 	vector::value_type
 	scalar;
 
@@ -69,11 +69,11 @@ vector_field_to_lines(
 
 		if(current_dimension == static_cast<typename Grid::dim::size_type>(current_point_in_grid.size()-1))
 		{
-			vector const 
-				center_of_cell = 
+			vector const
+				center_of_cell =
 					(_cell_size *
-					fcppt::math::dim::structure_cast<vector>( 
-						current_point_in_grid)) + 
+					fcppt::math::dim::structure_cast<vector>(
+						current_point_in_grid)) +
 					(_cell_size / static_cast<scalar>(2));
 
 			_lines.push_back(
@@ -88,7 +88,7 @@ vector_field_to_lines(
 						_line_color)));
 		}
 		else
-		{	
+		{
 			detail::vector_field_to_lines(
 				_lines,
 				_grid,
@@ -116,6 +116,9 @@ vector_field_to_lines(
 {
 	sge::line_drawer::scoped_lock scoped_lock_(
 		_line_drawer);
+
+	// Delete the old lines, ffs!
+	scoped_lock_.value().clear();
 
 	detail::vector_field_to_lines(
 		scoped_lock_.value(),

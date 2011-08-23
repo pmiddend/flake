@@ -24,7 +24,7 @@ generate_excentric_vector_field(
 	typename Grid::dim current_point_in_grid,
 	typename Grid::dim::size_type const current_dimension)
 {
-	typedef typename 
+	typedef typename
 	boost::mpl::identity<typename Grid::value_type>::type::value_type
 	scalar;
 
@@ -33,11 +33,11 @@ generate_excentric_vector_field(
 		current_point_in_grid[current_dimension] = i;
 
 		if(current_dimension == static_cast<typename Grid::dim::size_type>(current_point_in_grid.size()-1))
-			grid[current_point_in_grid] = 
+			grid[current_point_in_grid] =
 				fcppt::math::vector::normalize(
-					_cell_size * 
+					_cell_size *
 					fcppt::math::dim::structure_cast<typename Grid::value_type>(
-						current_point_in_grid) + (_cell_size / static_cast<scalar>(2)) - 
+						current_point_in_grid) + (_cell_size / static_cast<scalar>(2)) -
 					reference_point);
 		else
 			detail::generate_excentric_vector_field(
