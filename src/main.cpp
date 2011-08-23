@@ -181,6 +181,7 @@ try
 					).viewport().get().size())),
 			sge::font::text::align_h::left,
 			sge::font::text::align_v::top,
+
 			sge::font::text::flags::none);
 #endif
 
