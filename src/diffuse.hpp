@@ -5,13 +5,18 @@
 #include "ndim/sum_von_neumann.hpp"
 #include "ndim/on_border.hpp"
 #include "diffusion_coefficient.hpp"
+#include "update_boundary.hpp"
+#include "boundary_type.hpp"
 #include "scalar.hpp"
+#include "has_value_type.hpp"
 #include "scalar_duration.hpp"
 #include <fcppt/container/grid/object_impl.hpp>
 #include <fcppt/container/grid/iterator_position.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
 #include <boost/mpl/if.hpp>
+#include <boost/mpl/identity.hpp>
+#include <boost/mpl/eval_if.hpp>
 #include <boost/type_traits/is_same.hpp>
 
 namespace flake
@@ -72,9 +77,22 @@ diffuse_iteration(
 }
 }
 
+namespace detail
+{
+// Hack for the eval_if below
+template<typename T>
+struct value_type_to_type
+{
+	typedef typename
+	T::value_type
+	type;
+};
+}
+
 template<typename Grid>
 void
 diffuse(
+	flake::boundary_type::type const b,
 	Grid const &source,
 	Grid &destination,
 	flake::diffusion_coefficient const &diff,
@@ -88,11 +106,11 @@ diffuse(
 	vector_type;
 
 	typedef typename
-	boost::mpl::if_
+	boost::mpl::eval_if
 	<
-		boost::is_same<vector_type,flake::scalar>,
-		flake::scalar,
-		typename vector_type::value_type
+		flake::has_value_type<vector_type>,
+		detail::value_type_to_type<vector_type>,
+		boost::mpl::identity<flake::scalar>
 	>::type
 	scalar_type;
 
@@ -110,6 +128,10 @@ diffuse(
 			source,
 			destination,
 			a);
+
+	flake::update_boundary(
+		destination,
+		b);
 }
 }
 

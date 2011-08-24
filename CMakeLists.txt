@@ -77,11 +77,7 @@ SGE_CONFIG_ADD_CUSTOM_PATH(
 SET(
 	MAIN_FILES
 	src/main.cpp
-	src/source.cpp
-	src/diffuse.cpp
-	src/update_boundary.cpp
-	src/texture_from_scalar_view.cpp
-	src/apply_sources.cpp
+	src/texture_from_scalar_grid.cpp
 	src/simulation.cpp
 	src/simulation_impl.cpp
 	src/media_path.cpp)

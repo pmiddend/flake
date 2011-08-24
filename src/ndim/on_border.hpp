@@ -15,7 +15,7 @@ on_border(
 	typename Grid::dim const &position)
 {
 	typedef typename
-	Grid::size_type
+	Grid::dim::size_type
 	grid_size_type;
 
 	for(grid_size_type i = 0; i < Grid::dim::dim_wrapper::value; ++i)

@@ -14,7 +14,7 @@ namespace flake
 template<typename Grid>
 void
 update_boundary(
-	Grid const &grid,
+	Grid &grid,
 	flake::boundary_type::type const b)
 {
 	FCPPT_ASSERT_PRE(
