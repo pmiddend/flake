@@ -9,6 +9,7 @@ enum type
 {
 	horizontal,
 	vertical,
+	density,
 	size
 };
 }

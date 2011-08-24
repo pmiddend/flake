@@ -195,7 +195,7 @@ flake::simulation_impl::density_callback()
 		density_grid_view_1_);
 
 	flake::advect(
-		flake::boundary_type::horizontal,
+		flake::boundary_type::density,
 		mizuiro::image::make_const_view(
 			density_grid_view_0_),
 		density_grid_view_1_,
