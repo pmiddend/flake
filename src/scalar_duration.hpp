@@ -2,7 +2,7 @@
 #define FLAKE_SCALAR_DURATION_HPP_INCLUDED
 
 #include "scalar.hpp"
-#include <fcppt/chrono/duration.hpp>
+#include <fcppt/chrono/duration_fwd.hpp>
 
 namespace flake
 {

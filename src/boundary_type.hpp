@@ -7,9 +7,8 @@ namespace boundary_type
 {
 enum type
 {
-	horizontal,
-	vertical,
 	density,
+	velocity,
 	size
 };
 }
