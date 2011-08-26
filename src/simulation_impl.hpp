@@ -16,6 +16,7 @@
 #include <sge/line_drawer/object.hpp>
 #include <fcppt/math/vector/basic_impl.hpp>
 #include <fcppt/container/grid/object_impl.hpp>
+#include <fcppt/container/array.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/signal/scoped_connection.hpp>
 
@@ -39,6 +40,7 @@ public:
 
 	~simulation_impl();
 private:
+	/*
 	typedef
 	flake::source<flake::scalar_grid2>
 	density_source;
@@ -46,27 +48,43 @@ private:
 	typedef
 	std::vector<density_source>
 	density_source_sequence;
+	*/
+	typedef
+	fcppt::container::array<flake::vector2_grid2,2>
+	velocity_store_array;
+
+	typedef
+	fcppt::container::array<flake::vector2_grid2*,2>
+	velocity_view_array;
 
 	sge::systems::instance const &systems_;
 	sge::line_drawer::object line_drawer_;
 	flake::vector2 const cell_size_;
 	flake::vector2 const field_position_;
 	flake::scalar const arrow_length_;
-	flake::diffusion_coefficient diffusion_coefficient_;
-	flake::vector2_grid2 main_grid_;
+	flake::diffusion_coefficient const diffusion_coefficient_;
+	flake::vector2_grid2::dim const field_dimensions_;
+	velocity_store_array velocity_stores_;
+	velocity_view_array velocity_views_;
+	flake::scalar_grid2 divergence_;
+	flake::scalar_grid2 projection_;
 	// A ptr_array would be very ugly.
-	flake::scalar_grid2 density_grid_store_0_;
-	flake::scalar_grid2 density_grid_store_1_;
+	//flake::scalar_grid2 density_grid_store_0_;
+	//flake::scalar_grid2 density_grid_store_1_;
 	// Again, a ptr_array would be ugly
-	flake::scalar_grid2 *density_grid_view_0_;
-	flake::scalar_grid2 *density_grid_view_1_;
-	density_source_sequence density_sources_;
-	density_sprite::system density_sprite_system_;
-	density_sprite::object density_sprite_;
+	//flake::scalar_grid2 *density_grid_view_0_;
+	//flake::scalar_grid2 *density_grid_view_1_;
+	//density_source_sequence density_sources_;
+	//density_sprite::system density_sprite_system_;
+	//density_sprite::object density_sprite_;
 	fcppt::signal::scoped_connection density_input_connection_;
+	//fcppt::signal::scoped_connection velocity_input_connection_;
 
 	void
 	density_callback();
+
+	void
+	velocity_callback();
 };
 }
 

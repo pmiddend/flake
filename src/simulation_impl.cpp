@@ -1,4 +1,5 @@
 #include "simulation_impl.hpp"
+#include "project.hpp"
 #include "vector2.hpp"
 #include "source.hpp"
 #include "advect.hpp"
@@ -66,25 +67,31 @@ flake::simulation_impl::simulation_impl(
 				_config_file,
 				sge::parse::json::path(
 					FCPPT_TEXT("diffusion-coefficient"))))),
-	main_grid_(
-		flake::generate_excentric_vector_field<flake::vector2_grid2>(
-			sge::parse::json::find_and_convert_member<flake::vector2_grid2::dim>(
-				_config_file,
-				sge::parse::json::path(
-					FCPPT_TEXT("field-dimensions"))),
-			sge::parse::json::find_and_convert_member<flake::vector2>(
-				_config_file,
-				sge::parse::json::path(
-					FCPPT_TEXT("reference-point"))),
-			cell_size_)),
-	density_grid_store_0_(
-		main_grid_.size()),
-	density_grid_store_1_(
-		main_grid_.size()),
-	density_grid_view_0_(
-		&density_grid_store_0_),
-	density_grid_view_1_(
-		&density_grid_store_1_),
+	field_dimensions_(
+		sge::parse::json::find_and_convert_member<flake::vector2_grid2::dim>(
+			_config_file,
+			sge::parse::json::path(
+				FCPPT_TEXT("field-dimensions")))),
+	velocity_stores_(
+		fcppt::assign::make_array<flake::vector2_grid2>
+			(flake::generate_excentric_vector_field<flake::vector2_grid2>(
+				field_dimensions_,
+				sge::parse::json::find_and_convert_member<flake::vector2>(
+					_config_file,
+					sge::parse::json::path(
+						FCPPT_TEXT("reference-point"))),
+				cell_size_))
+			(flake::vector2_grid2(
+				field_dimensions_))),
+	velocity_views_(
+		fcppt::assign::make_array<flake::vector2_grid2*>
+			(&velocity_stores_[0])
+			(&velocity_stores_[1])),
+	divergence_(
+		field_dimensions_),
+	projection_(
+		field_dimensions_),
+	/*
 	density_sources_(),
 	density_sprite_system_(
 		systems_.renderer()),
@@ -98,7 +105,7 @@ flake::simulation_impl::simulation_impl(
 				density_sprite::object::dim(
 					static_cast<density_sprite::object::unit>(main_grid_.size().w()) * cell_size_.x(),
 					static_cast<density_sprite::object::unit>(main_grid_.size().h()) * cell_size_.y()))
-			.elements()),
+			.elements()),*/
 	density_input_connection_(
 		systems_.keyboard_collector().key_callback(
 			sge::input::keyboard::action(
@@ -107,6 +114,7 @@ flake::simulation_impl::simulation_impl(
 					&simulation_impl::density_callback,
 					this))))
 {
+	/*
 	std::fill(
 		density_grid_store_0_.begin(),
 		density_grid_store_0_.end(),
@@ -123,13 +131,14 @@ flake::simulation_impl::simulation_impl(
 				_config_file,
 				sge::parse::json::path(
 					FCPPT_TEXT("density-source-intensity")))));
+	*/
 }
 
 void
 flake::simulation_impl::update()
 {
 	flake::vector_field_to_lines(
-		main_grid_,
+		*velocity_views_[0],
 		line_drawer_,
 		field_position_,
 		cell_size_,
@@ -141,6 +150,7 @@ flake::simulation_impl::update()
 void
 flake::simulation_impl::render()
 {
+	/*
 	density_sprite_.texture(
 		sge::texture::part_ptr(
 			fcppt::make_shared_ptr<sge::texture::part_raw>(
@@ -150,12 +160,11 @@ flake::simulation_impl::render()
 
 	density_sprite_system_.render_all(
 		sge::sprite::default_equal());
+	*/
 
-	/*
 	sge::line_drawer::render_to_screen(
 		systems_.renderer(),
 		line_drawer_);
-	*/
 
 }
 
@@ -172,6 +181,38 @@ flake::simulation_impl::density_callback()
 	flake::scalar_duration const time_delta(
 		0.5f);
 
+	flake::diffuse(
+		flake::boundary_type::velocity,
+		*velocity_views_[0],
+		*velocity_views_[1],
+		diffusion_coefficient_,
+		time_delta);
+
+	std::swap(
+		velocity_views_[0],
+		velocity_views_[1]);
+
+	flake::project(
+		divergence_,
+		projection_,
+		*velocity_views_[0]);
+
+	flake::advect(
+		flake::boundary_type::velocity,
+		*velocity_views_[0],
+		*velocity_views_[1],
+		*velocity_views_[0],
+		time_delta);
+
+	std::swap(
+		velocity_views_[0],
+		velocity_views_[1]);
+
+	flake::project(
+		divergence_,
+		projection_,
+		*velocity_views_[0]);
+	/*
 	flake::apply_sources(
 		*density_grid_view_0_,
 		density_sources_,
@@ -198,4 +239,5 @@ flake::simulation_impl::density_callback()
 	std::swap(
 		density_grid_view_0_,
 		density_grid_view_1_);
+	*/
 }
