@@ -47,6 +47,7 @@
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/clocks/standard.hpp>
 #include <sge/timer/basic.hpp>
+#include <sge/log/global_context.hpp>
 #include <sge/systems/running_to_false.hpp>
 #include <sge/all_extensions.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
@@ -56,6 +57,10 @@
 #include <fcppt/chrono/seconds.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/exception.hpp>
+#include <fcppt/log/activate_levels.hpp>
+#include <fcppt/log/context.hpp>
+#include <fcppt/log/level.hpp>
+#include <fcppt/log/location.hpp>
 #include <iostream>
 #include <exception>
 #include <ostream>
@@ -97,6 +102,14 @@ try
 	// - Use Jacobi to compute the pressure 'p' from 'v', iterate,
 	//   alternate between p.r and p.g for storage.
 	// - Calculate gradient of 'p', subtract from 'v', return 'v2'
+
+	sge::log::global_context().apply(
+		fcppt::log::location(
+			FCPPT_TEXT("opencl")),
+		std::tr1::bind(
+			&fcppt::log::activate_levels,
+			std::tr1::placeholders::_1,
+			fcppt::log::level::verbose));
 
 	sge::parse::json::object const config_file =
 		sge::parse::json::config::merge_command_line_parameters(
@@ -190,7 +203,7 @@ try
 		// If we have no viewport (yet), don't do anything (this is just a
 		// precaution, we _might_ divide by zero somewhere below, otherwise)
 		if(!sge::renderer::viewport_size(sys.renderer()).content())
-			continue;
+			throw sge::exception(FCPPT_TEXT("There was an iteration without viewport. Usually not a problem, but OpenCL isn't suited for viewport changes, yet. So I have to exit now."));
 
 		sge::renderer::state::scoped scoped_state(
 			sys.renderer(),

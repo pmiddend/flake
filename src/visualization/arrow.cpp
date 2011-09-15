@@ -8,6 +8,7 @@
 #include <sge/renderer/projection/orthogonal_wh.hpp>
 #include <sge/renderer/state/bool.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
+#include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/size_type.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
@@ -36,11 +37,24 @@
 #include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/math/vector/basic_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/io/cifstream.hpp>
+#include <fcppt/io/cout.hpp>
+#include <fcppt/math/vector/output.hpp>
 #include <fcppt/unique_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/io/stream_to_string.hpp>
 #include <fcppt/text.hpp>
+
+// DEBUG
+/*
+#include <cstdlib>
+#include <sge/renderer/scoped_vertex_lock.hpp>
+#include <sge/renderer/lock_mode.hpp>
+#include <sge/renderer/vf/view.hpp>
+#include <sge/renderer/vf/vertex.hpp>
+#include <sge/renderer/vf/iterator.hpp>
+*/
 
 flake::visualization::arrow::arrow(
 	sge::opencl::context::object &_context,
@@ -65,7 +79,7 @@ flake::visualization::arrow::arrow(
 				0u),
 			static_cast<sge::renderer::size_type>(
 				_simulation.vector_field().size().content() * 2),
-			sge::renderer::resource_flags::none)),
+			sge::renderer::resource_flags::readable)),
 	cl_vb_(
 		_context,
 		*vb_,
@@ -81,7 +95,7 @@ flake::visualization::arrow::arrow(
 	transfer_kernel_(
 		transfer_program_,
 		sge::opencl::kernel::name(
-			"main")),
+			"fill_vb_with_arrows")),
 	shader_(
 		sge::shader::object_parameters(
 			renderer_,
@@ -124,7 +138,6 @@ flake::visualization::arrow::arrow(
 						_config_file,
 						sge::parse::json::string_to_path(
 							FCPPT_TEXT("visualization/arrow-length"))));
-
 }
 
 void
@@ -140,6 +153,7 @@ flake::visualization::arrow::update(
 	mem_objects.push_back(
 		&cl_vb_);
 
+	{
 	sge::opencl::memory_object::scoped_objects scoped_vb(
 		command_queue_,
 		mem_objects);
@@ -157,27 +171,55 @@ flake::visualization::arrow::update(
 		transfer_kernel_,
 		global_dim,
 		local_dim);
+	}
+
+	/* DEBUG
+	{
+		sge::renderer::scoped_vertex_lock scoped_vb(
+			*vb_,
+			sge::renderer::lock_mode::readwrite);
+
+		typedef
+		sge::renderer::vf::view<arrow_vf::part>
+		vertex_view;
+
+		vertex_view const vertices(
+			scoped_vb.value());
+
+		for(
+			vertex_view::iterator vb_it(
+				vertices.begin());
+			vb_it != vertices.end();
+			vb_it++)
+		{
+			fcppt::io::cerr << vb_it->get<arrow_vf::position>() << FCPPT_TEXT("\n");
+		}
+	}
+
+	std::exit(0);
+	*/
 }
 
 void
 flake::visualization::arrow::render()
 {
-	sge::renderer::scoped_vertex_buffer scoped_vb(
-		renderer_,
-		*vb_);
-
+	// Activate the shader and the vertex declaration
 	sge::shader::scoped scoped_shader(
 		shader_,
 		sge::shader::activate_everything());
+
+	sge::renderer::scoped_vertex_buffer scoped_vb(
+		renderer_,
+		*vb_);
 
 	shader_.update_uniform(
 		"projection",
 		sge::shader::matrix(
 			sge::renderer::projection::orthogonal_wh(
 				fcppt::math::dim::structure_cast<sge::renderer::projection::dim>(
-					sge::renderer::viewport_size(
-						renderer_)),
-				sge::renderer::projection::near(0.1f),
+						sge::renderer::viewport_size(
+							renderer_)),
+				sge::renderer::projection::near(0.0f),
 				sge::renderer::projection::far(10.0f)),
 			sge::shader::matrix_flags::projection));
 
@@ -195,7 +237,7 @@ flake::visualization::arrow::render_states() const
 	return
 		sge::renderer::state::list
 			(sge::renderer::state::bool_::clear_back_buffer = true)
-			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::white());
+			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::black());
 }
 
 flake::visualization::arrow::~arrow()

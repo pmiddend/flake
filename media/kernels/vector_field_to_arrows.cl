@@ -4,7 +4,7 @@ sampler_t const simple_sampler =
 	CLK_FILTER_LINEAR;
 
 __kernel void
-main(
+fill_vb_with_arrows(
 	__global float *vb,
 	float const grid_size,
 	float const arrow_length,
@@ -19,7 +19,6 @@ main(
 	size_t const base_index =
 		2 * 5 * (this_pos.y * get_image_width(vector_field) + this_pos.x);
 
-	/*
 	float2 const this_pos_float =
 		(float2)(
 			(float)this_pos.x,
@@ -35,16 +34,17 @@ main(
 				vector_field,
 				simple_sampler,
 				this_pos).xy;
-	*/
+	/*
 	float2 const start_position = (float2)(this_pos.x,this_pos.y);
-	float2 const end_position = start_position + (float2)(20.0f,20.0f);
+	float2 const end_position = start_position + (float2)(100.0f,100.0f);
+	*/
 
 	// Position 1
 	vb[base_index] = start_position.x;
 	vb[base_index+1] = start_position.y;
 
 	// Color 1 (rgb)
-	vb[base_index+2] = 1.0f;
+	vb[base_index+2] = 0.0f;
 	vb[base_index+3] = 0.0f;
 	vb[base_index+4] = 0.0f;
 
@@ -53,7 +53,7 @@ main(
 	vb[base_index+6] = end_position.y;
 
 	// Color 1 (rgb)
-	vb[base_index+7] = 0.0f;
+	vb[base_index+7] = 1.0f;
 	vb[base_index+8] = 1.0f;
-	vb[base_index+9] = 0.0f;
+	vb[base_index+9] = 1.0f;
 }
