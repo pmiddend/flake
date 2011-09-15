@@ -33,21 +33,16 @@ ADD_DEFINITIONS(${Mizuiro_DEFINITIONS})
 
 # sge begin
 FIND_PACKAGE(
-	SGE REQUIRED COMPONENTS 
-	camera
+	SGE REQUIRED COMPONENTS
+	opencl
 	config
-	fontbitmap
-	fonttext
 	image
 	image2d
 	input
 	renderer
-	line_drawer
-	parse 
+	parse
 	shader
-	sprite 
 	systems
-	texture
 	window
 	viewport)
 
@@ -68,7 +63,7 @@ INCLUDE(
 	SGECustomPath)
 
 SGE_CONFIG_ADD_CUSTOM_PATH(
-	flake	
+	flake
 	media
 	${CMAKE_SOURCE_DIR}/media
 	${INSTALL_MEDIA_DIR}
@@ -77,9 +72,15 @@ SGE_CONFIG_ADD_CUSTOM_PATH(
 SET(
 	MAIN_FILES
 	src/main.cpp
-	src/texture_from_scalar_grid.cpp
-	src/simulation.cpp
-	src/simulation_impl.cpp
+	src/media_path.cpp
+	src/utf8_file_to_fcppt_string.cpp
+	src/simulation/base.cpp
+	src/simulation/stam.cpp
+	src/media_path_from_string.cpp
+	src/simulation/create.cpp
+	src/visualization/base.cpp
+	src/visualization/arrow.cpp
+	src/visualization/create.cpp
 	src/media_path.cpp)
 
 FCPPT_UTILS_ADD_SOURCE_GROUPS("${MAIN_FILES}")
@@ -87,7 +88,7 @@ FCPPT_UTILS_ADD_SOURCE_GROUPS("${MAIN_FILES}")
 # app begin
 ADD_EXECUTABLE(
 	main
-	${MAIN_FILES} src/main.cpp)
+	${MAIN_FILES})
 
 TARGET_LINK_LIBRARIES(
 	main
