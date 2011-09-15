@@ -1,7 +1,7 @@
-sampler_t const simple_sampler =
+sampler_t const absolute_clamping_nearest =
 	CLK_NORMALIZED_COORDS_FALSE |
 	CLK_ADDRESS_CLAMP_TO_EDGE |
-	CLK_FILTER_LINEAR;
+	CLK_FILTER_NEAREST;
 
 __kernel void
 fill_vb_with_arrows(
@@ -32,12 +32,8 @@ fill_vb_with_arrows(
 			arrow_length *
 			read_imagef(
 				vector_field,
-				simple_sampler,
+				absolute_clamping_nearest,
 				this_pos).xy;
-	/*
-	float2 const start_position = (float2)(this_pos.x,this_pos.y);
-	float2 const end_position = start_position + (float2)(100.0f,100.0f);
-	*/
 
 	// Position 1
 	vb[base_index] = start_position.x;

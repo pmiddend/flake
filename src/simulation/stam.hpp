@@ -38,11 +38,13 @@ public:
 
 	~stam();
 private:
+	sge::opencl::command_queue::object &command_queue_;
 	sge::opencl::memory_object::image::planar v1_,v2_;
 	sge::opencl::memory_object::image::planar p_;
 	sge::opencl::memory_object::image::planar boundary_;
 	sge::opencl::program::object main_program_;
 	sge::opencl::kernel::object reset_vector_field_;
+	sge::opencl::kernel::object copy_boundary_;
 };
 }
 }

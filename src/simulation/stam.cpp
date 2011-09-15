@@ -46,6 +46,8 @@ flake::simulation::stam::stam(
 	flake::boundary_view const &boundary,
 	sge::parse::json::object const &)
 :
+	command_queue_(
+		_command_queue),
 	v1_(
 		_context,
 		CL_MEM_READ_WRITE,
@@ -83,7 +85,7 @@ flake::simulation::stam::stam(
 		_context,
 		CL_MEM_READ_WRITE,
 		create_image_format(
-			CL_R,
+			CL_INTENSITY,
 			CL_UNORM_INT8),
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
 			sge::image2d::view::size(
@@ -101,12 +103,17 @@ flake::simulation::stam::stam(
 	reset_vector_field_(
 		main_program_,
 		sge::opencl::kernel::name(
-			"reset_vector_field"))
+			"reset_vector_field")),
+	copy_boundary_(
+		main_program_,
+		sge::opencl::kernel::name(
+			"copy_boundary"))
 {
-	fcppt::io::cout << FCPPT_TEXT("Resetting vector field\n");
 	sge::image2d::dim const boundary_dim =
 		sge::image2d::view::size(
 			boundary.get());
+
+	fcppt::io::cout << FCPPT_TEXT("Resetting vector field\n");
 
 	reset_vector_field_.argument(
 		sge::opencl::kernel::argument_index(
@@ -114,7 +121,7 @@ flake::simulation::stam::stam(
 		v1_);
 
 	sge::opencl::command_queue::enqueue_kernel(
-		_command_queue,
+		command_queue_,
 		reset_vector_field_,
 		fcppt::assign::make_array<std::size_t>
 			(boundary_dim[0])
@@ -123,21 +130,26 @@ flake::simulation::stam::stam(
 			(1)
 			(1).container());
 
-	/*
-	sge::opencl::command_queue::scoped_planar_mapping scoped_image(
-		_command_queue,
-		boundary_,
-		CL_MAP_WRITE,
-		sge::opencl::memory_object::rect(
-			sge::opencl::memory_object::rect::vector::null(),
-			fcppt::math::dim::structure_cast<sge::opencl::memory_object::rect::dim>(
-				boundary_dim)));
+	fcppt::io::cout << FCPPT_TEXT("Done\n");
+	fcppt::io::cout << FCPPT_TEXT("Copying boundary to OpenCL buffer\n");
 
-	sge::image2d::algorithm::copy_and_convert(
-		boundary.get(),
-		scoped_image.view(),
-		sge::image::algorithm::may_overlap::no);
-	*/
+	{
+		sge::opencl::command_queue::scoped_planar_mapping scoped_image(
+			_command_queue,
+			boundary_,
+			CL_MAP_WRITE,
+			sge::opencl::memory_object::rect(
+				sge::opencl::memory_object::rect::vector::null(),
+				fcppt::math::dim::structure_cast<sge::opencl::memory_object::rect::dim>(
+					boundary_dim)));
+
+		sge::image2d::algorithm::copy_and_convert(
+			boundary.get(),
+			scoped_image.view(),
+			sge::image::algorithm::may_overlap::no);
+	}
+
+	fcppt::io::cout << FCPPT_TEXT("Done\n");
 }
 
 sge::opencl::memory_object::image::planar &
@@ -150,6 +162,25 @@ void
 flake::simulation::stam::update(
 	flake::duration const &)
 {
+	copy_boundary_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		v1_);
+
+	copy_boundary_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		boundary_);
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		copy_boundary_,
+		fcppt::assign::make_array<std::size_t>
+			(v1_.size()[0])
+			(v1_.size()[1]).container(),
+		fcppt::assign::make_array<std::size_t>
+			(1)
+			(1).container());
 }
 
 flake::simulation::stam::~stam()

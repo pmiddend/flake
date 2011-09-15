@@ -230,3 +230,4 @@ catch(...)
 	std::cerr << "unknown exception caught\n";
 	return EXIT_FAILURE;
 }
+
