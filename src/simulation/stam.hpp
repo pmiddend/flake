@@ -43,6 +43,7 @@ public:
 private:
 	sge::opencl::command_queue::object &command_queue_;
 	sge::opencl::memory_object::image::planar v1_,v2_;
+	sge::opencl::memory_object::image::planar temporary_v_;
 	sge::opencl::memory_object::image::planar p1_,p2_;
 	sge::opencl::memory_object::image::planar boundary_;
 	sge::opencl::program::object main_program_;
@@ -56,6 +57,31 @@ private:
 	cl_float const external_force_magnitude_;
 	cl_float const grid_size_;
 	unsigned const jacobi_iterations_;
+
+	void
+	copy_boundary(
+		sge::opencl::memory_object::image::planar &);
+	
+	void
+	advect(
+		flake::duration const &,
+		sge::opencl::memory_object::image::planar &from,
+		sge::opencl::memory_object::image::planar &to);
+	
+	void
+	apply_forces(
+		sge::opencl::memory_object::image::planar &);
+
+	void
+	divergence(
+		sge::opencl::memory_object::image::planar &from,
+		sge::opencl::memory_object::image::planar &to);
+	
+	void
+	project(
+		sge::opencl::memory_object::image::planar &v,
+		sge::opencl::memory_object::image::planar &divergence,
+		sge::opencl::memory_object::image::planar &target);
 };
 }
 }

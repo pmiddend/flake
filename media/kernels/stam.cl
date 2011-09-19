@@ -28,8 +28,8 @@ null_image(
 
 __kernel void
 copy_boundary(
-	__global __write_only image2d_t vector_field,
-	__global __read_only image2d_t boundary)
+	__global __read_only image2d_t boundary,
+	__global __write_only image2d_t vector_field)
 {
 	int2 const position =
 		(int2)(

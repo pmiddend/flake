@@ -96,6 +96,17 @@ flake::simulation::stam::stam(
 				boundary.get())),
 		sge::opencl::memory_object::image::planar_pitch(
 			0)),
+	temporary_v_(
+		_context,
+		CL_MEM_READ_WRITE,
+		create_image_format(
+			CL_RG,
+			CL_FLOAT),
+		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
+			sge::image2d::view::size(
+				boundary.get())),
+		sge::opencl::memory_object::image::planar_pitch(
+			0)),
 	p1_(
 		_context,
 		CL_MEM_READ_WRITE,
@@ -235,38 +246,75 @@ flake::simulation::stam::update(
 	flake::duration const &dt)
 {
 	// Copy boundary to v1
-	// Boundary!
+	this->copy_boundary(
+		v1_);
+
+	// Advect from v1 to v2
+	this->advect(
+		dt,
+		v1_,
+		v2_);
+
+	// Apply forces inside v2
+	this->apply_forces(
+		v2_);
+
+	// Calculate divergence of v2 to v1
+	this->divergence(
+		v2_,
+		v1_);
+
+	// Project v2, store result in v1
+	this->project(
+		v2_,
+		v1_,
+		v1_);
+}
+
+flake::simulation::stam::~stam()
+{
+}
+
+void
+flake::simulation::stam::copy_boundary(
+	sge::opencl::memory_object::image::planar &target)
+{
 	copy_boundary_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		v1_);
+		boundary_);
 
 	copy_boundary_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		boundary_);
+		target);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		copy_boundary_,
 		fcppt::assign::make_array<std::size_t>
-			(v1_.size()[0])
-			(v1_.size()[1]).container(),
+			(target.size()[0])
+			(target.size()[1]).container(),
 		fcppt::assign::make_array<std::size_t>
 			(1)
 			(1).container());
+}
 
-	// Advection
-	// Advect v1 to v2
+void
+flake::simulation::stam::advect(
+	flake::duration const &dt,
+	sge::opencl::memory_object::image::planar &from,
+	sge::opencl::memory_object::image::planar &to)
+{
 	advect_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		v1_);
+		from);
 
 	advect_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		v2_);
+		to);
 
 	advect_.argument(
 		sge::opencl::kernel::argument_index(
@@ -283,25 +331,28 @@ flake::simulation::stam::update(
 		command_queue_,
 		advect_,
 		fcppt::assign::make_array<std::size_t>
-			(v1_.size()[0])
-			(v1_.size()[1]).container(),
+			(from.size()[0])
+			(from.size()[1]).container(),
 		fcppt::assign::make_array<std::size_t>
 			(1)
 			(1).container());
+}
 
-	// Diffusion
-	/*jacobi_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
-		v2_);
-		*/
+void
+flake::simulation::stam::apply_forces(
+	sge::opencl::memory_object::image::planar &v)
+{
+	static bool force_applied = false;
+
+	if(force_applied)
+		return;
 
 	// External forces
 	// Apply external forces to v2 (inline)
 	apply_external_forces_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		v2_);
+		v);
 
 	apply_external_forces_.argument(
 		sge::opencl::kernel::argument_index(
@@ -314,13 +365,13 @@ flake::simulation::stam::update(
 		sge::opencl::kernel::argument_index(
 			2),
 		static_cast<cl_uint>(
-			v2_.size()[1]/2 - fan_width));
+			v.size()[1]/2 - fan_width));
 
 	apply_external_forces_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
 		static_cast<cl_uint>(
-			v2_.size()[1]/2 + fan_width - 1));
+			v.size()[1]/2 + fan_width - 1));
 
 	apply_external_forces_.argument(
 		sge::opencl::kernel::argument_index(
@@ -332,18 +383,24 @@ flake::simulation::stam::update(
 		apply_external_forces_,
 		fcppt::assign::make_array<std::size_t>(2*fan_width).container(),
 		fcppt::assign::make_array<std::size_t>(1).container());
+	
+	force_applied = true;
+}
 
-	// Projection
-	// Calculate divergence of v2 to v1
+void
+flake::simulation::stam::divergence(
+	sge::opencl::memory_object::image::planar &from,
+	sge::opencl::memory_object::image::planar &to)
+{
 	divergence_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		v2_);
+		from);
 
 	divergence_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		v1_);
+		to);
 
 	divergence_.argument(
 		sge::opencl::kernel::argument_index(
@@ -354,12 +411,19 @@ flake::simulation::stam::update(
 		command_queue_,
 		divergence_,
 		fcppt::assign::make_array<std::size_t>
-			(v1_.size()[0])
-			(v1_.size()[1]).container(),
+			(from.size()[0])
+			(from.size()[1]).container(),
 		fcppt::assign::make_array<std::size_t>
 			(1)
 			(1).container());
+}
 
+void
+flake::simulation::stam::project(
+	sge::opencl::memory_object::image::planar &v,
+	sge::opencl::memory_object::image::planar &_divergence,
+	sge::opencl::memory_object::image::planar &target)
+{
 	// Null p1 (initial solution guess)
 	null_image_.argument(
 		sge::opencl::kernel::argument_index(
@@ -376,11 +440,10 @@ flake::simulation::stam::update(
 			(1)
 			(1).container());
 
-	// Divergence is contained in v1
 	jacobi_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		v1_);
+		_divergence);
 
 	sge::opencl::memory_object::base *current_source = &p1_,*current_dest = &p2_;
 
@@ -437,13 +500,13 @@ flake::simulation::stam::update(
 	gradient_and_subtract_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
-		v2_);
+		v);
 
 	// Destination (was: divergence)
 	gradient_and_subtract_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
-		v1_);
+		target);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
@@ -454,10 +517,4 @@ flake::simulation::stam::update(
 		fcppt::assign::make_array<std::size_t>
 			(1)
 			(1).container());
-
-	//fcppt::io::cout << FCPPT_TEXT("Updated vector field\n");
-}
-
-flake::simulation::stam::~stam()
-{
 }
