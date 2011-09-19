@@ -1,7 +1,9 @@
 {
+	"grid-size" : 10.0,
+	"jacobi-iterations" : 40,
+	"external-force-magnitude" : 15.0,
 	"visualization" :
 	{
-		"grid-size" : 10.0,
-		"arrow-length" : 10.0
+		"arrow-length" : 1.0
 	}
 }

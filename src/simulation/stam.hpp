@@ -10,6 +10,9 @@
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <CL/cl.h>
+#include <fcppt/config/external_end.hpp>
 
 namespace flake
 {
@@ -40,11 +43,19 @@ public:
 private:
 	sge::opencl::command_queue::object &command_queue_;
 	sge::opencl::memory_object::image::planar v1_,v2_;
-	sge::opencl::memory_object::image::planar p_;
+	sge::opencl::memory_object::image::planar p1_,p2_;
 	sge::opencl::memory_object::image::planar boundary_;
 	sge::opencl::program::object main_program_;
-	sge::opencl::kernel::object reset_vector_field_;
+	sge::opencl::kernel::object null_image_;
 	sge::opencl::kernel::object copy_boundary_;
+	sge::opencl::kernel::object advect_;
+	sge::opencl::kernel::object apply_external_forces_;
+	sge::opencl::kernel::object divergence_;
+	sge::opencl::kernel::object jacobi_;
+	sge::opencl::kernel::object gradient_and_subtract_;
+	cl_float const external_force_magnitude_;
+	cl_float const grid_size_;
+	unsigned const jacobi_iterations_;
 };
 }
 }

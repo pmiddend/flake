@@ -87,22 +87,6 @@ try
 	// - Convert vector field to a vertex buffer of arrows
 	// - Draw the vertex buffer on the screen
 
-	// Algorithm outline:
-	//
-	// - Input: vector field 'v' from the last iteration
-	// - Take the boundary texture; set every texel in 'v' to the
-	//   zero vector (inplace)
-	// - Apply advection routine, return a new vector field 'v2'
-	// - (Apply diffusion)
-	// - Apply external forces. For example, set each vector on
-	//   the right side of the vector field to a specified value
-	//   (inplace)
-	// - Compute divergence of 'v2', store in 'v'
-	// - Nullify 'p' texture
-	// - Use Jacobi to compute the pressure 'p' from 'v', iterate,
-	//   alternate between p.r and p.g for storage.
-	// - Calculate gradient of 'p', subtract from 'v', return 'v2'
-
 	sge::log::global_context().apply(
 		fcppt::log::location(
 			FCPPT_TEXT("opencl")),
@@ -174,6 +158,16 @@ try
 				sge::systems::running_to_false(
 					running))));
 
+	fcppt::signal::scoped_connection const cb_sim(
+		sys.keyboard_collector().key_callback(
+			sge::input::keyboard::action(
+				sge::input::keyboard::key_code::space,
+				std::tr1::bind(
+					&flake::simulation::base::update,
+					simulation.get(),
+					flake::duration(
+						0.01f)))));
+
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			fcppt::chrono::seconds(1)));
@@ -182,7 +176,7 @@ try
 
 	while(running)
 	{
-		fcppt::io::cerr << "Iteration\n";
+	//	fcppt::io::cerr << "Iteration\n";
 
 		sys.window().dispatch();
 
@@ -193,12 +187,12 @@ try
 		simulation->update(
 			current_delta);
 
-		fcppt::io::cerr << "Updated simulation\n";
+//		fcppt::io::cerr << "Updated simulation\n";
 
 		visualization->update(
 			current_delta);
 
-		fcppt::io::cerr << "Updated visualization\n";
+//		fcppt::io::cerr << "Updated visualization\n";
 
 		// If we have no viewport (yet), don't do anything (this is just a
 		// precaution, we _might_ divide by zero somewhere below, otherwise)

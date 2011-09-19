@@ -129,7 +129,7 @@ flake::visualization::arrow::arrow(
 		sge::parse::json::find_and_convert_member<cl_float>(
 						_config_file,
 						sge::parse::json::string_to_path(
-							FCPPT_TEXT("visualization/grid-size"))));
+							FCPPT_TEXT("grid-size"))));
 
 	transfer_kernel_.argument(
 		sge::opencl::kernel::argument_index(
