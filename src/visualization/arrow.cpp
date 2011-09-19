@@ -1,4 +1,5 @@
 #include "arrow.hpp"
+#include "dummy_sprite/parameters.hpp"
 #include "../simulation/base.hpp"
 #include "../media_path_from_string.hpp"
 #include "arrow_vf/format.hpp"
@@ -17,6 +18,8 @@
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vector2.hpp>
 #include <sge/renderer/state/list.hpp>
+#include <sge/sprite/parameters.hpp>
+#include <sge/sprite/render_one.hpp>
 #include <sge/renderer/scalar.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
@@ -116,7 +119,23 @@ flake::visualization::arrow::arrow(
 					sge::shader::matrix(
 						sge::renderer::matrix4(),
 						sge::shader::matrix_flags::projection)))),
-			sge::shader::sampler_sequence()))
+			sge::shader::sampler_sequence())),
+		sprite_system_(
+			renderer_),
+		sprite_object_(
+			dummy_sprite::parameters()
+				.pos(
+					sge::renderer::vector2(10.0f,10.0f))
+				.size(
+					sge::parse::json::find_and_convert_member<dummy_sprite::object::unit>(
+						_config_file,
+						sge::parse::json::string_to_path(
+							FCPPT_TEXT("grid-size"))) *
+					fcppt::math::dim::structure_cast<dummy_sprite::object::dim>(
+						simulation_.vector_field().size()))
+				.any_color(
+					sge::image::colors::black())
+				.elements())
 {
 	transfer_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -127,17 +146,17 @@ flake::visualization::arrow::arrow(
 		sge::opencl::kernel::argument_index(
 			1),
 		sge::parse::json::find_and_convert_member<cl_float>(
-						_config_file,
-						sge::parse::json::string_to_path(
-							FCPPT_TEXT("grid-size"))));
+			_config_file,
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("grid-size"))));
 
 	transfer_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
 		sge::parse::json::find_and_convert_member<cl_float>(
-						_config_file,
-						sge::parse::json::string_to_path(
-							FCPPT_TEXT("visualization/arrow-length"))));
+			_config_file,
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("visualization/arrow-length"))));
 }
 
 void
@@ -203,6 +222,10 @@ flake::visualization::arrow::update(
 void
 flake::visualization::arrow::render()
 {
+	sge::sprite::render_one(
+		sprite_system_,
+		sprite_object_);
+
 	// Activate the shader and the vertex declaration
 	sge::shader::scoped scoped_shader(
 		shader_,
@@ -237,7 +260,7 @@ flake::visualization::arrow::render_states() const
 	return
 		sge::renderer::state::list
 			(sge::renderer::state::bool_::clear_back_buffer = true)
-			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::black());
+			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::white());
 }
 
 flake::visualization::arrow::~arrow()

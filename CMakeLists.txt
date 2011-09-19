@@ -40,6 +40,7 @@ FIND_PACKAGE(
 	image2d
 	input
 	renderer
+	sprite
 	parse
 	shader
 	systems

@@ -110,6 +110,16 @@ apply_external_forces(
 		get_global_id(
 			0);
 
+	write_imagef(
+		output,
+		(int2)(0,y),
+		(float4)(
+			force_magnitude,
+			0.0f
+			/*grid_size * (y - middle)*/,
+			0.0f,
+			0.0f));
+	/*
 	float const middle = 
 		(start + end) / 2.0f;
 
@@ -121,6 +131,7 @@ apply_external_forces(
 			grid_size * (y - middle),
 			0.0f,
 			0.0f));
+	*/
 }
 
 __kernel void
@@ -274,4 +285,25 @@ gradient_and_subtract(
 			t-b,
 			0.0f,
 			0.0f));
+}
+
+__kernel void
+copy_image(
+	__global __read_only image2d_t from,
+	__global __write_only image2d_t to)
+{
+	int2 const position =
+		(int2)(
+			get_global_id(
+				0),
+			get_global_id(
+				1));
+
+	write_imagef(
+		to,
+		position,
+		read_imagef(
+			from,
+			absolute_clamping_nearest,
+			position));
 }

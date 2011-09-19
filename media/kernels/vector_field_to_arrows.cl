@@ -40,7 +40,7 @@ fill_vb_with_arrows(
 	vb[base_index+1] = start_position.y;
 
 	// Color 1 (rgb)
-	vb[base_index+2] = 0.0f;
+	vb[base_index+2] = 1.0f;
 	vb[base_index+3] = 0.0f;
 	vb[base_index+4] = 0.0f;
 
@@ -49,7 +49,7 @@ fill_vb_with_arrows(
 	vb[base_index+6] = end_position.y;
 
 	// Color 1 (rgb)
-	vb[base_index+7] = 1.0f;
+	vb[base_index+7] = 0.0f;
 	vb[base_index+8] = 1.0f;
-	vb[base_index+9] = 1.0f;
+	vb[base_index+9] = 0.0f;
 }

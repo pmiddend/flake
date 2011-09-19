@@ -2,6 +2,8 @@
 #define FLAKE_VISUALIZATION_ARROW_HPP_INCLUDED
 
 #include "base.hpp"
+#include "dummy_sprite/system.hpp"
+#include "dummy_sprite/object.hpp"
 #include "../simulation/base_fwd.hpp"
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
@@ -11,6 +13,8 @@
 #include <sge/renderer/vertex_declaration_ptr.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/parse/json/object_fwd.hpp>
+#include <sge/sprite/object.hpp>
+#include <sge/sprite/external_system_impl.hpp>
 #include <sge/shader/object.hpp>
 #include <sge/renderer/vertex_buffer_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -55,6 +59,8 @@ private:
 	sge::opencl::program::object transfer_program_;
 	sge::opencl::kernel::object transfer_kernel_;
 	sge::shader::object shader_;
+	dummy_sprite::system sprite_system_;
+	dummy_sprite::object sprite_object_;
 };
 }
 }

@@ -40,9 +40,11 @@
 #include <fcppt/io/stream_to_string.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/assign/make_array.hpp>
+#include <fcppt/assert/pre.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/math/vector/basic_impl.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
+#include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/chrono/duration_impl.hpp>
 #include <fcppt/io/cifstream.hpp>
 #include <fcppt/io/cout.hpp>
@@ -176,6 +178,10 @@ flake::simulation::stam::stam(
 		main_program_,
 		sge::opencl::kernel::name(
 			"gradient_and_subtract")),
+	copy_image_(
+		main_program_,
+		sge::opencl::kernel::name(
+			"copy_image")),
 	external_force_magnitude_(
 		sge::parse::json::find_and_convert_member<cl_float>(
 			_config_file,
@@ -238,6 +244,7 @@ flake::simulation::stam::stam(
 sge::opencl::memory_object::image::planar &
 flake::simulation::stam::vector_field()
 {
+	//return temporary_v_;
 	return v1_;
 }
 
@@ -264,11 +271,19 @@ flake::simulation::stam::update(
 		v2_,
 		v1_);
 
+
 	// Project v2, store result in v1
 	this->project(
 		v2_,
 		v1_,
 		v1_);
+
+	/*
+	// Calculate divergence of v2 to v1
+	this->divergence(
+		v1_,
+		temporary_v_);
+			*/
 }
 
 flake::simulation::stam::~stam()
@@ -359,7 +374,7 @@ flake::simulation::stam::apply_forces(
 			1),
 		external_force_magnitude_);
 
-	cl_uint const fan_width = 5; 
+	cl_uint const fan_width = 1; 
 
 	apply_external_forces_.argument(
 		sge::opencl::kernel::argument_index(
@@ -381,7 +396,7 @@ flake::simulation::stam::apply_forces(
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		apply_external_forces_,
-		fcppt::assign::make_array<std::size_t>(2*fan_width).container(),
+		fcppt::assign::make_array<std::size_t>(/* 2* */fan_width).container(),
 		fcppt::assign::make_array<std::size_t>(1).container());
 	
 	force_applied = true;
@@ -451,7 +466,7 @@ flake::simulation::stam::project(
 	jacobi_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
-		static_cast<cl_float>(1) / grid_size_);
+		- (grid_size_ * grid_size_));
 
 	// Beta (rbeta)
 	jacobi_.argument(
@@ -502,7 +517,6 @@ flake::simulation::stam::project(
 			2),
 		v);
 
-	// Destination (was: divergence)
 	gradient_and_subtract_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
@@ -514,6 +528,35 @@ flake::simulation::stam::project(
 		fcppt::assign::make_array<std::size_t>
 			(p1_.size()[0])
 			(p1_.size()[1]).container(),
+		fcppt::assign::make_array<std::size_t>
+			(1)
+			(1).container());
+}
+
+void
+flake::simulation::stam::copy_image(
+	sge::opencl::memory_object::image::planar &from,
+	sge::opencl::memory_object::image::planar &to)
+{
+	FCPPT_ASSERT_PRE(
+		from.size() == to.size());
+
+	copy_image_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		from);
+
+	copy_image_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		to);
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		copy_image_,
+		fcppt::assign::make_array<std::size_t>
+			(from.size()[0])
+			(from.size()[1]).container(),
 		fcppt::assign::make_array<std::size_t>
 			(1)
 			(1).container());

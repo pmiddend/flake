@@ -54,6 +54,7 @@ private:
 	sge::opencl::kernel::object divergence_;
 	sge::opencl::kernel::object jacobi_;
 	sge::opencl::kernel::object gradient_and_subtract_;
+	sge::opencl::kernel::object copy_image_;
 	cl_float const external_force_magnitude_;
 	cl_float const grid_size_;
 	unsigned const jacobi_iterations_;
@@ -82,6 +83,11 @@ private:
 		sge::opencl::memory_object::image::planar &v,
 		sge::opencl::memory_object::image::planar &divergence,
 		sge::opencl::memory_object::image::planar &target);
+	
+	void
+	copy_image(
+		sge::opencl::memory_object::image::planar &from,
+		sge::opencl::memory_object::image::planar &to);
 };
 }
 }
