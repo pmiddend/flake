@@ -245,6 +245,7 @@ sge::opencl::memory_object::image::planar &
 flake::simulation::stam::vector_field()
 {
 	//return temporary_v_;
+	//return v2_;
 	return v1_;
 }
 
@@ -255,6 +256,10 @@ flake::simulation::stam::update(
 	// Copy boundary to v1
 	this->copy_boundary(
 		v1_);
+	
+	// Apply forces inside v2
+	this->apply_forces(
+		v1_);
 
 	// Advect from v1 to v2
 	this->advect(
@@ -262,15 +267,10 @@ flake::simulation::stam::update(
 		v1_,
 		v2_);
 
-	// Apply forces inside v2
-	this->apply_forces(
-		v2_);
-
 	// Calculate divergence of v2 to v1
 	this->divergence(
 		v2_,
 		v1_);
-
 
 	// Project v2, store result in v1
 	this->project(
@@ -278,12 +278,10 @@ flake::simulation::stam::update(
 		v1_,
 		v1_);
 
-	/*
-	// Calculate divergence of v2 to v1
+	// Store the divergence for debugging reasons
 	this->divergence(
 		v1_,
 		temporary_v_);
-			*/
 }
 
 flake::simulation::stam::~stam()
@@ -357,10 +355,12 @@ void
 flake::simulation::stam::apply_forces(
 	sge::opencl::memory_object::image::planar &v)
 {
+	/*
 	static bool force_applied = false;
 
 	if(force_applied)
 		return;
+	*/
 
 	// External forces
 	// Apply external forces to v2 (inline)
@@ -374,7 +374,7 @@ flake::simulation::stam::apply_forces(
 			1),
 		external_force_magnitude_);
 
-	cl_uint const fan_width = 1; 
+	cl_uint const fan_width = 5; 
 
 	apply_external_forces_.argument(
 		sge::opencl::kernel::argument_index(
@@ -396,10 +396,10 @@ flake::simulation::stam::apply_forces(
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		apply_external_forces_,
-		fcppt::assign::make_array<std::size_t>(/* 2* */fan_width).container(),
+		fcppt::assign::make_array<std::size_t>( 2* fan_width).container(),
 		fcppt::assign::make_array<std::size_t>(1).container());
 	
-	force_applied = true;
+	//force_applied = true;
 }
 
 void
@@ -466,7 +466,7 @@ flake::simulation::stam::project(
 	jacobi_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
-		- (grid_size_ * grid_size_));
+		-(grid_size_ * grid_size_));
 
 	// Beta (rbeta)
 	jacobi_.argument(

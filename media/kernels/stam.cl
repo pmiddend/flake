@@ -1,3 +1,5 @@
+// With non-normalized coordinates, only CLAMP and CLAMP_TO_EDGE are supported.
+// CLAMP will clamp to a border color.
 sampler_t const absolute_clamping_nearest =
 	CLK_NORMALIZED_COORDS_FALSE |
 	CLK_ADDRESS_CLAMP_TO_EDGE |
@@ -79,12 +81,28 @@ advect(
 
 	// After moving back in time, we do not always end up exactly at a grid
 	// cell's center, we might be inbetween grid cells. Luckily, we can
-	// interpolate (notice the linear interpolation here)!
+	// interpolate.
+	//
+	// Notice the linear interpolation here. If we use CLAMP instead of
+	// CLAMP_TO_EDGE, we clamp to a border color, which is the equivalent of
+	// black.
+	//
+	// Also note that this is the place where "diffusion" occurs. At cells with
+	// zero velocity, the only thing we do is take the current position as an 
+	// integer, convert it to float and subtract (0,0) from it. Then we write it back.
+	// However, the conversion to float loses information and we end up with a
+	// slighly off-grid position. Together with linear interpolation, this leads to
+	// diffusion.
+	//
+	// Also note that using CLAMP_TO_EDGE leads to border vectors on the left
+	// that point to the right (zero y coordinate) to not be changed.
 	float4 const interpolated_vector =
 		read_imagef(
 			input,
 			absolute_clamping_linear,
-			advected_vector);
+			// Linear interpolation uses (u,v) - (0.5,0.5) as "reference", so
+			// compensate for that using an addition here.
+			advected_vector + (float2)(0.5f,0.5f));
 
 	write_imagef(
 		output,
@@ -110,16 +128,17 @@ apply_external_forces(
 		get_global_id(
 			0);
 
+	/*
 	write_imagef(
 		output,
 		(int2)(0,y),
 		(float4)(
 			force_magnitude,
 			0.0f
-			/*grid_size * (y - middle)*/,
+//			grid_size * (y - middle),
 			0.0f,
 			0.0f));
-	/*
+	*/
 	float const middle = 
 		(start + end) / 2.0f;
 
@@ -131,7 +150,6 @@ apply_external_forces(
 			grid_size * (y - middle),
 			0.0f,
 			0.0f));
-	*/
 }
 
 __kernel void

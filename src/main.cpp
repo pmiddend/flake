@@ -184,8 +184,8 @@ try
 			sge::timer::elapsed_and_reset<flake::duration>(
 				delta_timer);
 
-//		simulation->update(
-//			current_delta);
+		simulation->update(
+			current_delta);
 
 //		fcppt::io::cerr << "Updated simulation\n";
 
