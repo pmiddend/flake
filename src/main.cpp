@@ -33,6 +33,7 @@
 #include <sge/renderer/vsync.hpp>
 #include <sge/renderer/no_multi_sampling.hpp>
 #include <sge/image2d/file.hpp>
+#include <sge/image2d/file_ptr.hpp>
 #include <sge/image2d/multi_loader.hpp>
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/viewport/center_on_resize.hpp>
@@ -129,15 +130,18 @@ try
 
 	sge::opencl::single_device_system opencl_system(
 		sys.renderer());
+	
+	sge::image2d::file_ptr boundary_image = 
+		sys.image_loader().load(
+			flake::media_path_from_string(
+				FCPPT_TEXT("images/boundary.png")));
 
 	flake::simulation::base_ptr simulation(
 		flake::simulation::create(
 			opencl_system.context(),
 			opencl_system.queue(),
 			flake::boundary_view(
-				sys.image_loader().load(
-					flake::media_path_from_string(
-						FCPPT_TEXT("images/boundary.png")))->view()),
+				boundary_image->view()),
 			config_file));
 
 	flake::visualization::base_ptr visualization(
@@ -146,6 +150,8 @@ try
 			opencl_system.queue(),
 			*simulation,
 			sys.renderer(),
+			flake::boundary_view(
+				boundary_image->view()),
 			config_file));
 
 	bool running =
@@ -172,12 +178,8 @@ try
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			fcppt::chrono::seconds(1)));
 
-	fcppt::io::cerr << "Beginning\n";
-
 	while(running)
 	{
-	//	fcppt::io::cerr << "Iteration\n";
-
 		sys.window().dispatch();
 
 		flake::duration const current_delta =
@@ -187,17 +189,14 @@ try
 		simulation->update(
 			current_delta);
 
-//		fcppt::io::cerr << "Updated simulation\n";
-
 		visualization->update(
 			current_delta);
-
-//		fcppt::io::cerr << "Updated visualization\n";
 
 		// If we have no viewport (yet), don't do anything (this is just a
 		// precaution, we _might_ divide by zero somewhere below, otherwise)
 		if(!sge::renderer::viewport_size(sys.renderer()).content())
-			throw sge::exception(FCPPT_TEXT("There was an iteration without viewport. Usually not a problem, but OpenCL isn't suited for viewport changes, yet. So I have to exit now."));
+			throw sge::exception(
+				FCPPT_TEXT("There was an iteration without viewport. Usually not a problem, but OpenCL isn't suited for viewport changes, yet. So I have to exit now."));
 
 		sge::renderer::state::scoped scoped_state(
 			sys.renderer(),

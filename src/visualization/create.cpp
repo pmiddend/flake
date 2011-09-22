@@ -11,6 +11,7 @@ flake::visualization::create(
 	sge::opencl::command_queue::object &_queue,
 	simulation::base &_simulation,
 	sge::renderer::device &_renderer,
+	flake::boundary_view const &_boundary,
 	sge::parse::json::object const &_config_file)
 {
 	return
@@ -24,6 +25,8 @@ flake::visualization::create(
 					_renderer),
 				fcppt::ref(
 					_simulation),
+				fcppt::cref(
+					_boundary),
 				fcppt::cref(
 					_config_file)));
 }

@@ -41,6 +41,7 @@ FIND_PACKAGE(
 	input
 	renderer
 	sprite
+	texture
 	parse
 	shader
 	systems

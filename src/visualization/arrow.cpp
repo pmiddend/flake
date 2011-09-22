@@ -3,15 +3,21 @@
 #include "../simulation/base.hpp"
 #include "../media_path_from_string.hpp"
 #include "arrow_vf/format.hpp"
+#include <sge/image2d/view/const_object.hpp>
 #include <sge/renderer/state/trampoline.hpp>
 #include <sge/renderer/state/color.hpp>
 #include <sge/renderer/viewport_size.hpp>
 #include <sge/renderer/projection/orthogonal_wh.hpp>
 #include <sge/renderer/state/bool.hpp>
+#include <sge/renderer/texture/mipmap/off.hpp>
+#include <sge/renderer/texture/address_mode2.hpp>
+#include <sge/renderer/texture/address_mode.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
+#include <sge/renderer/texture/create_planar_from_view.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/size_type.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
+#include <sge/texture/part_raw.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/renderer/vf/dynamic/part_index.hpp>
 #include <sge/renderer/device.hpp>
@@ -37,6 +43,7 @@
 #include <sge/shader/vf_to_string.hpp>
 #include <sge/shader/activate_everything.hpp>
 #include <fcppt/assign/make_container.hpp>
+#include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/math/vector/basic_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
@@ -64,6 +71,7 @@ flake::visualization::arrow::arrow(
 	sge::opencl::command_queue::object &_command_queue,
 	sge::renderer::device &_renderer,
 	simulation::base &_simulation,
+	flake::boundary_view const &_boundary,
 	sge::parse::json::object const &_config_file)
 :
 	command_queue_(
@@ -133,8 +141,15 @@ flake::visualization::arrow::arrow(
 							FCPPT_TEXT("grid-size"))) *
 					fcppt::math::dim::structure_cast<dummy_sprite::object::dim>(
 						simulation_.vector_field().size()))
-				.any_color(
-					sge::image::colors::black())
+				.texture(
+					fcppt::make_shared_ptr<sge::texture::part_raw>(
+						sge::renderer::texture::create_planar_from_view(
+							renderer_,
+							_boundary.get(),
+							sge::renderer::texture::mipmap::off(),
+							sge::renderer::texture::address_mode2(
+								sge::renderer::texture::address_mode::clamp),
+							sge::renderer::resource_flags::none)))
 				.elements())
 {
 	transfer_kernel_.argument(

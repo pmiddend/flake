@@ -1,7 +1,7 @@
 #ifndef FLAKE_BOUNDARY_VIEW_HPP_INCLUDED
 #define FLAKE_BOUNDARY_VIEW_HPP_INCLUDED
 
-#include <sge/image2d/view/const_object_fwd.hpp>
+#include <sge/image2d/view/const_object.hpp>
 #include <fcppt/strong_typedef.hpp>
 
 namespace flake

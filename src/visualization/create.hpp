@@ -2,6 +2,7 @@
 #define FLAKE_VISUALIZATION_CREATE_HPP_INCLUDED
 
 #include "base_ptr.hpp"
+#include "../boundary_view.hpp"
 #include "../simulation/base_fwd.hpp"
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
@@ -18,6 +19,7 @@ create(
 	sge::opencl::command_queue::object &,
 	simulation::base &,
 	sge::renderer::device &,
+	flake::boundary_view const &,
 	sge::parse::json::object const &);
 }
 }

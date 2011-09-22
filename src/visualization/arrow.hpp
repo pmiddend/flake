@@ -2,6 +2,7 @@
 #define FLAKE_VISUALIZATION_ARROW_HPP_INCLUDED
 
 #include "base.hpp"
+#include "../boundary_view.hpp"
 #include "dummy_sprite/system.hpp"
 #include "dummy_sprite/object.hpp"
 #include "../simulation/base_fwd.hpp"
@@ -36,6 +37,7 @@ public:
 		sge::opencl::command_queue::object &,
 		sge::renderer::device &,
 		simulation::base &,
+		flake::boundary_view const &,
 		sge::parse::json::object const &);
 
 	void
