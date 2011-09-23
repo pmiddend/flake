@@ -18,6 +18,9 @@
 #include <sge/renderer/size_type.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/texture/part_raw.hpp>
+#include <sge/renderer/texture/filter/scoped.hpp>
+#include <sge/renderer/texture/filter/point.hpp>
+#include <sge/renderer/stage.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/renderer/vf/dynamic/part_index.hpp>
 #include <sge/renderer/device.hpp>
@@ -237,9 +240,16 @@ flake::visualization::arrow::update(
 void
 flake::visualization::arrow::render()
 {
+	{
+	sge::renderer::texture::filter::scoped scoped_texture_filter(
+		renderer_,
+		sge::renderer::stage(0),
+		sge::renderer::texture::filter::point());
+
 	sge::sprite::render_one(
 		sprite_system_,
 		sprite_object_);
+	}
 
 	// Activate the shader and the vertex declaration
 	sge::shader::scoped scoped_shader(
