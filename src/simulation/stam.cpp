@@ -253,14 +253,18 @@ void
 flake::simulation::stam::update(
 	flake::duration const &dt)
 {
-	// Copy boundary to v1
-	this->copy_boundary(
-		v1_);
+	// Dirichlet boundary conditions for the advection step: The values for the
+	// solid cells is given by the boundary image.
+	//this->copy_boundary(
+	//	v1_);
 	
-	// Apply forces inside v2
+	// Also a form of Dirichlet: Set the boundary at certain locations to be
+	// inflow.
 	this->apply_forces(
 		v1_);
 
+	// NOTE: We should only run advect on a divergence-free vector field (aside
+	// from boundary conditions?)
 	// Advect from v1 to v2
 	this->advect(
 		dt,
@@ -279,9 +283,11 @@ flake::simulation::stam::update(
 		v1_);
 
 	// Store the divergence for debugging reasons
+	/*
 	this->divergence(
 		v1_,
 		temporary_v_);
+	*/
 }
 
 flake::simulation::stam::~stam()
@@ -332,12 +338,17 @@ flake::simulation::stam::advect(
 	advect_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
+		boundary_);
+
+	advect_.argument(
+		sge::opencl::kernel::argument_index(
+			3),
 		static_cast<cl_float>(
 			dt.count()));
 
 	advect_.argument(
 		sge::opencl::kernel::argument_index(
-			3),
+			4),
 		grid_size_);
 
 	sge::opencl::command_queue::enqueue_kernel(
@@ -420,6 +431,11 @@ flake::simulation::stam::divergence(
 	divergence_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
+		boundary_);
+
+	divergence_.argument(
+		sge::opencl::kernel::argument_index(
+			3),
 		grid_size_);
 
 	sge::opencl::command_queue::enqueue_kernel(
@@ -460,18 +476,23 @@ flake::simulation::stam::project(
 			0),
 		_divergence);
 
+	jacobi_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		boundary_);
+
 	sge::opencl::memory_object::base *current_source = &p1_,*current_dest = &p2_;
 
 	// Alpha
 	jacobi_.argument(
 		sge::opencl::kernel::argument_index(
-			3),
+			4),
 		-(grid_size_ * grid_size_));
 
 	// Beta (rbeta)
 	jacobi_.argument(
 		sge::opencl::kernel::argument_index(
-			4),
+			5),
 		static_cast<cl_float>(1)/static_cast<cl_float>(4));
 
 	for(unsigned i = 0; i < jacobi_iterations_; ++i)
@@ -483,7 +504,7 @@ flake::simulation::stam::project(
 
 		jacobi_.argument(
 			sge::opencl::kernel::argument_index(
-				2),
+				3),
 			*current_dest);
 
 		std::swap(
@@ -520,6 +541,11 @@ flake::simulation::stam::project(
 	gradient_and_subtract_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
+		boundary_);
+
+	gradient_and_subtract_.argument(
+		sge::opencl::kernel::argument_index(
+			4),
 		target);
 
 	sge::opencl::command_queue::enqueue_kernel(

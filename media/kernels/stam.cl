@@ -10,6 +10,23 @@ sampler_t const absolute_clamping_linear =
 	CLK_ADDRESS_CLAMP_TO_EDGE |
 	CLK_FILTER_LINEAR;
 
+__constant int2 const 
+	pos_left = (int2)(-1,0),
+	pos_right = (int2)(1,0),
+	pos_top = (int2)(0,1),
+	pos_bottom = (int2)(0,-1);
+
+bool
+is_solid(
+	__global __read_only image2d_t boundary,
+	int2 const position)
+{
+	return 
+		read_imagei(
+			boundary,
+			absolute_clamping_nearest,position).x != 0;
+}
+
 __kernel void
 null_image(
 	__global __write_only image2d_t f)
@@ -52,6 +69,7 @@ __kernel void
 advect(
 	__global __read_only image2d_t input,
 	__global __write_only image2d_t output,
+	__global __read_only image2d_t boundary,
 	float const dt,
 	float const grid_size)
 {
@@ -61,6 +79,15 @@ advect(
 				0),
 			get_global_id(
 				1));
+
+	if(is_solid(boundary,position))
+	{
+		write_imagef(
+			output,
+			position,
+			(float4)(0.0f));
+		return;
+	}
 
 	// Retrieve the (imagined) particle's current velocity. We can
 	// get this using a nearest filter, since we're at an exact
@@ -156,6 +183,7 @@ __kernel void
 divergence(
 	__global __read_only image2d_t input,
 	__global __write_only image2d_t output,
+	__global __read_only image2d_t boundary,
 	float const grid_size)
 {
 	int2 const position =
@@ -165,33 +193,42 @@ divergence(
 			get_global_id(
 				1));
 
-	float4 const
-		l =
+	float2
+		left =
 			read_imagef(
 				input,
 				absolute_clamping_nearest,
-				position - (int2)(1,0)),
-		r =
+				position + pos_left).xy,
+		right =
 			read_imagef(
 				input,
 				absolute_clamping_nearest,
-				position + (int2)(1,0)),
-		t =
+				position + pos_right).xy,
+		top =
 			read_imagef(
 				input,
 				absolute_clamping_nearest,
-				position + (int2)(0,1)),
-		b =
+				position + pos_top).xy,
+		bottom =
 			read_imagef(
 				input,
 				absolute_clamping_nearest,
-				position - (int2)(0,1));
+				position + pos_bottom).xy;
+
+	if(is_solid(boundary,position + pos_left))
+		left = (float2)(0.0f,0.0f);
+	if(is_solid(boundary,position + pos_right))
+		right = (float2)(0.0f,0.0f);
+	if(is_solid(boundary,position + pos_top))
+		top = (float2)(0.0f,0.0f);
+	if(is_solid(boundary,position + pos_bottom))
+		bottom = (float2)(0.0f,0.0f);
 
 	write_imagef(
 		output,
 		position,
 		(float4)(
-			((r.x - l.x) + (t.y - b.y)) / (2.0f * grid_size),
+			((right.x - left.x) + (top.y - bottom.y)) / (2.0f * grid_size),
 			0.0f,
 			0.0f,
 			0.0f));
@@ -203,11 +240,12 @@ divergence(
 // Convergence: Extremely slow
 __kernel void
 jacobi(
-	__global __read_only image2d_t b,
-	__global __read_only image2d_t x,
-	__global __write_only image2d_t output,
-	float const alpha,
-	float const beta)
+	/* 0 */__global __read_only image2d_t b,
+	/* 1 */__global __read_only image2d_t x,
+	/* 2 */__global __read_only image2d_t boundary,
+	/* 3 */__global __write_only image2d_t output,
+	/* 4 */float const alpha,
+	/* 5 */float const beta)
 {
 	int2 const position =
 		(int2)(
@@ -216,49 +254,63 @@ jacobi(
 			get_global_id(
 				1));
 
-	// NOTE: Is float4 the fastest here? Should we extract the .x component first?
-	float4 const
+	float
+		center =
+			read_imagef(
+				x,
+				absolute_clamping_nearest,
+				position).x,
 		left =
 			read_imagef(
 				x,
 				absolute_clamping_nearest,
-				position - (int2)(1,0)),
+				position + pos_left).x,
 		right =
 			read_imagef(
 				x,
 				absolute_clamping_nearest,
-				position + (int2)(1,0)),
+				position + pos_right).x,
 		top =
 			read_imagef(
 				x,
 				absolute_clamping_nearest,
-				position + (int2)(0,1)),
+				position + pos_top).x,
 		bottom =
 			read_imagef(
 				x,
 				absolute_clamping_nearest,
-				position - (int2)(0,1));
+				position + pos_bottom).x;
 
-	float4 const b_value =
-			read_imagef(
-				b,
-				absolute_clamping_nearest,
-				position);
+	if(is_solid(boundary,position + pos_left))
+		left = center;
+	if(is_solid(boundary,position + pos_right))
+		right = center;
+	if(is_solid(boundary,position + pos_top))
+		top = center;
+	if(is_solid(boundary,position + pos_bottom))
+		bottom = center;
+
+	float const b_value =
+		read_imagef(
+			b,
+			absolute_clamping_nearest,
+			position).x;
 
 	write_imagef(
 		output,
 		position,
-		(left + right + top + bottom + alpha * b_value) * beta);
+		(float4)((left + right + top + bottom + alpha * b_value) * beta,0.0f,0.0f,0.0f));
 }
 
 // Calculate the gradient of p and calculate
 // w - gradient(p)
 __kernel void
 gradient_and_subtract(
-	__global __read_only image2d_t p,
-	float const grid_size,
-	__global __read_only image2d_t w,
-	__global __write_only image2d_t output)
+	/* 0 */__global __read_only image2d_t p,
+	/* 1 */float const grid_size,
+	/* 2 */__global __read_only image2d_t w,
+	/* 3 */__global __read_only image2d_t boundary,
+	/* 4 */__global __write_only image2d_t output)
 {
 	int2 const position =
 		(int2)(
@@ -267,42 +319,90 @@ gradient_and_subtract(
 			get_global_id(
 				1));
 
-	// NOTE: Is float4 the fastest here? Should we extract the .x component first?
-	float const
-		l =
+	if(is_solid(boundary,position))
+	{
+		write_imagef(
+			output,
+			position,
+			(float4)(0.0f,0.0f,0.0f,0.0f));
+		return;
+	}
+
+	float
+		center = 
 			read_imagef(
 				p,
 				absolute_clamping_nearest,
-				position - (int2)(1,0)).x,
-		r =
+				position).x,
+		left =
 			read_imagef(
 				p,
 				absolute_clamping_nearest,
-				position + (int2)(1,0)).x,
-		t =
+				position + pos_left).x,
+		right =
 			read_imagef(
 				p,
 				absolute_clamping_nearest,
-				position + (int2)(0,1)).x,
-		b =
+				position + pos_right).x,
+		top =
 			read_imagef(
 				p,
 				absolute_clamping_nearest,
-				position - (int2)(0,1)).x;
+				position + pos_top).x,
+		bottom =
+			read_imagef(
+				p,
+				absolute_clamping_nearest,
+				position + pos_bottom).x;
+
+	float2 vmask = 
+		(float2)(1.0f,1.0f);
+
+	if(is_solid(boundary,position + pos_left))
+	{
+		left = center;
+		vmask.x = 0.0f;
+	}
+
+	if(is_solid(boundary,position + pos_right))
+	{
+		right = center;
+		vmask.x = 0.0f;
+	}
+
+	if(is_solid(boundary,position + pos_top))
+	{
+		top = center;
+		vmask.y = 0.0f;
+	}
+
+	if(is_solid(boundary,position + pos_bottom))
+	{
+		bottom = center;
+		vmask.y = 0.0f;
+	}
+
+	float2 const velocity = 
+		read_imagef(
+			w,
+			absolute_clamping_nearest,
+			position).xy;
+
+	float2 const pressure_gradient = 
+		(0.5f / grid_size) *
+			(float2)(
+				right-left,
+				top-bottom);
+
+	float2 result = 
+		velocity - pressure_gradient;
+
+	result = vmask * result;
 
 	write_imagef(
 		output,
 		position,
-		read_imagef(
-				w,
-				absolute_clamping_nearest,
-				position) -
-		(0.5f / grid_size) *
-		(float4)(
-			r-l,
-			t-b,
-			0.0f,
-			0.0f));
+		(float4)(result.xy,0.0f,0.0f));
 }
 
 __kernel void
