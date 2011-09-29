@@ -2,6 +2,7 @@
 #define FLAKELIB_SIMULATION_STAM_HPP_INCLUDED
 
 #include <flakelib/boundary_view.hpp>
+#include <flakelib/profiler/object.hpp>
 #include <flakelib/simulation/base.hpp>
 #include <sge/parse/json/object_fwd.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
@@ -58,6 +59,14 @@ private:
 	cl_float const external_force_magnitude_;
 	cl_float const grid_size_;
 	unsigned const jacobi_iterations_;
+	flakelib::profiler::object parent_profiler_;
+	flakelib::profiler::object null_image_profiler_;
+	flakelib::profiler::object copy_boundary_profiler_;
+	flakelib::profiler::object advection_profiler_;
+	flakelib::profiler::object external_forces_profiler_;
+	flakelib::profiler::object divergence_profiler_;
+	flakelib::profiler::object jacobi_profiler_;
+	flakelib::profiler::object project_profiler_;
 
 	void
 	copy_boundary(

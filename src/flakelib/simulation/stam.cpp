@@ -22,6 +22,7 @@
 // - Calculate gradient of 'p', subtract from 'v1', return 'v2'  [x]
 
 #include <flakelib/simulation/stam.hpp>
+#include <flakelib/profiler/scoped.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <sge/image2d/view/size.hpp>
 #include <sge/image2d/view/object.hpp>
@@ -196,7 +197,31 @@ flakelib::simulation::stam::stam(
 		sge::parse::json::find_and_convert_member<unsigned>(
 			_config_file,
 			sge::parse::json::string_to_path(
-				FCPPT_TEXT("jacobi-iterations"))))
+				FCPPT_TEXT("jacobi-iterations")))),
+	parent_profiler_(
+		FCPPT_TEXT("stam simulation"),
+		profiler::optional_parent()),
+	null_image_profiler_(
+		FCPPT_TEXT("null_image"),
+		parent_profiler_),
+	copy_boundary_profiler_(
+		FCPPT_TEXT("copy_boundary"),
+		parent_profiler_),
+	advection_profiler_(
+		FCPPT_TEXT("advection"),
+		parent_profiler_),
+	external_forces_profiler_(
+		FCPPT_TEXT("apply_external_forces"),
+		parent_profiler_),
+	divergence_profiler_(
+		FCPPT_TEXT("divergence_"),
+		parent_profiler_),
+	jacobi_profiler_(
+		FCPPT_TEXT("jacobi"),
+		parent_profiler_),
+	project_profiler_(
+		FCPPT_TEXT("project"),
+		parent_profiler_)
 {
 	sge::image2d::dim const boundary_dim =
 		sge::image2d::view::size(
@@ -253,6 +278,9 @@ void
 flakelib::simulation::stam::update(
 	flakelib::duration const &dt)
 {
+	profiler::scoped scoped_profiler(
+		parent_profiler_,
+		command_queue_);
 	// Dirichlet boundary conditions for the advection step: The values for the
 	// solid cells is given by the boundary image.
 	//this->copy_boundary(
@@ -292,12 +320,17 @@ flakelib::simulation::stam::update(
 
 flakelib::simulation::stam::~stam()
 {
+	fcppt::io::cout << parent_profiler_ << FCPPT_TEXT("\n");
 }
 
 void
 flakelib::simulation::stam::copy_boundary(
 	sge::opencl::memory_object::image::planar &target)
 {
+	profiler::scoped scoped_profiler(
+		copy_boundary_profiler_,
+		command_queue_);
+
 	copy_boundary_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
@@ -325,6 +358,10 @@ flakelib::simulation::stam::advect(
 	sge::opencl::memory_object::image::planar &from,
 	sge::opencl::memory_object::image::planar &to)
 {
+	profiler::scoped scoped_profiler(
+		advection_profiler_,
+		command_queue_);
+
 	advect_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
@@ -366,12 +403,9 @@ void
 flakelib::simulation::stam::apply_forces(
 	sge::opencl::memory_object::image::planar &v)
 {
-	/*
-	static bool force_applied = false;
-
-	if(force_applied)
-		return;
-	*/
+	profiler::scoped scoped_profiler(
+		external_forces_profiler_,
+		command_queue_);
 
 	// External forces
 	// Apply external forces to v2 (inline)
@@ -418,6 +452,10 @@ flakelib::simulation::stam::divergence(
 	sge::opencl::memory_object::image::planar &from,
 	sge::opencl::memory_object::image::planar &to)
 {
+	profiler::scoped scoped_profiler(
+		divergence_profiler_,
+		command_queue_);
+
 	divergence_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
@@ -455,65 +493,20 @@ flakelib::simulation::stam::project(
 	sge::opencl::memory_object::image::planar &_divergence,
 	sge::opencl::memory_object::image::planar &target)
 {
-	// Null p1 (initial solution guess)
-	null_image_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
-		p1_);
-
-	sge::opencl::command_queue::enqueue_kernel(
-		command_queue_,
-		null_image_,
-		fcppt::assign::make_array<std::size_t>
-			(p1_.size()[0])
-			(p1_.size()[1]).container(),
-		fcppt::assign::make_array<std::size_t>
-			(1)
-			(1).container());
-
-	jacobi_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
-		_divergence);
-
-	jacobi_.argument(
-		sge::opencl::kernel::argument_index(
-			2),
-		boundary_);
-
-	sge::opencl::memory_object::base *current_source = &p1_,*current_dest = &p2_;
-
-	// Alpha
-	jacobi_.argument(
-		sge::opencl::kernel::argument_index(
-			4),
-		-(grid_size_ * grid_size_));
-
-	// Beta (rbeta)
-	jacobi_.argument(
-		sge::opencl::kernel::argument_index(
-			5),
-		static_cast<cl_float>(1)/static_cast<cl_float>(4));
-
-	for(unsigned i = 0; i < jacobi_iterations_; ++i)
 	{
-		jacobi_.argument(
-			sge::opencl::kernel::argument_index(
-				1),
-			*current_source);
+		profiler::scoped scoped_profiler(
+			null_image_profiler_,
+			command_queue_);
 
-		jacobi_.argument(
+		// Null p1 (initial solution guess)
+		null_image_.argument(
 			sge::opencl::kernel::argument_index(
-				3),
-			*current_dest);
-
-		std::swap(
-			current_source,
-			current_dest);
+				0),
+			p1_);
 
 		sge::opencl::command_queue::enqueue_kernel(
 			command_queue_,
-			jacobi_,
+			null_image_,
 			fcppt::assign::make_array<std::size_t>
 				(p1_.size()[0])
 				(p1_.size()[1]).container(),
@@ -521,6 +514,68 @@ flakelib::simulation::stam::project(
 				(1)
 				(1).container());
 	}
+
+	// We need those later on
+	sge::opencl::memory_object::base *current_source = &p1_,*current_dest = &p2_;
+	{
+		profiler::scoped scoped_profiler(
+			jacobi_profiler_,
+			command_queue_);
+
+		jacobi_.argument(
+			sge::opencl::kernel::argument_index(
+				0),
+			_divergence);
+
+		jacobi_.argument(
+			sge::opencl::kernel::argument_index(
+				2),
+			boundary_);
+
+
+		// Alpha
+		jacobi_.argument(
+			sge::opencl::kernel::argument_index(
+				4),
+			-(grid_size_ * grid_size_));
+
+		// Beta (rbeta)
+		jacobi_.argument(
+			sge::opencl::kernel::argument_index(
+				5),
+			static_cast<cl_float>(1)/static_cast<cl_float>(4));
+
+		for(unsigned i = 0; i < jacobi_iterations_; ++i)
+		{
+			jacobi_.argument(
+				sge::opencl::kernel::argument_index(
+					1),
+				*current_source);
+
+			jacobi_.argument(
+				sge::opencl::kernel::argument_index(
+					3),
+				*current_dest);
+
+			std::swap(
+				current_source,
+				current_dest);
+
+			sge::opencl::command_queue::enqueue_kernel(
+				command_queue_,
+				jacobi_,
+				fcppt::assign::make_array<std::size_t>
+					(p1_.size()[0])
+					(p1_.size()[1]).container(),
+				fcppt::assign::make_array<std::size_t>
+					(1)
+					(1).container());
+		}
+	}
+
+	profiler::scoped scoped_profiler(
+		project_profiler_,
+		command_queue_);
 
 	gradient_and_subtract_.argument(
 		sge::opencl::kernel::argument_index(
