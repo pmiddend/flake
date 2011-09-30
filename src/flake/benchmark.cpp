@@ -104,7 +104,7 @@ try
 }
 catch(fcppt::exception const &e)
 {
-	fcppt::io::cerr << FCPPT_TEXT("fcppt exception caught: ") << e.string() << FCPPT_TEXT("\n");
+	fcppt::io::cerr() << FCPPT_TEXT("fcppt exception caught: ") << e.string() << FCPPT_TEXT("\n");
 	return EXIT_FAILURE;
 }
 catch(std::exception const &e)

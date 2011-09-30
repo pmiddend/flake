@@ -240,7 +240,7 @@ flakelib::simulation::stam::stam(
 		sge::image2d::view::size(
 			boundary.get());
 
-	fcppt::io::cout << FCPPT_TEXT("Resetting vector field v1\n");
+	fcppt::io::cout() << FCPPT_TEXT("Resetting vector field v1\n");
 
 	null_image_.argument(
 		sge::opencl::kernel::argument_index(
@@ -257,8 +257,8 @@ flakelib::simulation::stam::stam(
 			(1)
 			(1).container());
 
-	fcppt::io::cout << FCPPT_TEXT("Done\n");
-	fcppt::io::cout << FCPPT_TEXT("Copying boundary to OpenCL buffer\n");
+	fcppt::io::cout() << FCPPT_TEXT("Done\n");
+	fcppt::io::cout() << FCPPT_TEXT("Copying boundary to OpenCL buffer\n");
 
 	/*
 	{
@@ -278,7 +278,7 @@ flakelib::simulation::stam::stam(
 	}
 	*/
 
-	fcppt::io::cout << FCPPT_TEXT("Done\n");
+	fcppt::io::cout() << FCPPT_TEXT("Done\n");
 }
 
 sge::opencl::memory_object::image::planar &
@@ -335,7 +335,7 @@ flakelib::simulation::stam::update(
 
 flakelib::simulation::stam::~stam()
 {
-	fcppt::io::cout << parent_profiler_ << FCPPT_TEXT("\n");
+	fcppt::io::cout() << parent_profiler_ << FCPPT_TEXT("\n");
 }
 
 void

@@ -229,7 +229,7 @@ flakelib::visualization::arrow::update(
 			vb_it != vertices.end();
 			vb_it++)
 		{
-			fcppt::io::cerr << vb_it->get<arrow_vf::position>() << FCPPT_TEXT("\n");
+			fcppt::io::cerr() << vb_it->get<arrow_vf::position>() << FCPPT_TEXT("\n");
 		}
 	}
 
