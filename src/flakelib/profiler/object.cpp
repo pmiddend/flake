@@ -66,7 +66,8 @@ print(
 
 flakelib::profiler::object::object(
 	fcppt::string const &_name,
-	profiler::optional_parent const &_parent)
+	profiler::optional_parent const &_parent,
+	profiler::activation::type const _activation)
 :
 	name_(
 		_name),
@@ -74,7 +75,9 @@ flakelib::profiler::object::object(
 	calls_(
 		0),
 	total_time_(
-		0)
+		0),
+	activation_(
+		_activation)
 {
 	if(_parent)
 		_parent->add_child(
@@ -103,6 +106,20 @@ flakelib::profiler::duration const &
 flakelib::profiler::object::total_time() const
 {
 	return total_time_;
+}
+
+flakelib::profiler::activation::type
+flakelib::profiler::object::activation() const
+{
+	return activation_;
+}
+
+void
+flakelib::profiler::object::activation(
+	profiler::activation::type const _activation)
+{
+	activation_ = 
+		_activation;
 }
 
 flakelib::profiler::object::~object()

@@ -59,6 +59,7 @@ private:
 	cl_float const external_force_magnitude_;
 	cl_float const grid_size_;
 	unsigned const jacobi_iterations_;
+	bool const profiling_enabled_;
 	flakelib::profiler::object parent_profiler_;
 	flakelib::profiler::object null_image_profiler_;
 	flakelib::profiler::object copy_boundary_profiler_;

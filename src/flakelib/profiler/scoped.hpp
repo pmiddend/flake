@@ -25,7 +25,7 @@ public:
 private:
 	sge::opencl::command_queue::object &command_queue_;
 	profiler::object &object_;
-	profiler::time_point const start_;
+	profiler::time_point start_;
 };
 }
 }

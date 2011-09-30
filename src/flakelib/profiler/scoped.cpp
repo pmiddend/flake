@@ -12,14 +12,21 @@ flakelib::profiler::scoped::scoped(
 		_command_queue),
 	object_(
 		_object),
-	start_(
-		profiler::clock::now())
+	start_()
 {
+	if(_object.activation() == profiler::activation::enabled)
+	{
+		command_queue_.finish();
+		start_ = profiler::clock::now();
+	}
 }
 
 flakelib::profiler::scoped::~scoped()
 {
-	command_queue_.finish();
-	object_.add_call(
-		profiler::clock::now() - start_);
+	if(object_.activation() == profiler::activation::enabled)
+	{
+		command_queue_.finish();
+		object_.add_call(
+			profiler::clock::now() - start_);
+	}
 }

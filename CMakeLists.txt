@@ -126,7 +126,7 @@ FCPPT_UTILS_ADD_SOURCE_GROUPS("${FLAKELIB_FILES}")
 ADD_LIBRARY(
 	flakelib STATIC ${FLAKELIB_FILES})
 
-# app begin
+# main begin
 ADD_EXECUTABLE(
 	main
 	src/flake/main.cpp)
@@ -143,4 +143,23 @@ INSTALL(
 	main
 	DESTINATION
 	${INSTALL_BINARY_DIR})
-# app end
+# main end
+
+# benchmark begin
+ADD_EXECUTABLE(
+	benchmark
+	src/flake/benchmark.cpp)
+
+TARGET_LINK_LIBRARIES(
+	benchmark
+	flakelib
+	${Fcppt_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Boost_LIBRARIES})
+
+INSTALL(
+	TARGETS
+	benchmark
+	DESTINATION
+	${INSTALL_BINARY_DIR})
+# benchmark end

@@ -1,7 +1,9 @@
 {
+	"benchmark-iterations" : 2000,
 	"grid-size" : 10.0,
 	"jacobi-iterations" : 40,
 	"external-force-magnitude" : 30.0,
+	"profiling" : false,
 	"visualization" :
 	{
 		"arrow-length" : 1.0

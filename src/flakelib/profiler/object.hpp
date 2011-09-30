@@ -1,6 +1,7 @@
 #ifndef FLAKELIB_PROFILER_OBJECT_HPP_INCLUDED
 #define FLAKELIB_PROFILER_OBJECT_HPP_INCLUDED
 
+#include <flakelib/profiler/activation.hpp>
 #include <flakelib/profiler/scoped_fwd.hpp>
 #include <flakelib/profiler/optional_parent.hpp>
 #include <flakelib/profiler/call_count.hpp>
@@ -23,7 +24,8 @@ public:
 	explicit
 	object(
 		fcppt::string const &,
-		profiler::optional_parent const &);
+		profiler::optional_parent const &,
+		profiler::activation::type);
 
 	fcppt::string const &
 	name() const;
@@ -37,6 +39,13 @@ public:
 	profiler::duration const &
 	total_time() const;
 
+	profiler::activation::type
+	activation() const;
+
+	void
+	activation(
+		profiler::activation::type);
+
 	~object();
 private:
 	friend class profiler::scoped;
@@ -45,6 +54,7 @@ private:
 	profiler::child_sequence children_;
 	profiler::call_count calls_;
 	profiler::duration total_time_;
+	profiler::activation::type activation_;
 
 	void
 	add_child(

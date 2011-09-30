@@ -198,30 +198,43 @@ flakelib::simulation::stam::stam(
 			_config_file,
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("jacobi-iterations")))),
+	profiling_enabled_(
+		sge::parse::json::find_and_convert_member<bool>(
+			_config_file,
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("profiling")))),
 	parent_profiler_(
 		FCPPT_TEXT("stam simulation"),
-		profiler::optional_parent()),
+		profiler::optional_parent(),
+		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	null_image_profiler_(
 		FCPPT_TEXT("null_image"),
-		parent_profiler_),
+		parent_profiler_,
+		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	copy_boundary_profiler_(
 		FCPPT_TEXT("copy_boundary"),
-		parent_profiler_),
+		parent_profiler_,
+		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	advection_profiler_(
 		FCPPT_TEXT("advection"),
-		parent_profiler_),
+		parent_profiler_,
+		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	external_forces_profiler_(
 		FCPPT_TEXT("apply_external_forces"),
-		parent_profiler_),
+		parent_profiler_,
+		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	divergence_profiler_(
 		FCPPT_TEXT("divergence_"),
-		parent_profiler_),
+		parent_profiler_,
+		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	jacobi_profiler_(
 		FCPPT_TEXT("jacobi"),
-		parent_profiler_),
+		parent_profiler_,
+		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	project_profiler_(
 		FCPPT_TEXT("project"),
-		parent_profiler_)
+		parent_profiler_,
+		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled)
 {
 	sge::image2d::dim const boundary_dim =
 		sge::image2d::view::size(
@@ -247,6 +260,7 @@ flakelib::simulation::stam::stam(
 	fcppt::io::cout << FCPPT_TEXT("Done\n");
 	fcppt::io::cout << FCPPT_TEXT("Copying boundary to OpenCL buffer\n");
 
+	/*
 	{
 		sge::opencl::command_queue::scoped_planar_mapping scoped_image(
 			_command_queue,
@@ -262,6 +276,7 @@ flakelib::simulation::stam::stam(
 			scoped_image.view(),
 			sge::image::algorithm::may_overlap::no);
 	}
+	*/
 
 	fcppt::io::cout << FCPPT_TEXT("Done\n");
 }
