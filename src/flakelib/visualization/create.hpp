@@ -15,10 +15,10 @@ namespace visualization
 {
 flakelib::visualization::base_ptr
 create(
+	sge::renderer::device &,
 	sge::opencl::context::object &,
 	sge::opencl::command_queue::object &,
 	simulation::base &,
-	sge::renderer::device &,
 	flakelib::boundary_view const &,
 	sge::parse::json::object const &);
 }

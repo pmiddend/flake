@@ -45,6 +45,7 @@
 #include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/math/vector/basic_impl.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
+#include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/chrono/duration_impl.hpp>
 #include <fcppt/io/cifstream.hpp>
@@ -79,8 +80,8 @@ flakelib::simulation::stam::stam(
 		_command_queue),
 	v1_(
 		_context,
-		CL_MEM_READ_WRITE,
-		create_image_format(
+		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
+		::create_image_format(
 			CL_RG,
 			CL_FLOAT),
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
@@ -90,8 +91,8 @@ flakelib::simulation::stam::stam(
 			0)),
 	v2_(
 		_context,
-		CL_MEM_READ_WRITE,
-		create_image_format(
+		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
+		::create_image_format(
 			CL_RG,
 			CL_FLOAT),
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
@@ -101,7 +102,7 @@ flakelib::simulation::stam::stam(
 			0)),
 	temporary_v_(
 		_context,
-		CL_MEM_READ_WRITE,
+		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
 		create_image_format(
 			CL_RG,
 			CL_FLOAT),
@@ -112,7 +113,7 @@ flakelib::simulation::stam::stam(
 			0)),
 	p1_(
 		_context,
-		CL_MEM_READ_WRITE,
+		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
 		create_image_format(
 			CL_R,
 			CL_FLOAT),
@@ -123,7 +124,7 @@ flakelib::simulation::stam::stam(
 			0)),
 	p2_(
 		_context,
-		CL_MEM_READ_WRITE,
+		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
 		create_image_format(
 			CL_R,
 			CL_FLOAT),
@@ -134,7 +135,7 @@ flakelib::simulation::stam::stam(
 			0)),
 	boundary_(
 		_context,
-		CL_MEM_READ_WRITE,
+		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
 		create_image_format(
 			CL_INTENSITY,
 			CL_UNORM_INT8),
@@ -188,11 +189,11 @@ flakelib::simulation::stam::stam(
 			_config_file,
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("external-force-magnitude")))),
-	grid_size_(
+	grid_scale_(
 		sge::parse::json::find_and_convert_member<cl_float>(
 			_config_file,
 			sge::parse::json::string_to_path(
-				FCPPT_TEXT("grid-size")))),
+				FCPPT_TEXT("grid-scale")))),
 	jacobi_iterations_(
 		sge::parse::json::find_and_convert_member<unsigned>(
 			_config_file,
@@ -260,7 +261,6 @@ flakelib::simulation::stam::stam(
 	fcppt::io::cout() << FCPPT_TEXT("Done\n");
 	fcppt::io::cout() << FCPPT_TEXT("Copying boundary to OpenCL buffer\n");
 
-	/*
 	{
 		sge::opencl::command_queue::scoped_planar_mapping scoped_image(
 			_command_queue,
@@ -276,17 +276,18 @@ flakelib::simulation::stam::stam(
 			scoped_image.view(),
 			sge::image::algorithm::may_overlap::no);
 	}
-	*/
 
 	fcppt::io::cout() << FCPPT_TEXT("Done\n");
 }
 
-sge::opencl::memory_object::image::planar &
+flakelib::buffer_or_image const
 flakelib::simulation::stam::vector_field()
 {
 	//return temporary_v_;
 	//return v2_;
-	return v1_;
+	return 
+		flakelib::buffer_or_image(
+			&v1_);
 }
 
 void
@@ -401,7 +402,7 @@ flakelib::simulation::stam::advect(
 	advect_.argument(
 		sge::opencl::kernel::argument_index(
 			4),
-		grid_size_);
+		grid_scale_);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
@@ -451,7 +452,7 @@ flakelib::simulation::stam::apply_forces(
 	apply_external_forces_.argument(
 		sge::opencl::kernel::argument_index(
 			4),
-		grid_size_);
+		grid_scale_);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
@@ -489,7 +490,7 @@ flakelib::simulation::stam::divergence(
 	divergence_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
-		grid_size_);
+		grid_scale_);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
@@ -552,7 +553,7 @@ flakelib::simulation::stam::project(
 		jacobi_.argument(
 			sge::opencl::kernel::argument_index(
 				4),
-			-(grid_size_ * grid_size_));
+			-(grid_scale_ * grid_scale_));
 
 		// Beta (rbeta)
 		jacobi_.argument(
@@ -600,7 +601,7 @@ flakelib::simulation::stam::project(
 	gradient_and_subtract_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		grid_size_);
+		grid_scale_);
 
 	// Temporary vector field (from which the divergence was calculated)
 	gradient_and_subtract_.argument(

@@ -1,11 +1,12 @@
 {
 	"benchmark-iterations" : 2000,
-	"grid-size" : 10.0,
+	"grid-scale" : 10.0,
 	"jacobi-iterations" : 40,
 	"external-force-magnitude" : 30.0,
-	"profiling" : false,
+	"profiling" : true,
 	"visualization" :
 	{
-		"arrow-length" : 1.0
+		"arrow-scale" : 1.0,
+		"grid-position" : [10.0,10.0]
 	}
 }

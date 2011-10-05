@@ -21,7 +21,7 @@ SGE_RENDERER_VF_MAKE_UNSPECIFIED_TAG(
 typedef
 sge::renderer::vf::unspecified
 <
-	sge::renderer::vf::vector<sge::renderer::scalar,3>,
+	sge::renderer::vf::vector<sge::renderer::scalar,4>,
 	tags::color
 >
 color;

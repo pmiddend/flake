@@ -1,5 +1,5 @@
-#ifndef FLAKELIB_SIMULATION_STAM_HPP_INCLUDED
-#define FLAKELIB_SIMULATION_STAM_HPP_INCLUDED
+#ifndef FLAKELIB_SIMULATION_STAM_BUFFERS_HPP_INCLUDED
+#define FLAKELIB_SIMULATION_STAM_BUFFERS_HPP_INCLUDED
 
 #include <flakelib/boundary_view.hpp>
 #include <flakelib/profiler/object.hpp>
@@ -19,12 +19,12 @@ namespace flakelib
 {
 namespace simulation
 {
-class stam
+class stam_buffers
 :
 	public simulation::base
 {
 FCPPT_NONCOPYABLE(
-	stam);
+	stam_buffers);
 public:
 	explicit
 	stam(
@@ -33,7 +33,7 @@ public:
 		flakelib::boundary_view const &,
 		sge::parse::json::object const &);
 
-	flakelib::buffer_or_image const	
+	sge::opencl::memory_object::image::planar &
 	vector_field();
 
 	void
@@ -57,7 +57,7 @@ private:
 	sge::opencl::kernel::object gradient_and_subtract_;
 	sge::opencl::kernel::object copy_image_;
 	cl_float const external_force_magnitude_;
-	cl_float const grid_scale_;
+	cl_float const grid_size_;
 	unsigned const jacobi_iterations_;
 	bool const profiling_enabled_;
 	flakelib::profiler::object parent_profiler_;

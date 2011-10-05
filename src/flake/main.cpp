@@ -146,10 +146,10 @@ try
 
 	flakelib::visualization::base_ptr visualization(
 		flakelib::visualization::create(
+			sys.renderer(),
 			opencl_system.context(),
 			opencl_system.command_queue(),
 			*simulation,
-			sys.renderer(),
 			flakelib::boundary_view(
 				boundary_image->view()),
 			config_file));
