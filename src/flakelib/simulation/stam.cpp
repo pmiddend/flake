@@ -280,13 +280,11 @@ flakelib::simulation::stam::stam(
 	fcppt::io::cout() << FCPPT_TEXT("Done\n");
 }
 
-flakelib::buffer_or_image const
-flakelib::simulation::stam::vector_field()
+flakelib::planar_object const
+flakelib::simulation::stam::velocity()
 {
-	//return temporary_v_;
-	//return v2_;
 	return 
-		flakelib::buffer_or_image(
+		flakelib::planar_object(
 			&v1_);
 }
 

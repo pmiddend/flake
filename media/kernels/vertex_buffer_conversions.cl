@@ -80,3 +80,42 @@ buffer_to_vb(
 	vb[base_index].end_color = 
 		(float4)(0.0f,1.0f,0.0f,1.0f);
 }
+
+kernel void
+image_to_image(
+	global read_only image2d_t input,
+	global write_only image2d_t output,
+	float const scaling)
+{
+	int2 const this_pos = 
+		(int2)(
+			get_global_id(0),
+			get_global_id(1));
+
+	write_imagef(
+		output,
+		this_pos,
+		scaling * 
+		read_imagef(
+			input,
+			absolute_clamping_nearest,
+			this_pos));
+}
+
+kernel void
+buffer_to_image(
+	global float const *input,
+	global write_only image2d_t output,
+	float const scaling)
+{
+	int2 const this_pos = 
+		(int2)(
+			get_global_id(0),
+			get_global_id(1));
+
+	write_imagef(
+		output,
+		this_pos,
+		(float4)(
+			scaling * input[get_image_width(output) * this_pos.y + this_pos.x]));
+}

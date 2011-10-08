@@ -1,5 +1,5 @@
-#ifndef FLAKELIB_BUFFER_OR_IMAGE_HPP_INCLUDED
-#define FLAKELIB_BUFFER_OR_IMAGE_HPP_INCLUDED
+#ifndef FLAKELIB_PLANAR_OBJECT_HPP_INCLUDED
+#define FLAKELIB_PLANAR_OBJECT_HPP_INCLUDED
 
 #include <flakelib/planar_buffer.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
@@ -19,7 +19,7 @@ fcppt::variant::object
 		sge::opencl::memory_object::image::planar *
 	>
 >
-buffer_or_image;
+planar_object;
 }
 
 #endif

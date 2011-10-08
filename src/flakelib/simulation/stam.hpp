@@ -33,8 +33,8 @@ public:
 		flakelib::boundary_view const &,
 		sge::parse::json::object const &);
 
-	flakelib::buffer_or_image const	
-	vector_field();
+	flakelib::planar_object const	
+	velocity();
 
 	void
 	update(

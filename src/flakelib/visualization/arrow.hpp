@@ -3,8 +3,6 @@
 
 #include <flakelib/visualization/base.hpp>
 #include <flakelib/boundary_view.hpp>
-#include <flakelib/visualization/dummy_sprite/system.hpp>
-#include <flakelib/visualization/dummy_sprite/object.hpp>
 #include <flakelib/visualization/monitor/parent.hpp>
 #include <flakelib/visualization/monitor/planar_arrows.hpp>
 #include <flakelib/simulation/base_fwd.hpp>
@@ -52,8 +50,6 @@ private:
 	monitor::parent monitor_parent_;
 	monitor::planar_arrows velocity_arrows_;
 	simulation::base &simulation_;
-	dummy_sprite::system sprite_system_;
-	dummy_sprite::object sprite_object_;
 };
 }
 }

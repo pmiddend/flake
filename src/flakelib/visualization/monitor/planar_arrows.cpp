@@ -1,5 +1,6 @@
 #include <flakelib/visualization/monitor/planar_arrows.hpp>
 #include <flakelib/visualization/monitor/parent.hpp>
+#include <flakelib/visualization/monitor/dummy_sprite/parameters.hpp>
 #include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
 #include <sge/shader/scoped.hpp>
 #include <sge/shader/activate_everything.hpp>
@@ -11,6 +12,8 @@
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/vertex_count.hpp>
 #include <sge/renderer/nonindexed_primitive_type.hpp>
+#include <sge/sprite/parameters.hpp>
+#include <sge/texture/part_raw.hpp>
 #include <sge/renderer/viewport_size.hpp>
 #include <sge/renderer/projection/orthogonal_wh.hpp>
 #include <sge/renderer/projection/dim.hpp>
@@ -22,6 +25,8 @@
 #include <sge/renderer/vf/dynamic/part_index.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
+#include <fcppt/make_shared_ptr.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/math/dim/output.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/io/cout.hpp>
@@ -29,86 +34,69 @@
 
 flakelib::visualization::monitor::planar_arrows::planar_arrows(
 	monitor::parent &_parent,
+	monitor::name const &_name,
 	monitor::grid_dimensions const &_dimensions,
 	monitor::arrow_scale const &_arrow_scale,
 	monitor::grid_scale const &_grid_scale,
-	monitor::position const &_position)
+	sge::renderer::texture::planar_ptr const _optional_texture)
 :
-	parent_(
+	monitor::base(
 		_parent),
+	name_(
+		_name.get()),
 	dimensions_(
-		_dimensions),
+		_dimensions.get()),
 	arrow_scale_(
 		_arrow_scale),
 	grid_scale_(
 		_grid_scale),
-	position_(
-		_position),
+	position_(),
 	vb_(
-		parent_.renderer().create_vertex_buffer(
-			parent_.vertex_declaration(),
+		base::parent().renderer().create_vertex_buffer(
+			base::parent().vertex_declaration(),
 			sge::renderer::vf::dynamic::part_index(
 				0u),
 			static_cast<sge::renderer::size_type>(
 				dimensions_.content() * 2),
 			sge::renderer::resource_flags::readable)),
 	cl_vb_(
-		parent_.context(),
+		base::parent().context(),
 		*vb_,
-		sge::opencl::memory_object::renderer_buffer_lock_mode::write_only)
+		sge::opencl::memory_object::renderer_buffer_lock_mode::write_only),
+	sprite_()
 {
-	fcppt::io::cout() 
-		<< FCPPT_TEXT("Created planar arrows with ") 
-		<< (dimensions_.content() * 2) 
-		<< FCPPT_TEXT(" elements (dimension was ") 
-		<< dimensions_ 
-		<< FCPPT_TEXT(")\n");
+	if(_optional_texture)
+		sprite_.take(
+			fcppt::make_unique_ptr<dummy_sprite::object>(
+				dummy_sprite::parameters()
+					.size(
+						fcppt::math::dim::structure_cast<dummy_sprite::object::dim>(
+							this->area().size()))
+					.texture(
+						fcppt::make_shared_ptr<sge::texture::part_raw>(
+							_optional_texture))
+					.system(
+						&base::parent().sprite_system())
+					.elements()));
 }
 
 void
-flakelib::visualization::monitor::planar_arrows::from_buffer(
-	flakelib::buffer_or_image const &_buffer_or_image)
+flakelib::visualization::monitor::planar_arrows::from_planar_object(
+	flakelib::planar_object const &_planar_object)
 {
-	parent_.to_vb(
-		_buffer_or_image,
+	base::parent().to_vb(
+		_planar_object,
 		cl_vb_,
 		grid_scale_,
 		arrow_scale_);
 }
 
 void
-flakelib::visualization::monitor::planar_arrows::render()
+flakelib::visualization::monitor::planar_arrows::position(
+	monitor::rect::vector const &_position)
 {
-	// Activate the shader and the vertex declaration
-	sge::shader::scoped scoped_shader(
-		parent_.arrow_shader(),
-		sge::shader::activate_everything());
-
-	sge::renderer::scoped_vertex_buffer scoped_vb(
-		parent_.renderer(),
-		*vb_);
-
-	parent_.arrow_shader().update_uniform(
-		"projection",
-		sge::shader::matrix(
-			sge::renderer::projection::orthogonal_wh(
-				fcppt::math::dim::structure_cast<sge::renderer::projection::dim>(
-						sge::renderer::viewport_size(
-							parent_.renderer())),
-				sge::renderer::projection::near(0.0f),
-				sge::renderer::projection::far(10.0f)),
-			sge::shader::matrix_flags::projection));
-
-	parent_.arrow_shader().update_uniform(
-		"initial_position",
-		position_.get());
-
-	parent_.renderer().render_nonindexed(
-		sge::renderer::first_vertex(
-			0),
-		sge::renderer::vertex_count(
-			vb_->size()),
-		sge::renderer::nonindexed_primitive_type::line);
+	position_ =
+		_position;
 }
 
 flakelib::visualization::monitor::rect const
@@ -116,10 +104,51 @@ flakelib::visualization::monitor::planar_arrows::area() const
 {
 	return 
 		monitor::rect(
-			position_.get(),
+			position_,
 			grid_scale_.get() * 
 			fcppt::math::dim::structure_cast<monitor::rect::dim>(
 				dimensions_));
+}
+
+fcppt::string const
+flakelib::visualization::monitor::planar_arrows::name() const
+{
+	return name_;
+}
+
+void
+flakelib::visualization::monitor::planar_arrows::render()
+{
+	// Activate the shader and the vertex declaration
+	sge::shader::scoped scoped_shader(
+		base::parent().arrow_shader(),
+		sge::shader::activate_everything());
+
+	sge::renderer::scoped_vertex_buffer scoped_vb(
+		base::parent().renderer(),
+		*vb_);
+
+	base::parent().arrow_shader().update_uniform(
+		"projection",
+		sge::shader::matrix(
+			sge::renderer::projection::orthogonal_wh(
+				fcppt::math::dim::structure_cast<sge::renderer::projection::dim>(
+						sge::renderer::viewport_size(
+							base::parent().renderer())),
+				sge::renderer::projection::near(0.0f),
+				sge::renderer::projection::far(10.0f)),
+			sge::shader::matrix_flags::projection));
+
+	base::parent().arrow_shader().update_uniform(
+		"initial_position",
+		position_);
+
+	base::parent().renderer().render_nonindexed(
+		sge::renderer::first_vertex(
+			0),
+		sge::renderer::vertex_count(
+			vb_->size()),
+		sge::renderer::nonindexed_primitive_type::line);
 }
 
 flakelib::visualization::monitor::planar_arrows::~planar_arrows()

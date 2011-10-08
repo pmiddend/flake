@@ -1,6 +1,6 @@
 #include <flakelib/visualization/monitor/parent.hpp>
 #include <flakelib/media_path_from_string.hpp>
-#include <flakelib/visualization/arrow_vf/format.hpp>
+#include <flakelib/visualization/monitor/arrow_vf/format.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/shader/object_parameters.hpp>
@@ -9,21 +9,19 @@
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/command_queue/dim2.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
-// DEBUG
-#include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/base_ref_sequence.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
-#include <sge/opencl/memory_object/vertex_buffer.hpp>
 #include <sge/opencl/memory_object/scoped_objects.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/kernel/name.hpp>
 #include <sge/opencl/kernel/argument_index.hpp>
+#include <sge/sprite/default_equal.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/io/stream_to_string.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
 #include <fcppt/io/cifstream.hpp>
-#include <fcppt/io/cout.hpp>
+#include <fcppt/assert/pre.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/text.hpp>
 
@@ -57,6 +55,14 @@ flakelib::visualization::monitor::parent::parent(
 		conversion_program_,
 		sge::opencl::kernel::name(
 			"buffer_to_vb")),
+	image_to_image_kernel_(
+		conversion_program_,
+		sge::opencl::kernel::name(
+			"image_to_image")),
+	buffer_to_image_kernel_(
+		conversion_program_,
+		sge::opencl::kernel::name(
+			"buffer_to_image")),
 	arrow_shader_(
 		sge::shader::object_parameters(
 			renderer_,
@@ -79,7 +85,10 @@ flakelib::visualization::monitor::parent::parent(
 					FCPPT_TEXT("shaders/arrow/vertex.glsl")))
 			.fragment_shader(
 				flakelib::media_path_from_string(
-					FCPPT_TEXT("shaders/arrow/fragment.glsl"))))
+					FCPPT_TEXT("shaders/arrow/fragment.glsl")))),
+	sprite_system_(
+		renderer_),
+	children_()
 {
 }
 
@@ -97,23 +106,41 @@ flakelib::visualization::monitor::parent::context() const
 
 void
 flakelib::visualization::monitor::parent::to_vb(
-	flakelib::buffer_or_image const &_buffer_or_image,
-	sge::opencl::memory_object::vertex_buffer &_vb,
+	flakelib::planar_object const &_planar_object,
+	sge::opencl::memory_object::buffer &_vb,
 	monitor::grid_scale const &_grid_scale,
 	monitor::arrow_scale const &_arrow_scale)
 {
-	if(_buffer_or_image.type() == typeid(sge::opencl::memory_object::image::planar *))
+	if(_planar_object.type() == typeid(sge::opencl::memory_object::image::planar *))
 		this->image_to_vb(
-			*_buffer_or_image.get<sge::opencl::memory_object::image::planar *>(),
+			*_planar_object.get<sge::opencl::memory_object::image::planar *>(),
 			_vb,
 			_grid_scale,
 			_arrow_scale);
 	else
 		this->planar_buffer_to_vb(
-			_buffer_or_image.get<flakelib::planar_buffer>(),
+			_planar_object.get<flakelib::planar_buffer>(),
 			_vb,
 			_grid_scale,
 			_arrow_scale);
+}
+
+void
+flakelib::visualization::monitor::parent::to_texture(
+	flakelib::planar_object const &_planar_object,
+	sge::opencl::memory_object::image::planar &_texture,
+	monitor::scaling_factor const &_scaling)
+{
+	if(_planar_object.type() == typeid(sge::opencl::memory_object::image::planar *))
+		this->image_to_image(
+			*_planar_object.get<sge::opencl::memory_object::image::planar *>(),
+			_texture,
+			_scaling);
+	else
+		this->planar_buffer_to_image(
+			_planar_object.get<flakelib::planar_buffer>(),
+			_texture,
+			_scaling);
 }
 
 sge::shader::object &
@@ -128,6 +155,26 @@ flakelib::visualization::monitor::parent::renderer() const
 	return renderer_;
 }
 
+flakelib::visualization::monitor::dummy_sprite::system &
+flakelib::visualization::monitor::parent::sprite_system()
+{
+	return sprite_system_;
+}
+
+void
+flakelib::visualization::monitor::parent::render()
+{
+	for(child_list::iterator it = children_.begin(); it != children_.end(); ++it)
+		it->position(
+			monitor::rect::vector::null());
+
+	sprite_system_.render_all(
+		sge::sprite::default_equal());
+
+	for(child_list::iterator it = children_.begin(); it != children_.end(); ++it)
+		it->render();
+}
+
 flakelib::visualization::monitor::parent::~parent()
 {
 }
@@ -135,7 +182,7 @@ flakelib::visualization::monitor::parent::~parent()
 void
 flakelib::visualization::monitor::parent::image_to_vb(
 	sge::opencl::memory_object::image::planar &_image,
-	sge::opencl::memory_object::vertex_buffer &_vb,
+	sge::opencl::memory_object::buffer &_vb,
 	monitor::grid_scale const &_grid_scale,
 	monitor::arrow_scale const &_arrow_scale)
 {
@@ -163,12 +210,6 @@ flakelib::visualization::monitor::parent::image_to_vb(
 	mem_objects.push_back(
 		&_vb);
 
-	// DEBUG
-	fcppt::io::cerr() << FCPPT_TEXT("executing image_to_vb_kernel (image size ") << _image.size() << FCPPT_TEXT(")\n");
-
-	// DEBUG
-	command_queue_.finish();
-
 	{
 	sge::opencl::memory_object::scoped_objects scoped_vb(
 		command_queue_,
@@ -188,14 +229,12 @@ flakelib::visualization::monitor::parent::image_to_vb(
 		global_dim,
 		local_dim);
 	}
-
-	fcppt::io::cerr() << FCPPT_TEXT("done\n");
 }
 
 void
 flakelib::visualization::monitor::parent::planar_buffer_to_vb(
 	flakelib::planar_buffer const &_buffer,
-	sge::opencl::memory_object::vertex_buffer &_vb,
+	sge::opencl::memory_object::buffer &_vb,
 	monitor::grid_scale const &_grid_scale,
 	monitor::arrow_scale const &_arrow_scale)
 {
@@ -246,4 +285,121 @@ flakelib::visualization::monitor::parent::planar_buffer_to_vb(
 		buffer_to_vb_kernel_,
 		global_dim,
 		local_dim);
+}
+
+void
+flakelib::visualization::monitor::parent::image_to_image(
+	sge::opencl::memory_object::image::planar &_input,
+	sge::opencl::memory_object::image::planar &_output,
+	monitor::scaling_factor const &_scaling)
+{
+	image_to_image_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		_input);
+
+	image_to_image_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		_output);
+
+	image_to_image_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		_scaling.get());
+
+	sge::opencl::memory_object::base_ref_sequence mem_objects;
+	mem_objects.push_back(
+		&_output);
+
+	{
+		sge::opencl::memory_object::scoped_objects scoped_vb(
+			command_queue_,
+			mem_objects);
+
+		sge::opencl::command_queue::dim2 global_dim;
+		global_dim[0] = _input.size().w();
+		global_dim[1] = _input.size().h();
+
+		sge::opencl::command_queue::dim2 local_dim;
+		local_dim[0] = 1;
+		local_dim[1] = 1;
+
+		sge::opencl::command_queue::enqueue_kernel(
+			command_queue_,
+			image_to_image_kernel_,
+			global_dim,
+			local_dim);
+	}
+}
+
+void
+flakelib::visualization::monitor::parent::planar_buffer_to_image(
+	flakelib::planar_buffer const &_input,
+	sge::opencl::memory_object::image::planar &_output,
+	monitor::scaling_factor const &_scaling)
+{
+	buffer_to_image_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		_input.buffer());
+
+	buffer_to_image_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		_output);
+
+	buffer_to_image_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		_scaling.get());
+
+	sge::opencl::memory_object::base_ref_sequence mem_objects;
+	mem_objects.push_back(
+		&_output);
+
+	{
+		sge::opencl::memory_object::scoped_objects scoped_vb(
+			command_queue_,
+			mem_objects);
+
+		sge::opencl::command_queue::dim2 global_dim;
+		global_dim[0] = _input.size().w();
+		global_dim[1] = _input.size().h();
+
+		sge::opencl::command_queue::dim2 local_dim;
+		local_dim[0] = 1;
+		local_dim[1] = 1;
+
+		sge::opencl::command_queue::enqueue_kernel(
+			command_queue_,
+			buffer_to_image_kernel_,
+			global_dim,
+			local_dim);
+	}
+}
+
+void
+flakelib::visualization::monitor::parent::add_child(
+	monitor::base &_child)
+{
+	children_.push_back(
+		_child);
+}
+
+void
+flakelib::visualization::monitor::parent::erase_child(
+	monitor::base &_child)
+{
+	child_list::iterator it;
+	for(
+		it = children_.begin(); 
+		it != children_.end() && &(*it) != &_child; 
+		++it) ;
+
+	FCPPT_ASSERT_PRE(
+		it != children_.end());
+
+	children_.erase(
+		it);
 }

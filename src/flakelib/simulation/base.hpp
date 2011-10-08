@@ -2,7 +2,7 @@
 #define FLAKELIB_SIMULATION_BASE_HPP_INCLUDED
 
 #include <flakelib/duration.hpp>
-#include <flakelib/buffer_or_image.hpp>
+#include <flakelib/planar_object.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 
@@ -21,8 +21,8 @@ public:
 	update(
 		flakelib::duration const &) = 0;
 
-	virtual flakelib::buffer_or_image const
-	vector_field() = 0;
+	virtual flakelib::planar_object const
+	velocity() = 0;
 protected:
 	explicit
 	base();

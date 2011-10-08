@@ -1,5 +1,5 @@
-#ifndef FLAKELIB_VISUALIZATION_ARROW_VF_COLOR_HPP_INCLUDED
-#define FLAKELIB_VISUALIZATION_ARROW_VF_COLOR_HPP_INCLUDED
+#ifndef FLAKELIB_VISUALIZATION_MONITOR_ARROW_VF_COLOR_HPP_INCLUDED
+#define FLAKELIB_VISUALIZATION_MONITOR_ARROW_VF_COLOR_HPP_INCLUDED
 
 #include <sge/renderer/vf/unspecified.hpp>
 #include <sge/renderer/vf/vector.hpp>
@@ -9,6 +9,8 @@
 namespace flakelib
 {
 namespace visualization
+{
+namespace monitor
 {
 namespace arrow_vf
 {
@@ -25,6 +27,7 @@ sge::renderer::vf::unspecified
 	tags::color
 >
 color;
+}
 }
 }
 }

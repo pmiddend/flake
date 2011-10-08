@@ -76,7 +76,6 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src)
 SET(
 	FLAKELIB_FILES
 	src/flakelib/boundary_view.hpp
-	src/flakelib/buffer_or_image.hpp
 	src/flakelib/duration.hpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path.hpp
@@ -84,6 +83,7 @@ SET(
 	src/flakelib/media_path_from_string.hpp
 	src/flakelib/planar_buffer.cpp
 	src/flakelib/planar_buffer.hpp
+	src/flakelib/planar_object.hpp
 	src/flakelib/profiler/activation.hpp
 	src/flakelib/profiler/call_count.hpp
 	src/flakelib/profiler/child_sequence.hpp
@@ -105,36 +105,38 @@ SET(
 	src/flakelib/simulation/create.hpp
 	src/flakelib/simulation/stam.cpp
 	src/flakelib/simulation/stam.hpp
-	src/flakelib/simulation/stam_buffers.hpp
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/utf8_file_to_fcppt_string.hpp
 	src/flakelib/visualization/arrow.cpp
 	src/flakelib/visualization/arrow.hpp
-	src/flakelib/visualization/arrow_vf/color.hpp
-	src/flakelib/visualization/arrow_vf/format.hpp
-	src/flakelib/visualization/arrow_vf/part.hpp
-	src/flakelib/visualization/arrow_vf/position.hpp
 	src/flakelib/visualization/base.cpp
 	src/flakelib/visualization/base.hpp
 	src/flakelib/visualization/base_fwd.hpp
 	src/flakelib/visualization/base_ptr.hpp
 	src/flakelib/visualization/create.cpp
 	src/flakelib/visualization/create.hpp
-	src/flakelib/visualization/dummy_sprite/choices.hpp
-	src/flakelib/visualization/dummy_sprite/object.hpp
-	src/flakelib/visualization/dummy_sprite/parameters.hpp
-	src/flakelib/visualization/dummy_sprite/system.hpp
 	src/flakelib/visualization/monitor/arrow_scale.hpp
+	src/flakelib/visualization/monitor/arrow_vf/color.hpp
+	src/flakelib/visualization/monitor/arrow_vf/format.hpp
+	src/flakelib/visualization/monitor/arrow_vf/part.hpp
+	src/flakelib/visualization/monitor/arrow_vf/position.hpp
+	src/flakelib/visualization/monitor/base.cpp
+	src/flakelib/visualization/monitor/base.hpp
+	src/flakelib/visualization/monitor/dummy_sprite/choices.hpp
+	src/flakelib/visualization/monitor/dummy_sprite/object.hpp
+	src/flakelib/visualization/monitor/dummy_sprite/parameters.hpp
+	src/flakelib/visualization/monitor/dummy_sprite/system.hpp
 	src/flakelib/visualization/monitor/grid_dimensions.hpp
 	src/flakelib/visualization/monitor/grid_scale.hpp
+	src/flakelib/visualization/monitor/name.hpp
 	src/flakelib/visualization/monitor/parent.cpp
 	src/flakelib/visualization/monitor/parent.hpp
 	src/flakelib/visualization/monitor/parent_fwd.hpp
 	src/flakelib/visualization/monitor/planar_arrows.cpp
 	src/flakelib/visualization/monitor/planar_arrows.hpp
-	src/flakelib/visualization/monitor/position.hpp
 	src/flakelib/visualization/monitor/rect.hpp
 	src/flakelib/visualization/monitor/scaling_factor.hpp
+	src/flakelib/visualization/monitor/texture.cpp
 	src/flakelib/visualization/monitor/texture.hpp
 )
 

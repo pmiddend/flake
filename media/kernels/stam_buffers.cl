@@ -1,24 +1,23 @@
 float2 const
 bilinear_interpolation(
-	int2 const field_size,
-	float2 const *field,
+	uint2 const field_size,
+	global float2 const *field,
 	float2 position)
 {
 	position = 
 		clamp(
 			position,
-			float2(0.0f),
+			(float2)(0.0f),
 			convert_float2(
 				field_size - (float2)(1.0f,1.0f)));
 
-	int2 const rounded_down = 
-		convert_int2(
+	uint2 const rounded_down = 
+		convert_uint2(
 			position);
 
 	float2 const
 		fractional = 
-			fract(
-				position),
+			position - floor(position),
 		lefttop = 
 			field[field_size.x * rounded_down.y + rounded_down.x],
 		righttop = 
@@ -37,7 +36,7 @@ bilinear_interpolation(
 
 bool
 is_solid(
-	global uchar *boundary,
+	global uchar const *boundary,
 	size_t index)
 {
 	return 
@@ -53,15 +52,15 @@ null_image(
 
 kernel void
 advect(
-	int2 const field_size,
+	uint2 const field_size,
 	global float2 const *input,
 	global float2 *output,
 	global uchar const *boundary,
 	float const dt,
-	float const grid_size)
+	float const grid_scale)
 {
-	int2 const position =
-		(int2)(
+	uint2 const position =
+		(uint2)(
 			get_global_id(
 				0),
 			get_global_id(
@@ -87,7 +86,7 @@ advect(
 	float2 const advected_vector =
 		convert_float2(position) -
 		dt *
-		(1.0f / grid_size) *
+		(1.0f / grid_scale) *
 		current_velocity;
 
 	// After moving back in time, we do not always end up exactly at a grid
@@ -107,12 +106,12 @@ advect(
  */
 kernel void
 apply_external_forces(
-	int2 const field_size,
+	uint2 const field_size,
 	global float2 *output,
 	float const force_magnitude,
 	unsigned start,
 	unsigned end,
-	float const grid_size)
+	float const grid_scale)
 {
 	size_t const y =
 		start + 
@@ -125,19 +124,19 @@ apply_external_forces(
 	output[field_size.x * y] = 
 		(float2)(
 			force_magnitude,
-			grid_size * (y - middle));
+			grid_scale * (y - middle));
 }
 
 kernel void
 divergence(
-	int2 const field_size,
+	uint2 const field_size,
 	global float2 const *input,
 	global float *output,
 	global uchar const *boundary,
-	float const grid_size)
+	float const grid_scale)
 {
-	int2 const position =
-		(int2)(
+	uint2 const position =
+		(uint2)(
 			get_global_id(
 				0),
 			get_global_id(
@@ -167,7 +166,7 @@ divergence(
 			is_solid(boundary,bottom_index) ? input[bottom_index] : (float2)(0.0f,0.0f);
 
 	output[base_index] = 
-		((right.x - left.x) + (top.y - bottom.y)) / (2.0f * grid_size);
+		((right.x - left.x) + (top.y - bottom.y)) / (2.0f * grid_scale);
 }
 
 // Solves Ax=b for x, where A is the Laplace Operator.
@@ -176,7 +175,7 @@ divergence(
 // Convergence: Extremely slow
 kernel void
 jacobi(
-	/* 0 */int2 const field_size,
+	/* 0 */uint2 const field_size,
 	/* 1 */global float const *b,
 	/* 2 */global float const *x,
 	/* 3 */global uchar const *boundary,
@@ -184,8 +183,8 @@ jacobi(
 	/* 5 */float const alpha,
 	/* 6 */float const beta)
 {
-	int2 const position =
-		(int2)(
+	uint2 const position =
+		(uint2)(
 			get_global_id(
 				0),
 			get_global_id(
@@ -206,15 +205,15 @@ jacobi(
 
 	float const 
 		center = 
-			base_index,
+			x[base_index],
 		left = 
-			is_solid(boundary,left_index) ? input[left_index] : center,
+			is_solid(boundary,left_index) ? x[left_index] : center,
 		right = 
-			is_solid(boundary,right_index) ? input[right_index] : center,
+			is_solid(boundary,right_index) ? x[right_index] : center,
 		top = 
-			is_solid(boundary,top_index) ? input[top_index] : center,
+			is_solid(boundary,top_index) ? x[top_index] : center,
 		bottom = 
-			is_solid(boundary,bottom_index) ? input[bottom_index] : center;
+			is_solid(boundary,bottom_index) ? x[bottom_index] : center;
 
 	float const b_value =
 		b[base_index];
@@ -227,15 +226,15 @@ jacobi(
 // w - gradient(p)
 kernel void
 gradient_and_subtract(
-	/* 0 */int2 const field_size,
+	/* 0 */uint2 const field_size,
 	/* 1 */global float const *p,
-	/* 2 */float const grid_size,
+	/* 2 */float const grid_scale,
 	/* 3 */global float2 const *w,
 	/* 4 */global uchar const *boundary,
-	/* 5 */global float2 const *output)
+	/* 5 */global float2 *output)
 {
-	int2 const position =
-		(int2)(
+	uint2 const position =
+		(uint2)(
 			get_global_id(
 				0),
 			get_global_id(
@@ -260,17 +259,17 @@ gradient_and_subtract(
 		bottom_index = 
 			base_index - (position.y == (field_size.y - 1) ? 0 : 1); 
 
-	float const 
+	float
 		center = 
-			base_index,
+			p[base_index],
 		left = 
-			input[left_index],
+			p[left_index],
 		right = 
-			input[right_index],
+			p[right_index],
 		top = 
-			input[top_index],
+			p[top_index],
 		bottom = 
-			input[bottom_index];
+			p[bottom_index];
 
 	float2 vmask = 
 		(float2)(1.0f,1.0f);
@@ -303,7 +302,7 @@ gradient_and_subtract(
 		w[base_index];
 
 	float2 const pressure_gradient = 
-		(0.5f / grid_size) *
+		(0.5f / grid_scale) *
 			(float2)(
 				right-left,
 				top-bottom);
