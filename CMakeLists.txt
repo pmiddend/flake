@@ -71,73 +71,26 @@ SGE_CONFIG_ADD_CUSTOM_PATH(
 	${INSTALL_MEDIA_DIR}
 )
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 
 SET(
 	FLAKELIB_FILES
-	src/flakelib/boundary_view.hpp
-	src/flakelib/duration.hpp
 	src/flakelib/media_path.cpp
-	src/flakelib/media_path.hpp
 	src/flakelib/media_path_from_string.cpp
-	src/flakelib/media_path_from_string.hpp
 	src/flakelib/planar_buffer.cpp
-	src/flakelib/planar_buffer.hpp
-	src/flakelib/planar_object.hpp
-	src/flakelib/profiler/activation.hpp
-	src/flakelib/profiler/call_count.hpp
-	src/flakelib/profiler/child_sequence.hpp
-	src/flakelib/profiler/clock.hpp
-	src/flakelib/profiler/duration.hpp
 	src/flakelib/profiler/object.cpp
-	src/flakelib/profiler/object.hpp
-	src/flakelib/profiler/object_fwd.hpp
-	src/flakelib/profiler/optional_parent.hpp
 	src/flakelib/profiler/scoped.cpp
-	src/flakelib/profiler/scoped.hpp
-	src/flakelib/profiler/scoped_fwd.hpp
-	src/flakelib/profiler/time_point.hpp
 	src/flakelib/simulation/base.cpp
-	src/flakelib/simulation/base.hpp
-	src/flakelib/simulation/base_fwd.hpp
-	src/flakelib/simulation/base_ptr.hpp
 	src/flakelib/simulation/create.cpp
-	src/flakelib/simulation/create.hpp
 	src/flakelib/simulation/stam.cpp
-	src/flakelib/simulation/stam.hpp
 	src/flakelib/utf8_file_to_fcppt_string.cpp
-	src/flakelib/utf8_file_to_fcppt_string.hpp
 	src/flakelib/visualization/arrow.cpp
-	src/flakelib/visualization/arrow.hpp
 	src/flakelib/visualization/base.cpp
-	src/flakelib/visualization/base.hpp
-	src/flakelib/visualization/base_fwd.hpp
-	src/flakelib/visualization/base_ptr.hpp
 	src/flakelib/visualization/create.cpp
-	src/flakelib/visualization/create.hpp
-	src/flakelib/visualization/monitor/arrow_scale.hpp
-	src/flakelib/visualization/monitor/arrow_vf/color.hpp
-	src/flakelib/visualization/monitor/arrow_vf/format.hpp
-	src/flakelib/visualization/monitor/arrow_vf/part.hpp
-	src/flakelib/visualization/monitor/arrow_vf/position.hpp
 	src/flakelib/visualization/monitor/base.cpp
-	src/flakelib/visualization/monitor/base.hpp
-	src/flakelib/visualization/monitor/dummy_sprite/choices.hpp
-	src/flakelib/visualization/monitor/dummy_sprite/object.hpp
-	src/flakelib/visualization/monitor/dummy_sprite/parameters.hpp
-	src/flakelib/visualization/monitor/dummy_sprite/system.hpp
-	src/flakelib/visualization/monitor/grid_dimensions.hpp
-	src/flakelib/visualization/monitor/grid_scale.hpp
-	src/flakelib/visualization/monitor/name.hpp
 	src/flakelib/visualization/monitor/parent.cpp
-	src/flakelib/visualization/monitor/parent.hpp
-	src/flakelib/visualization/monitor/parent_fwd.hpp
 	src/flakelib/visualization/monitor/planar_arrows.cpp
-	src/flakelib/visualization/monitor/planar_arrows.hpp
-	src/flakelib/visualization/monitor/rect.hpp
-	src/flakelib/visualization/monitor/scaling_factor.hpp
 	src/flakelib/visualization/monitor/texture.cpp
-	src/flakelib/visualization/monitor/texture.hpp
 )
 
 FCPPT_UTILS_ADD_SOURCE_GROUPS("${FLAKELIB_FILES}")

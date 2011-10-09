@@ -37,7 +37,7 @@ namespace monitor
  *    "render" (and later probably "update") on all children.
  *
  * 2. It's a factory class for shaders/OpenCL objects. It keeps the context and
- * the vertex declaration as well as the sprite system.
+ *    the vertex declaration as well as the sprite system.
  */
 class parent
 {
