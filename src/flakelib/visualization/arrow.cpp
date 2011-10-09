@@ -72,6 +72,7 @@ flakelib::visualization::arrow::update(
 {
 	velocity_arrows_.from_planar_object(
 		simulation_.velocity());
+	monitor_parent_.update();
 }
 
 void

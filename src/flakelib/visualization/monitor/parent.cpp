@@ -2,6 +2,7 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/visualization/monitor/arrow_vf/format.hpp>
 #include <sge/renderer/device.hpp>
+#include <sge/renderer/onscreen_target.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/shader/object_parameters.hpp>
 #include <sge/shader/vf_to_string.hpp>
@@ -20,6 +21,7 @@
 #include <fcppt/io/stream_to_string.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
+#include <fcppt/math/box/structure_cast.hpp>
 #include <fcppt/io/cifstream.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/make_unique_ptr.hpp>
@@ -88,7 +90,13 @@ flakelib::visualization::monitor::parent::parent(
 					FCPPT_TEXT("shaders/arrow/fragment.glsl")))),
 	sprite_system_(
 		renderer_),
-	children_()
+	children_(),
+	window_manager_(
+		children_,
+		monitor::name(
+			FCPPT_TEXT("velocity")),
+		fcppt::math::box::structure_cast<monitor::rect>(
+			renderer_.onscreen_target().viewport().get()))
 {
 }
 
@@ -173,6 +181,15 @@ flakelib::visualization::monitor::parent::render()
 
 	for(child_list::iterator it = children_.begin(); it != children_.end(); ++it)
 		it->render();
+}
+
+void
+flakelib::visualization::monitor::parent::update()
+{
+	window_manager_.area(
+		fcppt::math::box::structure_cast<monitor::rect>(
+			renderer_.onscreen_target().viewport().get()));
+	window_manager_.update();
 }
 
 flakelib::visualization::monitor::parent::~parent()
@@ -381,7 +398,7 @@ flakelib::visualization::monitor::parent::planar_buffer_to_image(
 
 void
 flakelib::visualization::monitor::parent::add_child(
-	monitor::base &_child)
+	monitor::child &_child)
 {
 	children_.push_back(
 		_child);
@@ -389,7 +406,7 @@ flakelib::visualization::monitor::parent::add_child(
 
 void
 flakelib::visualization::monitor::parent::erase_child(
-	monitor::base &_child)
+	monitor::child &_child)
 {
 	child_list::iterator it;
 	for(

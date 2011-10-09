@@ -1,13 +1,13 @@
-#include <flakelib/visualization/monitor/base.hpp>
+#include <flakelib/visualization/monitor/child.hpp>
 #include <flakelib/visualization/monitor/parent.hpp>
 
-flakelib::visualization::monitor::base::~base()
+flakelib::visualization::monitor::child::~child()
 {
 	parent_.erase_child(
 		*this);
 }
 
-flakelib::visualization::monitor::base::base(
+flakelib::visualization::monitor::child::child(
 	monitor::parent &_parent)
 :
 	parent_(
@@ -18,7 +18,7 @@ flakelib::visualization::monitor::base::base(
 }
 
 flakelib::visualization::monitor::parent &
-flakelib::visualization::monitor::base::parent() const
+flakelib::visualization::monitor::child::parent() const
 {
 	return parent_;
 }

@@ -3,7 +3,7 @@
 
 #include <flakelib/planar_object.hpp>
 #include <flakelib/visualization/monitor/parent_fwd.hpp>
-#include <flakelib/visualization/monitor/base.hpp>
+#include <flakelib/visualization/monitor/child.hpp>
 #include <flakelib/visualization/monitor/dummy_sprite/object.hpp>
 #include <flakelib/visualization/monitor/name.hpp>
 #include <flakelib/visualization/monitor/rect.hpp>
@@ -27,7 +27,7 @@ namespace monitor
 {
 class planar_arrows
 :
-	public monitor::base
+	public monitor::child
 {
 FCPPT_NONCOPYABLE(
 	planar_arrows);

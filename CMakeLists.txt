@@ -87,10 +87,11 @@ SET(
 	src/flakelib/visualization/arrow.cpp
 	src/flakelib/visualization/base.cpp
 	src/flakelib/visualization/create.cpp
-	src/flakelib/visualization/monitor/base.cpp
+	src/flakelib/visualization/monitor/child.cpp
 	src/flakelib/visualization/monitor/parent.cpp
 	src/flakelib/visualization/monitor/planar_arrows.cpp
 	src/flakelib/visualization/monitor/texture.cpp
+	src/flakelib/visualization/monitor/window_manager.cpp
 )
 
 FCPPT_UTILS_ADD_SOURCE_GROUPS("${FLAKELIB_FILES}")

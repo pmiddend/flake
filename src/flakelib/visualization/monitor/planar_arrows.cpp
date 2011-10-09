@@ -40,7 +40,7 @@ flakelib::visualization::monitor::planar_arrows::planar_arrows(
 	monitor::grid_scale const &_grid_scale,
 	sge::renderer::texture::planar_ptr const _optional_texture)
 :
-	monitor::base(
+	monitor::child(
 		_parent),
 	name_(
 		_name.get()),
@@ -52,15 +52,15 @@ flakelib::visualization::monitor::planar_arrows::planar_arrows(
 		_grid_scale),
 	position_(),
 	vb_(
-		base::parent().renderer().create_vertex_buffer(
-			base::parent().vertex_declaration(),
+		child::parent().renderer().create_vertex_buffer(
+			child::parent().vertex_declaration(),
 			sge::renderer::vf::dynamic::part_index(
 				0u),
 			static_cast<sge::renderer::size_type>(
 				dimensions_.content() * 2),
 			sge::renderer::resource_flags::readable)),
 	cl_vb_(
-		base::parent().context(),
+		child::parent().context(),
 		*vb_,
 		sge::opencl::memory_object::renderer_buffer_lock_mode::write_only),
 	sprite_()
@@ -76,7 +76,7 @@ flakelib::visualization::monitor::planar_arrows::planar_arrows(
 						fcppt::make_shared_ptr<sge::texture::part_raw>(
 							_optional_texture))
 					.system(
-						&base::parent().sprite_system())
+						&child::parent().sprite_system())
 					.elements()));
 }
 
@@ -84,7 +84,7 @@ void
 flakelib::visualization::monitor::planar_arrows::from_planar_object(
 	flakelib::planar_object const &_planar_object)
 {
-	base::parent().to_vb(
+	child::parent().to_vb(
 		_planar_object,
 		cl_vb_,
 		grid_scale_,
@@ -121,29 +121,29 @@ flakelib::visualization::monitor::planar_arrows::render()
 {
 	// Activate the shader and the vertex declaration
 	sge::shader::scoped scoped_shader(
-		base::parent().arrow_shader(),
+		child::parent().arrow_shader(),
 		sge::shader::activate_everything());
 
 	sge::renderer::scoped_vertex_buffer scoped_vb(
-		base::parent().renderer(),
+		child::parent().renderer(),
 		*vb_);
 
-	base::parent().arrow_shader().update_uniform(
+	child::parent().arrow_shader().update_uniform(
 		"projection",
 		sge::shader::matrix(
 			sge::renderer::projection::orthogonal_wh(
 				fcppt::math::dim::structure_cast<sge::renderer::projection::dim>(
 						sge::renderer::viewport_size(
-							base::parent().renderer())),
+							child::parent().renderer())),
 				sge::renderer::projection::near(0.0f),
 				sge::renderer::projection::far(10.0f)),
 			sge::shader::matrix_flags::projection));
 
-	base::parent().arrow_shader().update_uniform(
+	child::parent().arrow_shader().update_uniform(
 		"initial_position",
 		position_);
 
-	base::parent().renderer().render_nonindexed(
+	child::parent().renderer().render_nonindexed(
 		sge::renderer::first_vertex(
 			0),
 		sge::renderer::vertex_count(

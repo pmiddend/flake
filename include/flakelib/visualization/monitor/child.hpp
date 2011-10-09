@@ -1,5 +1,5 @@
-#ifndef FLAKELIB_VISUALIZATION_MONITOR_BASE_HPP_INCLUDED
-#define FLAKELIB_VISUALIZATION_MONITOR_BASE_HPP_INCLUDED
+#ifndef FLAKELIB_VISUALIZATION_MONITOR_CHILD_HPP_INCLUDED
+#define FLAKELIB_VISUALIZATION_MONITOR_CHILD_HPP_INCLUDED
 
 #include <flakelib/visualization/monitor/rect.hpp>
 #include <flakelib/visualization/monitor/parent_fwd.hpp>
@@ -15,7 +15,7 @@ namespace visualization
 {
 namespace monitor
 {
-class base
+class child
 :
 	public
 		boost::intrusive::list_base_hook
@@ -24,7 +24,7 @@ class base
 		>
 {
 FCPPT_NONCOPYABLE(
-	base);
+	child);
 public:
 	virtual void
 	position(
@@ -39,10 +39,10 @@ public:
 	virtual void
 	render() = 0;
 
-	virtual ~base() = 0;
+	virtual ~child() = 0;
 protected:
 	explicit
-	base(
+	child(
 		monitor::parent &);
 
 	monitor::parent &parent_;

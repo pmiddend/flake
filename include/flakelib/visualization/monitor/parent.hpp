@@ -3,8 +3,10 @@
 
 #include <flakelib/planar_object.hpp>
 #include <flakelib/visualization/monitor/grid_dimensions.hpp>
+#include <flakelib/visualization/monitor/window_manager.hpp>
 #include <flakelib/visualization/monitor/dummy_sprite/system.hpp>
-#include <flakelib/visualization/monitor/base.hpp>
+#include <flakelib/visualization/monitor/child.hpp>
+#include <flakelib/visualization/monitor/child_list.hpp>
 #include <flakelib/visualization/monitor/arrow_scale.hpp>
 #include <flakelib/visualization/monitor/scaling_factor.hpp>
 #include <flakelib/visualization/monitor/grid_scale.hpp>
@@ -20,9 +22,6 @@
 #include <sge/sprite/intrusive/system_impl.hpp>
 #include <sge/shader/object.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/config/external_begin.hpp>
-#include <boost/intrusive/list.hpp>
-#include <fcppt/config/external_end.hpp>
 
 namespace flakelib
 {
@@ -81,17 +80,13 @@ public:
 	void
 	render();
 
+	void
+	update();
+
 	~parent();
 private:
-	friend class monitor::base;
+	friend class monitor::child;
 
-	typedef
-	boost::intrusive::list
-	<
-		monitor::base,
-		boost::intrusive::constant_time_size<false>
-	>
-	child_list;
 
 	sge::renderer::device &renderer_;
 	sge::opencl::context::object &context_;
@@ -104,7 +99,8 @@ private:
 	sge::opencl::kernel::object buffer_to_image_kernel_;
 	sge::shader::object arrow_shader_;
 	monitor::dummy_sprite::system sprite_system_;
-	child_list children_;
+	monitor::child_list children_;
+	monitor::window_manager window_manager_;
 
 	void
 	image_to_vb(
@@ -134,11 +130,11 @@ private:
 
 	void
 	add_child(
-		monitor::base &);
+		monitor::child &);
 
 	void
 	erase_child(
-		monitor::base &);
+		monitor::child &);
 };
 }
 }
