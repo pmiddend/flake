@@ -36,6 +36,9 @@ public:
 	flakelib::planar_object const	
 	velocity();
 
+	flakelib::planar_object const	
+	pressure();
+
 	void
 	update(
 		flakelib::duration const &);

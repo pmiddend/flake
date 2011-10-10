@@ -5,6 +5,7 @@
 #include <flakelib/boundary_view.hpp>
 #include <flakelib/visualization/monitor/parent.hpp>
 #include <flakelib/visualization/monitor/planar_arrows.hpp>
+#include <flakelib/visualization/monitor/texture.hpp>
 #include <flakelib/simulation/base_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
@@ -49,6 +50,7 @@ private:
 	sge::renderer::device &renderer_;
 	monitor::parent monitor_parent_;
 	monitor::planar_arrows velocity_arrows_;
+	monitor::texture pressure_;
 	simulation::base &simulation_;
 };
 }

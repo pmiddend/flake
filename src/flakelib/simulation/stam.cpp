@@ -288,6 +288,14 @@ flakelib::simulation::stam::velocity()
 			&v1_);
 }
 
+flakelib::planar_object const
+flakelib::simulation::stam::pressure()
+{
+	return 
+		flakelib::planar_object(
+			&p1_);
+}
+
 void
 flakelib::simulation::stam::update(
 	flakelib::duration const &dt)

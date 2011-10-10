@@ -92,14 +92,16 @@ image_to_image(
 			get_global_id(0),
 			get_global_id(1));
 
-	write_imagef(
-		output,
-		this_pos,
-		scaling * 
+	float4 const current_pixel = 
 		read_imagef(
 			input,
 			absolute_clamping_nearest,
-			this_pos));
+			this_pos);
+
+	write_imagef(
+		output,
+		this_pos,
+		scaling * current_pixel);
 }
 
 kernel void

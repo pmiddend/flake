@@ -18,16 +18,14 @@ flakelib::visualization::monitor::texture::texture(
 	monitor::parent &_parent,
 	monitor::name const &_name,
 	monitor::grid_dimensions const &_grid_dimensions,
-	monitor::rect const &_rect,
-	sge::renderer::device &_renderer,
-	sge::opencl::context::object &_context)
+	monitor::rect const &_rect)
 :
-	parent_(
+	monitor::child(
 		_parent),
 	name_(
 		_name.get()),
 	renderer_texture_(
-		_renderer.create_planar_texture(
+		child::parent().renderer().create_planar_texture(
 			sge::renderer::texture::planar_parameters(
 				fcppt::math::dim::structure_cast<sge::renderer::dim2>(
 					_grid_dimensions.get()),
@@ -38,9 +36,9 @@ flakelib::visualization::monitor::texture::texture(
 				sge::renderer::resource_flags::none,
 				sge::renderer::texture::capabilities_field::null()))),
 	cl_texture_(
-		_context,
+		child::parent().context(),
 		sge::opencl::memory_object::flags::write,
-		*renderer_texture_),
+		*renderer_texture_)/*,
 	sprite_(
 		dummy_sprite::parameters()
 			.pos(
@@ -52,7 +50,7 @@ flakelib::visualization::monitor::texture::texture(
 			.texture(
 				fcppt::make_shared_ptr<sge::texture::part_raw>(
 					renderer_texture_))
-			.elements())
+			.elements())*/
 {
 }
 
@@ -60,7 +58,7 @@ void
 flakelib::visualization::monitor::texture::from_planar_object(
 	flakelib::planar_object const &_planar_object)
 {
-	parent_.to_texture(
+	child::parent().to_texture(
 		_planar_object,
 		cl_texture_,
 		monitor::scaling_factor(
@@ -71,9 +69,11 @@ void
 flakelib::visualization::monitor::texture::position(
 	monitor::rect::vector const &_position)
 {
+	/*
 	sprite_.pos(
 		fcppt::math::vector::structure_cast<dummy_sprite::object::vector>(
 			_position));
+			*/
 }
 
 void
@@ -81,15 +81,24 @@ flakelib::visualization::monitor::texture::render()
 {
 }
 
+fcppt::string const
+flakelib::visualization::monitor::texture::name() const
+{
+	return name_;
+}
+
 flakelib::visualization::monitor::rect const
 flakelib::visualization::monitor::texture::area() const
 {
+	return monitor::rect(monitor::rect::vector::null(),monitor::rect::dim::null());
+	/*
 	return 
 		monitor::rect(
 			fcppt::math::vector::structure_cast<monitor::rect::vector>(
 				sprite_.pos()),
 			fcppt::math::dim::structure_cast<monitor::rect::dim>(
 				sprite_.size()));
+				*/
 }
 
 flakelib::visualization::monitor::texture::~texture()

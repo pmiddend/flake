@@ -3,6 +3,9 @@
 #include <flakelib/visualization/monitor/arrow_vf/format.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/onscreen_target.hpp>
+#include <sge/renderer/texture/filter/scoped.hpp>
+#include <sge/renderer/stage.hpp>
+#include <sge/renderer/texture/filter/point.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/shader/object_parameters.hpp>
 #include <sge/shader/vf_to_string.hpp>
@@ -21,11 +24,16 @@
 #include <fcppt/io/stream_to_string.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
+#include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
 #include <fcppt/io/cifstream.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/text.hpp>
+
+// DEBUG
+#include <iostream>
+#include <fcppt/math/dim/output.hpp>
 
 flakelib::visualization::monitor::parent::parent(
 	sge::renderer::device &_renderer,
@@ -172,6 +180,11 @@ flakelib::visualization::monitor::parent::sprite_system()
 void
 flakelib::visualization::monitor::parent::render()
 {
+	sge::renderer::texture::filter::scoped scoped_texture_filter(
+		renderer_,
+		sge::renderer::stage(0),
+		sge::renderer::texture::filter::point());
+
 	for(child_list::iterator it = children_.begin(); it != children_.end(); ++it)
 		it->position(
 			monitor::rect::vector::null());
@@ -310,6 +323,9 @@ flakelib::visualization::monitor::parent::image_to_image(
 	sge::opencl::memory_object::image::planar &_output,
 	monitor::scaling_factor const &_scaling)
 {
+	FCPPT_ASSERT_PRE(
+		_input.size() == _output.size());
+
 	image_to_image_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),

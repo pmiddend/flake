@@ -61,6 +61,16 @@ flakelib::visualization::arrow::arrow(
 			sge::renderer::texture::address_mode2(
 				sge::renderer::texture::address_mode::clamp),
 			sge::renderer::resource_flags::none)),
+	pressure_(
+		monitor_parent_,
+		monitor::name(
+			FCPPT_TEXT("pressure")),
+		monitor::grid_dimensions(
+			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
+				sge::image2d::view::size(
+					_boundary.get()))),
+		monitor::rect(
+			velocity_arrows_.area())),
 	simulation_(
 		_simulation)
 {
@@ -72,6 +82,8 @@ flakelib::visualization::arrow::update(
 {
 	velocity_arrows_.from_planar_object(
 		simulation_.velocity());
+	pressure_.from_planar_object(
+		simulation_.pressure());
 	monitor_parent_.update();
 }
 
@@ -79,14 +91,6 @@ void
 flakelib::visualization::arrow::render()
 {
 	monitor_parent_.render();
-	/*
-	{
-	sge::renderer::texture::filter::scoped scoped_texture_filter(
-		renderer_,
-		sge::renderer::stage(0),
-		sge::renderer::texture::filter::point());
-	}
-	*/
 }
 
 sge::renderer::state::list const

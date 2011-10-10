@@ -87,7 +87,6 @@ public:
 private:
 	friend class monitor::child;
 
-
 	sge::renderer::device &renderer_;
 	sge::opencl::context::object &context_;
 	sge::opencl::command_queue::object &command_queue_;

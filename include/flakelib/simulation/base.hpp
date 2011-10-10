@@ -23,6 +23,9 @@ public:
 
 	virtual flakelib::planar_object const
 	velocity() = 0;
+
+	virtual flakelib::planar_object const
+	pressure() = 0;
 protected:
 	explicit
 	base();
