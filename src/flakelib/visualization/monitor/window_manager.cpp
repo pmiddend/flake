@@ -1,10 +1,15 @@
 #include <flakelib/visualization/monitor/window_manager.hpp>
 #include <fcppt/assert/pre.hpp>
-#include <fcppt/math/vector/output.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <algorithm>
-#include <iostream>
 #include <fcppt/config/external_end.hpp>
+
+// DEBUG
+/*
+#include <iostream>
+#include <fcppt/math/vector/output.hpp>
+#include <fcppt/math/box/output.hpp>
+*/
 
 flakelib::visualization::monitor::window_manager::window_manager(
 	monitor::child_list &_children,
@@ -65,6 +70,7 @@ flakelib::visualization::monitor::window_manager::update()
 				0;
 		}
 		 
+	// DEBUG
 	//	std::cout << "Pane \"" << it->name() << "\" got position: " << current_pos << "\n";
 
 		it->position(
@@ -118,6 +124,8 @@ flakelib::visualization::monitor::window_manager::update_master_pane()
 			(area_.top() + area_.bottom())/static_cast<monitor::rect::value_type>(2) -
 			master_pane->area().h()/static_cast<monitor::rect::value_type>(2)));
 
+	// DEBUG
+	//std::cout << "Area is " << area_ << "\n";
 	//std::cout << "Master pane got position: " << master_pane->area().pos() << "\n";
 
 	return *master_pane;

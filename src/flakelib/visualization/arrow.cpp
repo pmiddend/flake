@@ -18,6 +18,7 @@
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/vector/basic_impl.hpp>
 #include <fcppt/text.hpp>
 
@@ -70,7 +71,41 @@ flakelib::visualization::arrow::arrow(
 				sge::image2d::view::size(
 					_boundary.get()))),
 		monitor::rect(
-			velocity_arrows_.area())),
+			velocity_arrows_.area().pos(),
+			velocity_arrows_.area().size()/static_cast<monitor::rect::value_type>(4)),
+		monitor::scaling_factor(
+			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
+				_config_file,
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("visualization/pressure-scale"))))),
+	velocity_magnitude_(
+		monitor_parent_,
+		monitor::name(
+			FCPPT_TEXT("velocity absolute")),
+		monitor::grid_dimensions(
+			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
+				sge::image2d::view::size(
+					_boundary.get()))),
+		monitor::rect(
+			velocity_arrows_.area().pos(),
+			velocity_arrows_.area().size()/static_cast<monitor::rect::value_type>(4)),
+		monitor::scaling_factor(1.00f)),
+	divergence_(
+		monitor_parent_,
+		monitor::name(
+			FCPPT_TEXT("divergence")),
+		monitor::grid_dimensions(
+			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
+				sge::image2d::view::size(
+					_boundary.get()))),
+		monitor::rect(
+			velocity_arrows_.area().pos(),
+			velocity_arrows_.area().size()/static_cast<monitor::rect::value_type>(4)),
+		monitor::scaling_factor(
+			sge::parse::json::find_and_convert_member<monitor::rect::value_type>(
+				_config_file,
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("visualization/divergence-scale"))))),
 	simulation_(
 		_simulation)
 {
@@ -84,6 +119,10 @@ flakelib::visualization::arrow::update(
 		simulation_.velocity());
 	pressure_.from_planar_object(
 		simulation_.pressure());
+	velocity_magnitude_.from_planar_object(
+		simulation_.velocity_magnitude());
+	divergence_.from_planar_object(
+		simulation_.divergence());
 	monitor_parent_.update();
 }
 
@@ -99,7 +138,7 @@ flakelib::visualization::arrow::render_states() const
 	return
 		sge::renderer::state::list
 			(sge::renderer::state::bool_::clear_back_buffer = true)
-			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::white());
+			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::paleturquoise());
 }
 
 flakelib::visualization::arrow::~arrow()

@@ -51,6 +51,8 @@ private:
 	monitor::parent monitor_parent_;
 	monitor::planar_arrows velocity_arrows_;
 	monitor::texture pressure_;
+	monitor::texture velocity_magnitude_;
+	monitor::texture divergence_;
 	simulation::base &simulation_;
 };
 }

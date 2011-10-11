@@ -14,16 +14,22 @@
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
 
+// DEBUG
+#include <iostream>
+
 flakelib::visualization::monitor::texture::texture(
 	monitor::parent &_parent,
 	monitor::name const &_name,
 	monitor::grid_dimensions const &_grid_dimensions,
-	monitor::rect const &_rect)
+	monitor::rect const &_rect,
+	monitor::scaling_factor const &_scaling)
 :
 	monitor::child(
 		_parent),
 	name_(
 		_name.get()),
+	scaling_(
+		_scaling.get()),
 	renderer_texture_(
 		child::parent().renderer().create_planar_texture(
 			sge::renderer::texture::planar_parameters(
@@ -38,7 +44,7 @@ flakelib::visualization::monitor::texture::texture(
 	cl_texture_(
 		child::parent().context(),
 		sge::opencl::memory_object::flags::write,
-		*renderer_texture_)/*,
+		*renderer_texture_),
 	sprite_(
 		dummy_sprite::parameters()
 			.pos(
@@ -50,7 +56,9 @@ flakelib::visualization::monitor::texture::texture(
 			.texture(
 				fcppt::make_shared_ptr<sge::texture::part_raw>(
 					renderer_texture_))
-			.elements())*/
+			.system(
+				&child::parent().sprite_system())
+			.elements())
 {
 }
 
@@ -62,18 +70,16 @@ flakelib::visualization::monitor::texture::from_planar_object(
 		_planar_object,
 		cl_texture_,
 		monitor::scaling_factor(
-			1.0f));
+			scaling_));
 }
 
 void
 flakelib::visualization::monitor::texture::position(
 	monitor::rect::vector const &_position)
 {
-	/*
 	sprite_.pos(
 		fcppt::math::vector::structure_cast<dummy_sprite::object::vector>(
 			_position));
-			*/
 }
 
 void
@@ -90,15 +96,12 @@ flakelib::visualization::monitor::texture::name() const
 flakelib::visualization::monitor::rect const
 flakelib::visualization::monitor::texture::area() const
 {
-	return monitor::rect(monitor::rect::vector::null(),monitor::rect::dim::null());
-	/*
 	return 
 		monitor::rect(
 			fcppt::math::vector::structure_cast<monitor::rect::vector>(
 				sprite_.pos()),
 			fcppt::math::dim::structure_cast<monitor::rect::dim>(
 				sprite_.size()));
-				*/
 }
 
 flakelib::visualization::monitor::texture::~texture()

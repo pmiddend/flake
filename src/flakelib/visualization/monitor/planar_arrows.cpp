@@ -25,6 +25,7 @@
 #include <sge/renderer/vf/dynamic/part_index.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
+#include <fcppt/math/vector/structure_cast.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/math/dim/output.hpp>
@@ -97,6 +98,10 @@ flakelib::visualization::monitor::planar_arrows::position(
 {
 	position_ =
 		_position;
+	if(sprite_)
+		sprite_->pos(
+			fcppt::math::vector::structure_cast<monitor::dummy_sprite::object::vector>(
+				_position));
 }
 
 flakelib::visualization::monitor::rect const

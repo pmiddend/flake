@@ -7,6 +7,7 @@
 #include <flakelib/visualization/monitor/name.hpp>
 #include <flakelib/visualization/monitor/grid_dimensions.hpp>
 #include <flakelib/visualization/monitor/rect.hpp>
+#include <flakelib/visualization/monitor/scaling_factor.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <flakelib/planar_object.hpp>
 #include <sge/sprite/object.hpp>
@@ -30,7 +31,8 @@ public:
 		monitor::parent &,
 		monitor::name const &,
 		monitor::grid_dimensions const &,
-		monitor::rect const &);
+		monitor::rect const &,
+		monitor::scaling_factor const &);
 
 	void
 	from_planar_object(
@@ -52,9 +54,10 @@ public:
 	~texture();
 private:
 	fcppt::string const name_;
+	monitor::scaling_factor::value_type const scaling_;
 	sge::renderer::texture::planar_ptr renderer_texture_;
 	sge::opencl::memory_object::image::planar cl_texture_;
-	//dummy_sprite::object sprite_;
+	dummy_sprite::object sprite_;
 };
 }
 }

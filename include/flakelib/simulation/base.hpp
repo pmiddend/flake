@@ -26,6 +26,12 @@ public:
 
 	virtual flakelib::planar_object const
 	pressure() = 0;
+
+	virtual flakelib::planar_object const
+	velocity_magnitude() = 0;
+
+	virtual flakelib::planar_object const
+	divergence() = 0;
 protected:
 	explicit
 	base();

@@ -133,6 +133,17 @@ flakelib::simulation::stam::stam(
 				boundary.get())),
 		sge::opencl::memory_object::image::planar_pitch(
 			0)),
+	helper_(
+		_context,
+		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
+		create_image_format(
+			CL_R,
+			CL_FLOAT),
+		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
+			sge::image2d::view::size(
+				boundary.get())),
+		sge::opencl::memory_object::image::planar_pitch(
+			0)),
 	boundary_(
 		_context,
 		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
@@ -156,10 +167,6 @@ flakelib::simulation::stam::stam(
 		main_program_,
 		sge::opencl::kernel::name(
 			"null_image")),
-	copy_boundary_(
-		main_program_,
-		sge::opencl::kernel::name(
-			"copy_boundary")),
 	advect_(
 		main_program_,
 		sge::opencl::kernel::name(
@@ -184,6 +191,10 @@ flakelib::simulation::stam::stam(
 		main_program_,
 		sge::opencl::kernel::name(
 			"copy_image")),
+	vector_magnitude_(
+		main_program_,
+		sge::opencl::kernel::name(
+			"vector_magnitude")),
 	external_force_magnitude_(
 		sge::parse::json::find_and_convert_member<cl_float>(
 			_config_file,
@@ -194,6 +205,11 @@ flakelib::simulation::stam::stam(
 			_config_file,
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("grid-scale")))),
+	velocity_magnitude_scale_(
+		sge::parse::json::find_and_convert_member<cl_float>(
+			_config_file,
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("visualization/velocity-magnitude-scale")))),
 	jacobi_iterations_(
 		sge::parse::json::find_and_convert_member<unsigned>(
 			_config_file,
@@ -210,10 +226,6 @@ flakelib::simulation::stam::stam(
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	null_image_profiler_(
 		FCPPT_TEXT("null_image"),
-		parent_profiler_,
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
-	copy_boundary_profiler_(
-		FCPPT_TEXT("copy_boundary"),
 		parent_profiler_,
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	advection_profiler_(
@@ -241,8 +253,6 @@ flakelib::simulation::stam::stam(
 		sge::image2d::view::size(
 			boundary.get());
 
-	fcppt::io::cout() << FCPPT_TEXT("Resetting vector field v1\n");
-
 	null_image_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
@@ -257,9 +267,6 @@ flakelib::simulation::stam::stam(
 		fcppt::assign::make_array<std::size_t>
 			(1)
 			(1).container());
-
-	fcppt::io::cout() << FCPPT_TEXT("Done\n");
-	fcppt::io::cout() << FCPPT_TEXT("Copying boundary to OpenCL buffer\n");
 
 	{
 		sge::opencl::command_queue::scoped_planar_mapping scoped_image(
@@ -276,8 +283,6 @@ flakelib::simulation::stam::stam(
 			scoped_image.view(),
 			sge::image::algorithm::may_overlap::no);
 	}
-
-	fcppt::io::cout() << FCPPT_TEXT("Done\n");
 }
 
 flakelib::planar_object const
@@ -296,6 +301,22 @@ flakelib::simulation::stam::pressure()
 			&p1_);
 }
 
+flakelib::planar_object const
+flakelib::simulation::stam::velocity_magnitude()
+{
+	return 
+		flakelib::planar_object(
+			&helper_);
+}
+
+flakelib::planar_object const
+flakelib::simulation::stam::divergence()
+{
+	return 
+		flakelib::planar_object(
+			&temporary_v_);
+}
+
 void
 flakelib::simulation::stam::update(
 	flakelib::duration const &dt)
@@ -303,10 +324,6 @@ flakelib::simulation::stam::update(
 	profiler::scoped scoped_profiler(
 		parent_profiler_,
 		command_queue_);
-	// Dirichlet boundary conditions for the advection step: The values for the
-	// solid cells is given by the boundary image.
-	//this->copy_boundary(
-	//	v1_);
 	
 	// Also a form of Dirichlet: Set the boundary at certain locations to be
 	// inflow.
@@ -326,52 +343,27 @@ flakelib::simulation::stam::update(
 		v2_,
 		v1_);
 
+	// Debug
+	this->divergence(
+		v2_,
+		temporary_v_);
+
 	// Project v2, store result in v1
 	this->project(
 		v2_,
 		v1_,
 		v1_);
 
-	// Store the divergence for debugging reasons
-	/*
-	this->divergence(
+	// Debug
+	this->vector_magnitude(
 		v1_,
-		temporary_v_);
-	*/
+		helper_,
+		velocity_magnitude_scale_);
 }
 
 flakelib::simulation::stam::~stam()
 {
 	fcppt::io::cout() << parent_profiler_ << FCPPT_TEXT("\n");
-}
-
-void
-flakelib::simulation::stam::copy_boundary(
-	sge::opencl::memory_object::image::planar &target)
-{
-	profiler::scoped scoped_profiler(
-		copy_boundary_profiler_,
-		command_queue_);
-
-	copy_boundary_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
-		boundary_);
-
-	copy_boundary_.argument(
-		sge::opencl::kernel::argument_index(
-			1),
-		target);
-
-	sge::opencl::command_queue::enqueue_kernel(
-		command_queue_,
-		copy_boundary_,
-		fcppt::assign::make_array<std::size_t>
-			(target.size()[0])
-			(target.size()[1]).container(),
-		fcppt::assign::make_array<std::size_t>
-			(1)
-			(1).container());
 }
 
 void
@@ -657,6 +649,41 @@ flakelib::simulation::stam::copy_image(
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		copy_image_,
+		fcppt::assign::make_array<std::size_t>
+			(from.size()[0])
+			(from.size()[1]).container(),
+		fcppt::assign::make_array<std::size_t>
+			(1)
+			(1).container());
+}
+
+void
+flakelib::simulation::stam::vector_magnitude(
+	sge::opencl::memory_object::image::planar &from,
+	sge::opencl::memory_object::image::planar &to,
+	cl_float const scaling)
+{
+	FCPPT_ASSERT_PRE(
+		from.size() == to.size());
+
+	vector_magnitude_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		from);
+
+	vector_magnitude_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		to);
+
+	vector_magnitude_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		scaling);
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		vector_magnitude_,
 		fcppt::assign::make_array<std::size_t>
 			(from.size()[0])
 			(from.size()[1]).container(),

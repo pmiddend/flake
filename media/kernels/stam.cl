@@ -18,7 +18,7 @@ __constant int2 const
 
 bool
 is_solid(
-	__global __read_only image2d_t boundary,
+	global read_only image2d_t boundary,
 	int2 const position)
 {
 	return 
@@ -27,9 +27,9 @@ is_solid(
 			absolute_clamping_nearest,position).x != 0;
 }
 
-__kernel void
+kernel void
 null_image(
-	__global __write_only image2d_t f)
+	global write_only image2d_t f)
 {
 	write_imagef(
 		f,
@@ -45,31 +45,11 @@ null_image(
 			0.0f));
 }
 
-__kernel void
-copy_boundary(
-	__global __read_only image2d_t boundary,
-	__global __write_only image2d_t vector_field)
-{
-	int2 const position =
-		(int2)(
-			get_global_id(
-				0),
-			get_global_id(
-				1));
-
-	// Branching = not good!
-	if(read_imagei(boundary,absolute_clamping_nearest,position).x != 0)
-		write_imagef(
-			vector_field,
-			position,
-			(float4)(0.0f,0.0f,0.0f,0.0f));
-}
-
-__kernel void
+kernel void
 advect(
-	__global __read_only image2d_t input,
-	__global __write_only image2d_t output,
-	__global __read_only image2d_t boundary,
+	global read_only image2d_t input,
+	global write_only image2d_t output,
+	global read_only image2d_t boundary,
 	float const dt,
 	float const grid_size)
 {
@@ -142,9 +122,9 @@ advect(
 	assigns a fixed force vector to them. This vector points to the right and has
   a given magnitude.
  */
-__kernel void
+kernel void
 apply_external_forces(
-	__global __write_only image2d_t output,
+	global write_only image2d_t output,
 	float const force_magnitude,
 	unsigned start,
 	unsigned end,
@@ -174,16 +154,43 @@ apply_external_forces(
 		(int2)(0,y),
 		(float4)(
 			force_magnitude,
-			grid_size * (y - middle),
+			y - middle,
 			0.0f,
 			0.0f));
 }
 
-__kernel void
+kernel void
+vector_magnitude(
+	global read_only image2d_t input,
+	global write_only image2d_t output,
+	float const scaling)
+{
+	int2 const position =
+		(int2)(
+			get_global_id(
+				0),
+			get_global_id(
+				1));
+
+	write_imagef(
+		output,
+		position,
+		(float4)(
+			length(
+				read_imagef(
+					input,
+					absolute_clamping_nearest,
+					position).xy) * scaling,
+			0.0f,
+			0.0f,
+			0.0f));
+}
+
+kernel void
 divergence(
-	__global __read_only image2d_t input,
-	__global __write_only image2d_t output,
-	__global __read_only image2d_t boundary,
+	global read_only image2d_t input,
+	global write_only image2d_t output,
+	global read_only image2d_t boundary,
 	float const grid_size)
 {
 	int2 const position =
@@ -238,12 +245,12 @@ divergence(
 // Explained (in German):
 // http://mo.mathematik.uni-stuttgart.de/kurse/kurs5/seite36.html
 // Convergence: Extremely slow
-__kernel void
+kernel void
 jacobi(
-	/* 0 */__global __read_only image2d_t b,
-	/* 1 */__global __read_only image2d_t x,
-	/* 2 */__global __read_only image2d_t boundary,
-	/* 3 */__global __write_only image2d_t output,
+	/* 0 */global read_only image2d_t b,
+	/* 1 */global read_only image2d_t x,
+	/* 2 */global read_only image2d_t boundary,
+	/* 3 */global write_only image2d_t output,
 	/* 4 */float const alpha,
 	/* 5 */float const beta)
 {
@@ -304,13 +311,13 @@ jacobi(
 
 // Calculate the gradient of p and calculate
 // w - gradient(p)
-__kernel void
+kernel void
 gradient_and_subtract(
-	/* 0 */__global __read_only image2d_t p,
+	/* 0 */global read_only image2d_t p,
 	/* 1 */float const grid_size,
-	/* 2 */__global __read_only image2d_t w,
-	/* 3 */__global __read_only image2d_t boundary,
-	/* 4 */__global __write_only image2d_t output)
+	/* 2 */global read_only image2d_t w,
+	/* 3 */global read_only image2d_t boundary,
+	/* 4 */global write_only image2d_t output)
 {
 	int2 const position =
 		(int2)(
@@ -405,10 +412,10 @@ gradient_and_subtract(
 		(float4)(result.xy,0.0f,0.0f));
 }
 
-__kernel void
+kernel void
 copy_image(
-	__global __read_only image2d_t from,
-	__global __write_only image2d_t to)
+	global read_only image2d_t from,
+	global write_only image2d_t to)
 {
 	int2 const position =
 		(int2)(

@@ -185,10 +185,6 @@ flakelib::visualization::monitor::parent::render()
 		sge::renderer::stage(0),
 		sge::renderer::texture::filter::point());
 
-	for(child_list::iterator it = children_.begin(); it != children_.end(); ++it)
-		it->position(
-			monitor::rect::vector::null());
-
 	sprite_system_.render_all(
 		sge::sprite::default_equal());
 
