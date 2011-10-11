@@ -5,6 +5,7 @@
 #include <flakelib/boundary_view.hpp>
 #include <flakelib/simulation/base_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
+#include <sge/font/system_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/parse/json/object_fwd.hpp>
@@ -19,6 +20,7 @@ create(
 	sge::opencl::context::object &,
 	sge::opencl::command_queue::object &,
 	simulation::base &,
+	sge::font::system &,
 	flakelib::boundary_view const &,
 	sge::parse::json::object const &);
 }

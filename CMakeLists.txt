@@ -42,6 +42,8 @@ FIND_PACKAGE(
 	renderer
 	sprite
 	texture
+	font
+	fonttext
 	parse
 	shader
 	systems

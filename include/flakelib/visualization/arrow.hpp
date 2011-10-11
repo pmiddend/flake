@@ -13,6 +13,7 @@
 #include <sge/parse/json/object_fwd.hpp>
 #include <sge/sprite/object.hpp>
 #include <sge/sprite/external_system_impl.hpp>
+#include <sge/font/system_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 
 namespace flakelib
@@ -32,6 +33,7 @@ public:
 		sge::opencl::context::object &,
 		sge::opencl::command_queue::object &,
 		simulation::base &,
+		sge::font::system &,
 		flakelib::boundary_view const &,
 		sge::parse::json::object const &);
 

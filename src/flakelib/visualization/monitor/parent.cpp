@@ -38,7 +38,10 @@
 flakelib::visualization::monitor::parent::parent(
 	sge::renderer::device &_renderer,
 	sge::opencl::context::object &_context,
-	sge::opencl::command_queue::object &_command_queue)
+	sge::opencl::command_queue::object &_command_queue,
+	sge::font::metrics_ptr const _font_metrics,
+	monitor::border_size const &_border_size,
+	monitor::font_color const &_font_color)
 :
 	renderer_(
 		_renderer),
@@ -46,6 +49,11 @@ flakelib::visualization::monitor::parent::parent(
 		_context),
 	command_queue_(
 		_command_queue),
+	font_metrics_(
+		_font_metrics),
+	font_drawer_(
+		renderer_,
+		_font_color.get()),
 	vd_(
 		renderer_.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format<arrow_vf::format>())),
@@ -104,7 +112,10 @@ flakelib::visualization::monitor::parent::parent(
 		monitor::name(
 			FCPPT_TEXT("velocity")),
 		fcppt::math::box::structure_cast<monitor::rect>(
-			renderer_.onscreen_target().viewport().get()))
+			renderer_.onscreen_target().viewport().get()),
+		_border_size,
+		*font_metrics_,
+		font_drawer_)
 {
 }
 
@@ -177,6 +188,18 @@ flakelib::visualization::monitor::parent::sprite_system()
 	return sprite_system_;
 }
 
+sge::font::metrics &
+flakelib::visualization::monitor::parent::font_metrics()
+{
+	return *font_metrics_;
+}
+
+sge::font::text::drawer_3d &
+flakelib::visualization::monitor::parent::font_drawer()
+{
+	return font_drawer_;
+}
+
 void
 flakelib::visualization::monitor::parent::render()
 {
@@ -190,6 +213,8 @@ flakelib::visualization::monitor::parent::render()
 
 	for(child_list::iterator it = children_.begin(); it != children_.end(); ++it)
 		it->render();
+
+	window_manager_.render();
 }
 
 void

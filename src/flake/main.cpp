@@ -123,6 +123,7 @@ try
 					sge::renderer::no_multi_sampling),
 				sge::viewport::center_on_resize(
 					sge::window::dim(1024,768))))
+			(sge::systems::parameterless::font)
 			(sge::systems::input(
 				sge::systems::input_helper_field(
 					sge::systems::input_helper::keyboard_collector),
@@ -150,6 +151,7 @@ try
 			opencl_system.context(),
 			opencl_system.command_queue(),
 			*simulation,
+			sys.font_system(),
 			flakelib::boundary_view(
 				boundary_image->view()),
 			config_file));

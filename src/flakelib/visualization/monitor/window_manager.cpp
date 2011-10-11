@@ -1,5 +1,12 @@
 #include <flakelib/visualization/monitor/window_manager.hpp>
+#include <sge/font/metrics.hpp>
+#include <sge/font/text/draw.hpp>
+#include <sge/font/text/from_fcppt_string.hpp>
+#include <sge/font/text/flags_none.hpp>
+#include <sge/font/text/part.hpp>
 #include <fcppt/assert/pre.hpp>
+#include <fcppt/math/box/basic_impl.hpp>
+#include <fcppt/math/vector/structure_cast.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <algorithm>
 #include <fcppt/config/external_end.hpp>
@@ -14,14 +21,23 @@
 flakelib::visualization::monitor::window_manager::window_manager(
 	monitor::child_list &_children,
 	monitor::name const &_master_pane,
-	monitor::rect const &_rect)
+	monitor::rect const &_rect,
+	monitor::border_size const &_border_size,
+	sge::font::metrics &_metrics,
+	sge::font::text::drawer &_drawer)
 :
 	children_(
 		_children),
 	master_pane_(
 		_master_pane.get()),
 	area_(
-		_rect)
+		_rect),
+	border_size_(
+		_border_size.get()),
+	metrics_(
+		_metrics),
+	drawer_(
+		_drawer)
 {
 }
 
@@ -55,7 +71,7 @@ flakelib::visualization::monitor::window_manager::update()
 			continue;
 
 		// Next line
-		if(current_pos.x() + it->area().w() > remaining_rect.right())
+		if(current_pos.x() + border_size_ + it->area().w() > remaining_rect.right())
 		{
 			FCPPT_ASSERT_PRE(
 				current_pos.y() + it->area().h() <= remaining_rect.bottom());
@@ -64,7 +80,7 @@ flakelib::visualization::monitor::window_manager::update()
 				remaining_rect.left();
 
 			current_pos.y() += 
-				current_row_max_height;
+				current_row_max_height + border_size_;
 
 			current_row_max_height = 
 				0;
@@ -74,14 +90,43 @@ flakelib::visualization::monitor::window_manager::update()
 	//	std::cout << "Pane \"" << it->name() << "\" got position: " << current_pos << "\n";
 
 		it->position(
-			current_pos);
+			monitor::rect::vector(
+				current_pos.x() + border_size_,
+				current_pos.y() + static_cast<monitor::rect::value_type>(metrics_.line_height())));
 
-		current_pos.x() += it->area().w();
+
+		current_pos.x() += it->area().w() + border_size_;
 
 		current_row_max_height = 
 			std::max(
 				current_row_max_height,
-				it->area().h());
+				it->area().h() + static_cast<monitor::rect::value_type>(metrics_.line_height()));
+	}
+}
+
+void
+flakelib::visualization::monitor::window_manager::render()
+{
+	for(
+		monitor::child_list::const_iterator it = children_.begin();
+		it != children_.end();
+		++it)
+	{
+		sge::font::text::draw(
+			metrics_,
+			drawer_,
+			sge::font::text::from_fcppt_string(
+				it->name()),
+			sge::font::rect(
+				sge::font::rect::vector(
+					it->area().pos().x(),
+					it->area().pos().y() - metrics_.line_height()),
+				sge::font::rect::dim(
+					1000,
+					1000)),
+				sge::font::text::align_h::left,
+				sge::font::text::align_v::top,
+				sge::font::text::flags::none);
 	}
 }
 

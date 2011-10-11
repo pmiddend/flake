@@ -1,5 +1,6 @@
 #include <flakelib/visualization/arrow.hpp>
 #include <flakelib/simulation/base.hpp>
+#include <flakelib/media_path_from_string.hpp>
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/image2d/view/size.hpp>
 #include <sge/image/colors.hpp>
@@ -14,6 +15,7 @@
 #include <sge/renderer/texture/address_mode2.hpp>
 #include <sge/renderer/state/trampoline.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
+#include <sge/font/system.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
@@ -27,6 +29,7 @@ flakelib::visualization::arrow::arrow(
 	sge::opencl::context::object &_context,
 	sge::opencl::command_queue::object &_command_queue,
 	simulation::base &_simulation,
+	sge::font::system &_font_system,
 	flakelib::boundary_view const &_boundary,
 	sge::parse::json::object const &_config_file)
 :
@@ -35,7 +38,21 @@ flakelib::visualization::arrow::arrow(
 	monitor_parent_(
 		_renderer,
 		_context,
-		_command_queue),
+		_command_queue,
+		_font_system.create_font(
+			flakelib::media_path_from_string(
+				FCPPT_TEXT("fonts/main.ttf")),
+			sge::parse::json::find_and_convert_member<sge::font::size_type>(
+				_config_file,
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("visualization/font-size")))),
+		monitor::border_size(
+			sge::parse::json::find_and_convert_member<monitor::border_size::value_type>(
+				_config_file,
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("visualization/border-size")))),
+		monitor::font_color(
+			sge::image::colors::black())),
 	velocity_arrows_(
 		monitor_parent_,
 		monitor::name(

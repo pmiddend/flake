@@ -10,6 +10,8 @@
 		"pressure-scale" : 0.10,
 		"velocity-magnitude-scale" : 0.01,
 		"divergence-scale" : 10.00,
-		"grid-position" : [10.0,10.0]
+		"grid-position" : [10.0,10.0],
+		"border-size" : 2.0,
+		"font-size" : 20
 	}
 }

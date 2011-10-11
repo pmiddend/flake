@@ -9,11 +9,15 @@
 #include <flakelib/visualization/monitor/child_list.hpp>
 #include <flakelib/visualization/monitor/arrow_scale.hpp>
 #include <flakelib/visualization/monitor/scaling_factor.hpp>
+#include <flakelib/visualization/monitor/font_color.hpp>
 #include <flakelib/visualization/monitor/grid_scale.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/vertex_declaration_ptr.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
+#include <sge/font/metrics_ptr.hpp>
+#include <sge/font/text/drawer_3d.hpp>
+#include <sge/image/color/any/object_fwd.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
@@ -47,7 +51,10 @@ public:
 	parent(
 		sge::renderer::device &,
 		sge::opencl::context::object &,
-		sge::opencl::command_queue::object &);
+		sge::opencl::command_queue::object &,
+		sge::font::metrics_ptr,
+		monitor::border_size const &,
+		monitor::font_color const &);
 	
 	sge::renderer::vertex_declaration const &
 	vertex_declaration() const;
@@ -77,6 +84,12 @@ public:
 	monitor::dummy_sprite::system &
 	sprite_system();
 
+	sge::font::metrics &
+	font_metrics();
+
+	sge::font::text::drawer_3d &
+	font_drawer();
+
 	void
 	render();
 
@@ -90,6 +103,8 @@ private:
 	sge::renderer::device &renderer_;
 	sge::opencl::context::object &context_;
 	sge::opencl::command_queue::object &command_queue_;
+	sge::font::metrics_ptr font_metrics_;
+	sge::font::text::drawer_3d font_drawer_;
 	sge::renderer::vertex_declaration_ptr vd_;
 	sge::opencl::program::object conversion_program_;
 	sge::opencl::kernel::object image_to_vb_kernel_;

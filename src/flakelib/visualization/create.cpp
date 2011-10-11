@@ -11,6 +11,7 @@ flakelib::visualization::create(
 	sge::opencl::context::object &_context,
 	sge::opencl::command_queue::object &_queue,
 	simulation::base &_simulation,
+	sge::font::system &_font_system,
 	flakelib::boundary_view const &_boundary,
 	sge::parse::json::object const &_config_file)
 {
@@ -25,6 +26,8 @@ flakelib::visualization::create(
 					_queue),
 				fcppt::ref(
 					_simulation),
+				fcppt::ref(
+					_font_system),
 				fcppt::cref(
 					_boundary),
 				fcppt::cref(
