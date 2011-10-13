@@ -1,4 +1,5 @@
 #include <flakelib/visualization/arrow.hpp>
+#include <flakelib/visualization/monitor/texture.hpp>
 #include <flakelib/simulation/base.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <sge/image2d/view/const_object.hpp>
@@ -18,7 +19,10 @@
 #include <sge/font/system.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/make_shared_ptr.hpp>
+#include <fcppt/ref.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
+#include <fcppt/container/ptr/insert_unique_ptr_map.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/vector/basic_impl.hpp>
@@ -35,6 +39,8 @@ flakelib::visualization::arrow::arrow(
 :
 	renderer_(
 		_renderer),
+	simulation_(
+		_simulation),
 	monitor_parent_(
 		_renderer,
 		_context,
@@ -78,54 +84,33 @@ flakelib::visualization::arrow::arrow(
 			sge::renderer::texture::mipmap::off(),
 			sge::renderer::texture::address_mode2(
 				sge::renderer::texture::address_mode::clamp),
-			sge::renderer::resource_flags::none)),
-	pressure_(
-		monitor_parent_,
-		monitor::name(
-			FCPPT_TEXT("pressure")),
-		monitor::grid_dimensions(
-			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
-				sge::image2d::view::size(
-					_boundary.get()))),
-		monitor::rect(
-			velocity_arrows_.area().pos(),
-			velocity_arrows_.area().size()/static_cast<monitor::rect::value_type>(4)),
-		monitor::scaling_factor(
-			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
-				_config_file,
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("visualization/pressure-scale"))))),
-	velocity_magnitude_(
-		monitor_parent_,
-		monitor::name(
-			FCPPT_TEXT("velocity absolute")),
-		monitor::grid_dimensions(
-			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
-				sge::image2d::view::size(
-					_boundary.get()))),
-		monitor::rect(
-			velocity_arrows_.area().pos(),
-			velocity_arrows_.area().size()/static_cast<monitor::rect::value_type>(4)),
-		monitor::scaling_factor(1.00f)),
-	divergence_(
-		monitor_parent_,
-		monitor::name(
-			FCPPT_TEXT("divergence")),
-		monitor::grid_dimensions(
-			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
-				sge::image2d::view::size(
-					_boundary.get()))),
-		monitor::rect(
-			velocity_arrows_.area().pos(),
-			velocity_arrows_.area().size()/static_cast<monitor::rect::value_type>(4)),
-		monitor::scaling_factor(
-			sge::parse::json::find_and_convert_member<monitor::rect::value_type>(
-				_config_file,
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("visualization/divergence-scale"))))),
-	simulation_(
-		_simulation)
+			sge::renderer::resource_flags::none))
 {
+	for(
+		flakelib::additional_planar_data::const_iterator it =
+			simulation_.additional_planar_data().begin();
+		it !=simulation_.additional_planar_data().end();
+		++it)
+		fcppt::container::ptr::insert_unique_ptr_map(
+			additional_data_,
+			it->first,
+			fcppt::make_unique_ptr<monitor::texture>(
+				fcppt::ref(
+					monitor_parent_),
+				monitor::name(
+					it->first),
+				monitor::grid_dimensions(
+					fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
+						sge::image2d::view::size(
+							_boundary.get()))),
+				monitor::rect(
+					velocity_arrows_.area().pos(),
+					velocity_arrows_.area().size()/static_cast<monitor::rect::value_type>(4)),
+				monitor::scaling_factor(
+					sge::parse::json::find_and_convert_member<monitor::rect::value_type>(
+						_config_file,
+						sge::parse::json::string_to_path(
+							FCPPT_TEXT("visualization/")+it->first+FCPPT_TEXT("-scale"))))));
 }
 
 void
@@ -134,12 +119,19 @@ flakelib::visualization::arrow::update(
 {
 	velocity_arrows_.from_planar_object(
 		simulation_.velocity());
-	pressure_.from_planar_object(
-		simulation_.pressure());
-	velocity_magnitude_.from_planar_object(
-		simulation_.velocity_magnitude());
-	divergence_.from_planar_object(
-		simulation_.divergence());
+
+	for(
+		flakelib::additional_planar_data::const_iterator it =
+			simulation_.additional_planar_data().begin();
+		it !=simulation_.additional_planar_data().end();
+		++it)
+		for(additional_data_monitors::iterator it2 =
+			additional_data_.begin();
+			it2 != additional_data_.end();
+			++it2)
+			if(it->first == it2->first)
+				it2->second->from_planar_object(
+					it->second);
 	monitor_parent_.update();
 }
 

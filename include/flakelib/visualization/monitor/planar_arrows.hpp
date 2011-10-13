@@ -40,7 +40,7 @@ public:
 		monitor::arrow_scale const &,
 		monitor::grid_scale const &,
 		sge::renderer::texture::planar_ptr);
-	
+
 	void
 	from_planar_object(
 		flakelib::planar_object const &);

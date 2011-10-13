@@ -69,10 +69,11 @@ try
 				sge::image::capabilities_field::null(),
 				sge::all_extensions)));
 
-	sge::opencl::single_device_system opencl_system((
-		sge::opencl::optional_renderer()));
-	
-	sge::image2d::file_ptr boundary_image = 
+	sge::opencl::single_device_system opencl_system(
+		(sge::opencl::optional_renderer()),
+		(sge::opencl::context::optional_error_callback()));
+
+	sge::image2d::file_ptr boundary_image =
 		sys.image_loader().load(
 			flakelib::media_path_from_string(
 				FCPPT_TEXT("images/boundary.png")));
@@ -84,12 +85,12 @@ try
 			flakelib::boundary_view(
 				boundary_image->view()),
 			config_file));
-	
+
 	for(
-		unsigned 
-			i = 
+		unsigned
+			i =
 				0,
-			its = 
+			its =
 				sge::parse::json::find_and_convert_member<unsigned>(
 					config_file,
 					sge::parse::json::path(

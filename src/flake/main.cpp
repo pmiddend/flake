@@ -1,5 +1,6 @@
 #include <flakelib/simulation/base_ptr.hpp>
 #include <flakelib/media_path_from_string.hpp>
+#include <flakelib/media_path.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/visualization/base_ptr.hpp>
@@ -19,6 +20,8 @@
 #include <sge/parse/json/array.hpp>
 #include <sge/parse/json/config/merge_command_line_parameters.hpp>
 #include <sge/parse/json/parse_string_exn.hpp>
+#include <sge/parse/json/find_and_convert_member.hpp>
+#include <sge/parse/json/path.hpp>
 #include <sge/parse/json/config/create_command_line_parameters.hpp>
 #include <sge/window/instance.hpp>
 #include <sge/image/capabilities_field.hpp>
@@ -61,6 +64,7 @@
 #include <fcppt/log/activate_levels.hpp>
 #include <fcppt/log/context.hpp>
 #include <fcppt/log/level.hpp>
+#include <fcppt/chrono/duration_comparison.hpp>
 #include <fcppt/log/location.hpp>
 #include <iostream>
 #include <exception>
@@ -130,12 +134,16 @@ try
 				sge::systems::cursor_option_field::null())));
 
 	sge::opencl::single_device_system opencl_system(
-		sys.renderer());
-	
-	sge::image2d::file_ptr boundary_image = 
+		(sys.renderer()),
+		(sge::opencl::context::optional_error_callback()));
+
+	sge::image2d::file_ptr boundary_image =
 		sys.image_loader().load(
-			flakelib::media_path_from_string(
-				FCPPT_TEXT("images/boundary.png")));
+			flakelib::media_path()
+				/ FCPPT_TEXT("images")
+				/ sge::parse::json::find_and_convert_member<fcppt::string>(
+					config_file,
+					sge::parse::json::path(FCPPT_TEXT("boundary-file"))));
 
 	flakelib::simulation::base_ptr simulation(
 		flakelib::simulation::create(
@@ -180,19 +188,26 @@ try
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			fcppt::chrono::seconds(1)));
 
+	flakelib::duration delta(0.0f);
+
 	while(running)
 	{
 		sys.window().dispatch();
 
-		flakelib::duration const current_delta =
+		delta +=
 			sge::timer::elapsed_and_reset<flakelib::duration>(
 				delta_timer);
 
-		simulation->update(
-			current_delta);
+		if(delta > flakelib::duration(0.05f))
+		{
+			simulation->update(
+				delta);
 
-		visualization->update(
-			current_delta);
+			visualization->update(
+				delta);
+
+			delta = flakelib::duration(0.0f);
+		}
 
 		// If we have no viewport (yet), don't do anything (this is just a
 		// precaution, we _might_ divide by zero somewhere below, otherwise)

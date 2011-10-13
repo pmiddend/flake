@@ -5,7 +5,7 @@
 #include <flakelib/boundary_view.hpp>
 #include <flakelib/visualization/monitor/parent.hpp>
 #include <flakelib/visualization/monitor/planar_arrows.hpp>
-#include <flakelib/visualization/monitor/texture.hpp>
+#include <flakelib/visualization/monitor/child.hpp>
 #include <flakelib/simulation/base_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
@@ -15,6 +15,9 @@
 #include <sge/sprite/external_system_impl.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <boost/ptr_container/ptr_map.hpp>
+#include <fcppt/config/external_end.hpp>
 
 namespace flakelib
 {
@@ -49,13 +52,15 @@ public:
 
 	~arrow();
 private:
+	typedef
+	boost::ptr_map<fcppt::string,monitor::child>
+	additional_data_monitors;
+
 	sge::renderer::device &renderer_;
+	simulation::base &simulation_;
 	monitor::parent monitor_parent_;
 	monitor::planar_arrows velocity_arrows_;
-	monitor::texture pressure_;
-	monitor::texture velocity_magnitude_;
-	monitor::texture divergence_;
-	simulation::base &simulation_;
+	additional_data_monitors additional_data_;
 };
 }
 }

@@ -3,6 +3,7 @@
 
 #include <flakelib/visualization/monitor/rect.hpp>
 #include <flakelib/visualization/monitor/parent_fwd.hpp>
+#include <flakelib/planar_object.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -38,6 +39,10 @@ public:
 
 	virtual void
 	render() = 0;
+
+	virtual void
+	from_planar_object(
+		flakelib::planar_object const &) = 0;
 
 	virtual ~child() = 0;
 protected:

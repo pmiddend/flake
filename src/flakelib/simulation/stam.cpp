@@ -247,8 +247,13 @@ flakelib::simulation::stam::stam(
 	project_profiler_(
 		FCPPT_TEXT("project"),
 		parent_profiler_,
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled)
+		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
+	additional_planar_data_()
 {
+	additional_planar_data_[FCPPT_TEXT("pressure")] = flakelib::planar_object(&p1_);
+	additional_planar_data_[FCPPT_TEXT("velocity-magnitude")] = flakelib::planar_object(&helper_);
+	additional_planar_data_[FCPPT_TEXT("divergence")] = flakelib::planar_object(&temporary_v_);
+
 	sge::image2d::dim const boundary_dim =
 		sge::image2d::view::size(
 			boundary.get());
@@ -262,8 +267,23 @@ flakelib::simulation::stam::stam(
 		command_queue_,
 		null_image_,
 		fcppt::assign::make_array<std::size_t>
-			(boundary_dim[0])
-			(boundary_dim[1]).container(),
+			(v1_.size()[0])
+			(v1_.size()[1]).container(),
+		fcppt::assign::make_array<std::size_t>
+			(1)
+			(1).container());
+
+	null_image_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		v2_);
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		null_image_,
+		fcppt::assign::make_array<std::size_t>
+			(v2_.size()[0])
+			(v2_.size()[1]).container(),
 		fcppt::assign::make_array<std::size_t>
 			(1)
 			(1).container());
@@ -288,33 +308,16 @@ flakelib::simulation::stam::stam(
 flakelib::planar_object const
 flakelib::simulation::stam::velocity()
 {
-	return 
+	return
 		flakelib::planar_object(
-			&v1_);
+			&v2_);
 }
 
-flakelib::planar_object const
-flakelib::simulation::stam::pressure()
+flakelib::additional_planar_data const &
+flakelib::simulation::stam::additional_planar_data() const
 {
-	return 
-		flakelib::planar_object(
-			&p1_);
-}
-
-flakelib::planar_object const
-flakelib::simulation::stam::velocity_magnitude()
-{
-	return 
-		flakelib::planar_object(
-			&helper_);
-}
-
-flakelib::planar_object const
-flakelib::simulation::stam::divergence()
-{
-	return 
-		flakelib::planar_object(
-			&temporary_v_);
+	return
+		additional_planar_data_;
 }
 
 void
@@ -324,39 +327,41 @@ flakelib::simulation::stam::update(
 	profiler::scoped scoped_profiler(
 		parent_profiler_,
 		command_queue_);
-	
+
 	// Also a form of Dirichlet: Set the boundary at certain locations to be
 	// inflow.
 	this->apply_forces(
-		v1_);
+		v1_,
+		v2_,
+		dt);
 
 	// NOTE: We should only run advect on a divergence-free vector field (aside
 	// from boundary conditions?)
-	// Advect from v1 to v2
+	// Advect from v2 to v1
 	this->advect(
 		dt,
+		v2_,
+		v1_);
+
+	// Calculate divergence of v1 to v2
+	this->divergence(
 		v1_,
 		v2_);
 
-	// Calculate divergence of v2 to v1
-	this->divergence(
-		v2_,
-		v1_);
-
 	// Debug
 	this->divergence(
-		v2_,
+		v1_,
 		temporary_v_);
 
-	// Project v2, store result in v1
+	// Project v1, store result in v2
 	this->project(
-		v2_,
 		v1_,
-		v1_);
+		v2_,
+		v2_);
 
 	// Debug
 	this->vector_magnitude(
-		v1_,
+		v2_,
 		helper_,
 		velocity_magnitude_scale_);
 }
@@ -415,47 +420,55 @@ flakelib::simulation::stam::advect(
 
 void
 flakelib::simulation::stam::apply_forces(
-	sge::opencl::memory_object::image::planar &v)
+	sge::opencl::memory_object::image::planar &input,
+	sge::opencl::memory_object::image::planar &output,
+	flakelib::duration const &dt)
 {
+	FCPPT_ASSERT_PRE(
+		input.size()[0] == input.size()[1]);
+
 	profiler::scoped scoped_profiler(
 		external_forces_profiler_,
 		command_queue_);
 
-	// External forces
-	// Apply external forces to v2 (inline)
 	apply_external_forces_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		v);
+		input);
 
 	apply_external_forces_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		external_force_magnitude_);
-
-	cl_uint const fan_width = 5; 
+		output);
 
 	apply_external_forces_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
-		static_cast<cl_uint>(
-			v.size()[1]/2 - fan_width));
+		external_force_magnitude_);
 
+	cl_uint const fan_width = 5; 
+
+	// start
 	apply_external_forces_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
 		static_cast<cl_uint>(
-			v.size()[1]/2 + fan_width - 1));
+			fan_width));
 
 	apply_external_forces_.argument(
 		sge::opencl::kernel::argument_index(
 			4),
 		grid_scale_);
 
+	apply_external_forces_.argument(
+		sge::opencl::kernel::argument_index(
+			5),
+		dt.count());
+
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		apply_external_forces_,
-		fcppt::assign::make_array<std::size_t>( 2* fan_width).container(),
+		fcppt::assign::make_array<std::size_t>(input.size()[0]).container(),
 		fcppt::assign::make_array<std::size_t>(1).container());
 	
 	//force_applied = true;

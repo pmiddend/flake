@@ -33,17 +33,11 @@ public:
 		flakelib::boundary_view const &,
 		sge::parse::json::object const &);
 
-	flakelib::planar_object const	
+	flakelib::planar_object const
 	velocity();
 
-	flakelib::planar_object const	
-	pressure();
-
-	flakelib::planar_object const	
-	velocity_magnitude();
-
-	flakelib::planar_object const	
-	divergence();
+	flakelib::additional_planar_data const &
+	additional_planar_data() const;
 
 	void
 	update(
@@ -77,28 +71,31 @@ private:
 	flakelib::profiler::object divergence_profiler_;
 	flakelib::profiler::object jacobi_profiler_;
 	flakelib::profiler::object project_profiler_;
-	
+	flakelib::additional_planar_data additional_planar_data_;
+
 	void
 	advect(
 		flakelib::duration const &,
 		sge::opencl::memory_object::image::planar &from,
 		sge::opencl::memory_object::image::planar &to);
-	
+
 	void
 	apply_forces(
-		sge::opencl::memory_object::image::planar &);
+		sge::opencl::memory_object::image::planar &,
+		sge::opencl::memory_object::image::planar &,
+		flakelib::duration const &);
 
 	void
 	divergence(
 		sge::opencl::memory_object::image::planar &from,
 		sge::opencl::memory_object::image::planar &to);
-	
+
 	void
 	project(
 		sge::opencl::memory_object::image::planar &v,
 		sge::opencl::memory_object::image::planar &divergence,
 		sge::opencl::memory_object::image::planar &target);
-	
+
 	void
 	copy_image(
 		sge::opencl::memory_object::image::planar &from,

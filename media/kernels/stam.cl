@@ -21,7 +21,7 @@ is_solid(
 	global read_only image2d_t boundary,
 	int2 const position)
 {
-	return 
+	return
 		read_imagei(
 			boundary,
 			absolute_clamping_nearest,position).x != 0;
@@ -51,7 +51,7 @@ advect(
 	global write_only image2d_t output,
 	global read_only image2d_t boundary,
 	float const dt,
-	float const grid_size)
+	float const grid_scale)
 {
 	int2 const position =
 		(int2)(
@@ -83,7 +83,7 @@ advect(
 	float2 const advected_vector =
 		convert_float2(position) -
 		dt *
-		(1.0f / grid_size) *
+		(1.0f / grid_scale) *
 		current_velocity;
 
 	// After moving back in time, we do not always end up exactly at a grid
@@ -124,39 +124,71 @@ advect(
  */
 kernel void
 apply_external_forces(
-	global write_only image2d_t output,
-	float const force_magnitude,
-	unsigned start,
-	unsigned end,
-	float const grid_size)
+	/* 0 */global read_only image2d_t input,
+	/* 1 */global write_only image2d_t output,
+	/* 2 */float const force_magnitude,
+	/* 3 */unsigned const fan_width,
+	/* 4 */float const grid_scale,
+	/* 5 */float const dt)
 {
-	size_t const y =
-		start + 
+	size_t const i =
 		get_global_id(
 			0);
 
-	/*
-	write_imagef(
-		output,
-		(int2)(0,y),
-		(float4)(
-			force_magnitude,
-			0.0f
-//			grid_size * (y - middle),
-			0.0f,
-			0.0f));
-	*/
+	unsigned const edge_size =
+		get_image_width(
+			input);
+
+	unsigned const start_y =
+		edge_size / 2 - fan_width;
+
 	float const middle = 
-		(start + end) / 2.0f;
+		start_y + 0.5f * fan_width;
 
 	write_imagef(
 		output,
-		(int2)(0,y),
-		(float4)(
-			force_magnitude,
-			y - middle,
-			0.0f,
-			0.0f));
+		(int2)(0,i),
+		read_imagef(
+			input,
+			absolute_clamping_nearest,
+			(int2)(1,i)));
+
+	write_imagef(
+		output,
+		(int2)(i,0),
+		read_imagef(
+			input,
+			absolute_clamping_nearest,
+			(int2)(i,1)));
+
+	write_imagef(
+		output,
+		(int2)(edge_size-1,i),
+		read_imagef(
+			input,
+			absolute_clamping_nearest,
+			(int2)(edge_size-2,i)));
+
+	write_imagef(
+		output,
+		(int2)(i,edge_size-1),
+		read_imagef(
+			input,
+			absolute_clamping_nearest,
+			(int2)(i,edge_size-2)));
+
+	if(i >= start_y && i <= start_y + 2*fan_width)
+	{
+		write_imagef(
+			output,
+			(int2)(0,i),
+			/*dt * */
+			(float4)(
+				force_magnitude,
+				i - middle,
+				0.0f,
+				0.0f));
+	}
 }
 
 kernel void
@@ -191,7 +223,7 @@ divergence(
 	global read_only image2d_t input,
 	global write_only image2d_t output,
 	global read_only image2d_t boundary,
-	float const grid_size)
+	float const grid_scale)
 {
 	int2 const position =
 		(int2)(
@@ -235,7 +267,7 @@ divergence(
 		output,
 		position,
 		(float4)(
-			((right.x - left.x) + (top.y - bottom.y)) / (2.0f * grid_size),
+			((right.x - left.x) + (top.y - bottom.y)) / (2.0f * grid_scale),
 			0.0f,
 			0.0f,
 			0.0f));
@@ -261,6 +293,28 @@ jacobi(
 			get_global_id(
 				1));
 
+	float const
+		left_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_left).x,
+		right_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_right).x,
+		top_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_top).x,
+		bottom_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_bottom).x;
+
 	float
 		center =
 			read_imagef(
@@ -268,26 +322,39 @@ jacobi(
 				absolute_clamping_nearest,
 				position).x,
 		left =
+			left_boundary *
+			center +
+			(1.0f - left_boundary) *
 			read_imagef(
 				x,
 				absolute_clamping_nearest,
 				position + pos_left).x,
 		right =
+			right_boundary *
+			center +
+			(1.0f - right_boundary) *
 			read_imagef(
 				x,
 				absolute_clamping_nearest,
 				position + pos_right).x,
 		top =
+			top_boundary *
+			center +
+			(1.0f - top_boundary) *
 			read_imagef(
 				x,
 				absolute_clamping_nearest,
 				position + pos_top).x,
 		bottom =
+			bottom_boundary *
+			center +
+			(1.0f - bottom_boundary) *
 			read_imagef(
 				x,
 				absolute_clamping_nearest,
 				position + pos_bottom).x;
 
+	/*
 	if(is_solid(boundary,position + pos_left))
 		left = center;
 	if(is_solid(boundary,position + pos_right))
@@ -296,6 +363,7 @@ jacobi(
 		top = center;
 	if(is_solid(boundary,position + pos_bottom))
 		bottom = center;
+		*/
 
 	float const b_value =
 		read_imagef(
@@ -314,7 +382,7 @@ jacobi(
 kernel void
 gradient_and_subtract(
 	/* 0 */global read_only image2d_t p,
-	/* 1 */float const grid_size,
+	/* 1 */float const grid_scale,
 	/* 2 */global read_only image2d_t w,
 	/* 3 */global read_only image2d_t boundary,
 	/* 4 */global write_only image2d_t output)
@@ -396,7 +464,7 @@ gradient_and_subtract(
 			position).xy;
 
 	float2 const pressure_gradient = 
-		(0.5f / grid_size) *
+		(0.5f / grid_scale) *
 			(float2)(
 				right-left,
 				top-bottom);

@@ -2,6 +2,7 @@
 #define FLAKELIB_SIMULATION_BASE_HPP_INCLUDED
 
 #include <flakelib/duration.hpp>
+#include <flakelib/additional_planar_data.hpp>
 #include <flakelib/planar_object.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -24,14 +25,9 @@ public:
 	virtual flakelib::planar_object const
 	velocity() = 0;
 
-	virtual flakelib::planar_object const
-	pressure() = 0;
-
-	virtual flakelib::planar_object const
-	velocity_magnitude() = 0;
-
-	virtual flakelib::planar_object const
-	divergence() = 0;
+	virtual
+	flakelib::additional_planar_data const &
+	additional_planar_data() const = 0;
 protected:
 	explicit
 	base();
