@@ -47,18 +47,19 @@ public:
 private:
 	sge::opencl::command_queue::object &command_queue_;
 	sge::opencl::memory_object::image::planar v1_,v2_;
-	sge::opencl::memory_object::image::planar temporary_v_;
-	sge::opencl::memory_object::image::planar p1_,p2_,helper_;
+	sge::opencl::memory_object::image::planar divergence_;
+	sge::opencl::memory_object::image::planar p1_,p2_,vector_magnitude_,residual_;
 	sge::opencl::memory_object::image::planar boundary_;
 	sge::opencl::program::object main_program_;
-	sge::opencl::kernel::object null_image_;
-	sge::opencl::kernel::object advect_;
-	sge::opencl::kernel::object apply_external_forces_;
-	sge::opencl::kernel::object divergence_;
-	sge::opencl::kernel::object jacobi_;
-	sge::opencl::kernel::object gradient_and_subtract_;
-	sge::opencl::kernel::object copy_image_;
-	sge::opencl::kernel::object vector_magnitude_;
+	sge::opencl::kernel::object null_image_kernel_;
+	sge::opencl::kernel::object advect_kernel_;
+	sge::opencl::kernel::object apply_external_forces_kernel_;
+	sge::opencl::kernel::object divergence_kernel_;
+	sge::opencl::kernel::object jacobi_kernel_;
+	sge::opencl::kernel::object laplace_residual_kernel_;
+	sge::opencl::kernel::object gradient_and_subtract_kernel_;
+	sge::opencl::kernel::object copy_image_kernel_;
+	sge::opencl::kernel::object vector_magnitude_kernel_;
 	cl_float const external_force_magnitude_;
 	cl_float const grid_scale_;
 	cl_float const velocity_magnitude_scale_;
@@ -72,6 +73,10 @@ private:
 	flakelib::profiler::object jacobi_profiler_;
 	flakelib::profiler::object project_profiler_;
 	flakelib::additional_planar_data additional_planar_data_;
+
+	void
+	null_image(
+		sge::opencl::memory_object::image::planar &);
 
 	void
 	advect(
@@ -106,6 +111,12 @@ private:
 		sge::opencl::memory_object::image::planar &from,
 		sge::opencl::memory_object::image::planar &to,
 		cl_float);
+
+	void
+	laplace_residual(
+		sge::opencl::memory_object::image::planar &lhs,
+		sge::opencl::memory_object::image::planar &rhs,
+		sge::opencl::memory_object::image::planar &to);
 };
 }
 }

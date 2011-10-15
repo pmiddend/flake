@@ -1,16 +1,17 @@
 {
-	"boundary-file" : "boundary_circle.png",
+	"boundary-file" : "boundary.png",
 	"benchmark-iterations" : 2000,
 	"grid-scale" : 10.0,
-	"jacobi-iterations" : 40,
-	"external-force-magnitude" : 30.0,
+	"jacobi-iterations" : 400,
+	"external-force-magnitude" : 10.0,
 	"profiling" : true,
 	"visualization" :
 	{
 		"arrow-scale" : 1.0,
-		"pressure-scale" : 0.10,
+		"pressure-scale" : 1.00,
 		"velocity-magnitude-scale" : 0.1,
 		"divergence-scale" : 100.00,
+		"residual-scale" : 100.00,
 		"grid-position" : [10.0,10.0],
 		"border-size" : 2.0,
 		"font-size" : 20

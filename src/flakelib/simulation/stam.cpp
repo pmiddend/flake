@@ -100,7 +100,7 @@ flakelib::simulation::stam::stam(
 				boundary.get())),
 		sge::opencl::memory_object::image::planar_pitch(
 			0)),
-	temporary_v_(
+	divergence_(
 		_context,
 		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
 		create_image_format(
@@ -133,7 +133,18 @@ flakelib::simulation::stam::stam(
 				boundary.get())),
 		sge::opencl::memory_object::image::planar_pitch(
 			0)),
-	helper_(
+	vector_magnitude_(
+		_context,
+		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
+		create_image_format(
+			CL_R,
+			CL_FLOAT),
+		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
+			sge::image2d::view::size(
+				boundary.get())),
+		sge::opencl::memory_object::image::planar_pitch(
+			0)),
+	residual_(
 		_context,
 		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
 		create_image_format(
@@ -163,35 +174,39 @@ flakelib::simulation::stam::stam(
 					flakelib::media_path_from_string(
 						FCPPT_TEXT("kernels/stam.cl"))))),
 		sge::opencl::program::build_parameters()),
-	null_image_(
+	null_image_kernel_(
 		main_program_,
 		sge::opencl::kernel::name(
 			"null_image")),
-	advect_(
+	advect_kernel_(
 		main_program_,
 		sge::opencl::kernel::name(
 			"advect")),
-	apply_external_forces_(
+	apply_external_forces_kernel_(
 		main_program_,
 		sge::opencl::kernel::name(
 			"apply_external_forces")),
-	divergence_(
+	divergence_kernel_(
 		main_program_,
 		sge::opencl::kernel::name(
 			"divergence")),
-	jacobi_(
+	jacobi_kernel_(
 		main_program_,
 		sge::opencl::kernel::name(
 			"jacobi")),
-	gradient_and_subtract_(
+	laplace_residual_kernel_(
+		main_program_,
+		sge::opencl::kernel::name(
+			"laplace_residual")),
+	gradient_and_subtract_kernel_(
 		main_program_,
 		sge::opencl::kernel::name(
 			"gradient_and_subtract")),
-	copy_image_(
+	copy_image_kernel_(
 		main_program_,
 		sge::opencl::kernel::name(
 			"copy_image")),
-	vector_magnitude_(
+	vector_magnitude_kernel_(
 		main_program_,
 		sge::opencl::kernel::name(
 			"vector_magnitude")),
@@ -237,7 +252,7 @@ flakelib::simulation::stam::stam(
 		parent_profiler_,
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	divergence_profiler_(
-		FCPPT_TEXT("divergence_"),
+		FCPPT_TEXT("divergence"),
 		parent_profiler_,
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	jacobi_profiler_(
@@ -251,44 +266,21 @@ flakelib::simulation::stam::stam(
 	additional_planar_data_()
 {
 	additional_planar_data_[FCPPT_TEXT("pressure")] = flakelib::planar_object(&p1_);
-	additional_planar_data_[FCPPT_TEXT("velocity-magnitude")] = flakelib::planar_object(&helper_);
-	additional_planar_data_[FCPPT_TEXT("divergence")] = flakelib::planar_object(&temporary_v_);
+	additional_planar_data_[FCPPT_TEXT("velocity-magnitude")] = flakelib::planar_object(&vector_magnitude_);
+	additional_planar_data_[FCPPT_TEXT("divergence")] = flakelib::planar_object(&divergence_);
+	additional_planar_data_[FCPPT_TEXT("residual")] = flakelib::planar_object(&residual_);
 
-	sge::image2d::dim const boundary_dim =
-		sge::image2d::view::size(
-			boundary.get());
-
-	null_image_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
+	this->null_image(
 		v1_);
 
-	sge::opencl::command_queue::enqueue_kernel(
-		command_queue_,
-		null_image_,
-		fcppt::assign::make_array<std::size_t>
-			(v1_.size()[0])
-			(v1_.size()[1]).container(),
-		fcppt::assign::make_array<std::size_t>
-			(1)
-			(1).container());
-
-	null_image_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
+	this->null_image(
 		v2_);
 
-	sge::opencl::command_queue::enqueue_kernel(
-		command_queue_,
-		null_image_,
-		fcppt::assign::make_array<std::size_t>
-			(v2_.size()[0])
-			(v2_.size()[1]).container(),
-		fcppt::assign::make_array<std::size_t>
-			(1)
-			(1).container());
-
 	{
+		sge::image2d::dim const boundary_dim =
+			sge::image2d::view::size(
+				boundary.get());
+
 		sge::opencl::command_queue::scoped_planar_mapping scoped_image(
 			_command_queue,
 			boundary_,
@@ -346,29 +338,53 @@ flakelib::simulation::stam::update(
 	// Calculate divergence of v1 to v2
 	this->divergence(
 		v1_,
-		v2_);
-
-	// Debug
-	this->divergence(
-		v1_,
-		temporary_v_);
+		divergence_);
 
 	// Project v1, store result in v2
 	this->project(
 		v1_,
-		v2_,
+		divergence_,
 		v2_);
 
 	// Debug
 	this->vector_magnitude(
 		v2_,
-		helper_,
+		vector_magnitude_,
 		velocity_magnitude_scale_);
+
+	this->laplace_residual(
+		p1_,
+		divergence_,
+		residual_);
 }
 
 flakelib::simulation::stam::~stam()
 {
 	fcppt::io::cout() << parent_profiler_ << FCPPT_TEXT("\n");
+}
+
+void
+flakelib::simulation::stam::null_image(
+	sge::opencl::memory_object::image::planar &input)
+{
+	profiler::scoped scoped_profiler(
+		null_image_profiler_,
+		command_queue_);
+
+	null_image_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		input);
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		null_image_kernel_,
+		fcppt::assign::make_array<std::size_t>
+			(input.size()[0])
+			(input.size()[1]).container(),
+		fcppt::assign::make_array<std::size_t>
+			(1)
+			(1).container());
 }
 
 void
@@ -381,35 +397,35 @@ flakelib::simulation::stam::advect(
 		advection_profiler_,
 		command_queue_);
 
-	advect_.argument(
+	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
 		from);
 
-	advect_.argument(
+	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
 		to);
 
-	advect_.argument(
+	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
 		boundary_);
 
-	advect_.argument(
+	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
 		static_cast<cl_float>(
 			dt.count()));
 
-	advect_.argument(
+	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			4),
 		grid_scale_);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
-		advect_,
+		advect_kernel_,
 		fcppt::assign::make_array<std::size_t>
 			(from.size()[0])
 			(from.size()[1]).container(),
@@ -431,46 +447,46 @@ flakelib::simulation::stam::apply_forces(
 		external_forces_profiler_,
 		command_queue_);
 
-	apply_external_forces_.argument(
+	apply_external_forces_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
 		input);
 
-	apply_external_forces_.argument(
+	apply_external_forces_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
 		output);
 
-	apply_external_forces_.argument(
+	apply_external_forces_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
 		external_force_magnitude_);
 
-	cl_uint const fan_width = 5; 
+	cl_uint const fan_width = 5;
 
 	// start
-	apply_external_forces_.argument(
+	apply_external_forces_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
 		static_cast<cl_uint>(
 			fan_width));
 
-	apply_external_forces_.argument(
+	apply_external_forces_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			4),
 		grid_scale_);
 
-	apply_external_forces_.argument(
+	apply_external_forces_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			5),
 		dt.count());
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
-		apply_external_forces_,
+		apply_external_forces_kernel_,
 		fcppt::assign::make_array<std::size_t>(input.size()[0]).container(),
 		fcppt::assign::make_array<std::size_t>(1).container());
-	
+
 	//force_applied = true;
 }
 
@@ -483,29 +499,29 @@ flakelib::simulation::stam::divergence(
 		divergence_profiler_,
 		command_queue_);
 
-	divergence_.argument(
+	divergence_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
 		from);
 
-	divergence_.argument(
+	divergence_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
 		to);
 
-	divergence_.argument(
+	divergence_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
 		boundary_);
 
-	divergence_.argument(
+	divergence_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
 		grid_scale_);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
-		divergence_,
+		divergence_kernel_,
 		fcppt::assign::make_array<std::size_t>
 			(from.size()[0])
 			(from.size()[1]).container(),
@@ -516,70 +532,51 @@ flakelib::simulation::stam::divergence(
 
 void
 flakelib::simulation::stam::project(
-	sge::opencl::memory_object::image::planar &v,
+	sge::opencl::memory_object::image::planar &_velocity,
 	sge::opencl::memory_object::image::planar &_divergence,
 	sge::opencl::memory_object::image::planar &target)
 {
-	{
-		profiler::scoped scoped_profiler(
-			null_image_profiler_,
-			command_queue_);
-
-		// Null p1 (initial solution guess)
-		null_image_.argument(
-			sge::opencl::kernel::argument_index(
-				0),
-			p1_);
-
-		sge::opencl::command_queue::enqueue_kernel(
-			command_queue_,
-			null_image_,
-			fcppt::assign::make_array<std::size_t>
-				(p1_.size()[0])
-				(p1_.size()[1]).container(),
-			fcppt::assign::make_array<std::size_t>
-				(1)
-				(1).container());
-	}
-
 	// We need those later on
 	sge::opencl::memory_object::base *current_source = &p1_,*current_dest = &p2_;
+
+	this->null_image(
+		p1_);
+
 	{
 		profiler::scoped scoped_profiler(
 			jacobi_profiler_,
 			command_queue_);
 
-		jacobi_.argument(
+		jacobi_kernel_.argument(
 			sge::opencl::kernel::argument_index(
 				0),
 			_divergence);
 
-		jacobi_.argument(
+		jacobi_kernel_.argument(
 			sge::opencl::kernel::argument_index(
 				2),
 			boundary_);
 
-
 		// Alpha
-		jacobi_.argument(
+		jacobi_kernel_.argument(
 			sge::opencl::kernel::argument_index(
 				4),
 			-(grid_scale_ * grid_scale_));
 
 		// Beta (rbeta)
-		jacobi_.argument(
+		jacobi_kernel_.argument(
 			sge::opencl::kernel::argument_index(
 				5),
 			static_cast<cl_float>(1)/static_cast<cl_float>(4));
 
 		for(unsigned i = 0; i < jacobi_iterations_; ++i)
 		{
-			jacobi_.argument(
+			jacobi_kernel_.argument(
 				sge::opencl::kernel::argument_index(
 					1),
 				*current_source);
 
-			jacobi_.argument(
+			jacobi_kernel_.argument(
 				sge::opencl::kernel::argument_index(
 					3),
 				*current_dest);
@@ -590,7 +587,7 @@ flakelib::simulation::stam::project(
 
 			sge::opencl::command_queue::enqueue_kernel(
 				command_queue_,
-				jacobi_,
+				jacobi_kernel_,
 				fcppt::assign::make_array<std::size_t>
 					(p1_.size()[0])
 					(p1_.size()[1]).container(),
@@ -604,35 +601,35 @@ flakelib::simulation::stam::project(
 		project_profiler_,
 		command_queue_);
 
-	gradient_and_subtract_.argument(
+	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
 		*current_source);
 
-	gradient_and_subtract_.argument(
+	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
 		grid_scale_);
 
 	// Temporary vector field (from which the divergence was calculated)
-	gradient_and_subtract_.argument(
+	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
-		v);
+		_velocity);
 
-	gradient_and_subtract_.argument(
+	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
 		boundary_);
 
-	gradient_and_subtract_.argument(
+	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			4),
 		target);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
-		gradient_and_subtract_,
+		gradient_and_subtract_kernel_,
 		fcppt::assign::make_array<std::size_t>
 			(p1_.size()[0])
 			(p1_.size()[1]).container(),
@@ -649,19 +646,19 @@ flakelib::simulation::stam::copy_image(
 	FCPPT_ASSERT_PRE(
 		from.size() == to.size());
 
-	copy_image_.argument(
+	copy_image_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
 		from);
 
-	copy_image_.argument(
+	copy_image_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
 		to);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
-		copy_image_,
+		copy_image_kernel_,
 		fcppt::assign::make_array<std::size_t>
 			(from.size()[0])
 			(from.size()[1]).container(),
@@ -679,27 +676,75 @@ flakelib::simulation::stam::vector_magnitude(
 	FCPPT_ASSERT_PRE(
 		from.size() == to.size());
 
-	vector_magnitude_.argument(
+	vector_magnitude_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
 		from);
 
-	vector_magnitude_.argument(
+	vector_magnitude_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
 		to);
 
-	vector_magnitude_.argument(
+	vector_magnitude_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
 		scaling);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
-		vector_magnitude_,
+		vector_magnitude_kernel_,
 		fcppt::assign::make_array<std::size_t>
 			(from.size()[0])
 			(from.size()[1]).container(),
+		fcppt::assign::make_array<std::size_t>
+			(1)
+			(1).container());
+}
+
+void
+flakelib::simulation::stam::laplace_residual(
+	sge::opencl::memory_object::image::planar &lhs,
+	sge::opencl::memory_object::image::planar &rhs,
+	sge::opencl::memory_object::image::planar &to)
+{
+	FCPPT_ASSERT_PRE(
+		lhs.size() == rhs.size());
+
+	FCPPT_ASSERT_PRE(
+		to.size() == rhs.size());
+
+	laplace_residual_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		lhs);
+
+	laplace_residual_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		rhs);
+
+	laplace_residual_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		to);
+
+	laplace_residual_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			3),
+		boundary_);
+
+	laplace_residual_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			4),
+		grid_scale_);
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		laplace_residual_kernel_,
+		fcppt::assign::make_array<std::size_t>
+			(lhs.size()[0])
+			(lhs.size()[1]).container(),
 		fcppt::assign::make_array<std::size_t>
 			(1)
 			(1).container());

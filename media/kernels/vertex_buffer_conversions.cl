@@ -87,12 +87,12 @@ image_to_image(
 	global write_only image2d_t output,
 	float const scaling)
 {
-	int2 const this_pos = 
+	int2 const this_pos =
 		(int2)(
 			get_global_id(0),
 			get_global_id(1));
 
-	float4 const current_pixel = 
+	float4 const current_pixel =
 		read_imagef(
 			input,
 			absolute_clamping_nearest,
@@ -101,7 +101,8 @@ image_to_image(
 	write_imagef(
 		output,
 		this_pos,
-		scaling * current_pixel);
+//		scaling * current_pixel);
+		(float4)(scaling * current_pixel.xyz,1.0f));
 }
 
 kernel void
@@ -110,7 +111,7 @@ buffer_to_image(
 	global write_only image2d_t output,
 	float const scaling)
 {
-	int2 const this_pos = 
+	int2 const this_pos =
 		(int2)(
 			get_global_id(0),
 			get_global_id(1));

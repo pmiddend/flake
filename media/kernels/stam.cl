@@ -10,7 +10,7 @@ sampler_t const absolute_clamping_linear =
 	CLK_ADDRESS_CLAMP_TO_EDGE |
 	CLK_FILTER_LINEAR;
 
-__constant int2 const 
+constant int2 const
 	pos_left = (int2)(-1,0),
 	pos_right = (int2)(1,0),
 	pos_top = (int2)(0,1),
@@ -142,8 +142,8 @@ apply_external_forces(
 	unsigned const start_y =
 		edge_size / 2 - fan_width;
 
-	float const middle = 
-		start_y + 0.5f * fan_width;
+	float const middle =
+		start_y + fan_width;
 
 	write_imagef(
 		output,
@@ -177,7 +177,7 @@ apply_external_forces(
 			absolute_clamping_nearest,
 			(int2)(i,edge_size-2)));
 
-	if(i >= start_y && i <= start_y + 2*fan_width)
+	if(i >= start_y && i < start_y + 2*fan_width)
 	{
 		write_imagef(
 			output,
@@ -404,7 +404,7 @@ gradient_and_subtract(
 	}
 
 	float
-		center = 
+		center =
 			read_imagef(
 				p,
 				absolute_clamping_nearest,
@@ -457,19 +457,19 @@ gradient_and_subtract(
 		vmask.y = 0.0f;
 	}
 
-	float2 const velocity = 
+	float2 const velocity =
 		read_imagef(
 			w,
 			absolute_clamping_nearest,
 			position).xy;
 
-	float2 const pressure_gradient = 
+	float2 const pressure_gradient =
 		(0.5f / grid_scale) *
 			(float2)(
 				right-left,
 				top-bottom);
 
-	float2 result = 
+	float2 result =
 		velocity - pressure_gradient;
 
 	result = vmask * result;
@@ -499,4 +499,101 @@ copy_image(
 			from,
 			absolute_clamping_nearest,
 			position));
+}
+
+kernel void
+laplace_residual(
+	// left hand side
+	global read_only image2d_t lhs,
+	// right hand side
+	global read_only image2d_t rhs,
+	global write_only image2d_t to,
+	global read_only image2d_t boundary,
+	float const grid_scale)
+{
+	int2 const position =
+		(int2)(
+			get_global_id(
+				0),
+			get_global_id(
+				1));
+
+	float const
+		left_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_left).x,
+		right_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_right).x,
+		top_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_top).x,
+		bottom_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_bottom).x;
+
+	float
+		center =
+			read_imagef(
+				lhs,
+				absolute_clamping_nearest,
+				position).x,
+		left =
+			left_boundary *
+			center +
+			(1.0f - left_boundary) *
+			read_imagef(
+				lhs,
+				absolute_clamping_nearest,
+				position + pos_left).x,
+		right =
+			right_boundary *
+			center +
+			(1.0f - right_boundary) *
+			read_imagef(
+				lhs,
+				absolute_clamping_nearest,
+				position + pos_right).x,
+		top =
+			top_boundary *
+			center +
+			(1.0f - top_boundary) *
+			read_imagef(
+				lhs,
+				absolute_clamping_nearest,
+				position + pos_top).x,
+		bottom =
+			bottom_boundary *
+			center +
+			(1.0f - bottom_boundary) *
+			read_imagef(
+				lhs,
+				absolute_clamping_nearest,
+				position + pos_bottom).x;
+
+	float const
+		laplace =
+			(left + right + top + bottom - 4.0f * center) / (grid_scale * grid_scale),
+		rhs_value =
+			read_imagef(
+				rhs,
+				absolute_clamping_nearest,
+				position).x;
+
+	write_imagef(
+		to,
+		position,
+		(float4)(
+			fabs(laplace - rhs_value),
+			0.0f,
+			0.0f,
+			0.0f));
 }

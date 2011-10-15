@@ -35,7 +35,7 @@ flakelib::visualization::monitor::texture::texture(
 			sge::renderer::texture::planar_parameters(
 				fcppt::math::dim::structure_cast<sge::renderer::dim2>(
 					_grid_dimensions.get()),
-				sge::image::color::format::l8,
+				sge::image::color::format::rgba32f,
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::texture::address_mode2(
 					sge::renderer::texture::address_mode::clamp),
