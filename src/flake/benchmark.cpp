@@ -1,30 +1,32 @@
-#include <flakelib/simulation/base_ptr.hpp>
-#include <flakelib/media_path_from_string.hpp>
 #include <flakelib/duration.hpp>
+#include <flakelib/media_path_from_string.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
-#include <flakelib/simulation/create.hpp>
 #include <flakelib/simulation/base.hpp>
+#include <flakelib/simulation/base_ptr.hpp>
+#include <flakelib/simulation/create.hpp>
 #include <sge/all_extensions.hpp>
+#include <sge/image/capabilities_field.hpp>
 #include <sge/image2d/file.hpp>
 #include <sge/image2d/file_ptr.hpp>
 #include <sge/image2d/multi_loader.hpp>
 #include <sge/image2d/view/const_object.hpp>
-#include <sge/image/capabilities_field.hpp>
 #include <sge/log/global_context.hpp>
 #include <sge/opencl/single_device_system.hpp>
 #include <sge/parse/json/array.hpp>
-#include <sge/parse/json/config/create_command_line_parameters.hpp>
-#include <sge/parse/json/config/merge_command_line_parameters.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/object.hpp>
 #include <sge/parse/json/parse_string_exn.hpp>
 #include <sge/parse/json/path.hpp>
+#include <sge/parse/json/config/create_command_line_parameters.hpp>
+#include <sge/parse/json/config/merge_command_line_parameters.hpp>
 #include <sge/systems/image_loader.hpp>
 #include <sge/systems/instance.hpp>
 #include <sge/systems/list.hpp>
+#include <fcppt/exception.hpp>
+#include <fcppt/text.hpp>
+#include <fcppt/chrono/duration_impl.hpp>
 #include <fcppt/chrono/seconds.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
-#include <fcppt/exception.hpp>
 #include <fcppt/io/cerr.hpp>
 #include <fcppt/log/activate_levels.hpp>
 #include <fcppt/log/context.hpp>
@@ -32,12 +34,13 @@
 #include <fcppt/log/location.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
 #include <fcppt/signal/scoped_connection.hpp>
-#include <fcppt/text.hpp>
-#include <fcppt/chrono/duration_impl.hpp>
-#include <iostream>
-#include <exception>
-#include <ostream>
+#include <fcppt/config/external_begin.hpp>
 #include <cstddef>
+#include <exception>
+#include <iostream>
+#include <ostream>
+#include <fcppt/config/external_end.hpp>
+
 
 int
 main(

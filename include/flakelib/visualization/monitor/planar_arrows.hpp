@@ -2,22 +2,23 @@
 #define FLAKELIB_VISUALIZATION_MONITOR_PLANAR_ARROWS_HPP_INCLUDED
 
 #include <flakelib/planar_object.hpp>
-#include <flakelib/visualization/monitor/parent_fwd.hpp>
-#include <flakelib/visualization/monitor/child.hpp>
-#include <flakelib/visualization/monitor/dummy_sprite/object.hpp>
-#include <flakelib/visualization/monitor/name.hpp>
-#include <flakelib/visualization/monitor/rect.hpp>
-#include <flakelib/visualization/monitor/grid_scale.hpp>
 #include <flakelib/visualization/monitor/arrow_scale.hpp>
+#include <flakelib/visualization/monitor/child.hpp>
 #include <flakelib/visualization/monitor/grid_dimensions.hpp>
+#include <flakelib/visualization/monitor/grid_scale.hpp>
+#include <flakelib/visualization/monitor/name.hpp>
+#include <flakelib/visualization/monitor/parent_fwd.hpp>
+#include <flakelib/visualization/monitor/rect.hpp>
+#include <flakelib/visualization/monitor/dummy_sprite/object.hpp>
+#include <sge/opencl/memory_object/buffer.hpp>
+#include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <sge/renderer/vertex_buffer_ptr.hpp>
 #include <sge/renderer/texture/planar_ptr.hpp>
-#include <sge/opencl/memory_object/image/planar_fwd.hpp>
-#include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
 #include <fcppt/math/vector/basic_impl.hpp>
+
 
 namespace flakelib
 {

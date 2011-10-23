@@ -2,8 +2,9 @@
 #define FLAKELIB_VISUALIZATION_BASE_HPP_INCLUDED
 
 #include <flakelib/duration.hpp>
-#include <fcppt/noncopyable.hpp>
 #include <sge/renderer/state/list.hpp>
+#include <fcppt/noncopyable.hpp>
+
 
 namespace flakelib
 {

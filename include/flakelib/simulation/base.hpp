@@ -1,11 +1,12 @@
 #ifndef FLAKELIB_SIMULATION_BASE_HPP_INCLUDED
 #define FLAKELIB_SIMULATION_BASE_HPP_INCLUDED
 
-#include <flakelib/duration.hpp>
 #include <flakelib/additional_planar_data.hpp>
+#include <flakelib/duration.hpp>
 #include <flakelib/planar_object.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
+
 
 namespace flakelib
 {

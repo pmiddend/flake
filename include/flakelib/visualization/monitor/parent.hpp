@@ -2,30 +2,31 @@
 #define FLAKELIB_VISUALIZATION_MONITOR_PARENT_HPP_INCLUDED
 
 #include <flakelib/planar_object.hpp>
-#include <flakelib/visualization/monitor/grid_dimensions.hpp>
-#include <flakelib/visualization/monitor/window_manager.hpp>
-#include <flakelib/visualization/monitor/dummy_sprite/system.hpp>
+#include <flakelib/visualization/monitor/arrow_scale.hpp>
 #include <flakelib/visualization/monitor/child.hpp>
 #include <flakelib/visualization/monitor/child_list.hpp>
-#include <flakelib/visualization/monitor/arrow_scale.hpp>
-#include <flakelib/visualization/monitor/scaling_factor.hpp>
 #include <flakelib/visualization/monitor/font_color.hpp>
+#include <flakelib/visualization/monitor/grid_dimensions.hpp>
 #include <flakelib/visualization/monitor/grid_scale.hpp>
-#include <sge/renderer/device_fwd.hpp>
-#include <sge/renderer/vertex_declaration_fwd.hpp>
-#include <sge/renderer/vertex_declaration_ptr.hpp>
-#include <sge/opencl/memory_object/image/planar_fwd.hpp>
+#include <flakelib/visualization/monitor/scaling_factor.hpp>
+#include <flakelib/visualization/monitor/window_manager.hpp>
+#include <flakelib/visualization/monitor/dummy_sprite/system.hpp>
 #include <sge/font/metrics_ptr.hpp>
 #include <sge/font/text/drawer_3d.hpp>
 #include <sge/image/color/any/object_fwd.hpp>
-#include <sge/opencl/memory_object/buffer_fwd.hpp>
-#include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
-#include <sge/opencl/program/object.hpp>
+#include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
-#include <sge/sprite/intrusive/system_impl.hpp>
+#include <sge/opencl/memory_object/buffer_fwd.hpp>
+#include <sge/opencl/memory_object/image/planar_fwd.hpp>
+#include <sge/opencl/program/object.hpp>
+#include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/vertex_declaration_fwd.hpp>
+#include <sge/renderer/vertex_declaration_ptr.hpp>
 #include <sge/shader/object.hpp>
+#include <sge/sprite/intrusive/system_impl.hpp>
 #include <fcppt/noncopyable.hpp>
+
 
 namespace flakelib
 {
@@ -54,8 +55,9 @@ public:
 		sge::opencl::command_queue::object &,
 		sge::font::metrics_ptr,
 		monitor::border_size const &,
-		monitor::font_color const &);
-	
+		monitor::font_color const &,
+		monitor::name const &);
+
 	sge::renderer::vertex_declaration const &
 	vertex_declaration() const;
 

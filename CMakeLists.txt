@@ -31,6 +31,12 @@ INCLUDE_DIRECTORIES(${Mizuiro_INCLUDE_DIR})
 ADD_DEFINITIONS(${Mizuiro_DEFINITIONS})
 # mizuiro end
 
+# rucksack begin
+FIND_PACKAGE(Rucksack REQUIRED)
+INCLUDE_DIRECTORIES(${Rucksack_INCLUDE_DIR})
+ADD_DEFINITIONS(${Rucksack_DEFINITIONS})
+# rucksack end
+
 # sge begin
 FIND_PACKAGE(
 	SGE REQUIRED COMPONENTS
@@ -77,9 +83,13 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 
 SET(
 	FLAKELIB_FILES
+	src/flakelib/laplace_solver/base.cpp
+	src/flakelib/laplace_solver/multigrid.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
+	src/flakelib/pde_tester.cpp
 	src/flakelib/planar_buffer.cpp
+	src/flakelib/planar_cache.cpp
 	src/flakelib/profiler/object.cpp
 	src/flakelib/profiler/scoped.cpp
 	src/flakelib/simulation/base.cpp
@@ -138,3 +148,22 @@ INSTALL(
 	DESTINATION
 	${INSTALL_BINARY_DIR})
 # benchmark end
+
+# pde_tester begin
+ADD_EXECUTABLE(
+	pde_tester
+	src/flake/pde_tester.cpp)
+
+TARGET_LINK_LIBRARIES(
+	pde_tester
+	flakelib
+	${Fcppt_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Boost_LIBRARIES})
+
+INSTALL(
+	TARGETS
+	pde_tester
+	DESTINATION
+	${INSTALL_BINARY_DIR})
+# pde_tester end

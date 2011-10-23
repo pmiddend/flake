@@ -1,21 +1,19 @@
+#include <flakelib/visualization/monitor/parent.hpp>
 #include <flakelib/visualization/monitor/texture.hpp>
 #include <flakelib/visualization/monitor/dummy_sprite/parameters.hpp>
-#include <flakelib/visualization/monitor/parent.hpp>
-#include <sge/sprite/parameters.hpp>
-#include <sge/renderer/device.hpp>
 #include <sge/opencl/memory_object/flags_field.hpp>
+#include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/texture/planar_parameters.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
+#include <sge/sprite/parameters.hpp>
 #include <sge/texture/part_raw.hpp>
+#include <fcppt/make_shared_ptr.hpp>
+#include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/vector/structure_cast.hpp>
-#include <fcppt/make_shared_ptr.hpp>
-#include <fcppt/container/bitfield/basic_impl.hpp>
 
-// DEBUG
-#include <iostream>
 
 flakelib::visualization::monitor::texture::texture(
 	monitor::parent &_parent,
@@ -96,7 +94,7 @@ flakelib::visualization::monitor::texture::name() const
 flakelib::visualization::monitor::rect const
 flakelib::visualization::monitor::texture::area() const
 {
-	return 
+	return
 		monitor::rect(
 			fcppt::math::vector::structure_cast<monitor::rect::vector>(
 				sprite_.pos()),

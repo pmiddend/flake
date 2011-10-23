@@ -2,15 +2,16 @@
 #define FLAKELIB_PROFILER_OBJECT_HPP_INCLUDED
 
 #include <flakelib/profiler/activation.hpp>
-#include <flakelib/profiler/scoped_fwd.hpp>
-#include <flakelib/profiler/optional_parent.hpp>
 #include <flakelib/profiler/call_count.hpp>
 #include <flakelib/profiler/child_sequence.hpp>
 #include <flakelib/profiler/duration.hpp>
+#include <flakelib/profiler/optional_parent.hpp>
+#include <flakelib/profiler/scoped_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/chrono/duration_impl.hpp>
 #include <fcppt/io/ostream.hpp>
+
 
 namespace flakelib
 {
@@ -59,7 +60,7 @@ private:
 	void
 	add_child(
 		profiler::object &);
-	
+
 	void
 	add_call(
 		profiler::duration const &);

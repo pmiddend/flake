@@ -1,8 +1,9 @@
-#include <flakelib/profiler/scoped.hpp>
-#include <flakelib/profiler/object.hpp>
 #include <flakelib/profiler/clock.hpp>
+#include <flakelib/profiler/object.hpp>
+#include <flakelib/profiler/scoped.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <fcppt/chrono/time_point_arithmetic.hpp>
+
 
 flakelib::profiler::scoped::scoped(
 	profiler::object &_object,

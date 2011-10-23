@@ -1,37 +1,38 @@
-#include <flakelib/visualization/monitor/planar_arrows.hpp>
 #include <flakelib/visualization/monitor/parent.hpp>
+#include <flakelib/visualization/monitor/planar_arrows.hpp>
 #include <flakelib/visualization/monitor/dummy_sprite/parameters.hpp>
 #include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
-#include <sge/shader/scoped.hpp>
+#include <sge/renderer/device.hpp>
+#include <sge/renderer/first_index.hpp>
+#include <sge/renderer/nonindexed_primitive_type.hpp>
+#include <sge/renderer/resource_flags.hpp>
+#include <sge/renderer/scoped_vertex_buffer.hpp>
+#include <sge/renderer/size_type.hpp>
+#include <sge/renderer/vertex_buffer.hpp>
+#include <sge/renderer/vertex_count.hpp>
+#include <sge/renderer/viewport_size.hpp>
+#include <sge/renderer/projection/dim.hpp>
+#include <sge/renderer/projection/far.hpp>
+#include <sge/renderer/projection/near.hpp>
+#include <sge/renderer/projection/orthogonal_wh.hpp>
+#include <sge/renderer/vf/dynamic/part_index.hpp>
 #include <sge/shader/activate_everything.hpp>
 #include <sge/shader/matrix.hpp>
 #include <sge/shader/matrix_flags.hpp>
 #include <sge/shader/object.hpp>
-#include <sge/renderer/scoped_vertex_buffer.hpp>
-#include <sge/renderer/first_index.hpp>
-#include <sge/renderer/device.hpp>
-#include <sge/renderer/vertex_count.hpp>
-#include <sge/renderer/nonindexed_primitive_type.hpp>
+#include <sge/shader/scoped.hpp>
 #include <sge/sprite/parameters.hpp>
 #include <sge/texture/part_raw.hpp>
-#include <sge/renderer/viewport_size.hpp>
-#include <sge/renderer/projection/orthogonal_wh.hpp>
-#include <sge/renderer/projection/dim.hpp>
-#include <sge/renderer/projection/near.hpp>
-#include <sge/renderer/projection/far.hpp>
-#include <sge/renderer/vertex_buffer.hpp>
-#include <sge/renderer/size_type.hpp>
-#include <sge/renderer/resource_flags.hpp>
-#include <sge/renderer/vf/dynamic/part_index.hpp>
-#include <fcppt/math/dim/structure_cast.hpp>
-#include <fcppt/math/dim/arithmetic.hpp>
-#include <fcppt/math/vector/structure_cast.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/math/dim/output.hpp>
-#include <fcppt/math/box/basic_impl.hpp>
-#include <fcppt/io/cout.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/io/cout.hpp>
+#include <fcppt/math/box/basic_impl.hpp>
+#include <fcppt/math/dim/arithmetic.hpp>
+#include <fcppt/math/dim/output.hpp>
+#include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/vector/structure_cast.hpp>
+
 
 flakelib::visualization::monitor::planar_arrows::planar_arrows(
 	monitor::parent &_parent,
@@ -107,10 +108,10 @@ flakelib::visualization::monitor::planar_arrows::position(
 flakelib::visualization::monitor::rect const
 flakelib::visualization::monitor::planar_arrows::area() const
 {
-	return 
+	return
 		monitor::rect(
 			position_,
-			grid_scale_.get() * 
+			grid_scale_.get() *
 			fcppt::math::dim::structure_cast<monitor::rect::dim>(
 				dimensions_));
 }

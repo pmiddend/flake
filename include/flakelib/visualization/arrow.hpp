@@ -1,23 +1,24 @@
 #ifndef FLAKELIB_VISUALIZATION_ARROW_HPP_INCLUDED
 #define FLAKELIB_VISUALIZATION_ARROW_HPP_INCLUDED
 
-#include <flakelib/visualization/base.hpp>
 #include <flakelib/boundary_view.hpp>
+#include <flakelib/simulation/base_fwd.hpp>
+#include <flakelib/visualization/base.hpp>
+#include <flakelib/visualization/monitor/child.hpp>
 #include <flakelib/visualization/monitor/parent.hpp>
 #include <flakelib/visualization/monitor/planar_arrows.hpp>
-#include <flakelib/visualization/monitor/child.hpp>
-#include <flakelib/simulation/base_fwd.hpp>
-#include <sge/opencl/context/object_fwd.hpp>
-#include <sge/opencl/command_queue/object_fwd.hpp>
-#include <sge/renderer/device_fwd.hpp>
-#include <sge/parse/json/object_fwd.hpp>
-#include <sge/sprite/object.hpp>
-#include <sge/sprite/external_system_impl.hpp>
 #include <sge/font/system_fwd.hpp>
+#include <sge/opencl/command_queue/object_fwd.hpp>
+#include <sge/opencl/context/object_fwd.hpp>
+#include <sge/parse/json/object_fwd.hpp>
+#include <sge/renderer/device_fwd.hpp>
+#include <sge/sprite/external_system_impl.hpp>
+#include <sge/sprite/object.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/ptr_container/ptr_map.hpp>
 #include <fcppt/config/external_end.hpp>
+
 
 namespace flakelib
 {

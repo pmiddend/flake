@@ -1,8 +1,8 @@
 #include <flakelib/visualization/monitor/window_manager.hpp>
 #include <sge/font/metrics.hpp>
 #include <sge/font/text/draw.hpp>
-#include <sge/font/text/from_fcppt_string.hpp>
 #include <sge/font/text/flags_none.hpp>
+#include <sge/font/text/from_fcppt_string.hpp>
 #include <sge/font/text/part.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
@@ -11,12 +11,6 @@
 #include <algorithm>
 #include <fcppt/config/external_end.hpp>
 
-// DEBUG
-/*
-#include <iostream>
-#include <fcppt/math/vector/output.hpp>
-#include <fcppt/math/box/output.hpp>
-*/
 
 flakelib::visualization::monitor::window_manager::window_manager(
 	monitor::child_list &_children,
@@ -44,7 +38,7 @@ flakelib::visualization::monitor::window_manager::window_manager(
 void
 flakelib::visualization::monitor::window_manager::update()
 {
-	monitor::child const &master_pane = 
+	monitor::child const &master_pane =
 		this->update_master_pane();
 
 	monitor::rect const remaining_rect(
@@ -58,7 +52,7 @@ flakelib::visualization::monitor::window_manager::update()
 	monitor::rect::vector current_pos(
 		remaining_rect.pos());
 
-	monitor::rect::value_type 
+	monitor::rect::value_type
 		current_row_max_height =
 			0;
 
@@ -76,18 +70,15 @@ flakelib::visualization::monitor::window_manager::update()
 			FCPPT_ASSERT_PRE(
 				current_pos.y() + it->area().h() <= remaining_rect.bottom());
 
-			current_pos.x() = 
+			current_pos.x() =
 				remaining_rect.left();
 
-			current_pos.y() += 
+			current_pos.y() +=
 				current_row_max_height + border_size_;
 
-			current_row_max_height = 
+			current_row_max_height =
 				0;
 		}
-		 
-	// DEBUG
-	//	std::cout << "Pane \"" << it->name() << "\" got position: " << current_pos << "\n";
 
 		it->position(
 			monitor::rect::vector(
@@ -97,7 +88,7 @@ flakelib::visualization::monitor::window_manager::update()
 
 		current_pos.x() += it->area().w() + border_size_;
 
-		current_row_max_height = 
+		current_row_max_height =
 			std::max(
 				current_row_max_height,
 				it->area().h() + static_cast<monitor::rect::value_type>(metrics_.line_height()));
@@ -134,7 +125,7 @@ void
 flakelib::visualization::monitor::window_manager::area(
 	monitor::rect const &_area)
 {
-	area_ = 
+	area_ =
 		_area;
 }
 
@@ -148,9 +139,9 @@ flakelib::visualization::monitor::window_manager::update_master_pane()
 	monitor::child *master_pane = 0;
 
 	for(
-		monitor::child_list::iterator it = 
-			children_.begin(); 
-		it != children_.end(); 
+		monitor::child_list::iterator it =
+			children_.begin();
+		it != children_.end();
 		++it)
 	{
 		if(it->name() == master_pane_)
@@ -168,10 +159,6 @@ flakelib::visualization::monitor::window_manager::update_master_pane()
 			area_.left(),
 			(area_.top() + area_.bottom())/static_cast<monitor::rect::value_type>(2) -
 			master_pane->area().h()/static_cast<monitor::rect::value_type>(2)));
-
-	// DEBUG
-	//std::cout << "Area is " << area_ << "\n";
-	//std::cout << "Master pane got position: " << master_pane->area().pos() << "\n";
 
 	return *master_pane;
 }

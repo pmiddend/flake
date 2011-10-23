@@ -1,15 +1,12 @@
+#if 0
 #include <flakelib/duration.hpp>
 #include <flakelib/media_path.hpp>
 #include <flakelib/media_path_from_string.hpp>
+#include <flakelib/pde_tester.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
-#include <flakelib/simulation/base.hpp>
-#include <flakelib/simulation/base_ptr.hpp>
-#include <flakelib/simulation/create.hpp>
-#include <flakelib/visualization/base.hpp>
-#include <flakelib/visualization/base_ptr.hpp>
-#include <flakelib/visualization/create.hpp>
 #include <sge/all_extensions.hpp>
 #include <sge/image/capabilities_field.hpp>
+#include <sge/image/colors.hpp>
 #include <sge/image2d/file.hpp>
 #include <sge/image2d/file_ptr.hpp>
 #include <sge/image2d/multi_loader.hpp>
@@ -35,7 +32,11 @@
 #include <sge/renderer/viewport_size.hpp>
 #include <sge/renderer/visual_depth.hpp>
 #include <sge/renderer/vsync.hpp>
+#include <sge/renderer/state/bool.hpp>
+#include <sge/renderer/state/color.hpp>
+#include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>
+#include <sge/renderer/state/trampoline.hpp>
 #include <sge/systems/cursor_option_field.hpp>
 #include <sge/systems/image_loader.hpp>
 #include <sge/systems/input.hpp>
@@ -80,21 +81,6 @@ main(
 	char *argv[])
 try
 {
-	// - Create textures (w*h):
-	//
-	// 	1. Vector field 'v' (rgba, float), vector field 'v2' (to write to)
-	//      2. Scalar field 'p' (two channels, float)
-	// 	3. Boundary (something small, gray8 maybe)
-	//
-	// - Create one vertex buffer, size w*h*2, shared with OpenCL.
-	//
-	// - Set the vector field to all zeroes (load it that way?)
-	// - Extract the boundary from a thresholded png image
-	//
-	// - Execute NS algorithm, resulting in a vector field
-	// - Convert vector field to a vertex buffer of arrows
-	// - Draw the vertex buffer on the screen
-
 	sge::log::global_context().apply(
 		fcppt::log::location(
 			FCPPT_TEXT("opencl")),
@@ -120,7 +106,7 @@ try
 				sge::all_extensions))
 			(sge::systems::window(
 				sge::window::simple_parameters(
-					FCPPT_TEXT("Simulation of fluid dynamics via Stam's Method"),
+					FCPPT_TEXT("Test of different pde solvers"),
 					sge::window::dim(1024,768))))
 			(sge::systems::renderer(
 				sge::renderer::parameters(
@@ -140,33 +126,6 @@ try
 		(sys.renderer()),
 		(sge::opencl::context::optional_error_callback()));
 
-	sge::image2d::file_ptr boundary_image =
-		sys.image_loader().load(
-			flakelib::media_path()
-				/ FCPPT_TEXT("images")
-				/ sge::parse::json::find_and_convert_member<fcppt::string>(
-					config_file,
-					sge::parse::json::path(FCPPT_TEXT("boundary-file"))));
-
-	flakelib::simulation::base_ptr simulation(
-		flakelib::simulation::create(
-			opencl_system.context(),
-			opencl_system.command_queue(),
-			flakelib::boundary_view(
-				boundary_image->view()),
-			config_file));
-
-	flakelib::visualization::base_ptr visualization(
-		flakelib::visualization::create(
-			sys.renderer(),
-			opencl_system.context(),
-			opencl_system.command_queue(),
-			*simulation,
-			sys.font_system(),
-			flakelib::boundary_view(
-				boundary_image->view()),
-			config_file));
-
 	bool running =
 		true;
 
@@ -177,40 +136,31 @@ try
 				sge::systems::running_to_false(
 					running))));
 
+	sys.window().dispatch();
+
+	flakelib::pde_tester tester(
+		opencl_system.context(),
+		opencl_system.command_queue(),
+		sys.renderer(),
+		sys.font_system(),
+		config_file,
+		sge::parse::json::find_and_convert_member<sge::opencl::memory_object::dim2>(
+			config_file,
+			sge::parse::json::path(FCPPT_TEXT("pde-tester-size"))));
+
 	fcppt::signal::scoped_connection const cb_sim(
 		sys.keyboard_collector().key_callback(
 			sge::input::keyboard::action(
 				sge::input::keyboard::key_code::space,
 				std::tr1::bind(
-					&flakelib::simulation::base::update,
-					simulation.get(),
-					flakelib::duration(
-						0.01f)))));
-
-	sge::timer::basic<sge::timer::clocks::standard> delta_timer(
-		sge::timer::parameters<sge::timer::clocks::standard>(
-			fcppt::chrono::seconds(1)));
-
-	flakelib::duration delta(0.0f);
+					&flakelib::pde_tester::update,
+					&tester))));
 
 	while(running)
 	{
 		sys.window().dispatch();
 
-		delta +=
-			sge::timer::elapsed_and_reset<flakelib::duration>(
-				delta_timer);
-
-		if(delta > flakelib::duration(0.05f))
-		{
-			simulation->update(
-				delta);
-
-			visualization->update(
-				delta);
-
-			delta = flakelib::duration(0.0f);
-		}
+		tester.update();
 
 		// If we have no viewport (yet), don't do anything (this is just a
 		// precaution, we _might_ divide by zero somewhere below, otherwise)
@@ -220,12 +170,14 @@ try
 
 		sge::renderer::state::scoped scoped_state(
 			sys.renderer(),
-			visualization->render_states());
+			sge::renderer::state::list
+				(sge::renderer::state::bool_::clear_back_buffer = true)
+				(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::paleturquoise()));
 
 		sge::renderer::scoped_block const block_(
 			sys.renderer());
 
-		visualization->render();
+		tester.render();
 	}
 }
 catch(fcppt::exception const &e)
@@ -243,4 +195,6 @@ catch(...)
 	std::cerr << "unknown exception caught\n";
 	return EXIT_FAILURE;
 }
-
+#else
+int main() {}
+#endif

@@ -1,14 +1,15 @@
 #ifndef FLAKELIB_VISUALIZATION_MONITOR_CHILD_HPP_INCLUDED
 #define FLAKELIB_VISUALIZATION_MONITOR_CHILD_HPP_INCLUDED
 
-#include <flakelib/visualization/monitor/rect.hpp>
-#include <flakelib/visualization/monitor/parent_fwd.hpp>
 #include <flakelib/planar_object.hpp>
+#include <flakelib/visualization/monitor/parent_fwd.hpp>
+#include <flakelib/visualization/monitor/rect.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/intrusive/list.hpp>
 #include <fcppt/config/external_end.hpp>
+
 
 namespace flakelib
 {

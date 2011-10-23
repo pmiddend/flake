@@ -1,9 +1,10 @@
 #include <flakelib/simulation/create.hpp>
 #include <flakelib/simulation/stam.hpp>
 #include <sge/image2d/view/const_object.hpp>
+#include <fcppt/cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
-#include <fcppt/cref.hpp>
+
 
 flakelib::simulation::base_ptr
 flakelib::simulation::create(

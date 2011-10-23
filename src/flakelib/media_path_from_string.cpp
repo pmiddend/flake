@@ -1,12 +1,15 @@
-#include <flakelib/media_path_from_string.hpp>
 #include <flakelib/media_path.hpp>
+#include <flakelib/media_path_from_string.hpp>
 #include <fcppt/text.hpp>
-#include <boost/algorithm/string/split.hpp>
+#include <fcppt/config/external_begin.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
 #include <boost/phoenix/core.hpp>
 #include <boost/phoenix/operator.hpp>
-#include <vector>
 #include <numeric>
+#include <vector>
+#include <fcppt/config/external_end.hpp>
+
 
 fcppt::filesystem::path const
 flakelib::media_path_from_string(

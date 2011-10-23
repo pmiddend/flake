@@ -1,17 +1,18 @@
 #ifndef FLAKELIB_VISUALIZATION_MONITOR_TEXTURE_HPP_INCLUDED
 #define FLAKELIB_VISUALIZATION_MONITOR_TEXTURE_HPP_INCLUDED
 
-#include <flakelib/visualization/monitor/dummy_sprite/object.hpp>
-#include <flakelib/visualization/monitor/parent_fwd.hpp>
+#include <flakelib/planar_object.hpp>
 #include <flakelib/visualization/monitor/child.hpp>
-#include <flakelib/visualization/monitor/name.hpp>
 #include <flakelib/visualization/monitor/grid_dimensions.hpp>
+#include <flakelib/visualization/monitor/name.hpp>
+#include <flakelib/visualization/monitor/parent_fwd.hpp>
 #include <flakelib/visualization/monitor/rect.hpp>
 #include <flakelib/visualization/monitor/scaling_factor.hpp>
+#include <flakelib/visualization/monitor/dummy_sprite/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
-#include <flakelib/planar_object.hpp>
 #include <sge/sprite/object.hpp>
 #include <fcppt/noncopyable.hpp>
+
 
 namespace flakelib
 {
@@ -50,7 +51,7 @@ public:
 
 	void
 	render();
-	
+
 	~texture();
 private:
 	fcppt::string const name_;

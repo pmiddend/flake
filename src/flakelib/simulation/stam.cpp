@@ -21,54 +21,44 @@
 //
 // - Calculate gradient of 'p', subtract from 'v1', return 'v2'  [x]
 
-#include <flakelib/simulation/stam.hpp>
-#include <flakelib/profiler/scoped.hpp>
 #include <flakelib/media_path_from_string.hpp>
-#include <sge/image2d/view/size.hpp>
-#include <sge/image2d/view/object.hpp>
-#include <sge/image2d/view/const_object.hpp>
-#include <sge/image2d/algorithm/copy_and_convert.hpp>
+#include <flakelib/profiler/scoped.hpp>
+#include <flakelib/simulation/stam.hpp>
 #include <sge/image/algorithm/may_overlap.hpp>
-#include <sge/opencl/program/source_string_sequence.hpp>
-#include <sge/opencl/program/build_parameters.hpp>
+#include <sge/image2d/algorithm/copy_and_convert.hpp>
+#include <sge/image2d/view/const_object.hpp>
+#include <sge/image2d/view/object.hpp>
+#include <sge/image2d/view/size.hpp>
+#include <sge/opencl/command_queue/dim2.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/scoped_planar_mapping.hpp>
+#include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/opencl/memory_object/rect.hpp>
-#include <sge/opencl/command_queue/dim2.hpp>
+#include <sge/opencl/program/build_parameters.hpp>
+#include <sge/opencl/program/source_string_sequence.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
-#include <fcppt/math/dim/structure_cast.hpp>
-#include <fcppt/io/stream_to_string.hpp>
-#include <fcppt/assign/make_container.hpp>
-#include <fcppt/assign/make_array.hpp>
+#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/optional.hpp>
+#include <fcppt/text.hpp>
+#include <fcppt/unique_ptr.hpp>
 #include <fcppt/assert/pre.hpp>
-#include <fcppt/math/box/basic_impl.hpp>
-#include <fcppt/math/vector/basic_impl.hpp>
-#include <fcppt/math/dim/basic_impl.hpp>
-#include <fcppt/container/bitfield/basic_impl.hpp>
-#include <fcppt/math/dim/comparison.hpp>
+#include <fcppt/assign/make_array.hpp>
+#include <fcppt/assign/make_container.hpp>
 #include <fcppt/chrono/duration_impl.hpp>
+#include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/io/cifstream.hpp>
 #include <fcppt/io/cout.hpp>
-#include <fcppt/unique_ptr.hpp>
-#include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/text.hpp>
-#include <fcppt/optional.hpp>
+#include <fcppt/io/stream_to_string.hpp>
+#include <fcppt/math/box/basic_impl.hpp>
+#include <fcppt/math/dim/basic_impl.hpp>
+#include <fcppt/math/dim/comparison.hpp>
+#include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/vector/basic_impl.hpp>
+#include <fcppt/config/external_begin.hpp>
 #include <algorithm>
+#include <fcppt/config/external_end.hpp>
 
-namespace
-{
-cl_image_format const
-create_image_format(
-	cl_channel_order const co,
-	cl_channel_type const ct)
-{
-	cl_image_format result;
-	result.image_channel_order = co;
-	result.image_channel_data_type = ct;
-	return result;
-}
-}
 
 flakelib::simulation::stam::stam(
 	sge::opencl::context::object &_context,
@@ -81,7 +71,7 @@ flakelib::simulation::stam::stam(
 	v1_(
 		_context,
 		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
-		::create_image_format(
+		sge::opencl::memory_object::create_image_format(
 			CL_RG,
 			CL_FLOAT),
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
@@ -92,7 +82,7 @@ flakelib::simulation::stam::stam(
 	v2_(
 		_context,
 		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
-		::create_image_format(
+		sge::opencl::memory_object::create_image_format(
 			CL_RG,
 			CL_FLOAT),
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
@@ -103,7 +93,7 @@ flakelib::simulation::stam::stam(
 	divergence_(
 		_context,
 		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
-		create_image_format(
+		sge::opencl::memory_object::create_image_format(
 			CL_RG,
 			CL_FLOAT),
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
@@ -114,7 +104,7 @@ flakelib::simulation::stam::stam(
 	p1_(
 		_context,
 		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
-		create_image_format(
+		sge::opencl::memory_object::create_image_format(
 			CL_R,
 			CL_FLOAT),
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
@@ -125,7 +115,7 @@ flakelib::simulation::stam::stam(
 	p2_(
 		_context,
 		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
-		create_image_format(
+		sge::opencl::memory_object::create_image_format(
 			CL_R,
 			CL_FLOAT),
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
@@ -136,7 +126,7 @@ flakelib::simulation::stam::stam(
 	vector_magnitude_(
 		_context,
 		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
-		create_image_format(
+		sge::opencl::memory_object::create_image_format(
 			CL_R,
 			CL_FLOAT),
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
@@ -147,7 +137,7 @@ flakelib::simulation::stam::stam(
 	residual_(
 		_context,
 		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
-		create_image_format(
+		sge::opencl::memory_object::create_image_format(
 			CL_R,
 			CL_FLOAT),
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
@@ -158,7 +148,7 @@ flakelib::simulation::stam::stam(
 	boundary_(
 		_context,
 		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
-		create_image_format(
+		sge::opencl::memory_object::create_image_format(
 			CL_INTENSITY,
 			CL_UNORM_INT8),
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(

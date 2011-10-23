@@ -1,8 +1,9 @@
 #ifndef FLAKELIB_VISUALIZATION_MONITOR_GRID_DIMENSIONS_HPP_INCLUDED
 #define FLAKELIB_VISUALIZATION_MONITOR_GRID_DIMENSIONS_HPP_INCLUDED
 
-#include <fcppt/strong_typedef.hpp>
 #include <sge/renderer/dim2.hpp>
+#include <fcppt/strong_typedef.hpp>
+
 
 namespace flakelib
 {

@@ -1,39 +1,36 @@
-#include <flakelib/visualization/monitor/parent.hpp>
 #include <flakelib/media_path_from_string.hpp>
+#include <flakelib/visualization/monitor/parent.hpp>
 #include <flakelib/visualization/monitor/arrow_vf/format.hpp>
+#include <sge/opencl/command_queue/dim2.hpp>
+#include <sge/opencl/command_queue/enqueue_kernel.hpp>
+#include <sge/opencl/kernel/argument_index.hpp>
+#include <sge/opencl/kernel/name.hpp>
+#include <sge/opencl/memory_object/base_ref_sequence.hpp>
+#include <sge/opencl/memory_object/buffer.hpp>
+#include <sge/opencl/memory_object/scoped_objects.hpp>
+#include <sge/opencl/memory_object/image/planar.hpp>
+#include <sge/opencl/program/build_parameters.hpp>
+#include <sge/opencl/program/source_string_sequence.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/onscreen_target.hpp>
-#include <sge/renderer/texture/filter/scoped.hpp>
 #include <sge/renderer/stage.hpp>
 #include <sge/renderer/texture/filter/point.hpp>
+#include <sge/renderer/texture/filter/scoped.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/shader/object_parameters.hpp>
 #include <sge/shader/vf_to_string.hpp>
-#include <sge/opencl/program/source_string_sequence.hpp>
-#include <sge/opencl/program/build_parameters.hpp>
-#include <sge/opencl/command_queue/dim2.hpp>
-#include <sge/opencl/command_queue/enqueue_kernel.hpp>
-#include <sge/opencl/memory_object/base_ref_sequence.hpp>
-#include <sge/opencl/memory_object/image/planar.hpp>
-#include <sge/opencl/memory_object/scoped_objects.hpp>
-#include <sge/opencl/memory_object/buffer.hpp>
-#include <sge/opencl/kernel/name.hpp>
-#include <sge/opencl/kernel/argument_index.hpp>
 #include <sge/sprite/default_equal.hpp>
-#include <fcppt/assign/make_container.hpp>
-#include <fcppt/io/stream_to_string.hpp>
-#include <fcppt/math/dim/basic_impl.hpp>
-#include <fcppt/math/dim/output.hpp>
-#include <fcppt/math/dim/comparison.hpp>
-#include <fcppt/math/box/structure_cast.hpp>
-#include <fcppt/io/cifstream.hpp>
-#include <fcppt/assert/pre.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/text.hpp>
-
-// DEBUG
-#include <iostream>
+#include <fcppt/assert/pre.hpp>
+#include <fcppt/assign/make_container.hpp>
+#include <fcppt/io/cifstream.hpp>
+#include <fcppt/io/stream_to_string.hpp>
+#include <fcppt/math/box/structure_cast.hpp>
+#include <fcppt/math/dim/basic_impl.hpp>
+#include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/output.hpp>
+
 
 flakelib::visualization::monitor::parent::parent(
 	sge::renderer::device &_renderer,
@@ -41,7 +38,8 @@ flakelib::visualization::monitor::parent::parent(
 	sge::opencl::command_queue::object &_command_queue,
 	sge::font::metrics_ptr const _font_metrics,
 	monitor::border_size const &_border_size,
-	monitor::font_color const &_font_color)
+	monitor::font_color const &_font_color,
+	monitor::name const &_master_pane)
 :
 	renderer_(
 		_renderer),
@@ -109,8 +107,7 @@ flakelib::visualization::monitor::parent::parent(
 	children_(),
 	window_manager_(
 		children_,
-		monitor::name(
-			FCPPT_TEXT("velocity")),
+		_master_pane,
 		fcppt::math::box::structure_cast<monitor::rect>(
 			renderer_.onscreen_target().viewport().get()),
 		_border_size,
@@ -447,8 +444,8 @@ flakelib::visualization::monitor::parent::erase_child(
 {
 	child_list::iterator it;
 	for(
-		it = children_.begin(); 
-		it != children_.end() && &(*it) != &_child; 
+		it = children_.begin();
+		it != children_.end() && &(*it) != &_child;
 		++it) ;
 
 	FCPPT_ASSERT_PRE(

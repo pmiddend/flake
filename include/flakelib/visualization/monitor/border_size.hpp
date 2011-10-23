@@ -2,8 +2,9 @@
 #define FLAKELIB_VISUALIZATION_MONITOR_BORDER_SIZE_HPP_INCLUDED
 
 #include <flakelib/visualization/monitor/rect.hpp>
-#include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/make_strong_typedef.hpp>
+#include <fcppt/math/box/basic_impl.hpp>
+
 
 namespace flakelib
 {

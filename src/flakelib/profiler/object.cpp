@@ -3,9 +3,10 @@
 #include <fcppt/chrono/duration_cast.hpp>
 #include <fcppt/chrono/microseconds.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <iomanip>
 #include <algorithm>
+#include <iomanip>
 #include <fcppt/config/external_end.hpp>
+
 
 namespace
 {
@@ -16,15 +17,15 @@ print(
 	fcppt::string::size_type const tabs,
 	fcppt::string::size_type const spaces)
 {
-	s 
+	s
 		<< fcppt::string(tabs,FCPPT_TEXT('\t'))
 		<< std::left
 		<< std::setw(static_cast<int>(spaces))
 		<< o.name()
-		<< FCPPT_TEXT(" | ") 
+		<< FCPPT_TEXT(" | ")
 		<< std::setw(10)
 		<< o.calls() << FCPPT_TEXT(" calls");
-	
+
 	if(o.calls())
 		s
 			<< FCPPT_TEXT(", ")
@@ -32,27 +33,27 @@ print(
 			<< std::setw(10)
 			<< fcppt::chrono::duration_cast<fcppt::chrono::microseconds>(o.total_time() / o.calls()).count()
 			<< FCPPT_TEXT(" microseconds per call");
-	
+
 	s << FCPPT_TEXT("\n");
 
-	fcppt::string::size_type max_child_size = 
+	fcppt::string::size_type max_child_size =
 		0;
 
 	for(
-		flakelib::profiler::child_sequence::const_iterator child = 
+		flakelib::profiler::child_sequence::const_iterator child =
 			o.children().begin();
 		child != o.children().end();
 		++child)
-		max_child_size = 
+		max_child_size =
 			std::max(
 				max_child_size,
 				child->name().length());
-	
+
 	if(!o.children().empty())
 		s << FCPPT_TEXT("↘") << FCPPT_TEXT("\n");
-	
+
 	for(
-		flakelib::profiler::child_sequence::const_iterator child = 
+		flakelib::profiler::child_sequence::const_iterator child =
 			o.children().begin();
 		child != o.children().end();
 		++child)
@@ -118,7 +119,7 @@ void
 flakelib::profiler::object::activation(
 	profiler::activation::type const _activation)
 {
-	activation_ = 
+	activation_ =
 		_activation;
 }
 
@@ -152,6 +153,6 @@ flakelib::profiler::operator<<(
 		o,
 		0u,
 		0u);
-	
+
 	return s;
 }

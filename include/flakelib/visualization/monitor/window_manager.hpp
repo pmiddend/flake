@@ -1,14 +1,15 @@
 #ifndef FLAKELIB_VISUALIZATION_MONITOR_WINDOW_MANAGER_HPP_INCLUDED
 #define FLAKELIB_VISUALIZATION_MONITOR_WINDOW_MANAGER_HPP_INCLUDED
 
-#include <flakelib/visualization/monitor/child_list.hpp>
-#include <flakelib/visualization/monitor/rect.hpp>
 #include <flakelib/visualization/monitor/border_size.hpp>
+#include <flakelib/visualization/monitor/child_list.hpp>
 #include <flakelib/visualization/monitor/name.hpp>
+#include <flakelib/visualization/monitor/rect.hpp>
 #include <sge/font/metrics_fwd.hpp>
 #include <sge/font/text/drawer_fwd.hpp>
-#include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/math/box/basic_impl.hpp>
+
 
 namespace flakelib
 {

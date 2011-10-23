@@ -1,10 +1,11 @@
 {
-	"boundary-file" : "boundary.png",
+	"boundary-file" : "boundary_circle.png",
 	"benchmark-iterations" : 2000,
 	"grid-scale" : 10.0,
 	"jacobi-iterations" : 400,
 	"external-force-magnitude" : 10.0,
 	"profiling" : true,
+	"pde-tester-size" : [64,64],
 	"visualization" :
 	{
 		"arrow-scale" : 1.0,

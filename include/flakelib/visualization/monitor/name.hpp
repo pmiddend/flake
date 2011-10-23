@@ -1,8 +1,9 @@
 #ifndef FLAKELIB_VISUALIZATION_MONITOR_NAME_HPP_INCLUDED
 #define FLAKELIB_VISUALIZATION_MONITOR_NAME_HPP_INCLUDED
 
-#include <fcppt/string.hpp>
 #include <fcppt/make_strong_typedef.hpp>
+#include <fcppt/string.hpp>
+
 
 namespace flakelib
 {
