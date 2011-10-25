@@ -5,9 +5,7 @@
 #include <flakelib/simulation/base.hpp>
 #include <flakelib/simulation/base_ptr.hpp>
 #include <flakelib/simulation/create.hpp>
-#include <flakelib/visualization/base.hpp>
-#include <flakelib/visualization/base_ptr.hpp>
-#include <flakelib/visualization/create.hpp>
+#include <flakelib/visualization/arrow.hpp>
 #include <sge/all_extensions.hpp>
 #include <sge/image/capabilities_field.hpp>
 #include <sge/image2d/file.hpp>
@@ -156,16 +154,15 @@ try
 				boundary_image->view()),
 			config_file));
 
-	flakelib::visualization::base_ptr visualization(
-		flakelib::visualization::create(
-			sys.renderer(),
-			opencl_system.context(),
-			opencl_system.command_queue(),
-			*simulation,
-			sys.font_system(),
-			flakelib::boundary_view(
-				boundary_image->view()),
-			config_file));
+	flakelib::visualization::arrow visualization(
+		sys.viewport_manager(),
+		sys.renderer(),
+		opencl_system.command_queue(),
+		*simulation,
+		sys.font_system(),
+		flakelib::boundary_view(
+			boundary_image->view()),
+		config_file);
 
 	bool running =
 		true;
@@ -206,7 +203,7 @@ try
 			simulation->update(
 				delta);
 
-			visualization->update(
+			visualization.update(
 				delta);
 
 			delta = flakelib::duration(0.0f);
@@ -220,12 +217,12 @@ try
 
 		sge::renderer::state::scoped scoped_state(
 			sys.renderer(),
-			visualization->render_states());
+			visualization.render_states());
 
 		sge::renderer::scoped_block const block_(
 			sys.renderer());
 
-		visualization->render();
+		visualization.render();
 	}
 }
 catch(fcppt::exception const &e)

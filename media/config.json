@@ -14,7 +14,7 @@
 		"divergence-scale" : 100.00,
 		"residual-scale" : 100.00,
 		"grid-position" : [10.0,10.0],
-		"border-size" : 2.0,
+		"border-size" : 2,
 		"font-size" : 20
 	}
 }

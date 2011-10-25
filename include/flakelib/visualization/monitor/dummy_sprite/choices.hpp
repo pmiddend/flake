@@ -1,8 +1,8 @@
 #ifndef FLAKELIB_VISUALIZATION_MONITOR_DUMMY_SPRITE_CHOICES_HPP_INCLUDED
 #define FLAKELIB_VISUALIZATION_MONITOR_DUMMY_SPRITE_CHOICES_HPP_INCLUDED
 
+#include <flakelib/visualization/monitor/scalar.hpp>
 #include <sge/image/color/rgba8.hpp>
-#include <sge/renderer/scalar.hpp>
 #include <sge/sprite/choices.hpp>
 #include <sge/sprite/no_color.hpp>
 #include <sge/sprite/type_choices.hpp>
@@ -27,8 +27,8 @@ sge::sprite::choices
 <
 	sge::sprite::type_choices
 	<
-		sge::renderer::scalar,
-		sge::renderer::scalar,
+		monitor::scalar,
+		monitor::scalar,
 		sge::sprite::no_color
 	>,
 	boost::mpl::vector3

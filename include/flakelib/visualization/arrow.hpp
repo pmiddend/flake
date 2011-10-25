@@ -7,9 +7,11 @@
 #include <flakelib/visualization/monitor/child.hpp>
 #include <flakelib/visualization/monitor/parent.hpp>
 #include <flakelib/visualization/monitor/planar_arrows.hpp>
+#include <rucksack/widget/master_and_slaves.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
+#include <sge/viewport/manager_fwd.hpp>
 #include <sge/parse/json/object_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/sprite/external_system_impl.hpp>
@@ -33,8 +35,8 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	arrow(
+		sge::viewport::manager &,
 		sge::renderer::device &,
-		sge::opencl::context::object &,
 		sge::opencl::command_queue::object &,
 		simulation::base &,
 		sge::font::system &,
@@ -60,6 +62,7 @@ private:
 	sge::renderer::device &renderer_;
 	simulation::base &simulation_;
 	monitor::parent monitor_parent_;
+	rucksack::widget::master_and_slaves master_and_slaves_;
 	monitor::planar_arrows velocity_arrows_;
 	additional_data_monitors additional_data_;
 };

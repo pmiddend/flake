@@ -3,14 +3,17 @@
 
 #include <flakelib/planar_object.hpp>
 #include <flakelib/visualization/monitor/child.hpp>
+#include <flakelib/visualization/monitor/dim.hpp>
 #include <flakelib/visualization/monitor/grid_dimensions.hpp>
 #include <flakelib/visualization/monitor/name.hpp>
 #include <flakelib/visualization/monitor/parent_fwd.hpp>
-#include <flakelib/visualization/monitor/rect.hpp>
 #include <flakelib/visualization/monitor/scaling_factor.hpp>
 #include <flakelib/visualization/monitor/dummy_sprite/object.hpp>
+#include <rucksack/widget/box/base.hpp>
+#include <rucksack/widget/dummy.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/sprite/object.hpp>
+#include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/noncopyable.hpp>
 
 
@@ -32,25 +35,24 @@ public:
 		monitor::parent &,
 		monitor::name const &,
 		monitor::grid_dimensions const &,
-		monitor::rect const &,
+		monitor::dim const &,
 		monitor::scaling_factor const &);
 
 	void
 	from_planar_object(
 		flakelib::planar_object const &);
 
-	void
-	position(
-		monitor::rect::vector const &);
-
-	monitor::rect const
-	area() const;
-
 	fcppt::string const
 	name() const;
 
 	void
 	render();
+
+	void
+	update();
+
+	rucksack::widget::base &
+	widget();
 
 	~texture();
 private:
@@ -59,6 +61,9 @@ private:
 	sge::renderer::texture::planar_ptr renderer_texture_;
 	sge::opencl::memory_object::image::planar cl_texture_;
 	dummy_sprite::object sprite_;
+	rucksack::widget::box::base box_parent_;
+	rucksack::widget::dummy font_box_;
+	rucksack::widget::dummy sprite_box_;
 };
 }
 }

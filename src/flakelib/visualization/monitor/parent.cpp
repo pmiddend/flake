@@ -11,6 +11,7 @@
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/source_string_sequence.hpp>
+#include <sge/opencl/command_queue/object.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/onscreen_target.hpp>
 #include <sge/renderer/stage.hpp>
@@ -31,20 +32,15 @@
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/output.hpp>
 
-
 flakelib::visualization::monitor::parent::parent(
+	sge::viewport::manager &_viewport_manager,
 	sge::renderer::device &_renderer,
-	sge::opencl::context::object &_context,
 	sge::opencl::command_queue::object &_command_queue,
 	sge::font::metrics_ptr const _font_metrics,
-	monitor::border_size const &_border_size,
-	monitor::font_color const &_font_color,
-	monitor::name const &_master_pane)
+	monitor::font_color const &_font_color)
 :
 	renderer_(
 		_renderer),
-	context_(
-		_context),
 	command_queue_(
 		_command_queue),
 	font_metrics_(
@@ -56,7 +52,7 @@ flakelib::visualization::monitor::parent::parent(
 		renderer_.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format<arrow_vf::format>())),
 	conversion_program_(
-		context_,
+		command_queue_.context(),
 		fcppt::assign::make_container<sge::opencl::program::source_string_sequence>(
 			fcppt::io::stream_to_string(
 				*fcppt::make_unique_ptr<fcppt::io::cifstream>(
@@ -105,14 +101,9 @@ flakelib::visualization::monitor::parent::parent(
 	sprite_system_(
 		renderer_),
 	children_(),
-	window_manager_(
-		children_,
-		_master_pane,
-		fcppt::math::box::structure_cast<monitor::rect>(
-			renderer_.onscreen_target().viewport().get()),
-		_border_size,
-		*font_metrics_,
-		font_drawer_)
+	viewport_adaptor_(
+		_viewport_manager,
+		renderer_)
 {
 }
 
@@ -125,7 +116,7 @@ flakelib::visualization::monitor::parent::vertex_declaration() const
 sge::opencl::context::object &
 flakelib::visualization::monitor::parent::context() const
 {
-	return context_;
+	return command_queue_.context();
 }
 
 void
@@ -197,6 +188,12 @@ flakelib::visualization::monitor::parent::font_drawer()
 	return font_drawer_;
 }
 
+rucksack::widget::viewport_adaptor &
+flakelib::visualization::monitor::parent::viewport_widget()
+{
+	return viewport_adaptor_;
+}
+
 void
 flakelib::visualization::monitor::parent::render()
 {
@@ -210,17 +207,13 @@ flakelib::visualization::monitor::parent::render()
 
 	for(child_list::iterator it = children_.begin(); it != children_.end(); ++it)
 		it->render();
-
-	window_manager_.render();
 }
 
 void
 flakelib::visualization::monitor::parent::update()
 {
-	window_manager_.area(
-		fcppt::math::box::structure_cast<monitor::rect>(
-			renderer_.onscreen_target().viewport().get()));
-	window_manager_.update();
+	for(child_list::iterator it = children_.begin(); it != children_.end(); ++it)
+		it->update();
 }
 
 flakelib::visualization::monitor::parent::~parent()

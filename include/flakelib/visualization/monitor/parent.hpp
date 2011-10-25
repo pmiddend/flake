@@ -9,8 +9,8 @@
 #include <flakelib/visualization/monitor/grid_dimensions.hpp>
 #include <flakelib/visualization/monitor/grid_scale.hpp>
 #include <flakelib/visualization/monitor/scaling_factor.hpp>
-#include <flakelib/visualization/monitor/window_manager.hpp>
 #include <flakelib/visualization/monitor/dummy_sprite/system.hpp>
+#include <rucksack/widget/viewport_adaptor.hpp>
 #include <sge/font/metrics_ptr.hpp>
 #include <sge/font/text/drawer_3d.hpp>
 #include <sge/image/color/any/object_fwd.hpp>
@@ -23,6 +23,7 @@
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/vertex_declaration_ptr.hpp>
+#include <sge/viewport/manager_fwd.hpp>
 #include <sge/shader/object.hpp>
 #include <sge/sprite/intrusive/system_impl.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -50,13 +51,11 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	parent(
+		sge::viewport::manager &,
 		sge::renderer::device &,
-		sge::opencl::context::object &,
 		sge::opencl::command_queue::object &,
 		sge::font::metrics_ptr,
-		monitor::border_size const &,
-		monitor::font_color const &,
-		monitor::name const &);
+		monitor::font_color const &);
 
 	sge::renderer::vertex_declaration const &
 	vertex_declaration() const;
@@ -92,6 +91,9 @@ public:
 	sge::font::text::drawer_3d &
 	font_drawer();
 
+	rucksack::widget::viewport_adaptor &
+	viewport_widget();
+
 	void
 	render();
 
@@ -103,7 +105,6 @@ private:
 	friend class monitor::child;
 
 	sge::renderer::device &renderer_;
-	sge::opencl::context::object &context_;
 	sge::opencl::command_queue::object &command_queue_;
 	sge::font::metrics_ptr font_metrics_;
 	sge::font::text::drawer_3d font_drawer_;
@@ -116,7 +117,7 @@ private:
 	sge::shader::object arrow_shader_;
 	monitor::dummy_sprite::system sprite_system_;
 	monitor::child_list children_;
-	monitor::window_manager window_manager_;
+	rucksack::widget::viewport_adaptor viewport_adaptor_;
 
 	void
 	image_to_vb(

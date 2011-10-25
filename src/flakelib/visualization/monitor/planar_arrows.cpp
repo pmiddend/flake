@@ -1,6 +1,12 @@
 #include <flakelib/visualization/monitor/parent.hpp>
 #include <flakelib/visualization/monitor/planar_arrows.hpp>
 #include <flakelib/visualization/monitor/dummy_sprite/parameters.hpp>
+#include <rucksack/axis_policy2.hpp>
+#include <sge/font/text/part.hpp>
+#include <sge/font/text/from_fcppt_string.hpp>
+#include <sge/font/text/size.hpp>
+#include <sge/font/text/draw.hpp>
+#include <sge/font/text/flags_none.hpp>
 #include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/first_index.hpp>
@@ -32,7 +38,45 @@
 #include <fcppt/math/dim/output.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/vector/structure_cast.hpp>
+#include <limits>
 
+namespace
+{
+rucksack::axis_policy2 const
+font_axis_policy(
+	sge::font::metrics &_font_metrics,
+	sge::font::text::string const &_text)
+{
+	sge::font::dim const size =
+		sge::font::text::size(
+			_font_metrics,
+			_text,
+			sge::font::dim(
+				std::numeric_limits<sge::font::dim::value_type>::max(),
+				std::numeric_limits<sge::font::dim::value_type>::max()),
+			sge::font::text::flags::none).size();
+
+	return
+		rucksack::axis_policy2(
+			rucksack::axis_policy(
+				rucksack::minimum_size(
+					static_cast<rucksack::scalar>(
+						size.w())),
+				rucksack::preferred_size(),
+				rucksack::is_expanding(
+					false)),
+			rucksack::axis_policy(
+				rucksack::minimum_size(
+					static_cast<rucksack::scalar>(
+						size.h())),
+				rucksack::preferred_size(),
+				rucksack::is_expanding(
+					false)),
+			rucksack::aspect(
+				1,
+				1));
+}
+}
 
 flakelib::visualization::monitor::planar_arrows::planar_arrows(
 	monitor::parent &_parent,
@@ -52,7 +96,6 @@ flakelib::visualization::monitor::planar_arrows::planar_arrows(
 		_arrow_scale),
 	grid_scale_(
 		_grid_scale),
-	position_(),
 	vb_(
 		child::parent().renderer().create_vertex_buffer(
 			child::parent().vertex_declaration(),
@@ -65,21 +108,61 @@ flakelib::visualization::monitor::planar_arrows::planar_arrows(
 		child::parent().context(),
 		*vb_,
 		sge::opencl::memory_object::renderer_buffer_lock_mode::write_only),
-	sprite_()
+	sprite_(),
+	box_parent_(
+		rucksack::axis::y,
+		rucksack::aspect(
+			1,
+			1)),
+	font_box_(
+		::font_axis_policy(
+			child::parent().font_metrics(),
+			sge::font::text::from_fcppt_string(
+				this->name()))),
+	sprite_box_(
+		rucksack::axis_policy2(
+			rucksack::axis_policy(
+				rucksack::minimum_size(
+					static_cast<rucksack::scalar>(
+						grid_scale_.get() *
+						static_cast<monitor::scalar>(
+							dimensions_.w()))),
+				rucksack::preferred_size(),
+				rucksack::is_expanding(
+					false)),
+			rucksack::axis_policy(
+				rucksack::minimum_size(
+					static_cast<rucksack::scalar>(
+						grid_scale_.get() *
+						static_cast<monitor::scalar>(
+							dimensions_.h()))),
+				rucksack::preferred_size(),
+				rucksack::is_expanding(
+					false)),
+			rucksack::aspect(
+				1,
+				1)))
 {
+	box_parent_.push_back_child(
+		font_box_,
+		rucksack::alignment::left_or_top);
+
+	box_parent_.push_back_child(
+		sprite_box_,
+		rucksack::alignment::left_or_top);
+
 	if(_optional_texture)
+	{
 		sprite_.take(
 			fcppt::make_unique_ptr<dummy_sprite::object>(
 				dummy_sprite::parameters()
-					.size(
-						fcppt::math::dim::structure_cast<dummy_sprite::object::dim>(
-							this->area().size()))
 					.texture(
 						fcppt::make_shared_ptr<sge::texture::part_raw>(
 							_optional_texture))
 					.system(
 						&child::parent().sprite_system())
 					.elements()));
+	}
 }
 
 void
@@ -91,29 +174,6 @@ flakelib::visualization::monitor::planar_arrows::from_planar_object(
 		cl_vb_,
 		grid_scale_,
 		arrow_scale_);
-}
-
-void
-flakelib::visualization::monitor::planar_arrows::position(
-	monitor::rect::vector const &_position)
-{
-	position_ =
-		_position;
-	if(sprite_)
-		sprite_->pos(
-			fcppt::math::vector::structure_cast<monitor::dummy_sprite::object::vector>(
-				_position));
-}
-
-flakelib::visualization::monitor::rect const
-flakelib::visualization::monitor::planar_arrows::area() const
-{
-	return
-		monitor::rect(
-			position_,
-			grid_scale_.get() *
-			fcppt::math::dim::structure_cast<monitor::rect::dim>(
-				dimensions_));
 }
 
 fcppt::string const
@@ -147,7 +207,8 @@ flakelib::visualization::monitor::planar_arrows::render()
 
 	child::parent().arrow_shader().update_uniform(
 		"initial_position",
-		position_);
+		fcppt::math::vector::structure_cast<sge::renderer::vector2>(
+			sprite_box_.position()));
 
 	child::parent().renderer().render_nonindexed(
 		sge::renderer::first_vertex(
@@ -155,6 +216,27 @@ flakelib::visualization::monitor::planar_arrows::render()
 		sge::renderer::vertex_count(
 			vb_->size()),
 		sge::renderer::nonindexed_primitive_type::line);
+}
+
+void
+flakelib::visualization::monitor::planar_arrows::update()
+{
+	if(sprite_)
+	{
+		sprite_->pos(
+			fcppt::math::vector::structure_cast<monitor::dummy_sprite::object::vector>(
+				sprite_box_.position()));
+
+		sprite_->size(
+			fcppt::math::dim::structure_cast<monitor::dummy_sprite::object::dim>(
+				sprite_box_.size()));
+	}
+}
+
+rucksack::widget::base &
+flakelib::visualization::monitor::planar_arrows::widget()
+{
+	return box_parent_;
 }
 
 flakelib::visualization::monitor::planar_arrows::~planar_arrows()

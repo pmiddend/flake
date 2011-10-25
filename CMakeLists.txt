@@ -98,12 +98,10 @@ SET(
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/visualization/arrow.cpp
 	src/flakelib/visualization/base.cpp
-	src/flakelib/visualization/create.cpp
 	src/flakelib/visualization/monitor/child.cpp
 	src/flakelib/visualization/monitor/parent.cpp
 	src/flakelib/visualization/monitor/planar_arrows.cpp
 	src/flakelib/visualization/monitor/texture.cpp
-	src/flakelib/visualization/monitor/window_manager.cpp
 )
 
 FCPPT_UTILS_ADD_SOURCE_GROUPS("${FLAKELIB_FILES}")
@@ -121,6 +119,7 @@ TARGET_LINK_LIBRARIES(
 	flakelib
 	${Fcppt_LIBRARIES}
 	${SGE_LIBRARIES}
+	${Rucksack_LIBRARIES}
 	${Boost_LIBRARIES})
 
 INSTALL(
@@ -140,6 +139,7 @@ TARGET_LINK_LIBRARIES(
 	flakelib
 	${Fcppt_LIBRARIES}
 	${SGE_LIBRARIES}
+	${Rucksack_LIBRARIES}
 	${Boost_LIBRARIES})
 
 INSTALL(
@@ -159,6 +159,7 @@ TARGET_LINK_LIBRARIES(
 	flakelib
 	${Fcppt_LIBRARIES}
 	${SGE_LIBRARIES}
+	${Rucksack_LIBRARIES}
 	${Boost_LIBRARIES})
 
 INSTALL(

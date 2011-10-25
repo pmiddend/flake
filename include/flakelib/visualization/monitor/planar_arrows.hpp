@@ -10,6 +10,8 @@
 #include <flakelib/visualization/monitor/parent_fwd.hpp>
 #include <flakelib/visualization/monitor/rect.hpp>
 #include <flakelib/visualization/monitor/dummy_sprite/object.hpp>
+#include <rucksack/widget/box/base.hpp>
+#include <rucksack/widget/dummy.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <sge/renderer/vertex_buffer_ptr.hpp>
@@ -46,19 +48,17 @@ public:
 	from_planar_object(
 		flakelib::planar_object const &);
 
-	void
-	position(
-		monitor::rect::vector const &);
-
-	monitor::rect const
-	area() const;
-
 	fcppt::string const
 	name() const;
 
 	void
 	render();
 
+	void
+	update();
+
+	rucksack::widget::base &
+	widget();
 
 	~planar_arrows();
 private:
@@ -70,6 +70,9 @@ private:
 	sge::renderer::vertex_buffer_ptr const vb_;
 	sge::opencl::memory_object::buffer cl_vb_;
 	fcppt::scoped_ptr<dummy_sprite::object> sprite_;
+	rucksack::widget::box::base box_parent_;
+	rucksack::widget::dummy font_box_;
+	rucksack::widget::dummy sprite_box_;
 };
 }
 }

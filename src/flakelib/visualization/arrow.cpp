@@ -29,8 +29,8 @@
 
 
 flakelib::visualization::arrow::arrow(
+	sge::viewport::manager &_viewport_manager,
 	sge::renderer::device &_renderer,
-	sge::opencl::context::object &_context,
 	sge::opencl::command_queue::object &_command_queue,
 	simulation::base &_simulation,
 	sge::font::system &_font_system,
@@ -42,8 +42,8 @@ flakelib::visualization::arrow::arrow(
 	simulation_(
 		_simulation),
 	monitor_parent_(
+		_viewport_manager,
 		_renderer,
-		_context,
 		_command_queue,
 		_font_system.create_font(
 			flakelib::media_path_from_string(
@@ -52,15 +52,14 @@ flakelib::visualization::arrow::arrow(
 				_config_file,
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("visualization/font-size")))),
-		monitor::border_size(
-			sge::parse::json::find_and_convert_member<monitor::border_size::value_type>(
+		monitor::font_color(
+			sge::image::colors::black())),
+	master_and_slaves_(
+		rucksack::padding(
+			sge::parse::json::find_and_convert_member<rucksack::scalar>(
 				_config_file,
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("visualization/border-size")))),
-		monitor::font_color(
-			sge::image::colors::black()),
-		monitor::name(
-			FCPPT_TEXT("velocity"))),
+					FCPPT_TEXT("visualization/border-size"))))),
 	velocity_arrows_(
 		monitor_parent_,
 		monitor::name(
@@ -88,11 +87,18 @@ flakelib::visualization::arrow::arrow(
 				sge::renderer::texture::address_mode::clamp),
 			sge::renderer::resource_flags::none))
 {
+	monitor_parent_.viewport_widget().child(
+		master_and_slaves_);
+
+	master_and_slaves_.master_pane(
+		velocity_arrows_.widget());
+
 	for(
 		flakelib::additional_planar_data::const_iterator it =
 			simulation_.additional_planar_data().begin();
 		it !=simulation_.additional_planar_data().end();
 		++it)
+	{
 		fcppt::container::ptr::insert_unique_ptr_map(
 			additional_data_,
 			it->first,
@@ -105,14 +111,20 @@ flakelib::visualization::arrow::arrow(
 					fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 						sge::image2d::view::size(
 							_boundary.get()))),
-				monitor::rect(
-					velocity_arrows_.area().pos(),
-					velocity_arrows_.area().size()/static_cast<monitor::rect::value_type>(4)),
+				monitor::rect::dim(
+					static_cast<monitor::scalar>(
+						velocity_arrows_.widget().axis_policy().x().minimum_size()/static_cast<rucksack::scalar>(4)),
+					static_cast<monitor::scalar>(
+						velocity_arrows_.widget().axis_policy().y().minimum_size()/static_cast<rucksack::scalar>(4))),
 				monitor::scaling_factor(
 					sge::parse::json::find_and_convert_member<monitor::rect::value_type>(
 						_config_file,
 						sge::parse::json::string_to_path(
 							FCPPT_TEXT("visualization/")+it->first+FCPPT_TEXT("-scale"))))));
+
+		master_and_slaves_.push_back_child(
+			additional_data_.find(it->first)->second->widget());
+	}
 }
 
 void
@@ -134,6 +146,7 @@ flakelib::visualization::arrow::update(
 			if(it->first == it2->first)
 				it2->second->from_planar_object(
 					it->second);
+
 	monitor_parent_.update();
 }
 

@@ -59,6 +59,8 @@
 #include <algorithm>
 #include <fcppt/config/external_end.hpp>
 
+#include <iostream>
+
 
 flakelib::simulation::stam::stam(
 	sge::opencl::context::object &_context,
