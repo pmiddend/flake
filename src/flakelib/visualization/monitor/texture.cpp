@@ -2,6 +2,11 @@
 #include <flakelib/visualization/monitor/texture.hpp>
 #include <flakelib/visualization/monitor/dummy_sprite/parameters.hpp>
 #include <rucksack/axis_policy2.hpp>
+#include <sge/font/text/draw.hpp>
+#include <sge/font/text/flags_none.hpp>
+#include <sge/font/text/from_fcppt_string.hpp>
+#include <sge/font/text/part.hpp>
+#include <sge/font/text/size.hpp>
 #include <sge/opencl/memory_object/flags_field.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
@@ -9,21 +14,18 @@
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/sprite/parameters.hpp>
 #include <sge/texture/part_raw.hpp>
-#include <sge/font/text/part.hpp>
-#include <sge/font/text/from_fcppt_string.hpp>
-#include <sge/font/text/size.hpp>
-#include <sge/font/text/draw.hpp>
-#include <sge/font/text/flags_none.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
-#include <fcppt/math/dim/structure_cast.hpp>
-#include <fcppt/math/vector/structure_cast.hpp>
-#include <limits>
-
-#include <iostream>
-#include <fcppt/math/vector/output.hpp>
 #include <fcppt/math/dim/output.hpp>
+#include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/vector/output.hpp>
+#include <fcppt/math/vector/structure_cast.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <iostream>
+#include <limits>
+#include <fcppt/config/external_end.hpp>
+
 
 namespace
 {
@@ -173,6 +175,7 @@ void
 flakelib::visualization::monitor::texture::update()
 {
 	box_parent_.relayout();
+
 	sprite_.pos(
 		fcppt::math::vector::structure_cast<dummy_sprite::object::vector>(
 			sprite_box_.position()));

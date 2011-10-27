@@ -1,34 +1,21 @@
-#if 0
-#include <flakelib/duration.hpp>
-#include <flakelib/media_path.hpp>
-#include <flakelib/media_path_from_string.hpp>
-#include <flakelib/pde_tester.hpp>
-#include <flakelib/utf8_file_to_fcppt_string.hpp>
+#include <flakelib/laplace_tester.hpp>
+#include <flakelib/laplace_solver/jacobi.hpp>
+#include <flakelib/laplace_solver/multigrid.hpp>
 #include <sge/all_extensions.hpp>
+#include <sge/exception.hpp>
 #include <sge/image/capabilities_field.hpp>
 #include <sge/image/colors.hpp>
-#include <sge/image2d/file.hpp>
-#include <sge/image2d/file_ptr.hpp>
-#include <sge/image2d/multi_loader.hpp>
-#include <sge/image2d/view/const_object.hpp>
 #include <sge/input/keyboard/action.hpp>
 #include <sge/input/keyboard/device.hpp>
 #include <sge/input/keyboard/key_code.hpp>
 #include <sge/log/global_context.hpp>
 #include <sge/opencl/single_device_system.hpp>
-#include <sge/parse/json/array.hpp>
-#include <sge/parse/json/find_and_convert_member.hpp>
-#include <sge/parse/json/object.hpp>
-#include <sge/parse/json/parse_string_exn.hpp>
-#include <sge/parse/json/path.hpp>
-#include <sge/parse/json/config/create_command_line_parameters.hpp>
-#include <sge/parse/json/config/merge_command_line_parameters.hpp>
+#include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/renderer/depth_stencil_buffer.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/no_multi_sampling.hpp>
 #include <sge/renderer/parameters.hpp>
 #include <sge/renderer/scoped_block.hpp>
-#include <sge/renderer/vertex_declaration_ptr.hpp>
 #include <sge/renderer/viewport_size.hpp>
 #include <sge/renderer/visual_depth.hpp>
 #include <sge/renderer/vsync.hpp>
@@ -47,28 +34,16 @@
 #include <sge/systems/renderer.hpp>
 #include <sge/systems/running_to_false.hpp>
 #include <sge/systems/window.hpp>
-#include <sge/timer/basic.hpp>
-#include <sge/timer/elapsed_and_reset.hpp>
-#include <sge/timer/parameters.hpp>
-#include <sge/timer/clocks/standard.hpp>
 #include <sge/viewport/center_on_resize.hpp>
 #include <sge/window/dim.hpp>
 #include <sge/window/instance.hpp>
 #include <sge/window/simple_parameters.hpp>
 #include <fcppt/exception.hpp>
 #include <fcppt/text.hpp>
-#include <fcppt/chrono/duration_comparison.hpp>
-#include <fcppt/chrono/seconds.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/io/cerr.hpp>
-#include <fcppt/log/activate_levels.hpp>
-#include <fcppt/log/context.hpp>
-#include <fcppt/log/level.hpp>
-#include <fcppt/log/location.hpp>
-#include <fcppt/math/dim/basic_impl.hpp>
 #include <fcppt/signal/scoped_connection.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <cstddef>
 #include <exception>
 #include <iostream>
 #include <ostream>
@@ -77,28 +52,10 @@
 
 int
 main(
-	int argc,
-	char *argv[])
+	int,
+	char *[])
 try
 {
-	sge::log::global_context().apply(
-		fcppt::log::location(
-			FCPPT_TEXT("opencl")),
-		std::tr1::bind(
-			&fcppt::log::activate_levels,
-			std::tr1::placeholders::_1,
-			fcppt::log::level::verbose));
-
-	sge::parse::json::object const config_file =
-		sge::parse::json::config::merge_command_line_parameters(
-			sge::parse::json::parse_string_exn(
-				flakelib::utf8_file_to_fcppt_string(
-					flakelib::media_path_from_string(
-						FCPPT_TEXT("config.json")))),
-			sge::parse::json::config::create_command_line_parameters(
-				argc,
-				argv));
-
 	sge::systems::instance sys(
 		sge::systems::list()
 			(sge::systems::image_loader(
@@ -107,7 +64,7 @@ try
 			(sge::systems::window(
 				sge::window::simple_parameters(
 					FCPPT_TEXT("Test of different pde solvers"),
-					sge::window::dim(1024,768))))
+					sge::window::dim(1920,1080))))
 			(sge::systems::renderer(
 				sge::renderer::parameters(
 					sge::renderer::visual_depth::depth32,
@@ -115,7 +72,7 @@ try
 					sge::renderer::vsync::on,
 					sge::renderer::no_multi_sampling),
 				sge::viewport::center_on_resize(
-					sge::window::dim(1024,768))))
+					sge::window::dim(1920,1080))))
 			(sge::systems::parameterless::font)
 			(sge::systems::input(
 				sge::systems::input_helper_field(
@@ -125,6 +82,39 @@ try
 	sge::opencl::single_device_system opencl_system(
 		(sys.renderer()),
 		(sge::opencl::context::optional_error_callback()));
+
+
+	flakelib::planar_cache cache(
+		opencl_system.context(),
+		sge::opencl::memory_object::create_image_format(
+			CL_R,
+			CL_FLOAT));
+
+	/*
+	flakelib::laplace_solver::jacobi jacobi_solver(
+		cache,
+		opencl_system.command_queue(),
+		flakelib::laplace_solver::grid_scale(
+			1.0f),
+		flakelib::laplace_solver::iterations(
+			51));
+			*/
+	flakelib::laplace_solver::multigrid multigrid_solver(
+		cache,
+		opencl_system.command_queue(),
+		flakelib::laplace_solver::grid_scale(
+			1.0f));
+
+	flakelib::laplace_tester tester(
+//		jacobi_solver,
+		multigrid_solver,
+		cache,
+		sys.renderer(),
+		sys.viewport_manager(),
+		opencl_system.command_queue(),
+		sys.font_system());
+
+	tester.update();
 
 	bool running =
 		true;
@@ -138,29 +128,9 @@ try
 
 	sys.window().dispatch();
 
-	flakelib::pde_tester tester(
-		opencl_system.context(),
-		opencl_system.command_queue(),
-		sys.renderer(),
-		sys.font_system(),
-		config_file,
-		sge::parse::json::find_and_convert_member<sge::opencl::memory_object::dim2>(
-			config_file,
-			sge::parse::json::path(FCPPT_TEXT("pde-tester-size"))));
-
-	fcppt::signal::scoped_connection const cb_sim(
-		sys.keyboard_collector().key_callback(
-			sge::input::keyboard::action(
-				sge::input::keyboard::key_code::space,
-				std::tr1::bind(
-					&flakelib::pde_tester::update,
-					&tester))));
-
 	while(running)
 	{
 		sys.window().dispatch();
-
-		tester.update();
 
 		// If we have no viewport (yet), don't do anything (this is just a
 		// precaution, we _might_ divide by zero somewhere below, otherwise)
@@ -195,6 +165,3 @@ catch(...)
 	std::cerr << "unknown exception caught\n";
 	return EXIT_FAILURE;
 }
-#else
-int main() {}
-#endif

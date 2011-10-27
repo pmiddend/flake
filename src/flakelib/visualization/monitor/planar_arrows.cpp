@@ -2,11 +2,11 @@
 #include <flakelib/visualization/monitor/planar_arrows.hpp>
 #include <flakelib/visualization/monitor/dummy_sprite/parameters.hpp>
 #include <rucksack/axis_policy2.hpp>
-#include <sge/font/text/part.hpp>
-#include <sge/font/text/from_fcppt_string.hpp>
-#include <sge/font/text/size.hpp>
 #include <sge/font/text/draw.hpp>
 #include <sge/font/text/flags_none.hpp>
+#include <sge/font/text/from_fcppt_string.hpp>
+#include <sge/font/text/part.hpp>
+#include <sge/font/text/size.hpp>
 #include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/first_index.hpp>
@@ -32,13 +32,15 @@
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/text.hpp>
-#include <fcppt/io/cout.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/output.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/vector/structure_cast.hpp>
+#include <fcppt/config/external_begin.hpp>
 #include <limits>
+#include <fcppt/config/external_end.hpp>
+
 
 namespace
 {

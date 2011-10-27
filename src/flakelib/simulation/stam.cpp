@@ -35,21 +35,18 @@
 #include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/opencl/memory_object/rect.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
+#include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <sge/opencl/program/source_string_sequence.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
-#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/optional.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/unique_ptr.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_array.hpp>
-#include <fcppt/assign/make_container.hpp>
 #include <fcppt/chrono/duration_impl.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
-#include <fcppt/io/cifstream.hpp>
 #include <fcppt/io/cout.hpp>
-#include <fcppt/io/stream_to_string.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
 #include <fcppt/math/dim/comparison.hpp>
@@ -57,9 +54,8 @@
 #include <fcppt/math/vector/basic_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <algorithm>
-#include <fcppt/config/external_end.hpp>
-
 #include <iostream>
+#include <fcppt/config/external_end.hpp>
 
 
 flakelib::simulation::stam::stam(
@@ -160,11 +156,9 @@ flakelib::simulation::stam::stam(
 			0)),
 	main_program_(
 		_context,
-		fcppt::assign::make_container<sge::opencl::program::source_string_sequence>(
-			fcppt::io::stream_to_string(
-				*fcppt::make_unique_ptr<fcppt::io::cifstream>(
-					flakelib::media_path_from_string(
-						FCPPT_TEXT("kernels/stam.cl"))))),
+		sge::opencl::program::file_to_source_string_sequence(
+			flakelib::media_path_from_string(
+				FCPPT_TEXT("kernels/stam.cl"))),
 		sge::opencl::program::build_parameters()),
 	null_image_kernel_(
 		main_program_,
@@ -257,10 +251,29 @@ flakelib::simulation::stam::stam(
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	additional_planar_data_()
 {
-	additional_planar_data_[FCPPT_TEXT("pressure")] = flakelib::planar_object(&p1_);
-	additional_planar_data_[FCPPT_TEXT("velocity-magnitude")] = flakelib::planar_object(&vector_magnitude_);
-	additional_planar_data_[FCPPT_TEXT("divergence")] = flakelib::planar_object(&divergence_);
-	additional_planar_data_[FCPPT_TEXT("residual")] = flakelib::planar_object(&residual_);
+	additional_planar_data_.push_back(
+		std::make_pair(
+			fcppt::string(
+				FCPPT_TEXT("pressure")),
+			flakelib::planar_object(&p1_)));
+
+	additional_planar_data_.push_back(
+		std::make_pair(
+			fcppt::string(
+				FCPPT_TEXT("velocity-magnitude")),
+			flakelib::planar_object(&vector_magnitude_)));
+
+	additional_planar_data_.push_back(
+		std::make_pair(
+			fcppt::string(
+				FCPPT_TEXT("divergence")),
+			flakelib::planar_object(&divergence_)));
+
+	additional_planar_data_.push_back(
+		std::make_pair(
+			fcppt::string(
+				FCPPT_TEXT("residual")),
+			flakelib::planar_object(&residual_)));
 
 	this->null_image(
 		v1_);

@@ -9,12 +9,12 @@
 #include <flakelib/visualization/monitor/parent_fwd.hpp>
 #include <flakelib/visualization/monitor/scaling_factor.hpp>
 #include <flakelib/visualization/monitor/dummy_sprite/object.hpp>
-#include <rucksack/widget/box/base.hpp>
 #include <rucksack/widget/dummy.hpp>
+#include <rucksack/widget/box/base.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/sprite/object.hpp>
-#include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/math/box/basic_impl.hpp>
 
 
 namespace flakelib

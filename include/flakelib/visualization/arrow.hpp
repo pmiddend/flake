@@ -11,11 +11,11 @@
 #include <sge/font/system_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
-#include <sge/viewport/manager_fwd.hpp>
 #include <sge/parse/json/object_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/sprite/external_system_impl.hpp>
 #include <sge/sprite/object.hpp>
+#include <sge/viewport/manager_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/ptr_container/ptr_map.hpp>

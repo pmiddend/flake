@@ -6,6 +6,7 @@
 #include <flakelib/laplace_solver/from.hpp>
 #include <flakelib/laplace_solver/grid_scale.hpp>
 #include <flakelib/laplace_solver/initial_guess.hpp>
+#include <flakelib/laplace_solver/iterations.hpp>
 #include <flakelib/laplace_solver/rhs.hpp>
 #include <flakelib/laplace_solver/to.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
@@ -34,25 +35,37 @@ public:
 	void
 	solve(
 		laplace_solver::rhs const &,
-		laplace_solver::destination const &);
+		laplace_solver::destination const &,
+		laplace_solver::initial_guess const &);
+
+	flakelib::additional_planar_data const &
+	additional_planar_data() const;
 
 	~multigrid();
 private:
 	flakelib::planar_cache &planar_cache_;
 	sge::opencl::command_queue::object &command_queue_;
 	grid_scale::value_type const grid_scale_;
-	unsigned const jacobi_iterations_;
-	sge::opencl::program::object program_;
+	iterations::value_type const jacobi_iterations_;
+	sge::opencl::program::object utility_program_;
+	sge::opencl::kernel::object copy_image_kernel_;
 	sge::opencl::kernel::object null_image_kernel_;
+	sge::opencl::program::object main_program_;
 	sge::opencl::kernel::object jacobi_kernel_;
 	sge::opencl::kernel::object laplacian_residual_kernel_;
 	sge::opencl::kernel::object downsample_kernel_;
 	sge::opencl::kernel::object upsample_kernel_;
 	sge::opencl::kernel::object add_kernel_;
+	flakelib::additional_planar_data additional_planar_data_;
 
 	void
 	null_image(
 		sge::opencl::memory_object::image::planar &);
+
+	void
+	copy_image(
+		laplace_solver::from const &,
+		laplace_solver::to const &);
 
 	void
 	jacobi(
@@ -81,6 +94,11 @@ private:
 		laplace_solver::from const &,
 		laplace_solver::from const &,
 		laplace_solver::to const &);
+
+	void
+	copy_to_planar_data(
+		sge::opencl::memory_object::image::planar &,
+		fcppt::string const &);
 };
 }
 }

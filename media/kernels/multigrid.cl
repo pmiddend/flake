@@ -14,21 +14,6 @@ constant int2 const
 	pos_top = (int2)(0,1),
 	pos_bottom = (int2)(0,-1);
 
-kernel void
-null_image(
-	global write_only image2d_t f)
-{
-	write_imagef(
-		f,
-		(int2)(
-			get_global_id(
-				0),
-			get_global_id(
-				1)),
-		(float4)(
-			0.0f));
-}
-
 /**
 	Solve the special equation
 
@@ -291,27 +276,27 @@ laplacian_residual(
 	float
 		center =
 			read_imagef(
-				rhs,
+				from,
 				absolute_clamping_nearest,
 				position).x,
 		left =
 			read_imagef(
-				rhs,
+				from,
 				absolute_clamping_nearest,
 				position + pos_left).x,
 		right =
 			read_imagef(
-				rhs,
+				from,
 				absolute_clamping_nearest,
 				position + pos_right).x,
 		top =
 			read_imagef(
-				rhs,
+				from,
 				absolute_clamping_nearest,
 				position + pos_top).x,
 		bottom =
 			read_imagef(
-				rhs,
+				from,
 				absolute_clamping_nearest,
 				position + pos_bottom).x;
 

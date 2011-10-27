@@ -23,9 +23,9 @@
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/vertex_declaration_ptr.hpp>
-#include <sge/viewport/manager_fwd.hpp>
 #include <sge/shader/object.hpp>
 #include <sge/sprite/intrusive/system_impl.hpp>
+#include <sge/viewport/manager_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 
 

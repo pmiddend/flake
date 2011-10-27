@@ -83,13 +83,18 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 
 SET(
 	FLAKELIB_FILES
+	src/flakelib/cl/apply_kernel_to_planar_image.cpp
 	src/flakelib/laplace_solver/base.cpp
+	src/flakelib/laplace_solver/jacobi.cpp
 	src/flakelib/laplace_solver/multigrid.cpp
+	src/flakelib/laplace_tester.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
 	src/flakelib/pde_tester.cpp
 	src/flakelib/planar_buffer.cpp
 	src/flakelib/planar_cache.cpp
+	src/flakelib/planar_lock.cpp
+	src/flakelib/planar_object_size.cpp
 	src/flakelib/profiler/object.cpp
 	src/flakelib/profiler/scoped.cpp
 	src/flakelib/simulation/base.cpp

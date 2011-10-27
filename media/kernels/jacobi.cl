@@ -18,10 +18,11 @@ constant int2 const
  */
 kernel void
 jacobi(
-	/* 0 */global read_only image2d_t x,
-	/* 1 */global write_only image2d_t output,
-	/* 2 */float const alpha,
-	/* 3 */float const beta)
+	/* 0 */float const alpha,
+	/* 1 */float const beta,
+	/* 2 */global read_only image2d_t rhs,
+	/* 3 */global read_only image2d_t x,
+	/* 4 */global write_only image2d_t output)
 {
 	int2 const position =
 		(int2)(
@@ -58,7 +59,10 @@ jacobi(
 				position + pos_bottom).x;
 
 	float const b_value =
-		0.0f;
+		read_imagef(
+				rhs,
+				absolute_clamping_nearest,
+				position).x;
 
 	write_imagef(
 		output,

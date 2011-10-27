@@ -10,8 +10,8 @@
 #include <flakelib/visualization/monitor/parent_fwd.hpp>
 #include <flakelib/visualization/monitor/rect.hpp>
 #include <flakelib/visualization/monitor/dummy_sprite/object.hpp>
-#include <rucksack/widget/box/base.hpp>
 #include <rucksack/widget/dummy.hpp>
+#include <rucksack/widget/box/base.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <sge/renderer/vertex_buffer_ptr.hpp>

@@ -4,16 +4,20 @@
 #include <flakelib/planar_object.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <boost/unordered_map.hpp>
+#include <vector>
+#include <utility>
 #include <fcppt/config/external_end.hpp>
 
 namespace flakelib
 {
 typedef
-boost::unordered_map
+std::vector
 <
-	fcppt::string,
-	flakelib::planar_object
+	std::pair
+	<
+		fcppt::string,
+		flakelib::planar_object
+	>
 >
 additional_planar_data;
 }

@@ -1,9 +1,9 @@
 #ifndef FLAKELIB_VISUALIZATION_MONITOR_CHILD_HPP_INCLUDED
 #define FLAKELIB_VISUALIZATION_MONITOR_CHILD_HPP_INCLUDED
 
-#include <rucksack/widget/base_fwd.hpp>
 #include <flakelib/planar_object.hpp>
 #include <flakelib/visualization/monitor/parent_fwd.hpp>
+#include <rucksack/widget/base_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/intrusive/list.hpp>

@@ -3,6 +3,7 @@
 #include <flakelib/visualization/monitor/arrow_vf/format.hpp>
 #include <sge/opencl/command_queue/dim2.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
+#include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/kernel/argument_index.hpp>
 #include <sge/opencl/kernel/name.hpp>
 #include <sge/opencl/memory_object/base_ref_sequence.hpp>
@@ -11,7 +12,6 @@
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/source_string_sequence.hpp>
-#include <sge/opencl/command_queue/object.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/onscreen_target.hpp>
 #include <sge/renderer/stage.hpp>
@@ -31,6 +31,7 @@
 #include <fcppt/math/dim/basic_impl.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/output.hpp>
+
 
 flakelib::visualization::monitor::parent::parent(
 	sge::viewport::manager &_viewport_manager,
