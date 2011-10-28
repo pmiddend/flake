@@ -25,16 +25,17 @@
 flakelib::laplace_solver::multigrid::multigrid(
 	flakelib::planar_cache &_planar_cache,
 	sge::opencl::command_queue::object &_command_queue,
+	laplace_solver::base &_inner_solver,
 	laplace_solver::grid_scale const &_grid_scale)
 :
 	planar_cache_(
 		_planar_cache),
 	command_queue_(
 		_command_queue),
+	inner_solver_(
+		_inner_solver),
 	grid_scale_(
 		_grid_scale.get()),
-	jacobi_iterations_(
-		3u),
 	utility_program_(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
@@ -55,10 +56,6 @@ flakelib::laplace_solver::multigrid::multigrid(
 			flakelib::media_path_from_string(
 				FCPPT_TEXT("kernels/multigrid.cl"))),
 		sge::opencl::program::build_parameters()),
-	jacobi_kernel_(
-		main_program_,
-		sge::opencl::kernel::name(
-			"jacobi")),
 	laplacian_residual_kernel_(
 		main_program_,
 		sge::opencl::kernel::name(
@@ -112,12 +109,12 @@ flakelib::laplace_solver::multigrid::solve(
 		laplace_solver::to(
 			p0.value()));
 
-	this->jacobi(
-		laplace_solver::initial_guess(
-			p0.value()),
+	inner_solver_.solve(
+		_rhs,
 		laplace_solver::destination(
 			p1.value()),
-		_rhs);
+		laplace_solver::initial_guess(
+			p0.value()));
 
 	this->copy_to_planar_data(
 		p1.value(),
@@ -127,12 +124,16 @@ flakelib::laplace_solver::multigrid::solve(
 	{
 		std::cout << "Small enough, bailing out\n";
 
-		this->jacobi(
-			laplace_solver::initial_guess(
-				_destination.get()),
+		inner_solver_.solve(
+			_rhs,
 			laplace_solver::destination(
 				p0.value()),
-			_rhs);
+			laplace_solver::initial_guess(
+				_destination.get()));
+
+		this->copy_to_planar_data(
+			p0.value(),
+			FCPPT_TEXT("termination"));
 		return;
 	}
 
@@ -210,12 +211,11 @@ flakelib::laplace_solver::multigrid::solve(
 		h.value(),
 		FCPPT_TEXT("error corrected"));
 
-	this->jacobi(
-		laplace_solver::initial_guess(
-			h.value()),
+	inner_solver_.solve(
+		_rhs,
 		_destination,
-		_rhs);
-
+		laplace_solver::initial_guess(
+			h.value()));
 	this->copy_to_planar_data(
 		_destination.get(),
 		FCPPT_TEXT("final smoothing"));
@@ -265,59 +265,6 @@ flakelib::laplace_solver::multigrid::copy_image(
 		copy_image_kernel_,
 		command_queue_,
 		_from.get());
-}
-
-void
-flakelib::laplace_solver::multigrid::jacobi(
-	laplace_solver::initial_guess const &_initial_guess,
-	laplace_solver::destination const &_destination,
-	laplace_solver::rhs const &_rhs)
-{
-	FCPPT_ASSERT_PRE(
-		jacobi_iterations_ % 2 != 0);
-
-	// Alpha
-	jacobi_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
-		-(grid_scale_ * grid_scale_));
-
-	// Beta (rbeta)
-	jacobi_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			1),
-		1.0f/4.0f);
-
-	jacobi_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			2),
-		_rhs.get());
-
-	sge::opencl::memory_object::image::planar
-		*current_source = &_initial_guess.get(),
-		*current_dest = &_destination.get();
-
-	for(iterations::value_type i = 0; i < jacobi_iterations_; ++i)
-	{
-		jacobi_kernel_.argument(
-			sge::opencl::kernel::argument_index(
-				3),
-			*current_source);
-
-		jacobi_kernel_.argument(
-			sge::opencl::kernel::argument_index(
-				4),
-			*current_dest);
-
-		std::swap(
-			current_source,
-			current_dest);
-
-		flakelib::cl::apply_kernel_to_planar_image(
-			jacobi_kernel_,
-			command_queue_,
-			*current_source);
-	}
 }
 
 void

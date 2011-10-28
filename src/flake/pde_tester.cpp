@@ -90,23 +90,22 @@ try
 			CL_R,
 			CL_FLOAT));
 
-	/*
 	flakelib::laplace_solver::jacobi jacobi_solver(
 		cache,
 		opencl_system.command_queue(),
 		flakelib::laplace_solver::grid_scale(
 			1.0f),
 		flakelib::laplace_solver::iterations(
-			51));
-			*/
+			3));
+
 	flakelib::laplace_solver::multigrid multigrid_solver(
 		cache,
 		opencl_system.command_queue(),
+		jacobi_solver,
 		flakelib::laplace_solver::grid_scale(
 			1.0f));
 
 	flakelib::laplace_tester tester(
-//		jacobi_solver,
 		multigrid_solver,
 		cache,
 		sys.renderer(),

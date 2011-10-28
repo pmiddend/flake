@@ -30,6 +30,7 @@ public:
 	multigrid(
 		flakelib::planar_cache &,
 		sge::opencl::command_queue::object &,
+		laplace_solver::base &inner_solver,
 		laplace_solver::grid_scale const &);
 
 	void
@@ -45,13 +46,12 @@ public:
 private:
 	flakelib::planar_cache &planar_cache_;
 	sge::opencl::command_queue::object &command_queue_;
+	laplace_solver::base &inner_solver_;
 	grid_scale::value_type const grid_scale_;
-	iterations::value_type const jacobi_iterations_;
 	sge::opencl::program::object utility_program_;
 	sge::opencl::kernel::object copy_image_kernel_;
 	sge::opencl::kernel::object null_image_kernel_;
 	sge::opencl::program::object main_program_;
-	sge::opencl::kernel::object jacobi_kernel_;
 	sge::opencl::kernel::object laplacian_residual_kernel_;
 	sge::opencl::kernel::object downsample_kernel_;
 	sge::opencl::kernel::object upsample_kernel_;
@@ -66,12 +66,6 @@ private:
 	copy_image(
 		laplace_solver::from const &,
 		laplace_solver::to const &);
-
-	void
-	jacobi(
-		laplace_solver::initial_guess const &,
-		laplace_solver::destination const &,
-		laplace_solver::rhs const &);
 
 	void
 	laplacian_residual(
