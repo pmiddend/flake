@@ -103,8 +103,9 @@ flakelib::visualization::monitor::planar_arrows::planar_arrows(
 			child::parent().vertex_declaration(),
 			sge::renderer::vf::dynamic::part_index(
 				0u),
-			static_cast<sge::renderer::size_type>(
-				dimensions_.content() * 2),
+			sge::renderer::vertex_count(
+				static_cast<sge::renderer::size_type>(
+					dimensions_.content() * 2)),
 			sge::renderer::resource_flags::readable)),
 	cl_vb_(
 		child::parent().context(),

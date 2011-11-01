@@ -4,9 +4,10 @@
 #include <flakelib/planar_object.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <vector>
 #include <utility>
+#include <vector>
 #include <fcppt/config/external_end.hpp>
+
 
 namespace flakelib
 {

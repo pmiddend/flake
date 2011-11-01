@@ -8,6 +8,7 @@
 #include <flakelib/visualization/monitor/parent.hpp>
 #include <rucksack/widget/enumeration.hpp>
 #include <sge/font/system_fwd.hpp>
+#include <sge/image2d/multi_loader_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
@@ -17,6 +18,7 @@
 #include <sge/viewport/manager_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/string.hpp>
+#include <fcppt/unique_ptr.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <fcppt/config/external_end.hpp>
@@ -36,7 +38,8 @@ public:
 		sge::renderer::device &,
 		sge::viewport::manager &,
 		sge::opencl::command_queue::object &,
-		sge::font::system &);
+		sge::font::system &,
+		sge::image2d::multi_loader &);
 
 	void
 	render();
@@ -54,6 +57,7 @@ private:
 	sge::renderer::device &renderer_;
 	sge::opencl::command_queue::object &command_queue_;
 	flakelib::planar_cache &planar_cache_;
+	fcppt::unique_ptr<sge::opencl::memory_object::image::planar> boundary_;
 	visualization::monitor::parent monitor_parent_;
 	rucksack::widget::enumeration master_widget_;
 	flakelib::planar_lock initial_guess_image_;

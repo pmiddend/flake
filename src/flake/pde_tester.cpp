@@ -83,7 +83,6 @@ try
 		(sys.renderer()),
 		(sge::opencl::context::optional_error_callback()));
 
-
 	flakelib::planar_cache cache(
 		opencl_system.context(),
 		sge::opencl::memory_object::create_image_format(
@@ -111,7 +110,8 @@ try
 		sys.renderer(),
 		sys.viewport_manager(),
 		opencl_system.command_queue(),
-		sys.font_system());
+		sys.font_system(),
+		sys.image_loader());
 
 	tester.update();
 
@@ -135,7 +135,9 @@ try
 		// precaution, we _might_ divide by zero somewhere below, otherwise)
 		if(!sge::renderer::viewport_size(sys.renderer()).content())
 			throw sge::exception(
-				FCPPT_TEXT("There was an iteration without viewport. Usually not a problem, but OpenCL isn't suited for viewport changes, yet. So I have to exit now."));
+				FCPPT_TEXT("There was an iteration without viewport.")
+				FCPPT_TEXT("Usually not a problem, but OpenCL isn't suited ")
+				FCPPT_TEXT("for viewport changes, yet. So I have to exit now."));
 
 		sge::renderer::state::scoped scoped_state(
 			sys.renderer(),

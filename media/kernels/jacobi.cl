@@ -21,8 +21,9 @@ jacobi(
 	/* 0 */float const alpha,
 	/* 1 */float const beta,
 	/* 2 */global read_only image2d_t rhs,
-	/* 3 */global read_only image2d_t x,
-	/* 4 */global write_only image2d_t output)
+	/* 3 */global read_only image2d_t boundary,
+	/* 4 */global read_only image2d_t x,
+	/* 5 */global write_only image2d_t output)
 {
 	int2 const position =
 		(int2)(
@@ -31,6 +32,28 @@ jacobi(
 			get_global_id(
 				1));
 
+	float const
+		left_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_left).x,
+		right_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_right).x,
+		top_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_top).x,
+		bottom_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_bottom).x;
+
 	float
 		center =
 			read_imagef(
@@ -38,21 +61,33 @@ jacobi(
 				absolute_clamping_nearest,
 				position).x,
 		left =
+			left_boundary *
+			center +
+			(1.0f - left_boundary) *
 			read_imagef(
 				x,
 				absolute_clamping_nearest,
 				position + pos_left).x,
 		right =
+			right_boundary *
+			center +
+			(1.0f - right_boundary) *
 			read_imagef(
 				x,
 				absolute_clamping_nearest,
 				position + pos_right).x,
 		top =
+			top_boundary *
+			center +
+			(1.0f - top_boundary) *
 			read_imagef(
 				x,
 				absolute_clamping_nearest,
 				position + pos_top).x,
 		bottom =
+			bottom_boundary *
+			center +
+			(1.0f - bottom_boundary) *
 			read_imagef(
 				x,
 				absolute_clamping_nearest,

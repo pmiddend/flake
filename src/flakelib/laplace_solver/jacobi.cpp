@@ -46,7 +46,8 @@ void
 flakelib::laplace_solver::jacobi::solve(
 	laplace_solver::rhs const &_rhs,
 	laplace_solver::destination const &_destination,
-	laplace_solver::initial_guess const &_initial_guess)
+	laplace_solver::initial_guess const &_initial_guess,
+	laplace_solver::boundary const &_boundary)
 {
 	FCPPT_ASSERT_PRE(
 		iterations_ % 2 != 0);
@@ -76,10 +77,18 @@ flakelib::laplace_solver::jacobi::solve(
 			1),
 		1.0f/4.0f);
 
+	// rhs
 	jacobi_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
 		_rhs.get());
+
+
+	// boundary
+	jacobi_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			3),
+		_boundary.get());
 
 	sge::opencl::memory_object::image::planar
 		*current_source =
@@ -91,12 +100,12 @@ flakelib::laplace_solver::jacobi::solve(
 	{
 		jacobi_kernel_.argument(
 			sge::opencl::kernel::argument_index(
-				3),
+				4),
 			*current_source);
 
 		jacobi_kernel_.argument(
 			sge::opencl::kernel::argument_index(
-				4),
+				5),
 			*current_dest);
 
 		if(i == 0)

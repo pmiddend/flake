@@ -84,6 +84,7 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 SET(
 	FLAKELIB_FILES
 	src/flakelib/cl/apply_kernel_to_planar_image.cpp
+	src/flakelib/cl/planar_image_view_to_cl_image.cpp
 	src/flakelib/laplace_solver/base.cpp
 	src/flakelib/laplace_solver/jacobi.cpp
 	src/flakelib/laplace_solver/multigrid.cpp

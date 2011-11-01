@@ -4,15 +4,18 @@
 #include <flakelib/cl/apply_kernel_to_planar_image.hpp>
 #include <flakelib/laplace_solver/base.hpp>
 #include <flakelib/visualization/monitor/texture.hpp>
+#include <flakelib/cl/planar_image_view_to_cl_image.hpp>
+#include <sge/image2d/view/const_object.hpp>
 #include <sge/font/system.hpp>
 #include <sge/image/colors.hpp>
+#include <sge/image2d/multi_loader.hpp>
+#include <sge/image2d/file.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
-#include <fcppt/container/ptr/push_back_unique_ptr.hpp>
 #include <fcppt/container/ptr/push_back_unique_ptr.hpp>
 
 
@@ -22,7 +25,8 @@ flakelib::laplace_tester::laplace_tester(
 	sge::renderer::device &_renderer,
 	sge::viewport::manager &_viewport_manager,
 	sge::opencl::command_queue::object &_command_queue,
-	sge::font::system &_font_system)
+	sge::font::system &_font_system,
+	sge::image2d::multi_loader &_image_loader)
 :
 	solver_(
 		_solver),
@@ -32,6 +36,12 @@ flakelib::laplace_tester::laplace_tester(
 		_command_queue),
 	planar_cache_(
 		_planar_cache),
+	boundary_(
+		cl::planar_image_view_to_cl_image(
+			_image_loader.load(
+				flakelib::media_path_from_string(
+					FCPPT_TEXT("images/boundary_256_black.png")))->view(),
+			command_queue_)),
 	monitor_parent_(
 		_viewport_manager,
 		_renderer,
@@ -51,16 +61,13 @@ flakelib::laplace_tester::laplace_tester(
 			1)),
 	initial_guess_image_(
 		planar_cache_,
-		// This could be a parameter to the class
-		256),
+		boundary_->size()[0]),
 	rhs_(
 		planar_cache_,
-		// This could be a parameter to the class
-		256),
+		boundary_->size()[0]),
 	destination_(
 		planar_cache_,
-		// This could be a parameter to the class
-		256),
+		boundary_->size()[0]),
 	utility_program_(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
@@ -118,7 +125,9 @@ flakelib::laplace_tester::update()
 		laplace_solver::destination(
 			destination_.value()),
 		laplace_solver::initial_guess(
-			initial_guess_image_.value()));
+			initial_guess_image_.value()),
+		laplace_solver::boundary(
+			*boundary_));
 
 	additional_data_.clear();
 

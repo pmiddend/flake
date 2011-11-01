@@ -33,7 +33,8 @@ public:
 	solve(
 		laplace_solver::rhs const &,
 		laplace_solver::destination const &,
-		laplace_solver::initial_guess const &);
+		laplace_solver::initial_guess const &,
+		laplace_solver::boundary const &);
 
 	flakelib::additional_planar_data const &
 	additional_planar_data() const;

@@ -2,6 +2,7 @@
 #define FLAKELIB_LAPLACE_SOLVER_BASE_HPP_INCLUDED
 
 #include <flakelib/additional_planar_data.hpp>
+#include <flakelib/laplace_solver/boundary.hpp>
 #include <flakelib/laplace_solver/destination.hpp>
 #include <flakelib/laplace_solver/initial_guess.hpp>
 #include <flakelib/laplace_solver/rhs.hpp>
@@ -21,7 +22,8 @@ public:
 	solve(
 		laplace_solver::rhs const &,
 		laplace_solver::destination const &,
-		laplace_solver::initial_guess const &) = 0;
+		laplace_solver::initial_guess const &,
+		laplace_solver::boundary const &) = 0;
 
 	virtual flakelib::additional_planar_data const &
 	additional_planar_data() const = 0;
