@@ -1,3 +1,5 @@
+#define WEIGHTED_JACOBI
+
 sampler_t const absolute_clamping_nearest =
 	CLK_NORMALIZED_COORDS_FALSE |
 	CLK_ADDRESS_CLAMP_TO_EDGE |
@@ -102,5 +104,9 @@ jacobi(
 	write_imagef(
 		output,
 		position,
+//#ifndef WEIGHTED_JACOBI
 		(float4)((left + right + top + bottom + alpha * b_value) * beta,0.0f,0.0f,0.0f));
+//#else
+//		(float4)(1.0f/3.0f * center + 2.0f / 3.0f * (left + right + top + bottom + alpha * b_value) * beta,0.0f,0.0f,0.0f));
+//#endif
 }

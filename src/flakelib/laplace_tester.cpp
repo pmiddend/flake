@@ -2,14 +2,15 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/planar_object_size.hpp>
 #include <flakelib/cl/apply_kernel_to_planar_image.hpp>
-#include <flakelib/laplace_solver/base.hpp>
-#include <flakelib/visualization/monitor/texture.hpp>
 #include <flakelib/cl/planar_image_view_to_cl_image.hpp>
-#include <sge/image2d/view/const_object.hpp>
+#include <flakelib/laplace_solver/base.hpp>
+#include <flakelib/utility/object.hpp>
+#include <flakelib/visualization/monitor/texture.hpp>
 #include <sge/font/system.hpp>
 #include <sge/image/colors.hpp>
-#include <sge/image2d/multi_loader.hpp>
 #include <sge/image2d/file.hpp>
+#include <sge/image2d/multi_loader.hpp>
+#include <sge/image2d/view/const_object.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
@@ -22,6 +23,7 @@
 flakelib::laplace_tester::laplace_tester(
 	laplace_solver::base &_solver,
 	flakelib::planar_cache &_planar_cache,
+	utility::object &_utility,
 	sge::renderer::device &_renderer,
 	sge::viewport::manager &_viewport_manager,
 	sge::opencl::command_queue::object &_command_queue,
@@ -36,6 +38,8 @@ flakelib::laplace_tester::laplace_tester(
 		_command_queue),
 	planar_cache_(
 		_planar_cache),
+	utility_(
+		_utility),
 	boundary_(
 		cl::planar_image_view_to_cl_image(
 			_image_loader.load(
@@ -68,32 +72,12 @@ flakelib::laplace_tester::laplace_tester(
 	destination_(
 		planar_cache_,
 		boundary_->size()[0]),
-	utility_program_(
-		command_queue_.context(),
-		sge::opencl::program::file_to_source_string_sequence(
-			flakelib::media_path_from_string(
-				FCPPT_TEXT("kernels/utility.cl"))),
-		sge::opencl::program::build_parameters()),
-	initial_guess_kernel_(
-		utility_program_,
-		sge::opencl::kernel::name("generate_guess")),
-	null_image_kernel_(
-		utility_program_,
-		sge::opencl::kernel::name("null_image")),
 	additional_data_()
 {
 	monitor_parent_.viewport_widget().child(
 		master_widget_);
 
-	// Generate the initial guess
-	null_image_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
-		rhs_.value());
-
-	flakelib::cl::apply_kernel_to_planar_image(
-		null_image_kernel_,
-		command_queue_,
+	utility_.null_image(
 		rhs_.value());
 }
 
@@ -107,15 +91,7 @@ flakelib::laplace_tester::render()
 void
 flakelib::laplace_tester::update()
 {
-	// Generate the initial guess
-	initial_guess_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
-		initial_guess_image_.value());
-
-	flakelib::cl::apply_kernel_to_planar_image(
-		initial_guess_kernel_,
-		command_queue_,
+	utility_.generate_oscillation(
 		initial_guess_image_.value());
 
 	// Solve the homogenous problem

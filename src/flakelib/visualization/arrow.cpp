@@ -85,7 +85,8 @@ flakelib::visualization::arrow::arrow(
 			sge::renderer::texture::mipmap::off(),
 			sge::renderer::texture::address_mode2(
 				sge::renderer::texture::address_mode::clamp),
-			sge::renderer::resource_flags::none))
+			sge::renderer::resource_flags_field(
+				sge::renderer::resource_flags::none)))
 {
 	monitor_parent_.viewport_widget().child(
 		master_and_slaves_);

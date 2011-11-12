@@ -106,7 +106,8 @@ flakelib::visualization::monitor::planar_arrows::planar_arrows(
 			sge::renderer::vertex_count(
 				static_cast<sge::renderer::size_type>(
 					dimensions_.content() * 2)),
-			sge::renderer::resource_flags::readable)),
+			sge::renderer::resource_flags_field(
+				sge::renderer::resource_flags::readable))),
 	cl_vb_(
 		child::parent().context(),
 		*vb_,
@@ -163,7 +164,7 @@ flakelib::visualization::monitor::planar_arrows::planar_arrows(
 						fcppt::make_shared_ptr<sge::texture::part_raw>(
 							_optional_texture))
 					.system(
-						&child::parent().sprite_system())
+						child::parent().sprite_system())
 					.elements()));
 	}
 }

@@ -4,6 +4,7 @@
 #include <flakelib/planar_cache.hpp>
 #include <flakelib/planar_lock.hpp>
 #include <flakelib/laplace_solver/base_fwd.hpp>
+#include <flakelib/utility/object_fwd.hpp>
 #include <flakelib/visualization/monitor/child_fwd.hpp>
 #include <flakelib/visualization/monitor/parent.hpp>
 #include <rucksack/widget/enumeration.hpp>
@@ -35,6 +36,7 @@ public:
 	laplace_tester(
 		laplace_solver::base &,
 		flakelib::planar_cache &,
+		flakelib::utility::object &,
 		sge::renderer::device &,
 		sge::viewport::manager &,
 		sge::opencl::command_queue::object &,
@@ -57,15 +59,13 @@ private:
 	sge::renderer::device &renderer_;
 	sge::opencl::command_queue::object &command_queue_;
 	flakelib::planar_cache &planar_cache_;
+	utility::object &utility_;
 	fcppt::unique_ptr<sge::opencl::memory_object::image::planar> boundary_;
 	visualization::monitor::parent monitor_parent_;
 	rucksack::widget::enumeration master_widget_;
 	flakelib::planar_lock initial_guess_image_;
 	flakelib::planar_lock rhs_;
 	flakelib::planar_lock destination_;
-	sge::opencl::program::object utility_program_;
-	sge::opencl::kernel::object initial_guess_kernel_;
-	sge::opencl::kernel::object null_image_kernel_;
 	additional_data_monitors additional_data_;
 };
 }

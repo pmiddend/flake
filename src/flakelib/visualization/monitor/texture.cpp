@@ -87,11 +87,13 @@ flakelib::visualization::monitor::texture::texture(
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::texture::address_mode2(
 					sge::renderer::texture::address_mode::clamp),
-				sge::renderer::resource_flags::none,
+				sge::renderer::resource_flags_field(
+					sge::renderer::resource_flags::none),
 				sge::renderer::texture::capabilities_field::null()))),
 	cl_texture_(
 		child::parent().context(),
-		sge::opencl::memory_object::flags::write,
+		sge::opencl::memory_object::flags_field(
+			sge::opencl::memory_object::flags::write),
 		*renderer_texture_),
 	sprite_(
 		dummy_sprite::parameters()
@@ -101,7 +103,7 @@ flakelib::visualization::monitor::texture::texture(
 				fcppt::make_shared_ptr<sge::texture::part_raw>(
 					renderer_texture_))
 			.system(
-				&child::parent().sprite_system())
+				child::parent().sprite_system())
 			.elements()),
 	box_parent_(
 		rucksack::axis::y,

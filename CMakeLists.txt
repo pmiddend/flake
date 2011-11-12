@@ -102,6 +102,7 @@ SET(
 	src/flakelib/simulation/create.cpp
 	src/flakelib/simulation/stam.cpp
 	src/flakelib/utf8_file_to_fcppt_string.cpp
+	src/flakelib/utility/object.cpp
 	src/flakelib/visualization/arrow.cpp
 	src/flakelib/visualization/base.cpp
 	src/flakelib/visualization/monitor/child.cpp

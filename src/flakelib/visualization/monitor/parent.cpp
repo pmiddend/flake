@@ -14,7 +14,7 @@
 #include <sge/opencl/program/source_string_sequence.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/onscreen_target.hpp>
-#include <sge/renderer/stage.hpp>
+#include <sge/renderer/texture/stage.hpp>
 #include <sge/renderer/texture/filter/point.hpp>
 #include <sge/renderer/texture/filter/scoped.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
@@ -59,7 +59,8 @@ flakelib::visualization::monitor::parent::parent(
 				*fcppt::make_unique_ptr<fcppt::io::cifstream>(
 					flakelib::media_path_from_string(
 						FCPPT_TEXT("kernels/vertex_buffer_conversions.cl"))))),
-		sge::opencl::program::build_parameters()),
+		sge::opencl::program::optional_build_parameters(
+			sge::opencl::program::build_parameters())),
 	image_to_vb_kernel_(
 		conversion_program_,
 		sge::opencl::kernel::name(
@@ -200,7 +201,8 @@ flakelib::visualization::monitor::parent::render()
 {
 	sge::renderer::texture::filter::scoped scoped_texture_filter(
 		renderer_,
-		sge::renderer::stage(0),
+		sge::renderer::texture::stage(
+			0),
 		sge::renderer::texture::filter::point());
 
 	sprite_system_.render_all(

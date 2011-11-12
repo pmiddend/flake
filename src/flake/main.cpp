@@ -135,8 +135,9 @@ try
 				sge::systems::cursor_option_field::null())));
 
 	sge::opencl::single_device_system opencl_system(
-		(sys.renderer()),
-		(sge::opencl::context::optional_error_callback()));
+		sge::opencl::optional_renderer(
+			sys.renderer()),
+		sge::opencl::context::optional_error_callback());
 
 	sge::image2d::file_ptr boundary_image =
 		sys.image_loader().load(

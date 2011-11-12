@@ -159,7 +159,8 @@ flakelib::simulation::stam::stam(
 		sge::opencl::program::file_to_source_string_sequence(
 			flakelib::media_path_from_string(
 				FCPPT_TEXT("kernels/stam.cl"))),
-		sge::opencl::program::build_parameters()),
+		sge::opencl::program::optional_build_parameters(
+			sge::opencl::program::build_parameters())),
 	null_image_kernel_(
 		main_program_,
 		sge::opencl::kernel::name(
@@ -227,27 +228,33 @@ flakelib::simulation::stam::stam(
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	null_image_profiler_(
 		FCPPT_TEXT("null_image"),
-		parent_profiler_,
+		profiler::optional_parent(
+			parent_profiler_),
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	advection_profiler_(
 		FCPPT_TEXT("advection"),
-		parent_profiler_,
+		profiler::optional_parent(
+			parent_profiler_),
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	external_forces_profiler_(
 		FCPPT_TEXT("apply_external_forces"),
-		parent_profiler_,
+		profiler::optional_parent(
+			parent_profiler_),
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	divergence_profiler_(
 		FCPPT_TEXT("divergence"),
-		parent_profiler_,
+		profiler::optional_parent(
+			parent_profiler_),
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	jacobi_profiler_(
 		FCPPT_TEXT("jacobi"),
-		parent_profiler_,
+		profiler::optional_parent(
+			parent_profiler_),
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	project_profiler_(
 		FCPPT_TEXT("project"),
-		parent_profiler_,
+		profiler::optional_parent(
+			parent_profiler_),
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	additional_planar_data_()
 {

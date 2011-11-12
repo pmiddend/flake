@@ -1,3 +1,5 @@
+#define LAPLACIAN_RESIDUAL_USES_BOUNDARY
+
 sampler_t const absolute_clamping_nearest =
 	CLK_NORMALIZED_COORDS_FALSE |
 	CLK_ADDRESS_CLAMP_TO_EDGE |
@@ -13,71 +15,6 @@ constant int2 const
 	pos_right = (int2)(1,0),
 	pos_top = (int2)(0,1),
 	pos_bottom = (int2)(0,-1);
-
-/**
-	Solve the special equation
-
-	Ax=0
-
-	where A is the Laplace operator.
-*/
-kernel void
-jacobi(
-	/* 0 */float const alpha,
-	/* 1 */float const beta,
-	/* 2 */global read_only image2d_t rhs,
-	/* 3 */global read_only image2d_t x,
-	/* 4 */global write_only image2d_t output)
-{
-	int2 const position =
-		(int2)(
-			get_global_id(
-				0),
-			get_global_id(
-				1));
-
-	float
-		center =
-			read_imagef(
-				x,
-				absolute_clamping_nearest,
-				position).x,
-		left =
-			read_imagef(
-				x,
-				absolute_clamping_nearest,
-				position + pos_left).x,
-		right =
-			read_imagef(
-				x,
-				absolute_clamping_nearest,
-				position + pos_right).x,
-		top =
-			read_imagef(
-				x,
-				absolute_clamping_nearest,
-				position + pos_top).x,
-		bottom =
-			read_imagef(
-				x,
-				absolute_clamping_nearest,
-				position + pos_bottom).x;
-
-	float const rhs_value =
-		read_imagef(
-			rhs,
-			absolute_clamping_nearest,
-			position).x;
-
-	write_imagef(
-		output,
-		position,
-		(float4)(
-			(left + right + top + bottom + alpha * rhs_value) * beta,
-			0.0f,
-			0.0f,
-			0.0f));
-}
 
 kernel void
 add(
@@ -257,10 +194,12 @@ upsample_(
 	*/
 }
 
+
+
 kernel void
 laplacian_residual(
-	// left hand side
 	global read_only image2d_t rhs,
+	global read_only image2d_t boundary,
 	// right hand side
 	global read_only image2d_t from,
 	global write_only image2d_t to,
@@ -273,6 +212,30 @@ laplacian_residual(
 			get_global_id(
 				1));
 
+#ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
+	float const
+		left_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_left).x,
+		right_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_right).x,
+		top_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_top).x,
+		bottom_boundary =
+			read_imagef(
+				boundary,
+				absolute_clamping_nearest,
+				position + pos_bottom).x;
+#endif
+
 	float
 		center =
 			read_imagef(
@@ -280,21 +243,41 @@ laplacian_residual(
 				absolute_clamping_nearest,
 				position).x,
 		left =
+#ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
+			left_boundary *
+			center +
+			(1.0f - left_boundary) *
+#endif
 			read_imagef(
 				from,
 				absolute_clamping_nearest,
 				position + pos_left).x,
 		right =
+#ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
+			right_boundary *
+			center +
+			(1.0f - right_boundary) *
+#endif
 			read_imagef(
 				from,
 				absolute_clamping_nearest,
 				position + pos_right).x,
 		top =
+#ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
+			top_boundary *
+			center +
+			(1.0f - top_boundary) *
+#endif
 			read_imagef(
 				from,
 				absolute_clamping_nearest,
 				position + pos_top).x,
 		bottom =
+#ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
+			bottom_boundary *
+			center +
+			(1.0f - bottom_boundary) *
+#endif
 			read_imagef(
 				from,
 				absolute_clamping_nearest,
@@ -313,7 +296,8 @@ laplacian_residual(
 		to,
 		position,
 		(float4)(
-			fabs(laplace - rhs_value),
+			//fabs(laplace - rhs_value),
+			rhs_value - laplace,
 			0.0f,
 			0.0f,
 			0.0f));

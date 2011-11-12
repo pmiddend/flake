@@ -1,6 +1,7 @@
 #include <flakelib/laplace_tester.hpp>
 #include <flakelib/laplace_solver/jacobi.hpp>
 #include <flakelib/laplace_solver/multigrid.hpp>
+#include <flakelib/utility/object.hpp>
 #include <sge/all_extensions.hpp>
 #include <sge/exception.hpp>
 #include <sge/image/capabilities_field.hpp>
@@ -80,8 +81,9 @@ try
 				sge::systems::cursor_option_field::null())));
 
 	sge::opencl::single_device_system opencl_system(
-		(sys.renderer()),
-		(sge::opencl::context::optional_error_callback()));
+		sge::opencl::optional_renderer(
+			sys.renderer()),
+		sge::opencl::context::optional_error_callback());
 
 	flakelib::planar_cache cache(
 		opencl_system.context(),
@@ -95,10 +97,14 @@ try
 		flakelib::laplace_solver::grid_scale(
 			1.0f),
 		flakelib::laplace_solver::iterations(
-			3));
+			7));
+
+	flakelib::utility::object utility_object(
+		opencl_system.command_queue());
 
 	flakelib::laplace_solver::multigrid multigrid_solver(
 		cache,
+		utility_object,
 		opencl_system.command_queue(),
 		jacobi_solver,
 		flakelib::laplace_solver::grid_scale(
@@ -107,6 +113,7 @@ try
 	flakelib::laplace_tester tester(
 		multigrid_solver,
 		cache,
+		utility_object,
 		sys.renderer(),
 		sys.viewport_manager(),
 		opencl_system.command_queue(),

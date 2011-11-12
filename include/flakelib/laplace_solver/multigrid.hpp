@@ -9,6 +9,7 @@
 #include <flakelib/laplace_solver/iterations.hpp>
 #include <flakelib/laplace_solver/rhs.hpp>
 #include <flakelib/laplace_solver/to.hpp>
+#include <flakelib/utility/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/program/object.hpp>
@@ -29,6 +30,7 @@ public:
 	explicit
 	multigrid(
 		flakelib::planar_cache &,
+		flakelib::utility::object &,
 		sge::opencl::command_queue::object &,
 		laplace_solver::base &inner_solver,
 		laplace_solver::grid_scale const &);
@@ -46,12 +48,10 @@ public:
 	~multigrid();
 private:
 	flakelib::planar_cache &planar_cache_;
+	flakelib::utility::object &utility_;
 	sge::opencl::command_queue::object &command_queue_;
 	laplace_solver::base &inner_solver_;
 	grid_scale::value_type const grid_scale_;
-	sge::opencl::program::object utility_program_;
-	sge::opencl::kernel::object copy_image_kernel_;
-	sge::opencl::kernel::object null_image_kernel_;
 	sge::opencl::program::object main_program_;
 	sge::opencl::kernel::object laplacian_residual_kernel_;
 	sge::opencl::kernel::object downsample_kernel_;
@@ -60,19 +60,11 @@ private:
 	flakelib::additional_planar_data additional_planar_data_;
 
 	void
-	null_image(
-		sge::opencl::memory_object::image::planar &);
-
-	void
-	copy_image(
-		laplace_solver::from const &,
-		laplace_solver::to const &);
-
-	void
 	laplacian_residual(
 		laplace_solver::rhs const &,
 		laplace_solver::from const &,
-		laplace_solver::to const &);
+		laplace_solver::to const &,
+		laplace_solver::boundary const &);
 
 	void
 	downsample(

@@ -1,11 +1,11 @@
 #include <flakelib/cl/planar_image_view_to_cl_image.hpp>
 #include <sge/image/algorithm/may_overlap.hpp>
-#include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/image2d/algorithm/copy_and_convert.hpp>
 #include <sge/image2d/view/format.hpp>
 #include <sge/image2d/view/size.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/command_queue/scoped_planar_mapping.hpp>
+#include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/memory_object/image/sge_color_format_to_opencl.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>

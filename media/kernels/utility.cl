@@ -42,7 +42,7 @@ null_image(
 }
 
 kernel void
-generate_guess(
+generate_oscillation(
 	global write_only image2d_t input)
 {
 	int2 const position =
