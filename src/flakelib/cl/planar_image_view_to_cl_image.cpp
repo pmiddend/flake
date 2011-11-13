@@ -12,7 +12,6 @@
 #include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 
-
 fcppt::unique_ptr<sge::opencl::memory_object::image::planar>
 flakelib::cl::planar_image_view_to_cl_image(
 	sge::image2d::view::const_object const &_planar_image,
@@ -22,7 +21,8 @@ flakelib::cl::planar_image_view_to_cl_image(
 		fcppt::make_unique_ptr<sge::opencl::memory_object::image::planar>(
 			fcppt::ref(
 				_command_queue.context()),
-			sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
+			sge::opencl::memory_object::flags_field(
+				sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
 			sge::opencl::memory_object::image::sge_color_format_to_opencl(
 				sge::image2d::view::format(
 					_planar_image)),

@@ -3,10 +3,10 @@
 
 #include <flakelib/utility/from.hpp>
 #include <flakelib/utility/to.hpp>
+#include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
-#include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <fcppt/noncopyable.hpp>
 
@@ -48,6 +48,8 @@ private:
 	sge::opencl::kernel::object copy_image_kernel_;
 	sge::opencl::kernel::object null_image_kernel_;
 	sge::opencl::kernel::object generate_oscillation_kernel_;
+	sge::opencl::kernel::object frobenius_norm_tile_kernel_;
+	sge::opencl::kernel::object frobenius_norm_kernel_;
 };
 }
 }

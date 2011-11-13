@@ -37,6 +37,12 @@ INCLUDE_DIRECTORIES(${Rucksack_INCLUDE_DIR})
 ADD_DEFINITIONS(${Rucksack_DEFINITIONS})
 # rucksack end
 
+# OpenCL begin
+FIND_PACKAGE(OpenCL REQUIRED)
+INCLUDE_DIRECTORIES(${OpenCL_INCLUDE_DIR})
+ADD_DEFINITIONS(${OpenCL_DEFINITIONS})
+# OpenCL end
+
 # sge begin
 FIND_PACKAGE(
 	SGE REQUIRED COMPONENTS
@@ -175,3 +181,22 @@ INSTALL(
 	DESTINATION
 	${INSTALL_BINARY_DIR})
 # pde_tester end
+
+# frobenius_tester begin
+ADD_EXECUTABLE(
+	frobenius_tester
+	src/flake/frobenius_tester.cpp)
+
+TARGET_LINK_LIBRARIES(
+	frobenius_tester
+	flakelib
+	${Fcppt_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Boost_LIBRARIES})
+
+INSTALL(
+	TARGETS
+	frobenius_tester
+	DESTINATION
+	${INSTALL_BINARY_DIR})
+# frobenius_tester end
