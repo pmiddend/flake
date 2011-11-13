@@ -9,13 +9,13 @@
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
-#include <fcppt/insert_to_fcppt_string.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_array.hpp>
 #include <fcppt/math/is_power_of_2.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/output.hpp>
+#include <fcppt/format.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <algorithm>
 #include <cstddef>
@@ -121,7 +121,7 @@ flakelib::laplace_solver::multigrid::solve(
 
 	// p1 now contains our first approximation to the solution x^(n)
 
-	if(size == 32)
+	if(size == 64)
 	{
 		// If we're done, solve once more, using our approximate
 		// solution as the initial guess, store result directly in
@@ -229,19 +229,24 @@ flakelib::laplace_solver::multigrid::solve(
 			first_smoothing.value()),
 		laplace_solver::from(
 			p0.value()),
+//		laplace_solver::to(
+//			h.value()));
 		laplace_solver::to(
-			h.value()));
+			_destination.get()));
 
 	this->copy_to_planar_data(
-		h.value(),
+//		h.value(),
+		_destination.get(),
 		FCPPT_TEXT("error corrected"));
 
+	/*
 	inner_solver_.solve(
 		_rhs,
 		_destination,
 		laplace_solver::initial_guess(
 			h.value()),
 		_boundary);
+		*/
 
 	this->copy_to_planar_data(
 		_destination.get(),
@@ -429,7 +434,10 @@ flakelib::laplace_solver::multigrid::copy_to_planar_data(
 
 	additional_planar_data_.push_back(
 		std::make_pair(
-			fcppt::insert_to_fcppt_string(_image.size()[0])+FCPPT_TEXT(": ")+_description,
+			(fcppt::format(FCPPT_TEXT("%1%: %2%\nN: %3%"))
+				% _image.size()[0]
+				% _description
+				% utility_.frobenius_norm(_image)).str(),
 			flakelib::planar_object(
 				&temp)));
 }
