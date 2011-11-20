@@ -42,7 +42,6 @@ flakelib::visualization::arrow::arrow(
 	simulation_(
 		_simulation),
 	monitor_parent_(
-		_viewport_manager,
 		_renderer,
 		_command_queue,
 		_font_system.create_font(
@@ -54,6 +53,9 @@ flakelib::visualization::arrow::arrow(
 					FCPPT_TEXT("visualization/font-size")))),
 		monitor::font_color(
 			sge::image::colors::black())),
+	viewport_widget_(
+		_viewport_manager,
+		_renderer),
 	master_and_slaves_(
 		rucksack::padding(
 			sge::parse::json::find_and_convert_member<rucksack::scalar>(
@@ -88,7 +90,7 @@ flakelib::visualization::arrow::arrow(
 			sge::renderer::resource_flags_field(
 				sge::renderer::resource_flags::none)))
 {
-	monitor_parent_.viewport_widget().child(
+	viewport_widget_.child(
 		master_and_slaves_);
 
 	master_and_slaves_.master_pane(
@@ -154,7 +156,8 @@ flakelib::visualization::arrow::update(
 void
 flakelib::visualization::arrow::render()
 {
-	monitor_parent_.render();
+	monitor_parent_.render(
+		monitor::optional_projection());
 }
 
 sge::renderer::state::list const

@@ -9,13 +9,13 @@
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
+#include <fcppt/format.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_array.hpp>
 #include <fcppt/math/is_power_of_2.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/output.hpp>
-#include <fcppt/format.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <algorithm>
 #include <cstddef>
@@ -28,7 +28,9 @@ flakelib::laplace_solver::multigrid::multigrid(
 	flakelib::utility::object &_utility,
 	sge::opencl::command_queue::object &_command_queue,
 	laplace_solver::base &_inner_solver,
-	laplace_solver::grid_scale const &_grid_scale)
+	laplace_solver::grid_scale const &_grid_scale,
+	laplace_solver::termination_size const &_termination_size,
+	laplace_solver::debug_output const &_debug_output)
 :
 	planar_cache_(
 		_planar_cache),
@@ -40,6 +42,10 @@ flakelib::laplace_solver::multigrid::multigrid(
 		_inner_solver),
 	grid_scale_(
 		_grid_scale.get()),
+	termination_size_(
+		_termination_size.get()),
+	debug_output_(
+		_debug_output.get()),
 	main_program_(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
@@ -103,7 +109,9 @@ flakelib::laplace_solver::multigrid::solve(
 		utility::from(
 			_initial_guess.get()),
 		utility::to(
-			p0.value()));
+			p0.value()),
+		utility::multiplier(
+			1.0f));
 
 	// Solve the original problem: Ax = f, retrieve approximate solution:
 	// x^(n)
@@ -121,7 +129,7 @@ flakelib::laplace_solver::multigrid::solve(
 
 	// p1 now contains our first approximation to the solution x^(n)
 
-	if(size == 64)
+	if(size == termination_size_)
 	{
 		// If we're done, solve once more, using our approximate
 		// solution as the initial guess, store result directly in
@@ -210,6 +218,23 @@ flakelib::laplace_solver::multigrid::solve(
 		coarse_error.value(),
 		FCPPT_TEXT("error estimate"));
 
+	if(debug_output_)
+	{
+		this->laplacian_residual(
+			laplace_solver::rhs(
+				rd.value()),
+			laplace_solver::from(
+				coarse_error.value()),
+			laplace_solver::to(
+				temporary_initial_guess.value()),
+			laplace_solver::boundary(
+				coarse_boundary.value()));
+
+		this->copy_to_planar_data(
+			temporary_initial_guess.value(),
+			FCPPT_TEXT("error estimate residual"));
+	}
+
 	this->upsample(
 		laplace_solver::from(
 			coarse_error.value()),
@@ -229,40 +254,41 @@ flakelib::laplace_solver::multigrid::solve(
 			first_smoothing.value()),
 		laplace_solver::from(
 			p0.value()),
-//		laplace_solver::to(
-//			h.value()));
 		laplace_solver::to(
-			_destination.get()));
+			h.value()));
+//		laplace_solver::to(
+//			_destination.get()));
 
 	this->copy_to_planar_data(
-//		h.value(),
-		_destination.get(),
+		h.value(),
+//		_destination.get(),
 		FCPPT_TEXT("error corrected"));
 
-	/*
 	inner_solver_.solve(
 		_rhs,
 		_destination,
 		laplace_solver::initial_guess(
 			h.value()),
 		_boundary);
-		*/
 
 	this->copy_to_planar_data(
 		_destination.get(),
 		FCPPT_TEXT("final smoothing"));
 
-	this->laplacian_residual(
-		_rhs,
-		laplace_solver::from(
-			_destination.get()),
-		laplace_solver::to(
-			p0.value()),
-		_boundary);
+	if(debug_output_)
+	{
+		this->laplacian_residual(
+			_rhs,
+			laplace_solver::from(
+				_destination.get()),
+			laplace_solver::to(
+				p0.value()),
+			_boundary);
 
-	this->copy_to_planar_data(
-		p0.value(),
-		FCPPT_TEXT("final residual"));
+		this->copy_to_planar_data(
+			p0.value(),
+			FCPPT_TEXT("final residual"));
+	}
 }
 
 flakelib::additional_planar_data const &
@@ -419,6 +445,9 @@ flakelib::laplace_solver::multigrid::copy_to_planar_data(
 	sge::opencl::memory_object::image::planar &_image,
 	fcppt::string const &_description)
 {
+	if(!debug_output_)
+		return;
+
 	sge::opencl::memory_object::image::planar &temp =
 		planar_cache_.get(
 			_image.size());
@@ -430,7 +459,9 @@ flakelib::laplace_solver::multigrid::copy_to_planar_data(
 		utility::from(
 			_image),
 		utility::to(
-			temp));
+			temp),
+		utility::multiplier(
+			10.0f));
 
 	additional_planar_data_.push_back(
 		std::make_pair(

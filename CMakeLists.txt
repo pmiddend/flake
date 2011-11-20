@@ -41,6 +41,8 @@ FIND_PACKAGE(
 	input
 	renderer
 	sprite
+	sprite
+	camera
 	texture
 	font
 	fonttext
@@ -85,7 +87,6 @@ SET(
 	src/flakelib/laplace_tester.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
-	src/flakelib/pde_tester.cpp
 	src/flakelib/planar_buffer.cpp
 	src/flakelib/planar_cache.cpp
 	src/flakelib/planar_lock.cpp
@@ -95,8 +96,10 @@ SET(
 	src/flakelib/simulation/base.cpp
 	src/flakelib/simulation/create.cpp
 	src/flakelib/simulation/stam.cpp
+	src/flakelib/sprite_drawer_3d.cpp
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/utility/object.cpp
+	src/flakelib/viewport_pager.cpp
 	src/flakelib/visualization/arrow.cpp
 	src/flakelib/visualization/base.cpp
 	src/flakelib/visualization/monitor/child.cpp

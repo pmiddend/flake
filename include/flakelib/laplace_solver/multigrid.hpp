@@ -3,11 +3,13 @@
 
 #include <flakelib/planar_cache_fwd.hpp>
 #include <flakelib/laplace_solver/base.hpp>
+#include <flakelib/laplace_solver/debug_output.hpp>
 #include <flakelib/laplace_solver/from.hpp>
 #include <flakelib/laplace_solver/grid_scale.hpp>
 #include <flakelib/laplace_solver/initial_guess.hpp>
 #include <flakelib/laplace_solver/iterations.hpp>
 #include <flakelib/laplace_solver/rhs.hpp>
+#include <flakelib/laplace_solver/termination_size.hpp>
 #include <flakelib/laplace_solver/to.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
@@ -33,7 +35,9 @@ public:
 		flakelib::utility::object &,
 		sge::opencl::command_queue::object &,
 		laplace_solver::base &inner_solver,
-		laplace_solver::grid_scale const &);
+		laplace_solver::grid_scale const &,
+		laplace_solver::termination_size const &,
+		laplace_solver::debug_output const &);
 
 	void
 	solve(
@@ -52,6 +56,8 @@ private:
 	sge::opencl::command_queue::object &command_queue_;
 	laplace_solver::base &inner_solver_;
 	grid_scale::value_type const grid_scale_;
+	termination_size::value_type const termination_size_;
+	bool const debug_output_;
 	sge::opencl::program::object main_program_;
 	sge::opencl::kernel::object laplacian_residual_kernel_;
 	sge::opencl::kernel::object downsample_kernel_;

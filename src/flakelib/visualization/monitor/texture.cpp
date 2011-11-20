@@ -9,12 +9,18 @@
 #include <sge/font/text/size.hpp>
 #include <sge/opencl/memory_object/flags_field.hpp>
 #include <sge/renderer/device.hpp>
+#include <sge/renderer/onscreen_target.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/scoped_transform.hpp>
 #include <sge/renderer/texture/planar_parameters.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/sprite/parameters.hpp>
+#include <sge/sprite/projection_matrix.hpp>
 #include <sge/texture/part_raw.hpp>
 #include <fcppt/make_shared_ptr.hpp>
+#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/ref.hpp>
+#include <fcppt/scoped_ptr.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
@@ -156,8 +162,40 @@ flakelib::visualization::monitor::texture::from_planar_object(
 }
 
 void
-flakelib::visualization::monitor::texture::render()
+flakelib::visualization::monitor::texture::render(
+	monitor::optional_projection const &_projection)
 {
+	sge::renderer::scoped_transform world_transform(
+		child::parent().renderer(),
+		sge::renderer::matrix_mode::world,
+		sge::renderer::matrix4::identity());
+
+	sge::renderer::state::scoped scoped_state(
+		child::parent().renderer(),
+		sge::sprite::render_states<flakelib::sprite_drawer_3d::sprite_choices>());
+
+	fcppt::scoped_ptr<sge::renderer::scoped_transform> projection_transform;
+
+	if(_projection)
+	{
+		projection_transform.take(
+			fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
+				fcppt::ref(
+					child::parent().renderer()),
+				sge::renderer::matrix_mode::projection,
+				*_projection));
+	}
+	else
+	{
+		projection_transform.take(
+			fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
+				fcppt::ref(
+					child::parent().renderer()),
+				sge::renderer::matrix_mode::projection,
+				sge::sprite::projection_matrix(
+					child::parent().renderer().onscreen_target().viewport())));
+	}
+
 	sge::font::text::draw(
 		child::parent().font_metrics(),
 		child::parent().font_drawer(),

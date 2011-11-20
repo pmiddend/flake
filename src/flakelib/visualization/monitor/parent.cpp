@@ -14,6 +14,8 @@
 #include <sge/opencl/program/source_string_sequence.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/onscreen_target.hpp>
+#include <sge/renderer/scoped_transform.hpp>
+#include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/texture/stage.hpp>
 #include <sge/renderer/texture/filter/point.hpp>
 #include <sge/renderer/texture/filter/scoped.hpp>
@@ -21,7 +23,10 @@
 #include <sge/shader/object_parameters.hpp>
 #include <sge/shader/vf_to_string.hpp>
 #include <sge/sprite/default_equal.hpp>
+#include <sge/sprite/render_states.hpp>
 #include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/ref.hpp>
+#include <fcppt/scoped_ptr.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_container.hpp>
@@ -34,7 +39,6 @@
 
 
 flakelib::visualization::monitor::parent::parent(
-	sge::viewport::manager &_viewport_manager,
 	sge::renderer::device &_renderer,
 	sge::opencl::command_queue::object &_command_queue,
 	sge::font::metrics_ptr const _font_metrics,
@@ -102,10 +106,7 @@ flakelib::visualization::monitor::parent::parent(
 					FCPPT_TEXT("shaders/arrow/fragment.glsl")))),
 	sprite_system_(
 		renderer_),
-	children_(),
-	viewport_adaptor_(
-		_viewport_manager,
-		renderer_)
+	children_()
 {
 }
 
@@ -184,20 +185,15 @@ flakelib::visualization::monitor::parent::font_metrics()
 	return *font_metrics_;
 }
 
-sge::font::text::drawer_3d &
+flakelib::sprite_drawer_3d &
 flakelib::visualization::monitor::parent::font_drawer()
 {
 	return font_drawer_;
 }
 
-rucksack::widget::viewport_adaptor &
-flakelib::visualization::monitor::parent::viewport_widget()
-{
-	return viewport_adaptor_;
-}
-
 void
-flakelib::visualization::monitor::parent::render()
+flakelib::visualization::monitor::parent::render(
+	monitor::optional_projection const &_projection)
 {
 	sge::renderer::texture::filter::scoped scoped_texture_filter(
 		renderer_,
@@ -205,11 +201,41 @@ flakelib::visualization::monitor::parent::render()
 			0),
 		sge::renderer::texture::filter::point());
 
-	sprite_system_.render_all(
-		sge::sprite::default_equal());
+	fcppt::scoped_ptr<sge::renderer::scoped_transform> projection_transform;
+	fcppt::scoped_ptr<sge::renderer::scoped_transform> world_transform;
+
+	if(_projection)
+	{
+		projection_transform.take(
+			fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
+				fcppt::ref(
+					renderer_),
+				sge::renderer::matrix_mode::projection,
+				*_projection));
+
+		world_transform.take(
+			fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
+				fcppt::ref(
+					renderer_),
+				sge::renderer::matrix_mode::world,
+				sge::renderer::matrix4::identity()));
+
+		sge::renderer::state::scoped scoped_state(
+			renderer_,
+			sge::sprite::render_states<dummy_sprite::choices>());
+
+		sprite_system_.render_all_advanced(
+			sge::sprite::default_equal());
+	}
+	else
+	{
+		sprite_system_.render_all(
+			sge::sprite::default_equal());
+	}
 
 	for(child_list::iterator it = children_.begin(); it != children_.end(); ++it)
-		it->render();
+		it->render(
+			_projection);
 }
 
 void

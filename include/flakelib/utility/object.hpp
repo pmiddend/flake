@@ -2,6 +2,7 @@
 #define FLAKELIB_UTILITY_OBJECT_HPP_INCLUDED
 
 #include <flakelib/utility/from.hpp>
+#include <flakelib/utility/multiplier.hpp>
 #include <flakelib/utility/to.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
@@ -31,7 +32,8 @@ public:
 	void
 	copy_image(
 		utility::from const &,
-		utility::to const &);
+		utility::to const &,
+		utility::multiplier const &);
 
 	void
 	generate_oscillation(

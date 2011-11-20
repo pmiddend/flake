@@ -3,8 +3,8 @@
 #include <flakelib/utility/object.hpp>
 #include <sge/opencl/command_queue/dim2.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
-#include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/command_queue/object.hpp>
+#include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
@@ -68,7 +68,8 @@ flakelib::utility::object::null_image(
 void
 flakelib::utility::object::copy_image(
 	utility::from const &_from,
-	utility::to const &_to)
+	utility::to const &_to,
+	utility::multiplier const &_multiplier)
 {
 	copy_image_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -79,6 +80,11 @@ flakelib::utility::object::copy_image(
 		sge::opencl::kernel::argument_index(
 			1),
 		_to.get());
+
+	copy_image_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		_multiplier.get());
 
 	flakelib::cl::apply_kernel_to_planar_image(
 		copy_image_kernel_,
@@ -109,7 +115,7 @@ flakelib::utility::object::frobenius_norm(
 		frobenius_norm_kernel_.work_group_size(
 			command_queue_.device());
 
-	fcppt::io::cerr() << FCPPT_TEXT("Work group size: ") << work_group_size << FCPPT_TEXT("\n");
+	//fcppt::io::cerr() << FCPPT_TEXT("Work group size: ") << work_group_size << FCPPT_TEXT("\n");
 
 	// NOTE: This is optimized for square work group dimensions and thus
 	// for square images.
@@ -122,10 +128,12 @@ flakelib::utility::object::frobenius_norm(
 				static_cast<double>(
 					work_group_size)));
 
+	/*
 	fcppt::io::cerr()
 		<< FCPPT_TEXT("Group size is: ")
 		<< rounded_down_root << FCPPT_TEXT("x") << rounded_down_root
 		<< FCPPT_TEXT("\n");
+		*/
 
 	sge::opencl::memory_object::buffer partial_results(
 		command_queue_.context(),

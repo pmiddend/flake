@@ -3,6 +3,7 @@
 
 #include <flakelib/planar_cache.hpp>
 #include <flakelib/planar_lock.hpp>
+#include <flakelib/viewport_pager.hpp>
 #include <flakelib/laplace_solver/base_fwd.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <flakelib/visualization/monitor/child_fwd.hpp>
@@ -44,7 +45,8 @@ public:
 		sge::image2d::multi_loader &);
 
 	void
-	render();
+	render(
+		visualization::monitor::optional_projection const &);
 
 	void
 	update();
@@ -62,7 +64,8 @@ private:
 	utility::object &utility_;
 	fcppt::unique_ptr<sge::opencl::memory_object::image::planar> boundary_;
 	visualization::monitor::parent monitor_parent_;
-	rucksack::widget::enumeration master_widget_;
+	flakelib::viewport_pager master_widget_;
+	rucksack::widget::enumeration enumeration_widget_;
 	flakelib::planar_lock initial_guess_image_;
 	flakelib::planar_lock rhs_;
 	flakelib::planar_lock destination_;

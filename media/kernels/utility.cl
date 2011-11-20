@@ -6,7 +6,8 @@ sampler_t const absolute_clamping_nearest =
 kernel void
 copy_image(
 	global read_only image2d_t from,
-	global write_only image2d_t to)
+	global write_only image2d_t to,
+	float const multiplier)
 {
 	int2 const position =
 		(int2)(
@@ -17,6 +18,7 @@ copy_image(
 	write_imagef(
 		to,
 		position,
+		multiplier *
 		read_imagef(
 			from,
 			absolute_clamping_nearest,
@@ -55,11 +57,22 @@ generate_oscillation(
 	float const oscillations =
 		32.0f;
 
+	float const
+		sine1 =
+			sinpi(2.0f * oscillations * position.x / get_image_width(input)),
+		sine2 =
+			sinpi(2.0f * oscillations * position.y / get_image_height(input)),
+		sine3 =
+			sinpi(2.0f * 1.0f/4.0f * oscillations * position.x / get_image_width(input)),
+		sine4 =
+			sinpi(2.0f * 1.0f/4.0f * oscillations * position.y / get_image_height(input)),
+		sum = clamp(sine1 + sine2 + sine3 + sine4,-1.0f,1.0f);
+
 	write_imagef(
 		input,
 		position,
 		(float4)(
-			(sinpi(2.0f * oscillations * position.y / get_image_width(input)) + 1.0f)/2.0f,
+			(sum + 1.0f)/2.0f,
 			1.0f,
 			1.0f,
 			1.0f));

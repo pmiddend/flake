@@ -8,6 +8,7 @@
 #include <flakelib/visualization/monitor/parent.hpp>
 #include <flakelib/visualization/monitor/planar_arrows.hpp>
 #include <rucksack/widget/master_and_slaves.hpp>
+#include <rucksack/widget/viewport_adaptor.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
@@ -62,6 +63,7 @@ private:
 	sge::renderer::device &renderer_;
 	simulation::base &simulation_;
 	monitor::parent monitor_parent_;
+	rucksack::widget::viewport_adaptor viewport_widget_;
 	rucksack::widget::master_and_slaves master_and_slaves_;
 	monitor::planar_arrows velocity_arrows_;
 	additional_data_monitors additional_data_;

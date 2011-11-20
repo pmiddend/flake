@@ -52,7 +52,8 @@ public:
 	name() const;
 
 	void
-	render();
+	render(
+		monitor::optional_projection const &);
 
 	void
 	update();

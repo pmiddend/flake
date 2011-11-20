@@ -187,7 +187,8 @@ flakelib::visualization::monitor::planar_arrows::name() const
 }
 
 void
-flakelib::visualization::monitor::planar_arrows::render()
+flakelib::visualization::monitor::planar_arrows::render(
+	monitor::optional_projection const &_projection)
 {
 	// Activate the shader and the vertex declaration
 	sge::shader::scoped scoped_shader(
@@ -201,12 +202,16 @@ flakelib::visualization::monitor::planar_arrows::render()
 	child::parent().arrow_shader().update_uniform(
 		"projection",
 		sge::shader::matrix(
-			sge::renderer::projection::orthogonal_wh(
-				fcppt::math::dim::structure_cast<sge::renderer::projection::dim>(
-						sge::renderer::viewport_size(
-							child::parent().renderer())),
-				sge::renderer::projection::near(0.0f),
-				sge::renderer::projection::far(10.0f)),
+			_projection.has_value()
+			?
+				*_projection
+			:
+				sge::renderer::projection::orthogonal_wh(
+					fcppt::math::dim::structure_cast<sge::renderer::projection::dim>(
+							sge::renderer::viewport_size(
+								child::parent().renderer())),
+					sge::renderer::projection::near(0.0f),
+					sge::renderer::projection::far(10.0f)),
 			sge::shader::matrix_flags::projection));
 
 	child::parent().arrow_shader().update_uniform(

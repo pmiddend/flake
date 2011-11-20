@@ -2,17 +2,17 @@
 #define FLAKELIB_VISUALIZATION_MONITOR_PARENT_HPP_INCLUDED
 
 #include <flakelib/planar_object.hpp>
+#include <flakelib/sprite_drawer_3d.hpp>
 #include <flakelib/visualization/monitor/arrow_scale.hpp>
 #include <flakelib/visualization/monitor/child.hpp>
 #include <flakelib/visualization/monitor/child_list.hpp>
 #include <flakelib/visualization/monitor/font_color.hpp>
 #include <flakelib/visualization/monitor/grid_dimensions.hpp>
 #include <flakelib/visualization/monitor/grid_scale.hpp>
+#include <flakelib/visualization/monitor/optional_projection.hpp>
 #include <flakelib/visualization/monitor/scaling_factor.hpp>
 #include <flakelib/visualization/monitor/dummy_sprite/system.hpp>
-#include <rucksack/widget/viewport_adaptor.hpp>
 #include <sge/font/metrics_ptr.hpp>
-#include <sge/font/text/drawer_3d.hpp>
 #include <sge/image/color/any/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
@@ -25,7 +25,6 @@
 #include <sge/renderer/vertex_declaration_ptr.hpp>
 #include <sge/shader/object.hpp>
 #include <sge/sprite/intrusive/system_impl.hpp>
-#include <sge/viewport/manager_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 
 
@@ -51,7 +50,6 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	parent(
-		sge::viewport::manager &,
 		sge::renderer::device &,
 		sge::opencl::command_queue::object &,
 		sge::font::metrics_ptr,
@@ -88,14 +86,12 @@ public:
 	sge::font::metrics &
 	font_metrics();
 
-	sge::font::text::drawer_3d &
+	flakelib::sprite_drawer_3d &
 	font_drawer();
 
-	rucksack::widget::viewport_adaptor &
-	viewport_widget();
-
 	void
-	render();
+	render(
+		monitor::optional_projection const &);
 
 	void
 	update();
@@ -107,7 +103,7 @@ private:
 	sge::renderer::device &renderer_;
 	sge::opencl::command_queue::object &command_queue_;
 	sge::font::metrics_ptr font_metrics_;
-	sge::font::text::drawer_3d font_drawer_;
+	flakelib::sprite_drawer_3d font_drawer_;
 	sge::renderer::vertex_declaration_ptr vd_;
 	sge::opencl::program::object conversion_program_;
 	sge::opencl::kernel::object image_to_vb_kernel_;
@@ -117,7 +113,6 @@ private:
 	sge::shader::object arrow_shader_;
 	monitor::dummy_sprite::system sprite_system_;
 	monitor::child_list children_;
-	rucksack::widget::viewport_adaptor viewport_adaptor_;
 
 	void
 	image_to_vb(

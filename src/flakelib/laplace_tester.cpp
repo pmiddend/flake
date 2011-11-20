@@ -47,7 +47,6 @@ flakelib::laplace_tester::laplace_tester(
 					FCPPT_TEXT("images/boundary_256_black.png")))->view(),
 			command_queue_)),
 	monitor_parent_(
-		_viewport_manager,
 		_renderer,
 		command_queue_,
 		_font_system.create_font(
@@ -58,6 +57,9 @@ flakelib::laplace_tester::laplace_tester(
 		visualization::monitor::font_color(
 			sge::image::colors::black())),
 	master_widget_(
+		_viewport_manager,
+		_renderer),
+	enumeration_widget_(
 		rucksack::padding(
 			3),
 		rucksack::aspect(
@@ -74,18 +76,20 @@ flakelib::laplace_tester::laplace_tester(
 		boundary_->size()[0]),
 	additional_data_()
 {
-	monitor_parent_.viewport_widget().child(
-		master_widget_);
+	master_widget_.child(
+		enumeration_widget_);
 
 	utility_.null_image(
 		rhs_.value());
 }
 
 void
-flakelib::laplace_tester::render()
+flakelib::laplace_tester::render(
+	visualization::monitor::optional_projection const &_projection)
 {
 	monitor_parent_.update();
-	monitor_parent_.render();
+	monitor_parent_.render(
+		_projection);
 }
 
 void
@@ -95,6 +99,24 @@ flakelib::laplace_tester::update()
 		initial_guess_image_.value());
 
 	// Solve the homogenous problem
+	solver_.solve(
+		laplace_solver::rhs(
+			rhs_.value()),
+		laplace_solver::destination(
+			destination_.value()),
+		laplace_solver::initial_guess(
+			initial_guess_image_.value()),
+		laplace_solver::boundary(
+			*boundary_));
+
+	utility_.copy_image(
+		utility::from(
+			destination_.value()),
+		utility::to(
+			initial_guess_image_.value()),
+		utility::multiplier(
+			1.0f));
+
 	solver_.solve(
 		laplace_solver::rhs(
 			rhs_.value()),
@@ -126,7 +148,7 @@ flakelib::laplace_tester::update()
 		flakelib::planar_object(
 			&initial_guess_image_.value()));
 
-	master_widget_.push_back_child(
+	enumeration_widget_.push_back_child(
 		additional_data_.back().widget());
 
 	for(
@@ -157,7 +179,7 @@ flakelib::laplace_tester::update()
 		additional_data_.back().from_planar_object(
 			it->second);
 
-		master_widget_.push_back_child(
+		enumeration_widget_.push_back_child(
 			additional_data_.back().widget());
 	}
 
@@ -180,7 +202,7 @@ flakelib::laplace_tester::update()
 		flakelib::planar_object(
 			&destination_.value()));
 
-	master_widget_.push_back_child(
+	enumeration_widget_.push_back_child(
 		additional_data_.back().widget());
 
 }

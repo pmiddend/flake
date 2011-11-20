@@ -4,8 +4,8 @@
 #include <flakelib/boundary_view.hpp>
 #include <flakelib/profiler/object.hpp>
 #include <flakelib/simulation/base.hpp>
-#include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
+#include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>

@@ -2,6 +2,7 @@
 #define FLAKELIB_VISUALIZATION_MONITOR_CHILD_HPP_INCLUDED
 
 #include <flakelib/planar_object.hpp>
+#include <flakelib/visualization/monitor/optional_projection.hpp>
 #include <flakelib/visualization/monitor/parent_fwd.hpp>
 #include <rucksack/widget/base_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -31,7 +32,8 @@ public:
 	name() const = 0;
 
 	virtual void
-	render() = 0;
+	render(
+		monitor::optional_projection const &) = 0;
 
 	virtual void
 	update() = 0;

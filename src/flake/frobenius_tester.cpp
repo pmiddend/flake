@@ -1,12 +1,12 @@
 #include <flakelib/cl/planar_image_view_to_cl_image.hpp>
 #include <flakelib/utility/object.hpp>
-#include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/all_extensions.hpp>
 #include <sge/image/capabilities_field.hpp>
 #include <sge/image2d/file.hpp>
 #include <sge/image2d/multi_loader.hpp>
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/opencl/single_device_system.hpp>
+#include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/systems/image_loader.hpp>
 #include <sge/systems/instance.hpp>
 #include <sge/systems/list.hpp>
@@ -18,9 +18,9 @@
 #include <fcppt/io/cout.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <cstddef>
+#include <exception>
 #include <iostream>
 #include <ostream>
-#include <exception>
 #include <fcppt/config/external_end.hpp>
 
 
