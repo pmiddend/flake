@@ -21,6 +21,7 @@
 #include <sge/opencl/single_device_system.hpp>
 #include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/parse/json/array.hpp>
+#include <sge/parse/json/string_to_path.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/object.hpp>
 #include <sge/parse/json/parse_string_exn.hpp>
@@ -75,6 +76,21 @@
 #include <ostream>
 #include <fcppt/config/external_end.hpp>
 
+namespace
+{
+void
+update_simulation_and_visualization(
+	flakelib::simulation::stam::object &_simulation,
+	flakelib::visualization::arrow &_visual,
+	flakelib::duration const &_delta)
+{
+			_simulation.update(
+				_delta);
+
+			_visual.update(
+				_delta);
+}
+}
 
 int
 main(
@@ -132,9 +148,10 @@ try
 		sys.image_loader().load(
 			flakelib::media_path()
 				/ FCPPT_TEXT("images")
-				/ sge::parse::json::find_and_convert_member<fcppt::string>(
+				/
+				sge::parse::json::find_and_convert_member<fcppt::string>(
 					config_file,
-					sge::parse::json::path(FCPPT_TEXT("boundary-file"))));
+					sge::parse::json::string_to_path(FCPPT_TEXT("stam-test/boundary-file"))));
 
 	flakelib::planar_pool::object planar_pool(
 		opencl_system.context(),
@@ -154,14 +171,20 @@ try
 	flakelib::laplace_solver::dynamic_factory configurable_solver(
 		planar_pool,
 		opencl_system.command_queue(),
-		config_file,
+		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
+			config_file,
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("simulation-solver"))),
 		utility_object);
 
 	flakelib::simulation::stam::object simulation(
 		opencl_system.command_queue(),
 		flakelib::boundary_view(
 			boundary_image->view()),
-		config_file,
+		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
+			config_file,
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("stam-test"))),
 		flakelib::simulation::arrow_image_cache(
 			arrow_pool),
 		flakelib::simulation::scalar_image_cache(
@@ -177,7 +200,10 @@ try
 		sys.font_system(),
 		flakelib::boundary_view(
 			boundary_image->view()),
-		config_file);
+		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
+			config_file,
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("arrow-visualization"))));
 
 	bool running =
 		true;
@@ -194,8 +220,11 @@ try
 			sge::input::keyboard::action(
 				sge::input::keyboard::key_code::space,
 				std::tr1::bind(
-					&flakelib::simulation::base::update,
-					&simulation,
+					&update_simulation_and_visualization,
+					fcppt::ref(
+						simulation),
+					fcppt::ref(
+						visualization),
 					flakelib::duration(
 						0.01f)))));
 
@@ -215,11 +244,11 @@ try
 
 		if(delta > flakelib::duration(0.05f))
 		{
-			simulation.update(
-				delta);
+			//simulation.update(
+			//	delta);
 
-			visualization.update(
-				delta);
+			//visualization.update(
+			//	delta);
 
 			delta = flakelib::duration(0.0f);
 		}

@@ -73,21 +73,11 @@ flakelib::simulation::stam::object::object(
 			_config_file,
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("grid-scale")))),
-	velocity_magnitude_scale_(
-		sge::parse::json::find_and_convert_member<cl_float>(
-			_config_file,
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("visualization/velocity-magnitude-scale")))),
 	profiling_enabled_(
 		sge::parse::json::find_and_convert_member<bool>(
 			_config_file,
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("profiling")))),
-	debug_output_(
-		sge::parse::json::find_and_convert_member<bool>(
-			_config_file,
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("debug-output")))),
 	main_program_(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
@@ -141,12 +131,16 @@ flakelib::simulation::stam::object::object(
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	additional_planar_data_(),
 	boundary_image_(
-		fcppt::make_unique_ptr<planar_pool::scoped_lock>(
-			fcppt::ref(
-				scalar_image_cache_),
-			fcppt::math::dim::structure_cast<sge::opencl::memory_object::rect::dim>(
-				sge::image2d::view::size(
-					_boundary_image.get())))),
+		command_queue_.context(),
+		sge::opencl::memory_object::flags_field(sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
+		sge::opencl::memory_object::create_image_format(
+			CL_INTENSITY,
+			CL_UNORM_INT8),
+		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
+			sge::image2d::view::size(
+				_boundary_image.get())),
+		sge::opencl::memory_object::image::planar_pitch(
+			0)),
 	// This has to be initialized here because we need it as the "initial
 	// guess" for further computations. It will be zero-initialized in the
 	// ctor.
@@ -163,11 +157,13 @@ flakelib::simulation::stam::object::object(
 	residual_image_(),
 	pressure_image_()
 {
-	// Initialize additional data
+	// Initialize additional data. The names here are used in the configuration
+	// file with the suffix "-scale" to determine how they should be scaled when
+	// viewing them. As such, they shouldn't contain any whitespaces
 	fcppt::container::array<fcppt::string,4> const additional_data =
 		{{
 			 FCPPT_TEXT("pressure"),
-			 FCPPT_TEXT("velocity magnitude"),
+			 FCPPT_TEXT("velocity-magnitude"),
 			 FCPPT_TEXT("divergence"),
 			 FCPPT_TEXT("residual"),
 		 }};
@@ -186,11 +182,11 @@ flakelib::simulation::stam::object::object(
 	// Initialize boundary
 	sge::opencl::command_queue::scoped_planar_mapping scoped_image(
 		_command_queue,
-		boundary_image_->value(),
+		boundary_image_,
 		CL_MAP_WRITE,
 		sge::opencl::memory_object::rect(
 			sge::opencl::memory_object::rect::vector::null(),
-			boundary_image_->value().size()));
+			boundary_image_.size()));
 
 	sge::image2d::algorithm::copy_and_convert(
 		_boundary_image.get(),
@@ -223,7 +219,7 @@ flakelib::simulation::stam::object::additional_planar_data() const
 				&divergence_image_->value());
 
 	if(vector_magnitude_image_)
-		additional_planar_data_[FCPPT_TEXT("vector-magnitude")] =
+		additional_planar_data_[FCPPT_TEXT("velocity-magnitude")] =
 			flakelib::planar_object(
 				&vector_magnitude_image_->value());
 
@@ -320,7 +316,7 @@ flakelib::simulation::stam::object::advect(
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
-		boundary_image_->value());
+		boundary_image_);
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -432,7 +428,7 @@ flakelib::simulation::stam::object::divergence(
 	divergence_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
-		boundary_image_->value());
+		boundary_image_);
 
 	divergence_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -476,7 +472,7 @@ flakelib::simulation::stam::object::solve(
 		laplace_solver::initial_guess(
 			initial_guess->value()),
 		laplace_solver::boundary(
-			boundary_image_->value()));
+			boundary_image_));
 
 	return
 		fcppt::move(
@@ -517,7 +513,7 @@ flakelib::simulation::stam::object::gradient_and_subtract(
 	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
-		boundary_image_->value());
+		boundary_image_);
 
 	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -566,7 +562,7 @@ flakelib::simulation::stam::object::laplacian_residual(
 	laplacian_residual_absolute_value_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
-		boundary_image_->value());
+		boundary_image_);
 
 	laplacian_residual_absolute_value_kernel_.argument(
 		sge::opencl::kernel::argument_index(

@@ -17,7 +17,7 @@
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
-#include <sge/opencl/memory_object/image/planar_fwd.hpp>
+#include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <sge/parse/json/object_fwd.hpp>
 
@@ -74,9 +74,7 @@ private:
 	laplace_solver::base &laplace_solver_;
 	cl_float const external_force_magnitude_;
 	cl_float const grid_scale_;
-	cl_float const velocity_magnitude_scale_;
 	bool const profiling_enabled_;
-	bool const debug_output_;
 	sge::opencl::program::object main_program_;
 	sge::opencl::kernel::object advect_kernel_;
 	sge::opencl::kernel::object apply_external_forces_kernel_;
@@ -89,7 +87,7 @@ private:
 	flakelib::profiler::object divergence_profiler_;
 	flakelib::profiler::object project_profiler_;
 	mutable flakelib::additional_planar_data additional_planar_data_;
-	flakelib::planar_pool::unique_lock boundary_image_;
+	sge::opencl::memory_object::image::planar boundary_image_;
 	flakelib::planar_pool::unique_lock velocity_image_;
 	flakelib::planar_pool::unique_lock divergence_image_;
 	flakelib::planar_pool::unique_lock vector_magnitude_image_;

@@ -50,7 +50,7 @@ flakelib::visualization::arrow::arrow(
 			sge::parse::json::find_and_convert_member<sge::font::size_type>(
 				_config_file,
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("visualization/font-size")))),
+					FCPPT_TEXT("font-size")))),
 		monitor::font_color(
 			sge::image::colors::black())),
 	viewport_widget_(
@@ -61,7 +61,7 @@ flakelib::visualization::arrow::arrow(
 			sge::parse::json::find_and_convert_member<rucksack::scalar>(
 				_config_file,
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("visualization/border-size"))))),
+					FCPPT_TEXT("border-size"))))),
 	velocity_arrows_(
 		monitor_parent_,
 		monitor::name(
@@ -75,7 +75,7 @@ flakelib::visualization::arrow::arrow(
 			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
 				_config_file,
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("visualization/arrow-scale")))),
+					FCPPT_TEXT("arrow-scale")))),
 		monitor::grid_scale(
 			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
 				_config_file,
@@ -123,7 +123,7 @@ flakelib::visualization::arrow::arrow(
 					sge::parse::json::find_and_convert_member<monitor::rect::value_type>(
 						_config_file,
 						sge::parse::json::string_to_path(
-							FCPPT_TEXT("visualization/")+it->key()+FCPPT_TEXT("-scale"))))));
+							it->key()+FCPPT_TEXT("-scale"))))));
 
 		master_and_slaves_.push_back_child(
 			additional_data_.find(it->key())->second->widget());
