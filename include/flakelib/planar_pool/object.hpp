@@ -1,5 +1,5 @@
-#ifndef FLAKELIB_PLANAR_CACHE_HPP_INCLUDED
-#define FLAKELIB_PLANAR_CACHE_HPP_INCLUDED
+#ifndef FLAKELIB_PLANAR_POOL_HPP_INCLUDED
+#define FLAKELIB_PLANAR_POOL_HPP_INCLUDED
 
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
@@ -14,13 +14,15 @@
 
 namespace flakelib
 {
-class planar_cache
+namespace planar_pool
+{
+class object
 {
 FCPPT_NONCOPYABLE(
-	planar_cache);
+	object);
 public:
 	explicit
-	planar_cache(
+	object(
 		sge::opencl::context::object &,
 		cl_image_format);
 
@@ -40,7 +42,7 @@ public:
 	unlock(
 		sge::opencl::memory_object::image::planar &);
 
-	~planar_cache();
+	~object();
 private:
 	typedef
 	boost::ptr_vector<sge::opencl::memory_object::image::planar>
@@ -55,6 +57,7 @@ private:
 	image_pool image_pool_;
 	locked_textures locked_textures_;
 };
+}
 }
 
 #endif

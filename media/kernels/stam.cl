@@ -192,33 +192,6 @@ apply_external_forces(
 }
 
 kernel void
-vector_magnitude(
-	global read_only image2d_t input,
-	global write_only image2d_t output,
-	float const scaling)
-{
-	int2 const position =
-		(int2)(
-			get_global_id(
-				0),
-			get_global_id(
-				1));
-
-	write_imagef(
-		output,
-		position,
-		(float4)(
-			length(
-				read_imagef(
-					input,
-					absolute_clamping_nearest,
-					position).xy) * scaling,
-			0.0f,
-			0.0f,
-			0.0f));
-}
-
-kernel void
 divergence(
 	global read_only image2d_t input,
 	global write_only image2d_t output,
@@ -430,7 +403,7 @@ gradient_and_subtract(
 				absolute_clamping_nearest,
 				position + pos_bottom).x;
 
-	float2 vmask = 
+	float2 vmask =
 		(float2)(1.0f,1.0f);
 
 	if(is_solid(boundary,position + pos_left))
@@ -481,34 +454,11 @@ gradient_and_subtract(
 }
 
 kernel void
-copy_image(
-	global read_only image2d_t from,
-	global write_only image2d_t to)
-{
-	int2 const position =
-		(int2)(
-			get_global_id(
-				0),
-			get_global_id(
-				1));
-
-	write_imagef(
-		to,
-		position,
-		read_imagef(
-			from,
-			absolute_clamping_nearest,
-			position));
-}
-
-kernel void
-laplace_residual(
-	// left hand side
-	global read_only image2d_t lhs,
-	// right hand side
+laplacian_residual_absolute_value(
 	global read_only image2d_t rhs,
-	global write_only image2d_t to,
 	global read_only image2d_t boundary,
+	global read_only image2d_t from,
+	global write_only image2d_t to,
 	float const grid_scale)
 {
 	int2 const position =
@@ -543,7 +493,7 @@ laplace_residual(
 	float
 		center =
 			read_imagef(
-				lhs,
+				from,
 				absolute_clamping_nearest,
 				position).x,
 		left =
@@ -551,7 +501,7 @@ laplace_residual(
 			center +
 			(1.0f - left_boundary) *
 			read_imagef(
-				lhs,
+				from,
 				absolute_clamping_nearest,
 				position + pos_left).x,
 		right =
@@ -559,7 +509,7 @@ laplace_residual(
 			center +
 			(1.0f - right_boundary) *
 			read_imagef(
-				lhs,
+				from,
 				absolute_clamping_nearest,
 				position + pos_right).x,
 		top =
@@ -567,7 +517,7 @@ laplace_residual(
 			center +
 			(1.0f - top_boundary) *
 			read_imagef(
-				lhs,
+				from,
 				absolute_clamping_nearest,
 				position + pos_top).x,
 		bottom =
@@ -575,7 +525,7 @@ laplace_residual(
 			center +
 			(1.0f - bottom_boundary) *
 			read_imagef(
-				lhs,
+				from,
 				absolute_clamping_nearest,
 				position + pos_bottom).x;
 

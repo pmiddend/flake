@@ -46,7 +46,10 @@ flakelib::utility::object::object(
 		sge::opencl::kernel::name("frobenius_norm_tile")),
 	frobenius_norm_kernel_(
 		program_,
-		sge::opencl::kernel::name("frobenius_norm"))
+		sge::opencl::kernel::name("frobenius_norm")),
+	planar_vector_magnitude_kernel_(
+		program_,
+		sge::opencl::kernel::name("planar_vector_magnitude"))
 {
 }
 
@@ -88,6 +91,33 @@ flakelib::utility::object::copy_image(
 
 	flakelib::cl::apply_kernel_to_planar_image(
 		copy_image_kernel_,
+		command_queue_,
+		_from.get());
+}
+
+void
+flakelib::utility::object::planar_vector_magnitude(
+	utility::from const &_from,
+	utility::to const &_to,
+	utility::multiplier const &_multiplier)
+{
+	planar_vector_magnitude_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		_from.get());
+
+	planar_vector_magnitude_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		_to.get());
+
+	planar_vector_magnitude_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		_multiplier.get());
+
+	flakelib::cl::apply_kernel_to_planar_image(
+		planar_vector_magnitude_kernel_,
 		command_queue_,
 		_from.get());
 }

@@ -1,7 +1,6 @@
 #ifndef FLAKELIB_LAPLACE_SOLVER_MULTIGRID_HPP_INCLUDED
 #define FLAKELIB_LAPLACE_SOLVER_MULTIGRID_HPP_INCLUDED
 
-#include <flakelib/planar_cache_fwd.hpp>
 #include <flakelib/laplace_solver/base.hpp>
 #include <flakelib/laplace_solver/debug_output.hpp>
 #include <flakelib/laplace_solver/from.hpp>
@@ -11,6 +10,7 @@
 #include <flakelib/laplace_solver/rhs.hpp>
 #include <flakelib/laplace_solver/termination_size.hpp>
 #include <flakelib/laplace_solver/to.hpp>
+#include <flakelib/planar_pool/object_fwd.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
@@ -31,7 +31,7 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	multigrid(
-		flakelib::planar_cache &,
+		flakelib::planar_pool::object &,
 		flakelib::utility::object &,
 		sge::opencl::command_queue::object &,
 		laplace_solver::base &inner_solver,
@@ -51,7 +51,7 @@ public:
 
 	~multigrid();
 private:
-	flakelib::planar_cache &planar_cache_;
+	flakelib::planar_pool::object &planar_cache_;
 	flakelib::utility::object &utility_;
 	sge::opencl::command_queue::object &command_queue_;
 	laplace_solver::base &inner_solver_;

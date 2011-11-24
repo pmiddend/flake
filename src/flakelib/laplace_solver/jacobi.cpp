@@ -1,8 +1,8 @@
 #include <flakelib/media_path_from_string.hpp>
-#include <flakelib/planar_cache.hpp>
-#include <flakelib/planar_lock.hpp>
 #include <flakelib/cl/apply_kernel_to_planar_image.hpp>
 #include <flakelib/laplace_solver/jacobi.hpp>
+#include <flakelib/planar_pool/object.hpp>
+#include <flakelib/planar_pool/scoped_lock.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
@@ -16,7 +16,7 @@
 
 
 flakelib::laplace_solver::jacobi::jacobi(
-	flakelib::planar_cache &_planar_cache,
+	flakelib::planar_pool::object &_planar_cache,
 	sge::opencl::command_queue::object &_command_queue,
 	laplace_solver::grid_scale const &_grid_scale,
 	laplace_solver::iterations const &_iterations)
@@ -62,7 +62,7 @@ flakelib::laplace_solver::jacobi::solve(
 	FCPPT_ASSERT_PRE(
 		_initial_guess.get().size() == _destination.get().size());
 
-	flakelib::planar_lock p0(
+	flakelib::planar_pool::scoped_lock p0(
 		planar_cache_,
 		_rhs.get().size()[0]);
 

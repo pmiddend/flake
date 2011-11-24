@@ -129,3 +129,30 @@ frobenius_norm(
 	for(size_t i = 0; i < elements; ++i)
 		total_results[0] += workgroup_results[i];
 }
+
+kernel void
+planar_vector_magnitude(
+	global read_only image2d_t input,
+	global write_only image2d_t output,
+	float const scaling)
+{
+	int2 const position =
+		(int2)(
+			get_global_id(
+				0),
+			get_global_id(
+				1));
+
+	write_imagef(
+		output,
+		position,
+		(float4)(
+			length(
+				read_imagef(
+					input,
+					absolute_clamping_nearest,
+					position).xy) * scaling,
+			0.0f,
+			0.0f,
+			0.0f));
+}

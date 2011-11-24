@@ -1,6 +1,9 @@
+#include <flakelib/exception.hpp>
 #include <flakelib/laplace_tester.hpp>
+#include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/laplace_solver/jacobi.hpp>
 #include <flakelib/laplace_solver/multigrid.hpp>
+#include <flakelib/planar_pool/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/all_extensions.hpp>
 #include <sge/exception.hpp>
@@ -98,7 +101,7 @@ try
 			sys.renderer()),
 		sge::opencl::context::optional_error_callback());
 
-	flakelib::planar_cache cache(
+	flakelib::planar_pool::object cache(
 		opencl_system.context(),
 		sge::opencl::memory_object::create_image_format(
 			CL_R,
@@ -123,7 +126,7 @@ try
 		flakelib::laplace_solver::grid_scale(
 			1.0f),
 		flakelib::laplace_solver::termination_size(
-			64),
+			128),
 		flakelib::laplace_solver::debug_output(
 			true));
 
@@ -176,6 +179,10 @@ try
 
 	while(running)
 	{
+		flakelib::scoped_frame_limiter frame_limiter(
+			static_cast<flakelib::scoped_frame_limiter::fps_type>(
+				60));
+
 		sys.window().dispatch();
 
 		camera.update(
@@ -185,7 +192,7 @@ try
 		// If we have no viewport (yet), don't do anything (this is just a
 		// precaution, we _might_ divide by zero somewhere below, otherwise)
 		if(!sge::renderer::viewport_size(sys.renderer()).content())
-			throw sge::exception(
+			throw flakelib::exception(
 				FCPPT_TEXT("There was an iteration without viewport.")
 				FCPPT_TEXT("Usually not a problem, but OpenCL isn't suited ")
 				FCPPT_TEXT("for viewport changes, yet. So I have to exit now."));

@@ -1,3 +1,4 @@
+#include <flakelib/exception.hpp>
 #include <flakelib/planar_object_size.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <fcppt/variant/apply_unary.hpp>

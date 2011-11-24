@@ -16,5 +16,17 @@
 		"grid-position" : [10.0,10.0],
 		"border-size" : 2,
 		"font-size" : 20
+	},
+	"simulation-solver" :
+	{
+		"type" : "multigrid",
+		"grid-scale" : 1.0,
+		"termination-size" : [64,64],
+		"inner-solver" :
+		{
+			"type" : "jacobi",
+			"grid-scale" : 1.0,
+			"iterations" : 4
+		}
 	}
 }

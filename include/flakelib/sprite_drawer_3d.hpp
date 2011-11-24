@@ -47,16 +47,6 @@ public:
 	color_object;
 
 	typedef
-	std::map
-	<
-		sge::font::text::char_type,
-		sge::texture::const_part_ptr
-	>
-	texture_map;
-
-	texture_map textures_;
-
-	typedef
 	sge::sprite::choices
 	<
 		sge::sprite::type_choices
@@ -111,6 +101,16 @@ public:
 
 	~sprite_drawer_3d();
 private:
+	typedef
+	std::map
+	<
+		sge::font::text::char_type,
+		sge::texture::const_part_ptr
+	>
+	texture_map;
+
+	texture_map textures_;
+
 	sge::texture::const_part_ptr const
 	cached_texture(
 		sge::font::text::char_type,

@@ -39,6 +39,12 @@ public:
 	generate_oscillation(
 		sge::opencl::memory_object::image::planar &);
 
+	void
+	planar_vector_magnitude(
+		utility::from const &,
+		utility::to const &,
+		utility::multiplier const &);
+
 	cl_float
 	frobenius_norm(
 		sge::opencl::memory_object::image::planar &);
@@ -52,6 +58,7 @@ private:
 	sge::opencl::kernel::object generate_oscillation_kernel_;
 	sge::opencl::kernel::object frobenius_norm_tile_kernel_;
 	sge::opencl::kernel::object frobenius_norm_kernel_;
+	sge::opencl::kernel::object planar_vector_magnitude_kernel_;
 };
 }
 }

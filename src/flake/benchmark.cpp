@@ -3,7 +3,6 @@
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/simulation/base.hpp>
 #include <flakelib/simulation/base_ptr.hpp>
-#include <flakelib/simulation/create.hpp>
 #include <sge/all_extensions.hpp>
 #include <sge/image/capabilities_field.hpp>
 #include <sge/image2d/file.hpp>
@@ -76,6 +75,7 @@ try
 		(sge::opencl::optional_renderer()),
 		(sge::opencl::context::optional_error_callback()));
 
+#if 0
 	sge::image2d::file_ptr boundary_image =
 		sys.image_loader().load(
 			flakelib::media_path_from_string(
@@ -105,6 +105,7 @@ try
 			flakelib::duration(
 				0.01f));
 	}
+#endif
 }
 catch(fcppt::exception const &e)
 {

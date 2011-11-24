@@ -1,4 +1,4 @@
-#include <flakelib/planar_cache.hpp>
+#include <flakelib/planar_pool/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
@@ -10,7 +10,7 @@
 #include <fcppt/math/dim/comparison.hpp>
 
 
-flakelib::planar_cache::planar_cache(
+flakelib::planar_pool::object::object(
 	sge::opencl::context::object &_context,
 	cl_image_format const _image_format)
 :
@@ -24,7 +24,7 @@ flakelib::planar_cache::planar_cache(
 }
 
 void
-flakelib::planar_cache::lock(
+flakelib::planar_pool::object::lock(
 	sge::opencl::memory_object::image::planar &_image)
 {
 	FCPPT_ASSERT_PRE(
@@ -35,7 +35,7 @@ flakelib::planar_cache::lock(
 }
 
 sge::opencl::memory_object::image::planar &
-flakelib::planar_cache::get(
+flakelib::planar_pool::object::get(
 	sge::opencl::memory_object::size_type const edge_size)
 {
 	return
@@ -46,7 +46,7 @@ flakelib::planar_cache::get(
 }
 
 sge::opencl::memory_object::image::planar &
-flakelib::planar_cache::get(
+flakelib::planar_pool::object::get(
 	sge::opencl::memory_object::dim2 const &_size)
 {
 	for(
@@ -85,7 +85,7 @@ flakelib::planar_cache::get(
 }
 
 void
-flakelib::planar_cache::unlock(
+flakelib::planar_pool::object::unlock(
 	sge::opencl::memory_object::image::planar &_image)
 {
 	locked_textures::size_type const deleted_elements = locked_textures_.erase(
@@ -95,6 +95,6 @@ flakelib::planar_cache::unlock(
 		deleted_elements);
 }
 
-flakelib::planar_cache::~planar_cache()
+flakelib::planar_pool::object::~object()
 {
 }

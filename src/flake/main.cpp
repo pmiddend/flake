@@ -1,10 +1,12 @@
 #include <flakelib/duration.hpp>
+#include <flakelib/exception.hpp>
 #include <flakelib/media_path.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
-#include <flakelib/simulation/base.hpp>
-#include <flakelib/simulation/base_ptr.hpp>
-#include <flakelib/simulation/create.hpp>
+#include <flakelib/laplace_solver/dynamic_factory.hpp>
+#include <flakelib/planar_pool/object.hpp>
+#include <flakelib/simulation/stam/object.hpp>
+#include <flakelib/utility/object.hpp>
 #include <flakelib/visualization/arrow.hpp>
 #include <sge/all_extensions.hpp>
 #include <sge/image/capabilities_field.hpp>
@@ -17,6 +19,7 @@
 #include <sge/input/keyboard/key_code.hpp>
 #include <sge/log/global_context.hpp>
 #include <sge/opencl/single_device_system.hpp>
+#include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/parse/json/array.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/object.hpp>
@@ -53,6 +56,7 @@
 #include <sge/window/instance.hpp>
 #include <sge/window/simple_parameters.hpp>
 #include <fcppt/exception.hpp>
+#include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/chrono/duration_comparison.hpp>
 #include <fcppt/chrono/seconds.hpp>
@@ -78,21 +82,6 @@ main(
 	char *argv[])
 try
 {
-	// - Create textures (w*h):
-	//
-	// 	1. Vector field 'v' (rgba, float), vector field 'v2' (to write to)
-	//      2. Scalar field 'p' (two channels, float)
-	// 	3. Boundary (something small, gray8 maybe)
-	//
-	// - Create one vertex buffer, size w*h*2, shared with OpenCL.
-	//
-	// - Set the vector field to all zeroes (load it that way?)
-	// - Extract the boundary from a thresholded png image
-	//
-	// - Execute NS algorithm, resulting in a vector field
-	// - Convert vector field to a vertex buffer of arrows
-	// - Draw the vertex buffer on the screen
-
 	sge::log::global_context().apply(
 		fcppt::log::location(
 			FCPPT_TEXT("opencl")),
@@ -147,19 +136,44 @@ try
 					config_file,
 					sge::parse::json::path(FCPPT_TEXT("boundary-file"))));
 
-	flakelib::simulation::base_ptr simulation(
-		flakelib::simulation::create(
-			opencl_system.context(),
-			opencl_system.command_queue(),
-			flakelib::boundary_view(
-				boundary_image->view()),
-			config_file));
+	flakelib::planar_pool::object planar_pool(
+		opencl_system.context(),
+		sge::opencl::memory_object::create_image_format(
+			CL_R,
+			CL_FLOAT));
+
+	flakelib::planar_pool::object arrow_pool(
+		opencl_system.context(),
+		sge::opencl::memory_object::create_image_format(
+			CL_RG,
+			CL_FLOAT));
+
+	flakelib::utility::object utility_object(
+		opencl_system.command_queue());
+
+	flakelib::laplace_solver::dynamic_factory configurable_solver(
+		planar_pool,
+		opencl_system.command_queue(),
+		config_file,
+		utility_object);
+
+	flakelib::simulation::stam::object simulation(
+		opencl_system.command_queue(),
+		flakelib::boundary_view(
+			boundary_image->view()),
+		config_file,
+		flakelib::simulation::arrow_image_cache(
+			arrow_pool),
+		flakelib::simulation::scalar_image_cache(
+			planar_pool),
+		utility_object,
+		configurable_solver.value());
 
 	flakelib::visualization::arrow visualization(
 		sys.viewport_manager(),
 		sys.renderer(),
 		opencl_system.command_queue(),
-		*simulation,
+		simulation,
 		sys.font_system(),
 		flakelib::boundary_view(
 			boundary_image->view()),
@@ -181,7 +195,7 @@ try
 				sge::input::keyboard::key_code::space,
 				std::tr1::bind(
 					&flakelib::simulation::base::update,
-					simulation.get(),
+					&simulation,
 					flakelib::duration(
 						0.01f)))));
 
@@ -201,7 +215,7 @@ try
 
 		if(delta > flakelib::duration(0.05f))
 		{
-			simulation->update(
+			simulation.update(
 				delta);
 
 			visualization.update(
@@ -213,7 +227,7 @@ try
 		// If we have no viewport (yet), don't do anything (this is just a
 		// precaution, we _might_ divide by zero somewhere below, otherwise)
 		if(!sge::renderer::viewport_size(sys.renderer()).content())
-			throw sge::exception(
+			throw flakelib::exception(
 				FCPPT_TEXT("There was an iteration without viewport. Usually not a problem, but OpenCL isn't suited for viewport changes, yet. So I have to exit now."));
 
 		sge::renderer::state::scoped scoped_state(

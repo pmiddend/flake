@@ -1,5 +1,5 @@
+#include <flakelib/exception.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
-#include <sge/exception.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/filesystem/path.hpp>
@@ -22,7 +22,7 @@ flakelib::utf8_file_to_fcppt_string(
 
 	if(!file_stream.is_open())
 		throw
-			sge::exception(
+			flakelib::exception(
 				FCPPT_TEXT("Couldn't open file \"")+
 				fcppt::filesystem::path_to_string(
 					path)+

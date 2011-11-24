@@ -200,7 +200,6 @@ kernel void
 laplacian_residual(
 	global read_only image2d_t rhs,
 	global read_only image2d_t boundary,
-	// right hand side
 	global read_only image2d_t from,
 	global write_only image2d_t to,
 	float const grid_scale)

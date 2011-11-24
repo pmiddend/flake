@@ -1,10 +1,10 @@
 #ifndef FLAKELIB_LAPLACE_TESTER_HPP_INCLUDED
 #define FLAKELIB_LAPLACE_TESTER_HPP_INCLUDED
 
-#include <flakelib/planar_cache.hpp>
-#include <flakelib/planar_lock.hpp>
 #include <flakelib/viewport_pager.hpp>
 #include <flakelib/laplace_solver/base_fwd.hpp>
+#include <flakelib/planar_pool/object_fwd.hpp>
+#include <flakelib/planar_pool/scoped_lock.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <flakelib/visualization/monitor/child_fwd.hpp>
 #include <flakelib/visualization/monitor/parent.hpp>
@@ -36,7 +36,7 @@ public:
 	explicit
 	laplace_tester(
 		laplace_solver::base &,
-		flakelib::planar_cache &,
+		flakelib::planar_pool::object &,
 		flakelib::utility::object &,
 		sge::renderer::device &,
 		sge::viewport::manager &,
@@ -60,15 +60,15 @@ private:
 	laplace_solver::base &solver_;
 	sge::renderer::device &renderer_;
 	sge::opencl::command_queue::object &command_queue_;
-	flakelib::planar_cache &planar_cache_;
+	flakelib::planar_pool::object &planar_cache_;
 	utility::object &utility_;
 	fcppt::unique_ptr<sge::opencl::memory_object::image::planar> boundary_;
 	visualization::monitor::parent monitor_parent_;
 	flakelib::viewport_pager master_widget_;
 	rucksack::widget::enumeration enumeration_widget_;
-	flakelib::planar_lock initial_guess_image_;
-	flakelib::planar_lock rhs_;
-	flakelib::planar_lock destination_;
+	flakelib::planar_pool::scoped_lock initial_guess_image_;
+	flakelib::planar_pool::scoped_lock rhs_;
+	flakelib::planar_pool::scoped_lock destination_;
 	additional_data_monitors additional_data_;
 };
 }

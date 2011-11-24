@@ -22,7 +22,7 @@
 
 flakelib::laplace_tester::laplace_tester(
 	laplace_solver::base &_solver,
-	flakelib::planar_cache &_planar_cache,
+	flakelib::planar_pool::object &_planar_cache,
 	utility::object &_utility,
 	sge::renderer::device &_renderer,
 	sge::viewport::manager &_viewport_manager,
@@ -44,7 +44,7 @@ flakelib::laplace_tester::laplace_tester(
 		cl::planar_image_view_to_cl_image(
 			_image_loader.load(
 				flakelib::media_path_from_string(
-					FCPPT_TEXT("images/boundary_256_black.png")))->view(),
+					FCPPT_TEXT("images/boundary_1024_black.png")))->view(),
 			command_queue_)),
 	monitor_parent_(
 		_renderer,
@@ -127,6 +127,60 @@ flakelib::laplace_tester::update()
 		laplace_solver::boundary(
 			*boundary_));
 
+	utility_.copy_image(
+		utility::from(
+			destination_.value()),
+		utility::to(
+			initial_guess_image_.value()),
+		utility::multiplier(
+			1.0f));
+
+	solver_.solve(
+		laplace_solver::rhs(
+			rhs_.value()),
+		laplace_solver::destination(
+			destination_.value()),
+		laplace_solver::initial_guess(
+			initial_guess_image_.value()),
+		laplace_solver::boundary(
+			*boundary_));
+
+	utility_.copy_image(
+		utility::from(
+			destination_.value()),
+		utility::to(
+			initial_guess_image_.value()),
+		utility::multiplier(
+			1.0f));
+
+	solver_.solve(
+		laplace_solver::rhs(
+			rhs_.value()),
+		laplace_solver::destination(
+			destination_.value()),
+		laplace_solver::initial_guess(
+			initial_guess_image_.value()),
+		laplace_solver::boundary(
+			*boundary_));
+
+	utility_.copy_image(
+		utility::from(
+			destination_.value()),
+		utility::to(
+			initial_guess_image_.value()),
+		utility::multiplier(
+			1.0f));
+
+	solver_.solve(
+		laplace_solver::rhs(
+			rhs_.value()),
+		laplace_solver::destination(
+			destination_.value()),
+		laplace_solver::initial_guess(
+			initial_guess_image_.value()),
+		laplace_solver::boundary(
+			*boundary_));
+
 	additional_data_.clear();
 
 	fcppt::container::ptr::push_back_unique_ptr(
@@ -159,7 +213,7 @@ flakelib::laplace_tester::update()
 	{
 		sge::opencl::memory_object::dim2 const object_size =
 			flakelib::planar_object_size(
-				it->second);
+				it->value());
 
 		fcppt::container::ptr::push_back_unique_ptr(
 			additional_data_,
@@ -167,7 +221,7 @@ flakelib::laplace_tester::update()
 				fcppt::ref(
 					monitor_parent_),
 				visualization::monitor::name(
-					it->first),
+					it->key()),
 				visualization::monitor::grid_dimensions(
 					fcppt::math::dim::structure_cast<visualization::monitor::grid_dimensions::value_type>(
 						object_size)),
@@ -177,7 +231,7 @@ flakelib::laplace_tester::update()
 					1.0f)));
 
 		additional_data_.back().from_planar_object(
-			it->second);
+			it->value());
 
 		enumeration_widget_.push_back_child(
 			additional_data_.back().widget());

@@ -1,8 +1,8 @@
 #include <flakelib/media_path_from_string.hpp>
-#include <flakelib/planar_cache.hpp>
-#include <flakelib/planar_lock.hpp>
 #include <flakelib/cl/apply_kernel_to_planar_image.hpp>
 #include <flakelib/laplace_solver/multigrid.hpp>
+#include <flakelib/planar_pool/object.hpp>
+#include <flakelib/planar_pool/scoped_lock.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
@@ -24,7 +24,7 @@
 
 
 flakelib::laplace_solver::multigrid::multigrid(
-	flakelib::planar_cache &_planar_cache,
+	flakelib::planar_pool::object &_planar_cache,
 	flakelib::utility::object &_utility,
 	sge::opencl::command_queue::object &_command_queue,
 	laplace_solver::base &_inner_solver,
@@ -96,7 +96,7 @@ flakelib::laplace_solver::multigrid::solve(
 	sge::opencl::memory_object::size_type const size =
 		_destination.get().size()[0];
 
-	flakelib::planar_lock
+	flakelib::planar_pool::scoped_lock
 		p0(
 			planar_cache_,
 			size),
@@ -165,7 +165,7 @@ flakelib::laplace_solver::multigrid::solve(
 		p0.value(),
 		FCPPT_TEXT("residual"));
 
-	flakelib::planar_lock
+	flakelib::planar_pool::scoped_lock
 		rd(
 			planar_cache_,
 			size/2),
@@ -197,7 +197,7 @@ flakelib::laplace_solver::multigrid::solve(
 	// To recursively call the solve function again, we need to provide an
 	// initial guess. For the recursion steps, we use 0 as the initial
 	// guess (or rather, the matrix containing all zeroes)
-	flakelib::planar_lock temporary_initial_guess(
+	flakelib::planar_pool::scoped_lock temporary_initial_guess(
 		planar_cache_,
 		size/2);
 
@@ -245,7 +245,7 @@ flakelib::laplace_solver::multigrid::solve(
 		p0.value(),
 		FCPPT_TEXT("upsampled error"));
 
-	flakelib::planar_lock h(
+	flakelib::planar_pool::scoped_lock h(
 		planar_cache_,
 		size);
 
@@ -464,7 +464,7 @@ flakelib::laplace_solver::multigrid::copy_to_planar_data(
 			10.0f));
 
 	additional_planar_data_.push_back(
-		std::make_pair(
+		flakelib::additional_planar_data::value_type(
 			(fcppt::format(FCPPT_TEXT("%1%: %2%\nN: %3%"))
 				% _image.size()[0]
 				% _description

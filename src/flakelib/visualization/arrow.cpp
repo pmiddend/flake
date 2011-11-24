@@ -104,12 +104,12 @@ flakelib::visualization::arrow::arrow(
 	{
 		fcppt::container::ptr::insert_unique_ptr_map(
 			additional_data_,
-			it->first,
+			it->key(),
 			fcppt::make_unique_ptr<monitor::texture>(
 				fcppt::ref(
 					monitor_parent_),
 				monitor::name(
-					it->first),
+					it->key()),
 				monitor::grid_dimensions(
 					fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 						sge::image2d::view::size(
@@ -123,10 +123,10 @@ flakelib::visualization::arrow::arrow(
 					sge::parse::json::find_and_convert_member<monitor::rect::value_type>(
 						_config_file,
 						sge::parse::json::string_to_path(
-							FCPPT_TEXT("visualization/")+it->first+FCPPT_TEXT("-scale"))))));
+							FCPPT_TEXT("visualization/")+it->key()+FCPPT_TEXT("-scale"))))));
 
 		master_and_slaves_.push_back_child(
-			additional_data_.find(it->first)->second->widget());
+			additional_data_.find(it->key())->second->widget());
 	}
 }
 
@@ -146,9 +146,9 @@ flakelib::visualization::arrow::update(
 			additional_data_.begin();
 			it2 != additional_data_.end();
 			++it2)
-			if(it->first == it2->first)
+			if(it->key() == it2->first)
 				it2->second->from_planar_object(
-					it->second);
+					it->value());
 
 	monitor_parent_.update();
 }

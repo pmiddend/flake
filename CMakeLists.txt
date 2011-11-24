@@ -81,21 +81,23 @@ SET(
 	FLAKELIB_FILES
 	src/flakelib/cl/apply_kernel_to_planar_image.cpp
 	src/flakelib/cl/planar_image_view_to_cl_image.cpp
+	src/flakelib/exception.cpp
 	src/flakelib/laplace_solver/base.cpp
+	src/flakelib/laplace_solver/dynamic_factory.cpp
 	src/flakelib/laplace_solver/jacobi.cpp
 	src/flakelib/laplace_solver/multigrid.cpp
 	src/flakelib/laplace_tester.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
 	src/flakelib/planar_buffer.cpp
-	src/flakelib/planar_cache.cpp
-	src/flakelib/planar_lock.cpp
 	src/flakelib/planar_object_size.cpp
+	src/flakelib/planar_pool/object.cpp
+	src/flakelib/planar_pool/scoped_lock.cpp
 	src/flakelib/profiler/object.cpp
 	src/flakelib/profiler/scoped.cpp
+	src/flakelib/scoped_frame_limiter.cpp
 	src/flakelib/simulation/base.cpp
-	src/flakelib/simulation/create.cpp
-	src/flakelib/simulation/stam.cpp
+	src/flakelib/simulation/stam/object.cpp
 	src/flakelib/sprite_drawer_3d.cpp
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/utility/object.cpp
