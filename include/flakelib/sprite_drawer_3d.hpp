@@ -109,7 +109,6 @@ private:
 	>
 	texture_map;
 
-	texture_map textures_;
 
 	sge::texture::const_part_ptr const
 	cached_texture(
@@ -119,6 +118,7 @@ private:
 
 	color_object col_;
 	sge::texture::manager texman_;
+	texture_map textures_;
 	sprite_system sys_;
 	sprite_container sprites_;
 };
