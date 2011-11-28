@@ -9,7 +9,7 @@
 #include <sge/font/system.hpp>
 #include <sge/image/colors.hpp>
 #include <sge/image2d/file.hpp>
-#include <sge/image2d/multi_loader.hpp>
+#include <sge/image2d/system.hpp>
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/create_image_format.hpp>
@@ -28,7 +28,7 @@ flakelib::laplace_tester::laplace_tester(
 	sge::viewport::manager &_viewport_manager,
 	sge::opencl::command_queue::object &_command_queue,
 	sge::font::system &_font_system,
-	sge::image2d::multi_loader &_image_loader)
+	sge::image2d::system &_image_loader)
 :
 	solver_(
 		_solver),

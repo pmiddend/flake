@@ -5,7 +5,7 @@
 #include <flakelib/laplace_solver/multigrid.hpp>
 #include <flakelib/planar_pool/object.hpp>
 #include <flakelib/utility/object.hpp>
-#include <sge/all_extensions.hpp>
+#include <sge/media/all_extensions.hpp>
 #include <sge/exception.hpp>
 #include <sge/camera/ortho_freelook/object.hpp>
 #include <sge/camera/ortho_freelook/parameters.hpp>
@@ -31,7 +31,7 @@
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/state/trampoline.hpp>
 #include <sge/systems/cursor_option_field.hpp>
-#include <sge/systems/image_loader.hpp>
+#include <sge/systems/image2d.hpp>
 #include <sge/systems/input.hpp>
 #include <sge/systems/input_helper.hpp>
 #include <sge/systems/input_helper_field.hpp>
@@ -74,9 +74,9 @@ try
 
 	sge::systems::instance sys(
 		sge::systems::list()
-			(sge::systems::image_loader(
+			(sge::systems::image2d(
 				sge::image::capabilities_field::null(),
-				sge::all_extensions))
+				sge::media::all_extensions))
 			(sge::systems::window(
 				sge::window::simple_parameters(
 					FCPPT_TEXT("Test of different pde solvers"),
@@ -138,7 +138,7 @@ try
 		sys.viewport_manager(),
 		opencl_system.command_queue(),
 		sys.font_system(),
-		sys.image_loader());
+		sys.image_system());
 
 	bool running =
 		true;

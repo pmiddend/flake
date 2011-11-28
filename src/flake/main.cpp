@@ -8,11 +8,11 @@
 #include <flakelib/simulation/stam/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <flakelib/visualization/arrow.hpp>
-#include <sge/all_extensions.hpp>
+#include <sge/media/all_extensions.hpp>
 #include <sge/image/capabilities_field.hpp>
 #include <sge/image2d/file.hpp>
 #include <sge/image2d/file_ptr.hpp>
-#include <sge/image2d/multi_loader.hpp>
+#include <sge/image2d/system.hpp>
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/input/keyboard/action.hpp>
 #include <sge/input/keyboard/device.hpp>
@@ -39,7 +39,7 @@
 #include <sge/renderer/vsync.hpp>
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/systems/cursor_option_field.hpp>
-#include <sge/systems/image_loader.hpp>
+#include <sge/systems/image2d.hpp>
 #include <sge/systems/input.hpp>
 #include <sge/systems/input_helper.hpp>
 #include <sge/systems/input_helper_field.hpp>
@@ -118,9 +118,9 @@ try
 
 	sge::systems::instance sys(
 		sge::systems::list()
-			(sge::systems::image_loader(
+			(sge::systems::image2d(
 				sge::image::capabilities_field::null(),
-				sge::all_extensions))
+				sge::media::all_extensions))
 			(sge::systems::window(
 				sge::window::simple_parameters(
 					FCPPT_TEXT("Simulation of fluid dynamics via Stam's Method"),
@@ -145,7 +145,7 @@ try
 		sge::opencl::context::optional_error_callback());
 
 	sge::image2d::file_ptr boundary_image =
-		sys.image_loader().load(
+		sys.image_system().load(
 			flakelib::media_path()
 				/ FCPPT_TEXT("images")
 				/

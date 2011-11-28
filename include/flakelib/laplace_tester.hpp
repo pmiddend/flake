@@ -10,7 +10,7 @@
 #include <flakelib/visualization/monitor/parent.hpp>
 #include <rucksack/widget/enumeration.hpp>
 #include <sge/font/system_fwd.hpp>
-#include <sge/image2d/multi_loader_fwd.hpp>
+#include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
@@ -42,7 +42,7 @@ public:
 		sge::viewport::manager &,
 		sge::opencl::command_queue::object &,
 		sge::font::system &,
-		sge::image2d::multi_loader &);
+		sge::image2d::system &);
 
 	void
 	render(

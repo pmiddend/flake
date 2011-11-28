@@ -1,13 +1,13 @@
 #include <flakelib/cl/planar_image_view_to_cl_image.hpp>
 #include <flakelib/utility/object.hpp>
-#include <sge/all_extensions.hpp>
+#include <sge/media/all_extensions.hpp>
 #include <sge/image/capabilities_field.hpp>
 #include <sge/image2d/file.hpp>
-#include <sge/image2d/multi_loader.hpp>
+#include <sge/image2d/system.hpp>
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/opencl/single_device_system.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
-#include <sge/systems/image_loader.hpp>
+#include <sge/systems/image2d.hpp>
 #include <sge/systems/instance.hpp>
 #include <sge/systems/list.hpp>
 #include <fcppt/exception.hpp>
@@ -41,9 +41,9 @@ try
 
 	sge::systems::instance sys(
 		sge::systems::list()
-			(sge::systems::image_loader(
+			(sge::systems::image2d(
 				sge::image::capabilities_field::null(),
-				sge::all_extensions)));
+				sge::media::all_extensions)));
 
 	sge::opencl::single_device_system opencl_system(
 		(sge::opencl::optional_renderer()),
@@ -51,7 +51,7 @@ try
 
 	fcppt::unique_ptr<sge::opencl::memory_object::image::planar> input_image(
 		flakelib::cl::planar_image_view_to_cl_image(
-			sys.image_loader().load(
+			sys.image_system().load(
 				fcppt::from_std_string(
 					argv[1]))->view(),
 			opencl_system.command_queue()));

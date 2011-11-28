@@ -3,11 +3,11 @@
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/simulation/base.hpp>
 #include <flakelib/simulation/base_ptr.hpp>
-#include <sge/all_extensions.hpp>
+#include <sge/media/all_extensions.hpp>
 #include <sge/image/capabilities_field.hpp>
 #include <sge/image2d/file.hpp>
 #include <sge/image2d/file_ptr.hpp>
-#include <sge/image2d/multi_loader.hpp>
+#include <sge/image2d/system.hpp>
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/log/global_context.hpp>
 #include <sge/opencl/single_device_system.hpp>
@@ -18,7 +18,7 @@
 #include <sge/parse/json/path.hpp>
 #include <sge/parse/json/config/create_command_line_parameters.hpp>
 #include <sge/parse/json/config/merge_command_line_parameters.hpp>
-#include <sge/systems/image_loader.hpp>
+#include <sge/systems/image2d.hpp>
 #include <sge/systems/instance.hpp>
 #include <sge/systems/list.hpp>
 #include <fcppt/exception.hpp>
@@ -67,9 +67,9 @@ try
 
 	sge::systems::instance sys(
 		sge::systems::list()
-			(sge::systems::image_loader(
+			(sge::systems::image2d(
 				sge::image::capabilities_field::null(),
-				sge::all_extensions)));
+				sge::media::all_extensions)));
 
 	sge::opencl::single_device_system opencl_system(
 		(sge::opencl::optional_renderer()),
