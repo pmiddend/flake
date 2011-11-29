@@ -41,7 +41,6 @@ FIND_PACKAGE(
 	input
 	renderer
 	sprite
-	sprite
 	camera
 	texture
 	font

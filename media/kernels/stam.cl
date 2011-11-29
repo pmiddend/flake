@@ -139,12 +139,7 @@ apply_external_forces(
 		get_image_width(
 			input);
 
-	unsigned const start_y =
-		edge_size / 2 - fan_width;
-
-	float const middle =
-		start_y + fan_width;
-
+	/*
 	write_imagef(
 		output,
 		(int2)(0,i),
@@ -152,6 +147,15 @@ apply_external_forces(
 			input,
 			absolute_clamping_nearest,
 			(int2)(1,i)));
+		*/
+	write_imagef(
+		output,
+		(int2)(0,i),
+		(float4)(
+			force_magnitude,
+			0.0f,
+			0.0f,
+			0.0f));
 
 	write_imagef(
 		output,
@@ -177,6 +181,7 @@ apply_external_forces(
 			absolute_clamping_nearest,
 			(int2)(i,edge_size-2)));
 
+	/*
 	if(i >= start_y && i < start_y + 2*fan_width)
 	{
 		write_imagef(
@@ -189,7 +194,7 @@ apply_external_forces(
 						i - middle)),
 				0.0f,
 				0.0f));
-	}
+	}*/
 }
 
 kernel void
@@ -543,7 +548,7 @@ laplacian_residual_absolute_value(
 		to,
 		position,
 		(float4)(
-			fabs(laplace - rhs_value),
+			laplace - rhs_value,
 			0.0f,
 			0.0f,
 			0.0f));

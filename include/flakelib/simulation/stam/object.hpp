@@ -86,6 +86,7 @@ private:
 	flakelib::profiler::object external_forces_profiler_;
 	flakelib::profiler::object divergence_profiler_;
 	flakelib::profiler::object project_profiler_;
+	flakelib::profiler::object solve_profiler_;
 	mutable flakelib::additional_planar_data additional_planar_data_;
 	sge::opencl::memory_object::image::planar boundary_image_;
 	flakelib::planar_pool::unique_lock velocity_image_;
@@ -124,6 +125,10 @@ private:
 
 	planar_pool::unique_lock
 	vector_magnitude(
+		sge::opencl::memory_object::image::planar &);
+
+	planar_pool::unique_lock
+	gradient(
 		sge::opencl::memory_object::image::planar &);
 };
 }

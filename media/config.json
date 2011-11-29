@@ -4,9 +4,9 @@
 	{
 		"arrow-scale" : 10.0,
 		"pressure-scale" : 1.00,
-		"velocity-magnitude-scale" : 1.0,
+		"velocity-magnitude-scale" : 0.2,
 		"divergence-scale" : 100.00,
-		"residual-scale" : 100.00,
+		"residual-scale" : 1.0,
 		"grid-position" : [10.0,10.0],
 		"grid-scale" : 10.0,
 		"border-size" : 2,
@@ -15,7 +15,7 @@
 	"stam-test" :
 	{
 		"profiling" : true,
-		"external-force-magnitude" : 3.0,
+		"external-force-magnitude" : 2.0,
 		"grid-scale" : 1.0,
 		"boundary-file" : "boundary_circle.png"
 	},

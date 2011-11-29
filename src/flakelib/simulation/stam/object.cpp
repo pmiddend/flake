@@ -128,6 +128,11 @@ flakelib::simulation::stam::object::object(
 		profiler::optional_parent(
 			parent_profiler_),
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
+	solve_profiler_(
+		FCPPT_TEXT("solve"),
+		profiler::optional_parent(
+			parent_profiler_),
+		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	additional_planar_data_(),
 	boundary_image_(
 		command_queue_.context(),
@@ -276,7 +281,7 @@ flakelib::simulation::stam::object::update(
 	residual_image_ =
 		this->laplacian_residual(
 			stam::solution(
-				velocity_image_->value()),
+				pressure_image_->value()),
 			stam::rhs(
 				divergence_image_->value()));
 }
@@ -456,6 +461,10 @@ flakelib::planar_pool::unique_lock
 flakelib::simulation::stam::object::solve(
 	sge::opencl::memory_object::image::planar &_rhs)
 {
+	profiler::scoped scoped_profiler(
+		solve_profiler_,
+		command_queue_);
+
 	flakelib::planar_pool::unique_lock result(
 		fcppt::make_unique_ptr<flakelib::planar_pool::scoped_lock>(
 			fcppt::ref(
