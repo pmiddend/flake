@@ -40,7 +40,6 @@
 #include <fcppt/math/vector/basic_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <algorithm>
-#include <iostream>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -147,7 +146,7 @@ flakelib::simulation::stam::object::object(
 	velocity_image_(
 		fcppt::make_unique_ptr<planar_pool::scoped_lock>(
 			fcppt::ref(
-				scalar_image_cache_),
+				arrow_image_cache_),
 			fcppt::math::dim::structure_cast<sge::opencl::memory_object::rect::dim>(
 				sge::image2d::view::size(
 					_boundary_image.get())))),
@@ -357,6 +356,14 @@ flakelib::simulation::stam::object::apply_forces(
 				arrow_image_cache_),
 			from.size()));
 
+	utility_.copy_image(
+		utility::from(
+			from),
+		utility::to(
+			result->value()),
+		utility::multiplier(
+			1.0f));
+
 	apply_external_forces_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
@@ -552,17 +559,17 @@ flakelib::simulation::stam::object::laplacian_residual(
 	laplacian_residual_absolute_value_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		_divergence.get());
+		boundary_image_);
 
 	laplacian_residual_absolute_value_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
-		result->value());
+		_divergence.get());
 
 	laplacian_residual_absolute_value_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
-		boundary_image_);
+		result->value());
 
 	laplacian_residual_absolute_value_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -581,17 +588,17 @@ flakelib::simulation::stam::object::laplacian_residual(
 
 flakelib::planar_pool::unique_lock
 flakelib::simulation::stam::object::vector_magnitude(
-	sge::opencl::memory_object::image::planar &from)
+	sge::opencl::memory_object::image::planar &_from)
 {
 	flakelib::planar_pool::unique_lock result(
 		fcppt::make_unique_ptr<flakelib::planar_pool::scoped_lock>(
 			fcppt::ref(
 				scalar_image_cache_),
-			from.size()));
+			_from.size()));
 
 	utility_.planar_vector_magnitude(
 		utility::from(
-			from),
+			_from),
 		utility::to(
 			result->value()),
 		utility::multiplier(

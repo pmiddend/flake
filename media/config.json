@@ -4,7 +4,7 @@
 	{
 		"arrow-scale" : 10.0,
 		"pressure-scale" : 1.00,
-		"velocity-magnitude-scale" : 0.1,
+		"velocity-magnitude-scale" : 1.0,
 		"divergence-scale" : 100.00,
 		"residual-scale" : 100.00,
 		"grid-position" : [10.0,10.0],
@@ -15,26 +15,26 @@
 	"stam-test" :
 	{
 		"profiling" : true,
-		"external-force-magnitude" : 0.1,
+		"external-force-magnitude" : 3.0,
 		"grid-scale" : 1.0,
 		"boundary-file" : "boundary_circle.png"
 	},
-	"simulation-solver" :
+	"simulation-solver-jac" :
 	{
 		"type" : "jacobi",
 		"grid-scale" : 1.0,
 		"iterations" : 51
 	},
-	"simulation-solver-mg" :
+	"simulation-solver" :
 	{
 		"type" : "multigrid",
 		"grid-scale" : 1.0,
-		"termination-size" : 64,
+		"termination-size" : 4,
 		"inner-solver" :
 		{
 			"type" : "jacobi",
 			"grid-scale" : 1.0,
-			"iterations" : 3
+			"iterations" : 7
 		}
 	}
 }

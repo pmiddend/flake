@@ -306,6 +306,15 @@ public:
 	}
 
 	/**
+	\brief Erase all elements from the list
+	*/
+	void
+	clear()
+	{
+		sequence_.clear();
+	}
+
+	/**
 	\brief Conveniently access an element using a key.
 	\throws fcppt::container::out_of_range If the key doesn't exist
 	*/

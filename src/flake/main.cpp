@@ -239,16 +239,18 @@ try
 		sys.window().dispatch();
 
 		delta +=
-			sge::timer::elapsed_and_reset<flakelib::duration>(
+			50.0f * sge::timer::elapsed_and_reset<flakelib::duration>(
 				delta_timer);
 
-		if(delta > flakelib::duration(0.05f))
+		/*
+		if(delta > flakelib::duration(0.3f))
+		*/
 		{
-			//simulation.update(
-			//	delta);
+			simulation.update(
+				delta);
 
-			//visualization.update(
-			//	delta);
+			visualization.update(
+				delta);
 
 			delta = flakelib::duration(0.0f);
 		}

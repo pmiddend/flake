@@ -118,10 +118,10 @@ advect(
 }
 
 /*
-	This function iterates over all the left border pixels of the image and
-	assigns a fixed force vector to them. This vector points to the right and has
-  a given magnitude.
- */
+This function iterates over all the left border pixels of the image and assigns
+a fixed force vector to them. This vector points to the right and has a given
+magnitude.
+*/
 kernel void
 apply_external_forces(
 	/* 0 */global read_only image2d_t input,
@@ -182,10 +182,11 @@ apply_external_forces(
 		write_imagef(
 			output,
 			(int2)(0,i),
-			/*dt * */
 			(float4)(
-				force_magnitude,
-				i - middle,
+				fast_normalize(
+					(float2)(
+						force_magnitude,
+						i - middle)),
 				0.0f,
 				0.0f));
 	}
@@ -455,11 +456,11 @@ gradient_and_subtract(
 
 kernel void
 laplacian_residual_absolute_value(
-	global read_only image2d_t rhs,
-	global read_only image2d_t boundary,
-	global read_only image2d_t from,
-	global write_only image2d_t to,
-	float const grid_scale)
+	/* 0 */global read_only image2d_t rhs,
+	/* 1 */global read_only image2d_t boundary,
+	/* 2 */global read_only image2d_t from,
+	/* 3 */global write_only image2d_t to,
+	/* 4 */float const grid_scale)
 {
 	int2 const position =
 		(int2)(
