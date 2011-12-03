@@ -57,7 +57,8 @@ print(
 			o.children().begin();
 		child != o.children().end();
 		++child)
-		::print(
+		// If I write ::print, MSVC will return an error
+		print(
 			s,
 			*child,
 			tabs+1u,

@@ -71,6 +71,8 @@ font_axis_policy(
 }
 }
 
+FCPPT_PP_PUSH_WARNING
+FCPPT_PP_DISABLE_VC_WARNING(4355)
 flakelib::visualization::monitor::texture::texture(
 	monitor::parent &_parent,
 	monitor::name const &_name,
@@ -149,6 +151,7 @@ flakelib::visualization::monitor::texture::texture(
 		sprite_box_,
 		rucksack::alignment::left_or_top);
 }
+FCPPT_PP_POP_WARNING
 
 void
 flakelib::visualization::monitor::texture::from_planar_object(

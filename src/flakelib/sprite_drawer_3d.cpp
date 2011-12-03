@@ -14,7 +14,6 @@
 #include <sge/texture/rect_fragmented.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
-#include <fcppt/math/dim/quad.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/spirit/home/phoenix/object/construct.hpp>
@@ -47,11 +46,9 @@ flakelib::sprite_drawer_3d::sprite_drawer_3d(
 				),
 				_rend.caps().preferred_texture_format().get(),
 				sge::renderer::texture::mipmap::off(),
-				fcppt::math::dim::quad<
-					sge::renderer::dim2
-				>(
-					256
-				)
+				sge::renderer::dim2(
+					256,
+					256)
 			)
 		)
 	),

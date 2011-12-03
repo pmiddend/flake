@@ -177,7 +177,8 @@ flakelib::simulation::stam::object::object(
 			additional_planar_data::value_type(
 				additional_data[i],
 				// Leave the actual image empty for now
-				flakelib::planar_object()));
+				flakelib::planar_object(
+					flakelib::invalid_planar_object())));
 
 	// Initialize velocity
 	utility_.null_image(

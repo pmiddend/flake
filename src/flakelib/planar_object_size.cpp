@@ -2,6 +2,7 @@
 #include <flakelib/planar_object_size.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <fcppt/variant/apply_unary.hpp>
+#include <fcppt/text.hpp>
 
 
 namespace
@@ -25,6 +26,13 @@ public:
 		sge::opencl::memory_object::image::planar const * const b) const
 	{
 		return b->size();
+	}
+
+	result_type
+	operator()(
+		flakelib::invalid_planar_object const &) const
+	{
+		throw flakelib::exception(FCPPT_TEXT("Tried to get the size of an invalid planar object"));
 	}
 };
 }

@@ -124,7 +124,7 @@ try
 			(sge::systems::window(
 				sge::window::simple_parameters(
 					FCPPT_TEXT("Simulation of fluid dynamics via Stam's Method"),
-					sge::window::dim(1024,768))))
+					sge::window::dim(1280,1024))))
 			(sge::systems::renderer(
 				sge::renderer::parameters(
 					sge::renderer::visual_depth::depth32,
@@ -132,7 +132,7 @@ try
 					sge::renderer::vsync::on,
 					sge::renderer::no_multi_sampling),
 				sge::viewport::center_on_resize(
-					sge::window::dim(1024,768))))
+					sge::window::dim(1280,1024))))
 			(sge::systems::parameterless::font)
 			(sge::systems::input(
 				sge::systems::input_helper_field(

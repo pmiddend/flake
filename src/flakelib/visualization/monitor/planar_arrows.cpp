@@ -80,6 +80,8 @@ font_axis_policy(
 }
 }
 
+FCPPT_PP_PUSH_WARNING
+FCPPT_PP_DISABLE_VC_WARNING(4355)
 flakelib::visualization::monitor::planar_arrows::planar_arrows(
 	monitor::parent &_parent,
 	monitor::name const &_name,
@@ -168,6 +170,7 @@ flakelib::visualization::monitor::planar_arrows::planar_arrows(
 					.elements()));
 	}
 }
+FCPPT_PP_POP_WARNING
 
 void
 flakelib::visualization::monitor::planar_arrows::from_planar_object(
