@@ -5,6 +5,7 @@
 #include <flakelib/simulation/base_fwd.hpp>
 #include <flakelib/visualization/base.hpp>
 #include <flakelib/visualization/monitor/child.hpp>
+#include <flakelib/visualization/monitor/texture.hpp>
 #include <flakelib/visualization/monitor/parent.hpp>
 #include <flakelib/visualization/monitor/planar_arrows.hpp>
 #include <rucksack/widget/master_and_slaves.hpp>
@@ -65,6 +66,7 @@ private:
 	monitor::parent monitor_parent_;
 	rucksack::widget::viewport_adaptor viewport_widget_;
 	rucksack::widget::master_and_slaves master_and_slaves_;
+	rucksack::widget::box::base master_box_;
 	monitor::planar_arrows velocity_arrows_;
 	additional_data_monitors additional_data_;
 };

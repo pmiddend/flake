@@ -28,24 +28,6 @@ is_solid(
 }
 
 kernel void
-null_image(
-	global write_only image2d_t f)
-{
-	write_imagef(
-		f,
-		(int2)(
-			get_global_id(
-				0),
-			get_global_id(
-				1)),
-		(float4)(
-			0.0f,
-			0.0f,
-			0.0f,
-			0.0f));
-}
-
-kernel void
 advect(
 	global read_only image2d_t input,
 	global write_only image2d_t output,

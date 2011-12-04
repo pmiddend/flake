@@ -62,6 +62,11 @@ flakelib::visualization::arrow::arrow(
 				_config_file,
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("border-size"))))),
+	master_box_(
+		rucksack::axis::y,
+		rucksack::aspect(
+			1,
+			1)),
 	velocity_arrows_(
 		monitor_parent_,
 		monitor::name(
@@ -94,7 +99,11 @@ flakelib::visualization::arrow::arrow(
 		master_and_slaves_);
 
 	master_and_slaves_.master_pane(
-		velocity_arrows_.widget());
+		master_box_);
+
+	master_box_.push_back_child(
+		velocity_arrows_.widget(),
+		rucksack::alignment::left_or_top);
 
 	for(
 		flakelib::additional_planar_data::const_iterator it =
@@ -120,7 +129,7 @@ flakelib::visualization::arrow::arrow(
 					static_cast<monitor::scalar>(
 						velocity_arrows_.widget().axis_policy().y().minimum_size()/static_cast<rucksack::scalar>(4))),
 				monitor::scaling_factor(
-					sge::parse::json::find_and_convert_member<monitor::rect::value_type>(
+					sge::parse::json::find_and_convert_member<monitor::scalar>(
 						_config_file,
 						sge::parse::json::string_to_path(
 							it->key()+FCPPT_TEXT("-scale"))))));

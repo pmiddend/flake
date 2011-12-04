@@ -35,14 +35,20 @@ namespace visualization
 namespace monitor
 {
 /**
- * This class serves two purposes:
- *
- * 1. It's a parent class, having a number of children. The parent calls
- *    "render" (and later probably "update") on all children.
- *
- * 2. It's a factory class for shaders/OpenCL objects. It keeps the context and
- *    the vertex declaration as well as the sprite system.
- */
+\details
+This class serves two purposes:
+
+<ol>
+<li>
+It's a parent class, having a number of children. The parent calls "render"
+(and later probably "update") on all children.
+</li>
+<li>
+It's a factory class for shaders/OpenCL objects. It keeps the context and the
+vertex declaration as well as the sprite system.
+</li>
+</ol>
+*/
 class parent
 {
 FCPPT_NONCOPYABLE(

@@ -234,6 +234,12 @@ flakelib::visualization::monitor::texture::widget()
 	return box_parent_;
 }
 
+rucksack::widget::base const &
+flakelib::visualization::monitor::texture::widget() const
+{
+	return box_parent_;
+}
+
 fcppt::string const
 flakelib::visualization::monitor::texture::name() const
 {

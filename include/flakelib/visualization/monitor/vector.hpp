@@ -11,7 +11,7 @@ namespace visualization
 namespace monitor
 {
 typedef
-fcppt::math::vector::static_<monitor::scalar>::type
+fcppt::math::vector::static_<monitor::scalar,2>::type
 vector;
 }
 }
