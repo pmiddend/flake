@@ -98,7 +98,12 @@ SET(
 	src/flakelib/laplace_tester.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
+	src/flakelib/monitor/child.cpp
+	src/flakelib/monitor/parent.cpp
+	src/flakelib/monitor/planar_arrows.cpp
+	src/flakelib/monitor/texture.cpp
 	src/flakelib/planar_buffer.cpp
+	src/flakelib/planar_framework.cpp
 	src/flakelib/planar_object_size.cpp
 	src/flakelib/planar_pool/object.cpp
 	src/flakelib/planar_pool/scoped_lock.cpp
@@ -111,12 +116,6 @@ SET(
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/utility/object.cpp
 	src/flakelib/viewport_pager.cpp
-	src/flakelib/visualization/arrow.cpp
-	src/flakelib/visualization/base.cpp
-	src/flakelib/visualization/monitor/child.cpp
-	src/flakelib/visualization/monitor/parent.cpp
-	src/flakelib/visualization/monitor/planar_arrows.cpp
-	src/flakelib/visualization/monitor/texture.cpp
 )
 
 FCPPT_UTILS_ADD_SOURCE_GROUPS("${FLAKELIB_FILES}")

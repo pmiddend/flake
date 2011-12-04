@@ -2,13 +2,12 @@
 #include <flakelib/exception.hpp>
 #include <flakelib/media_path.hpp>
 #include <flakelib/media_path_from_string.hpp>
+#include <flakelib/planar_framework.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/laplace_solver/dynamic_factory.hpp>
 #include <flakelib/planar_pool/object.hpp>
 #include <flakelib/simulation/stam/object.hpp>
 #include <flakelib/utility/object.hpp>
-#include <flakelib/visualization/arrow.hpp>
-#include <sge/media/all_extensions.hpp>
 #include <sge/image/capabilities_field.hpp>
 #include <sge/image2d/file.hpp>
 #include <sge/image2d/file_ptr.hpp>
@@ -18,14 +17,15 @@
 #include <sge/input/keyboard/device.hpp>
 #include <sge/input/keyboard/key_code.hpp>
 #include <sge/log/global_context.hpp>
+#include <sge/media/all_extensions.hpp>
 #include <sge/opencl/single_device_system.hpp>
 #include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/parse/json/array.hpp>
-#include <sge/parse/json/string_to_path.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/object.hpp>
 #include <sge/parse/json/parse_string_exn.hpp>
 #include <sge/parse/json/path.hpp>
+#include <sge/parse/json/string_to_path.hpp>
 #include <sge/parse/json/config/create_command_line_parameters.hpp>
 #include <sge/parse/json/config/merge_command_line_parameters.hpp>
 #include <sge/renderer/depth_stencil_buffer.hpp>
@@ -76,12 +76,13 @@
 #include <ostream>
 #include <fcppt/config/external_end.hpp>
 
+
 namespace
 {
 void
 update_simulation_and_visualization(
 	flakelib::simulation::stam::object &_simulation,
-	flakelib::visualization::arrow &_visual,
+	flakelib::planar_framework &_visual,
 	flakelib::duration const &_delta)
 {
 			_simulation.update(
@@ -192,7 +193,7 @@ try
 		utility_object,
 		configurable_solver.value());
 
-	flakelib::visualization::arrow visualization(
+	flakelib::planar_framework visualization(
 		sys.viewport_manager(),
 		sys.renderer(),
 		opencl_system.command_queue(),

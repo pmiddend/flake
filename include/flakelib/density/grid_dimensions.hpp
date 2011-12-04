@@ -2,6 +2,7 @@
 #define FLAKELIB_DENSITY_GRID_DIMENSIONS_HPP_INCLUDED
 
 #include <sge/opencl/memory_object/dim2.hpp>
+#include <fcppt/strong_typedef.hpp>
 
 namespace flakelib
 {

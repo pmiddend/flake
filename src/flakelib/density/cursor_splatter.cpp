@@ -1,18 +1,19 @@
-#include <flakelib/density/cursor_splatter.hpp>
 #include <flakelib/media_path_from_string.hpp>
-#include <sge/opencl/command_queue/object.hpp>
-#include <sge/opencl/program/file_to_source_string_sequence.hpp>
-#include <sge/opencl/program/build_parameters.hpp>
-#include <sge/opencl/command_queue/enqueue_kernel.hpp>
-#include <sge/opencl/memory_object/image/planar.hpp>
-#include <sge/input/cursor/object.hpp>
+#include <flakelib/density/cursor_splatter.hpp>
 #include <sge/input/cursor/button_event.hpp>
+#include <sge/input/cursor/object.hpp>
+#include <sge/opencl/command_queue/enqueue_kernel.hpp>
+#include <sge/opencl/command_queue/object.hpp>
+#include <sge/opencl/memory_object/image/planar.hpp>
+#include <sge/opencl/program/build_parameters.hpp>
+#include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assign/make_array.hpp>
 #include <fcppt/math/box/contains_point.hpp>
-#include <fcppt/math/vector/arithmetic.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/vector/arithmetic.hpp>
 #include <fcppt/tr1/functional.hpp>
+
 
 flakelib::density::cursor_splatter::cursor_splatter(
 	sge::opencl::command_queue::object &_command_queue,

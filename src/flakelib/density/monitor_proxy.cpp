@@ -1,20 +1,21 @@
 #include <flakelib/density/monitor_proxy.hpp>
 #include <fcppt/text.hpp>
-#include <fcppt/math/vector/structure_cast.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/vector/structure_cast.hpp>
+
 
 flakelib::density::monitor_proxy::monitor_proxy(
-	visualization::monitor::parent &_parent,
-	visualization::monitor::grid_dimensions const &_grid_dimensions,
-	visualization::monitor::dim const &_dim)
+	monitor::parent &_parent,
+	monitor::grid_dimensions const &_grid_dimensions,
+	monitor::dim const &_dim)
 :
 	density_texture_(
 		_parent,
-		visualization::monitor::name(
+		monitor::name(
 			FCPPT_TEXT("density")),
 		_grid_dimensions,
 		_dim,
-		visualization::monitor::scaling_factor(
+		monitor::scaling_factor(
 			1.0f))
 {
 }

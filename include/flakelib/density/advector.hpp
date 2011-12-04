@@ -1,19 +1,20 @@
 #ifndef FLAKELIB_DENSITY_ADVECTOR_HPP_INCLUDED
 #define FLAKELIB_DENSITY_ADVECTOR_HPP_INCLUDED
 
-#include <sge/opencl/command_queue/object_fwd.hpp>
-#include <sge/opencl/memory_object/image/planar_fwd.hpp>
-#include <sge/opencl/program/object.hpp>
-#include <sge/opencl/kernel/object.hpp>
-#include <sge/opencl/clinclude.hpp>
-#include <flakelib/planar_pool/object_fwd.hpp>
+#include <flakelib/duration.hpp>
 #include <flakelib/density/grid_dimensions.hpp>
 #include <flakelib/density/grid_scale.hpp>
+#include <flakelib/planar_pool/object_fwd.hpp>
 #include <flakelib/planar_pool/scoped_lock.hpp>
 #include <flakelib/planar_pool/unique_lock.hpp>
 #include <flakelib/utility/object_fwd.hpp>
-#include <flakelib/duration.hpp>
+#include <sge/opencl/clinclude.hpp>
+#include <sge/opencl/command_queue/object_fwd.hpp>
+#include <sge/opencl/kernel/object.hpp>
+#include <sge/opencl/memory_object/image/planar_fwd.hpp>
+#include <sge/opencl/program/object.hpp>
 #include <fcppt/noncopyable.hpp>
+
 
 namespace flakelib
 {

@@ -4,8 +4,8 @@
 #include <flakelib/cl/apply_kernel_to_planar_image.hpp>
 #include <flakelib/cl/planar_image_view_to_cl_image.hpp>
 #include <flakelib/laplace_solver/base.hpp>
+#include <flakelib/monitor/texture.hpp>
 #include <flakelib/utility/object.hpp>
-#include <flakelib/visualization/monitor/texture.hpp>
 #include <sge/font/system.hpp>
 #include <sge/image/colors.hpp>
 #include <sge/image2d/file.hpp>
@@ -54,7 +54,7 @@ flakelib::laplace_tester::laplace_tester(
 				FCPPT_TEXT("fonts/main.ttf")),
 			static_cast<sge::font::size_type>(
 				15)),
-		visualization::monitor::font_color(
+		monitor::font_color(
 			sge::image::colors::black())),
 	master_widget_(
 		_viewport_manager,
@@ -85,7 +85,7 @@ flakelib::laplace_tester::laplace_tester(
 
 void
 flakelib::laplace_tester::render(
-	visualization::monitor::optional_projection const &_projection)
+	monitor::optional_projection const &_projection)
 {
 	monitor_parent_.update();
 	monitor_parent_.render(
@@ -185,17 +185,17 @@ flakelib::laplace_tester::update()
 
 	fcppt::container::ptr::push_back_unique_ptr(
 		additional_data_,
-		fcppt::make_unique_ptr<visualization::monitor::texture>(
+		fcppt::make_unique_ptr<monitor::texture>(
 			fcppt::ref(
 				monitor_parent_),
-			visualization::monitor::name(
+			monitor::name(
 				FCPPT_TEXT("initial guess")),
-			visualization::monitor::grid_dimensions(
-				fcppt::math::dim::structure_cast<visualization::monitor::grid_dimensions::value_type>(
+			monitor::grid_dimensions(
+				fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 					initial_guess_image_.value().size())),
-			fcppt::math::dim::structure_cast<visualization::monitor::dim>(
+			fcppt::math::dim::structure_cast<monitor::dim>(
 				initial_guess_image_.value().size()),
-			visualization::monitor::scaling_factor(
+			monitor::scaling_factor(
 				1.0f)));
 
 	additional_data_.back().from_planar_object(
@@ -217,17 +217,17 @@ flakelib::laplace_tester::update()
 
 		fcppt::container::ptr::push_back_unique_ptr(
 			additional_data_,
-			fcppt::make_unique_ptr<visualization::monitor::texture>(
+			fcppt::make_unique_ptr<monitor::texture>(
 				fcppt::ref(
 					monitor_parent_),
-				visualization::monitor::name(
+				monitor::name(
 					it->key()),
-				visualization::monitor::grid_dimensions(
-					fcppt::math::dim::structure_cast<visualization::monitor::grid_dimensions::value_type>(
+				monitor::grid_dimensions(
+					fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 						object_size)),
-				fcppt::math::dim::structure_cast<visualization::monitor::dim>(
+				fcppt::math::dim::structure_cast<monitor::dim>(
 					object_size),
-				visualization::monitor::scaling_factor(
+				monitor::scaling_factor(
 					1.0f)));
 
 		additional_data_.back().from_planar_object(
@@ -239,17 +239,17 @@ flakelib::laplace_tester::update()
 
 	fcppt::container::ptr::push_back_unique_ptr(
 		additional_data_,
-		fcppt::make_unique_ptr<visualization::monitor::texture>(
+		fcppt::make_unique_ptr<monitor::texture>(
 			fcppt::ref(
 				monitor_parent_),
-			visualization::monitor::name(
+			monitor::name(
 				FCPPT_TEXT("destination")),
-			visualization::monitor::grid_dimensions(
-				fcppt::math::dim::structure_cast<visualization::monitor::grid_dimensions::value_type>(
+			monitor::grid_dimensions(
+				fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 					destination_.value().size())),
-			fcppt::math::dim::structure_cast<visualization::monitor::dim>(
+			fcppt::math::dim::structure_cast<monitor::dim>(
 				destination_.value().size()),
-			visualization::monitor::scaling_factor(
+			monitor::scaling_factor(
 				1.0f)));
 
 	additional_data_.back().from_planar_object(

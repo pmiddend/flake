@@ -5,7 +5,6 @@
 #include <flakelib/laplace_solver/multigrid.hpp>
 #include <flakelib/planar_pool/object.hpp>
 #include <flakelib/utility/object.hpp>
-#include <sge/media/all_extensions.hpp>
 #include <sge/exception.hpp>
 #include <sge/camera/ortho_freelook/object.hpp>
 #include <sge/camera/ortho_freelook/parameters.hpp>
@@ -15,6 +14,7 @@
 #include <sge/input/keyboard/device.hpp>
 #include <sge/input/keyboard/key_code.hpp>
 #include <sge/log/global_context.hpp>
+#include <sge/media/all_extensions.hpp>
 #include <sge/opencl/single_device_system.hpp>
 #include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/renderer/depth_stencil_buffer.hpp>
@@ -207,7 +207,7 @@ try
 			sys.renderer());
 
 		tester.render(
-			flakelib::visualization::monitor::optional_projection(
+			flakelib::monitor::optional_projection(
 				camera.projection()));
 	}
 }

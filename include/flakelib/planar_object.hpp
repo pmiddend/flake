@@ -1,8 +1,8 @@
 #ifndef FLAKELIB_PLANAR_OBJECT_HPP_INCLUDED
 #define FLAKELIB_PLANAR_OBJECT_HPP_INCLUDED
 
-#include <flakelib/planar_buffer.hpp>
 #include <flakelib/invalid_planar_object.hpp>
+#include <flakelib/planar_buffer.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <fcppt/variant/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>

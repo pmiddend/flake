@@ -1,8 +1,9 @@
 #ifndef FLAKELIB_DENSITY_SPLAT_RADIUS_HPP_INCLUDED
 #define FLAKELIB_DENSITY_SPLAT_RADIUS_HPP_INCLUDED
 
-#include <fcppt/strong_typedef.hpp>
 #include <sge/opencl/memory_object/size_type.hpp>
+#include <fcppt/strong_typedef.hpp>
+
 
 namespace flakelib
 {
