@@ -65,19 +65,6 @@ public:
 	sge::opencl::context::object &
 	context() const;
 
-	void
-	to_vb(
-		flakelib::planar_object const &,
-		sge::opencl::memory_object::buffer &,
-		monitor::grid_scale const &,
-		monitor::arrow_scale const &);
-
-	void
-	to_texture(
-		flakelib::planar_object const &,
-		sge::opencl::memory_object::image::planar &,
-		monitor::scaling_factor const &);
-
 	sge::shader::object &
 	arrow_shader();
 
@@ -109,40 +96,9 @@ private:
 	sge::font::metrics_ptr font_metrics_;
 	flakelib::sprite_drawer_3d font_drawer_;
 	sge::renderer::vertex_declaration_ptr vd_;
-	sge::opencl::program::object conversion_program_;
-	sge::opencl::kernel::object image_to_vb_kernel_;
-	sge::opencl::kernel::object buffer_to_vb_kernel_;
-	sge::opencl::kernel::object image_to_image_kernel_;
-	sge::opencl::kernel::object buffer_to_image_kernel_;
 	sge::shader::object arrow_shader_;
 	monitor::dummy_sprite::system sprite_system_;
 	monitor::child_list children_;
-
-	void
-	image_to_vb(
-		sge::opencl::memory_object::image::planar &,
-		sge::opencl::memory_object::buffer &,
-		monitor::grid_scale const &,
-		monitor::arrow_scale const &);
-
-	void
-	planar_buffer_to_vb(
-		flakelib::planar_buffer const &,
-		sge::opencl::memory_object::buffer &,
-		monitor::grid_scale const &,
-		monitor::arrow_scale const &);
-
-	void
-	image_to_image(
-		sge::opencl::memory_object::image::planar &,
-		sge::opencl::memory_object::image::planar &,
-		monitor::scaling_factor const &);
-
-	void
-	planar_buffer_to_image(
-		flakelib::planar_buffer const &,
-		sge::opencl::memory_object::image::planar &,
-		monitor::scaling_factor const &);
 
 	void
 	add_child(

@@ -97,9 +97,9 @@ flakelib::monitor::planar_arrows::planar_arrows(
 	dimensions_(
 		_dimensions.get()),
 	arrow_scale_(
-		_arrow_scale),
+		_arrow_scale.get()),
 	grid_scale_(
-		_grid_scale),
+		_grid_scale.get()),
 	vb_(
 		child::parent().renderer().create_vertex_buffer(
 			child::parent().vertex_declaration(),
@@ -130,7 +130,7 @@ flakelib::monitor::planar_arrows::planar_arrows(
 			rucksack::axis_policy(
 				rucksack::minimum_size(
 					static_cast<rucksack::scalar>(
-						grid_scale_.get() *
+						grid_scale_ *
 						static_cast<monitor::scalar>(
 							dimensions_.w()))),
 				rucksack::preferred_size(),
@@ -139,7 +139,7 @@ flakelib::monitor::planar_arrows::planar_arrows(
 			rucksack::axis_policy(
 				rucksack::minimum_size(
 					static_cast<rucksack::scalar>(
-						grid_scale_.get() *
+						grid_scale_ *
 						static_cast<monitor::scalar>(
 							dimensions_.h()))),
 				rucksack::preferred_size(),
@@ -172,15 +172,22 @@ flakelib::monitor::planar_arrows::planar_arrows(
 }
 FCPPT_PP_POP_WARNING
 
-void
-flakelib::monitor::planar_arrows::from_planar_object(
-	flakelib::planar_object const &_planar_object)
+sge::opencl::memory_object::buffer &
+flakelib::monitor::planar_arrows::cl_buffer()
 {
-	child::parent().to_vb(
-		_planar_object,
-		cl_vb_,
-		grid_scale_,
-		arrow_scale_);
+	return cl_vb_;
+}
+
+flakelib::monitor::scalar
+flakelib::monitor::planar_arrows::arrow_scale() const
+{
+	return arrow_scale_;
+}
+
+flakelib::monitor::scalar
+flakelib::monitor::planar_arrows::grid_scale() const
+{
+	return grid_scale_;
 }
 
 fcppt::string const

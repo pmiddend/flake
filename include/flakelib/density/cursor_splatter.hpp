@@ -2,6 +2,7 @@
 #define FLAKELIB_DENSITY_CURSOR_SPLATTER_HPP_INCLUDED
 
 #include <flakelib/density/cursor_rectangle.hpp>
+#include <flakelib/density/source_image.hpp>
 #include <flakelib/density/splat_radius.hpp>
 #include <sge/input/cursor/button_event_fwd.hpp>
 #include <sge/input/cursor/move_event_fwd.hpp>
@@ -27,7 +28,7 @@ public:
 	explicit
 	cursor_splatter(
 		sge::opencl::command_queue::object &,
-		sge::opencl::memory_object::image::planar &,
+		density::source_image const &,
 		sge::input::cursor::object &,
 		density::splat_radius const &);
 

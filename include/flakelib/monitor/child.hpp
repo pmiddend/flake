@@ -39,10 +39,6 @@ public:
 	virtual rucksack::widget::base &
 	widget() = 0;
 
-	virtual void
-	from_planar_object(
-		flakelib::planar_object const &) = 0;
-
 	virtual ~child() = 0;
 protected:
 	explicit

@@ -4,6 +4,7 @@
 #include <flakelib/duration.hpp>
 #include <flakelib/density/grid_dimensions.hpp>
 #include <flakelib/density/grid_scale.hpp>
+#include <flakelib/density/velocity_image.hpp>
 #include <flakelib/planar_pool/object_fwd.hpp>
 #include <flakelib/planar_pool/scoped_lock.hpp>
 #include <flakelib/planar_pool/unique_lock.hpp>
@@ -35,7 +36,7 @@ public:
 
 	void
 	update(
-		sge::opencl::memory_object::image::planar &,
+		density::velocity_image const &,
 		flakelib::duration const &);
 
 	sge::opencl::memory_object::image::planar &

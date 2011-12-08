@@ -69,8 +69,8 @@ public:
 private:
 	sge::opencl::command_queue::object &command_queue_;
 	utility::object &utility_;
-	flakelib::planar_pool::object &arrow_image_cache_;
-	flakelib::planar_pool::object &scalar_image_cache_;
+	planar_pool::object &arrow_image_cache_;
+	planar_pool::object &scalar_image_cache_;
 	laplace_solver::base &laplace_solver_;
 	cl_float const external_force_magnitude_;
 	cl_float const grid_scale_;

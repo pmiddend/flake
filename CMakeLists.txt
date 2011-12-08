@@ -101,6 +101,7 @@ SET(
 	src/flakelib/monitor/child.cpp
 	src/flakelib/monitor/parent.cpp
 	src/flakelib/monitor/planar_arrows.cpp
+	src/flakelib/monitor/planar_converter.cpp
 	src/flakelib/monitor/texture.cpp
 	src/flakelib/planar_buffer.cpp
 	src/flakelib/planar_framework.cpp

@@ -137,7 +137,7 @@ try
 			(sge::systems::parameterless::font)
 			(sge::systems::input(
 				sge::systems::input_helper_field(
-					sge::systems::input_helper::keyboard_collector),
+					sge::systems::input_helper::keyboard_collector) | sge::systems::input_helper::cursor_demuxer,
 				sge::systems::cursor_option_field::null())));
 
 	sge::opencl::single_device_system opencl_system(
@@ -154,7 +154,7 @@ try
 					config_file,
 					sge::parse::json::string_to_path(FCPPT_TEXT("stam-test/boundary-file"))));
 
-	flakelib::planar_pool::object planar_pool(
+	flakelib::planar_pool::object scalar_pool(
 		opencl_system.context(),
 		sge::opencl::memory_object::create_image_format(
 			CL_R,
@@ -170,7 +170,7 @@ try
 		opencl_system.command_queue());
 
 	flakelib::laplace_solver::dynamic_factory configurable_solver(
-		planar_pool,
+		scalar_pool,
 		opencl_system.command_queue(),
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
 			config_file,
@@ -189,7 +189,7 @@ try
 		flakelib::simulation::arrow_image_cache(
 			arrow_pool),
 		flakelib::simulation::scalar_image_cache(
-			planar_pool),
+			scalar_pool),
 		utility_object,
 		configurable_solver.value());
 
@@ -204,7 +204,10 @@ try
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
 			config_file,
 			sge::parse::json::string_to_path(
-				FCPPT_TEXT("arrow-visualization"))));
+				FCPPT_TEXT("arrow-visualization"))),
+		sys.cursor_demuxer(),
+		scalar_pool,
+		utility_object);
 
 	bool running =
 		true;

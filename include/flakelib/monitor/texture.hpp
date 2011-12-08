@@ -36,9 +36,11 @@ public:
 		monitor::dim const &,
 		monitor::scaling_factor const &);
 
-	void
-	from_planar_object(
-		flakelib::planar_object const &);
+	sge::opencl::memory_object::image::planar &
+	cl_texture();
+
+	monitor::scalar
+	scaling_factor() const;
 
 	fcppt::string const
 	name() const;
@@ -59,7 +61,7 @@ public:
 	~texture();
 private:
 	fcppt::string const name_;
-	monitor::scaling_factor::value_type const scaling_;
+	monitor::scalar const scaling_;
 	sge::renderer::texture::planar_ptr renderer_texture_;
 	sge::opencl::memory_object::image::planar cl_texture_;
 	dummy_sprite::object sprite_;

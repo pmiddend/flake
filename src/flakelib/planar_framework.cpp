@@ -35,7 +35,10 @@ flakelib::planar_framework::planar_framework(
 	simulation::base &_simulation,
 	sge::font::system &_font_system,
 	flakelib::boundary_view const &_boundary,
-	sge::parse::json::object const &_config_file)
+	sge::parse::json::object const &_config_file,
+	sge::input::cursor::object &_cursor,
+	planar_pool::object &_scalar_pool,
+	utility::object &_utility)
 :
 	renderer_(
 		_renderer),
@@ -53,6 +56,8 @@ flakelib::planar_framework::planar_framework(
 					FCPPT_TEXT("font-size")))),
 		monitor::font_color(
 			sge::image::colors::black())),
+	planar_converter_(
+		_command_queue),
 	viewport_widget_(
 		_viewport_manager,
 		_renderer),
@@ -93,7 +98,43 @@ flakelib::planar_framework::planar_framework(
 			sge::renderer::texture::address_mode2(
 				sge::renderer::texture::address_mode::clamp),
 			sge::renderer::resource_flags_field(
-				sge::renderer::resource_flags::none)))
+				sge::renderer::resource_flags::none))),
+	density_advector_(
+		_command_queue,
+		_scalar_pool,
+		_utility,
+		density::grid_dimensions(
+			fcppt::math::dim::structure_cast<density::grid_dimensions::value_type>(
+				sge::image2d::view::size(
+					_boundary.get()))),
+		density::grid_scale(
+			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
+				_config_file,
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("grid-scale"))))),
+	density_cursor_splatter_(
+		_command_queue,
+		density::source_image(
+			density_advector_.source_image()),
+		_cursor,
+		density::splat_radius(
+			sge::parse::json::find_and_convert_member<density::splat_radius::value_type>(
+				_config_file,
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("density-splat-radius"))))),
+	density_monitor_(
+		monitor_parent_,
+		monitor::grid_dimensions(
+			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
+				sge::image2d::view::size(
+					_boundary.get()))),
+		monitor::rect::dim(
+			static_cast<monitor::scalar>(
+				velocity_arrows_.widget().axis_policy().x().minimum_size()),
+			static_cast<monitor::scalar>(
+				velocity_arrows_.widget().axis_policy().y().minimum_size())),
+		planar_converter_),
+	additional_data_()
 {
 	viewport_widget_.child(
 		master_and_slaves_);
@@ -103,6 +144,10 @@ flakelib::planar_framework::planar_framework(
 
 	master_box_.push_back_child(
 		velocity_arrows_.widget(),
+		rucksack::alignment::left_or_top);
+
+	master_box_.push_back_child(
+		density_monitor_.monitor().widget(),
 		rucksack::alignment::left_or_top);
 
 	for(
@@ -141,23 +186,49 @@ flakelib::planar_framework::planar_framework(
 
 void
 flakelib::planar_framework::update(
-	flakelib::duration const &)
+	flakelib::duration const &_dt)
 {
-	velocity_arrows_.from_planar_object(
-		simulation_.velocity());
+	density_cursor_splatter_.update_cursor_rectangle(
+		density_monitor_.rectangle());
+
+	density_advector_.update(
+		density::velocity_image(
+			*simulation_.velocity().get<sge::opencl::memory_object::image::planar *>()),
+		_dt);
+
+	density_monitor_.update(
+		density_advector_.density_image());
+
+	planar_converter_.to_vb(
+		flakelib::planar_object(
+			simulation_.velocity()),
+		velocity_arrows_.cl_buffer(),
+		monitor::grid_scale(
+			velocity_arrows_.grid_scale()),
+		monitor::arrow_scale(
+			velocity_arrows_.arrow_scale()));
 
 	for(
 		flakelib::additional_planar_data::const_iterator it =
 			simulation_.additional_planar_data().begin();
 		it !=simulation_.additional_planar_data().end();
 		++it)
+	{
 		for(additional_data_monitors::iterator it2 =
 			additional_data_.begin();
 			it2 != additional_data_.end();
 			++it2)
-			if(it->key() == it2->first)
-				it2->second->from_planar_object(
-					it->value());
+		{
+			if(it->key() != it2->first)
+				continue;
+
+			planar_converter_.to_texture(
+				it->value(),
+				it2->second->cl_texture(),
+				monitor::scaling_factor(
+					it2->second->scaling_factor()));
+		}
+	}
 
 	monitor_parent_.update();
 }

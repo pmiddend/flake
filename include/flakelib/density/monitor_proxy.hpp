@@ -5,6 +5,7 @@
 #include <flakelib/monitor/dim.hpp>
 #include <flakelib/monitor/grid_dimensions.hpp>
 #include <flakelib/monitor/parent_fwd.hpp>
+#include <flakelib/monitor/planar_converter_fwd.hpp>
 #include <flakelib/monitor/texture.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -23,7 +24,8 @@ public:
 	monitor_proxy(
 		monitor::parent &,
 		monitor::grid_dimensions const &,
-		monitor::dim const &);
+		monitor::dim const &,
+		monitor::planar_converter &);
 
 	void
 	update(
@@ -32,9 +34,13 @@ public:
 	density::cursor_rectangle const
 	rectangle() const;
 
+	monitor::texture &
+	monitor();
+
 	~monitor_proxy();
 private:
 	monitor::texture density_texture_;
+	monitor::planar_converter &planar_converter_;
 };
 }
 }

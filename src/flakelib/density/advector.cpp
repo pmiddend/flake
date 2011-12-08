@@ -59,7 +59,7 @@ flakelib::density::advector::advector(
 
 void
 flakelib::density::advector::update(
-	sge::opencl::memory_object::image::planar &_velocity,
+	density::velocity_image const &_velocity,
 	flakelib::duration const &_dt)
 {
 	apply_sources_kernel_.argument(
@@ -96,7 +96,7 @@ flakelib::density::advector::update(
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
-		_velocity);
+		_velocity.get());
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(

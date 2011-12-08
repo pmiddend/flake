@@ -153,15 +153,16 @@ flakelib::monitor::texture::texture(
 }
 FCPPT_PP_POP_WARNING
 
-void
-flakelib::monitor::texture::from_planar_object(
-	flakelib::planar_object const &_planar_object)
+sge::opencl::memory_object::image::planar &
+flakelib::monitor::texture::cl_texture()
 {
-	child::parent().to_texture(
-		_planar_object,
-		cl_texture_,
-		monitor::scaling_factor(
-			scaling_));
+	return cl_texture_;
+}
+
+flakelib::monitor::scalar
+flakelib::monitor::texture::scaling_factor() const
+{
+	return scaling_;
 }
 
 void

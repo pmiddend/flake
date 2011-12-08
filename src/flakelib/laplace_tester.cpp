@@ -56,6 +56,8 @@ flakelib::laplace_tester::laplace_tester(
 				15)),
 		monitor::font_color(
 			sge::image::colors::black())),
+	planar_converter_(
+		command_queue_),
 	master_widget_(
 		_viewport_manager,
 		_renderer),
@@ -198,9 +200,12 @@ flakelib::laplace_tester::update()
 			monitor::scaling_factor(
 				1.0f)));
 
-	additional_data_.back().from_planar_object(
+	planar_converter_.to_texture(
 		flakelib::planar_object(
-			&initial_guess_image_.value()));
+			&initial_guess_image_.value()),
+		additional_data_.back().cl_texture(),
+		monitor::scaling_factor(
+			1.0f));
 
 	enumeration_widget_.push_back_child(
 		additional_data_.back().widget());
@@ -230,8 +235,11 @@ flakelib::laplace_tester::update()
 				monitor::scaling_factor(
 					1.0f)));
 
-		additional_data_.back().from_planar_object(
-			it->value());
+		planar_converter_.to_texture(
+			it->value(),
+			additional_data_.back().cl_texture(),
+			monitor::scaling_factor(
+				1.0f));
 
 		enumeration_widget_.push_back_child(
 			additional_data_.back().widget());
@@ -252,9 +260,12 @@ flakelib::laplace_tester::update()
 			monitor::scaling_factor(
 				1.0f)));
 
-	additional_data_.back().from_planar_object(
+	planar_converter_.to_texture(
 		flakelib::planar_object(
-			&destination_.value()));
+			&destination_.value()),
+		additional_data_.back().cl_texture(),
+		monitor::scaling_factor(
+			1.0f));
 
 	enumeration_widget_.push_back_child(
 		additional_data_.back().widget());

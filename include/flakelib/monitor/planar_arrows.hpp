@@ -42,9 +42,14 @@ public:
 		monitor::grid_scale const &,
 		sge::renderer::texture::planar_ptr);
 
-	void
-	from_planar_object(
-		flakelib::planar_object const &);
+	sge::opencl::memory_object::buffer &
+	cl_buffer();
+
+	monitor::scalar
+	arrow_scale() const;
+
+	monitor::scalar
+	grid_scale() const;
 
 	fcppt::string const
 	name() const;
@@ -63,8 +68,8 @@ public:
 private:
 	fcppt::string const name_;
 	monitor::grid_dimensions::value_type const dimensions_;
-	monitor::arrow_scale const arrow_scale_;
-	monitor::grid_scale const grid_scale_;
+	monitor::scalar const arrow_scale_;
+	monitor::scalar const grid_scale_;
 	monitor::rect::vector position_;
 	sge::renderer::vertex_buffer_ptr const vb_;
 	sge::opencl::memory_object::buffer cl_vb_;

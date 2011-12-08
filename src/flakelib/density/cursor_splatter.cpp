@@ -13,18 +13,20 @@
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
 #include <fcppt/tr1/functional.hpp>
-
+// DEBUG
+#include <iostream>
+#include <fcppt/math/vector/output.hpp>
 
 flakelib::density::cursor_splatter::cursor_splatter(
 	sge::opencl::command_queue::object &_command_queue,
-	sge::opencl::memory_object::image::planar &_source_image,
+	density::source_image const &_source_image,
 	sge::input::cursor::object &_cursor,
 	density::splat_radius const &_splat_radius)
 :
 	command_queue_(
 		_command_queue),
 	source_image_(
-		_source_image),
+		_source_image.get()),
 	cursor_(
 		_cursor),
 	splat_radius_(
@@ -96,6 +98,8 @@ flakelib::density::cursor_splatter::cursor_move_callback(
 			cursor_position))
 		return;
 
+	std::cout << "Cursor position: " << cursor_position << ", rectangle origin: " << cursor_rectangle_.pos() << "\n";
+
 	sge::input::cursor::position const
 		relative_position(
 			cursor_position - cursor_rectangle_.pos()),
@@ -105,6 +109,8 @@ flakelib::density::cursor_splatter::cursor_move_callback(
 				source_image_.size()) /
 			fcppt::math::dim::structure_cast<sge::input::cursor::position>(
 				cursor_rectangle_.size()));
+
+	std::cout << "Relative position: " << relative_position << ", grid position: " << grid_position << "\n";
 
 	splat_kernel_.argument(
 		sge::opencl::kernel::argument_index(

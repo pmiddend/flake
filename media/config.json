@@ -3,6 +3,7 @@
 	"arrow-visualization" :
 	{
 		"arrow-scale" : 2.0,
+		"density-splat-radius" : 4,
 		"pressure-scale" : 1.00,
 		"velocity-magnitude-scale" : 0.2,
 		"divergence-scale" : 100.00,
@@ -15,9 +16,9 @@
 	"stam-test" :
 	{
 		"profiling" : true,
-		"external-force-magnitude" : 20.0,
+		"external-force-magnitude" : 10.0,
 		"grid-scale" : 1.0,
-		"boundary-file" : "boundary_circle_256.png"
+		"boundary-file" : "boundary_circle_128.png"
 	},
 	"simulation-solver-jac" :
 	{

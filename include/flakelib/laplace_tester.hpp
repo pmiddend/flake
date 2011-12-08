@@ -3,8 +3,9 @@
 
 #include <flakelib/viewport_pager.hpp>
 #include <flakelib/laplace_solver/base_fwd.hpp>
-#include <flakelib/monitor/child_fwd.hpp>
 #include <flakelib/monitor/parent.hpp>
+#include <flakelib/monitor/planar_converter.hpp>
+#include <flakelib/monitor/texture_fwd.hpp>
 #include <flakelib/planar_pool/object_fwd.hpp>
 #include <flakelib/planar_pool/scoped_lock.hpp>
 #include <flakelib/utility/object_fwd.hpp>
@@ -54,7 +55,7 @@ public:
 	~laplace_tester();
 private:
 	typedef
-	boost::ptr_vector<monitor::child>
+	boost::ptr_vector<monitor::texture>
 	additional_data_monitors;
 
 	laplace_solver::base &solver_;
@@ -64,6 +65,7 @@ private:
 	utility::object &utility_;
 	fcppt::unique_ptr<sge::opencl::memory_object::image::planar> boundary_;
 	monitor::parent monitor_parent_;
+	monitor::planar_converter planar_converter_;
 	flakelib::viewport_pager master_widget_;
 	rucksack::widget::enumeration enumeration_widget_;
 	flakelib::planar_pool::scoped_lock initial_guess_image_;
