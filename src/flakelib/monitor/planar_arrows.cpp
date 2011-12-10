@@ -166,8 +166,7 @@ flakelib::monitor::planar_arrows::planar_arrows(
 						fcppt::make_shared_ptr<sge::texture::part_raw>(
 							_optional_texture))
 					.system(
-						child::parent().sprite_system())
-					.elements()));
+						child::parent().sprite_system())));
 	}
 }
 FCPPT_PP_POP_WARNING

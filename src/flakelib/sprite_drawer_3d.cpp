@@ -120,7 +120,6 @@ flakelib::sprite_drawer_3d::draw_char(
 			.color(
 				col_
 			)
-			.elements()
 		)
 	);
 }
