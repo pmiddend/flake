@@ -1,3 +1,5 @@
+#include "float_handling.cl"
+
 sampler_t const absolute_clamping_nearest =
 	CLK_NORMALIZED_COORDS_FALSE |
 	CLK_ADDRESS_CLAMP_TO_EDGE |
@@ -15,11 +17,12 @@ copy_image(
 				0),
 			get_global_id(
 				1));
-	write_imagef(
+
+	FLAKE_WRITE_IMAGE_FUNCTION(
 		to,
 		position,
-		multiplier *
-		read_imagef(
+		FLAKE_FROM_FLOAT(multiplier) *
+		FLAKE_READ_IMAGE_FUNCTION(
 			from,
 			absolute_clamping_nearest,
 			position));
@@ -29,18 +32,15 @@ kernel void
 null_image(
 	global write_only image2d_t f)
 {
-	write_imagef(
+	FLAKE_WRITE_IMAGE_FUNCTION(
 		f,
 		(int2)(
 			get_global_id(
 				0),
 			get_global_id(
 				1)),
-		(float4)(
-			0.0f,
-			0.0f,
-			0.0f,
-			0.0f));
+		(flake_real4)(
+			FLAKE_REAL_LIT(0.0)));
 }
 
 kernel void
@@ -54,28 +54,28 @@ generate_oscillation(
 			get_global_id(
 				1));
 
-	float const oscillations =
-		32.0f;
+	flake_real const oscillations =
+		FLAKE_REAL_LIT(32.0);
 
-	float const
+	flake_real const
 		sine1 =
-			sinpi(2.0f * oscillations * position.x / get_image_width(input)),
+			sinpi(FLAKE_REAL_LIT(2.0) * oscillations * position.x / get_image_width(input)),
 		sine2 =
-			sinpi(2.0f * oscillations * position.y / get_image_height(input)),
+			sinpi(FLAKE_REAL_LIT(2.0) * oscillations * position.y / get_image_height(input)),
 		sine3 =
-			sinpi(2.0f * 1.0f/4.0f * oscillations * position.x / get_image_width(input)),
+			sinpi(FLAKE_REAL_LIT(2.0) * FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(4.0) * oscillations * position.x / get_image_width(input)),
 		sine4 =
-			sinpi(2.0f * 1.0f/4.0f * oscillations * position.y / get_image_height(input)),
-		sum = clamp(sine1 + sine2 + sine3 + sine4,-1.0f,1.0f);
+			sinpi(FLAKE_REAL_LIT(2.0) * FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(4.0) * oscillations * position.y / get_image_height(input)),
+		sum = clamp(sine1 + sine2 + sine3 + sine4,FLAKE_REAL_LIT(-1.0),FLAKE_REAL_LIT(1.0));
 
-	write_imagef(
+	FLAKE_WRITE_IMAGE_FUNCTION(
 		input,
 		position,
-		(float4)(
-			(sum + 1.0f)/2.0f,
-			1.0f,
-			1.0f,
-			1.0f));
+		(flake_real4)(
+			(sum + FLAKE_REAL_LIT(1.0))/FLAKE_REAL_LIT(2.0),
+			FLAKE_REAL_LIT(1.0),
+			FLAKE_REAL_LIT(1.0),
+			FLAKE_REAL_LIT(1.0)));
 }
 
 kernel void
@@ -143,16 +143,16 @@ planar_vector_magnitude(
 			get_global_id(
 				1));
 
-	write_imagef(
+	FLAKE_WRITE_IMAGE_FUNCTION(
 		output,
 		position,
-		(float4)(
+		(flake_real4)(
 			length(
-				read_imagef(
+				FLAKE_READ_IMAGE_FUNCTION(
 					input,
 					absolute_clamping_nearest,
 					position).xy) * scaling,
-			0.0f,
-			0.0f,
-			0.0f));
+			FLAKE_REAL_LIT(0.0),
+			FLAKE_REAL_LIT(0.0),
+			FLAKE_REAL_LIT(0.0)));
 }

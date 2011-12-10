@@ -1,6 +1,7 @@
 #ifndef FLAKELIB_LAPLACE_TESTER_HPP_INCLUDED
 #define FLAKELIB_LAPLACE_TESTER_HPP_INCLUDED
 
+#include <flakelib/build_options.hpp>
 #include <flakelib/viewport_pager.hpp>
 #include <flakelib/laplace_solver/base_fwd.hpp>
 #include <flakelib/monitor/parent.hpp>
@@ -43,7 +44,8 @@ public:
 		sge::viewport::manager &,
 		sge::opencl::command_queue::object &,
 		sge::font::system &,
-		sge::image2d::system &);
+		sge::image2d::system &,
+		flakelib::build_options const &);
 
 	void
 	render(

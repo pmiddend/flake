@@ -1,6 +1,7 @@
 #ifndef FLAKELIB_DENSITY_ADVECTOR_HPP_INCLUDED
 #define FLAKELIB_DENSITY_ADVECTOR_HPP_INCLUDED
 
+#include <flakelib/build_options.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/density/grid_dimensions.hpp>
 #include <flakelib/density/grid_scale.hpp>
@@ -31,6 +32,7 @@ public:
 		sge::opencl::command_queue::object &,
 		planar_pool::object &,
 		utility::object &,
+		flakelib::build_options const &,
 		density::grid_dimensions const &,
 		density::grid_scale const &);
 

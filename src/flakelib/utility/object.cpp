@@ -19,7 +19,8 @@
 
 
 flakelib::utility::object::object(
-	sge::opencl::command_queue::object &_command_queue)
+	sge::opencl::command_queue::object &_command_queue,
+	flakelib::build_options const &_build_options)
 :
 	command_queue_(
 		_command_queue),
@@ -29,7 +30,9 @@ flakelib::utility::object::object(
 			flakelib::media_path_from_string(
 				FCPPT_TEXT("kernels/utility.cl"))),
 		sge::opencl::program::optional_build_parameters(
-			sge::opencl::program::build_parameters())),
+			sge::opencl::program::build_parameters()
+				.options(
+					_build_options.get()))),
 	copy_image_kernel_(
 		program_,
 		sge::opencl::kernel::name(

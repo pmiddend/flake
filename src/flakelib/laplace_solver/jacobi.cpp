@@ -18,6 +18,7 @@
 flakelib::laplace_solver::jacobi::jacobi(
 	flakelib::planar_pool::object &_planar_cache,
 	sge::opencl::command_queue::object &_command_queue,
+	flakelib::build_options const &_build_options,
 	laplace_solver::grid_scale const &_grid_scale,
 	laplace_solver::iterations const &_iterations)
 :
@@ -35,7 +36,9 @@ flakelib::laplace_solver::jacobi::jacobi(
 			flakelib::media_path_from_string(
 				FCPPT_TEXT("kernels/jacobi.cl"))),
 		sge::opencl::program::optional_build_parameters(
-			sge::opencl::program::build_parameters())),
+			sge::opencl::program::build_parameters()
+				.options(
+					_build_options.get()))),
 	jacobi_kernel_(
 		jacobi_program_,
 		sge::opencl::kernel::name(

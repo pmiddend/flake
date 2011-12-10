@@ -2,6 +2,7 @@
 #define FLAKELIB_PLANAR_FRAMEWORK_HPP_INCLUDED
 
 #include <flakelib/boundary_view.hpp>
+#include <flakelib/build_options.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/density/advector.hpp>
 #include <flakelib/density/cursor_splatter.hpp>
@@ -45,6 +46,7 @@ public:
 		sge::opencl::command_queue::object &,
 		simulation::base &,
 		sge::font::system &,
+		flakelib::build_options const &,
 		flakelib::boundary_view const &,
 		sge::parse::json::object const &,
 		sge::input::cursor::object &,

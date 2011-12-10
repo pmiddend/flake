@@ -20,8 +20,5 @@ splat(
 		output,
 		(int2)(start_x,start_y) + position,
 		(float4)(
-			1.0f,
-			1.0f,
-			1.0f,
 			1.0f));
 }

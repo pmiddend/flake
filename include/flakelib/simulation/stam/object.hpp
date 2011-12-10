@@ -3,6 +3,7 @@
 
 #include <flakelib/additional_planar_data.hpp>
 #include <flakelib/boundary_view.hpp>
+#include <flakelib/build_options.hpp>
 #include <flakelib/laplace_solver/base_fwd.hpp>
 #include <flakelib/planar_pool/unique_lock.hpp>
 #include <flakelib/profiler/object.hpp>
@@ -48,6 +49,7 @@ public:
 		sge::opencl::command_queue::object &,
 		flakelib::boundary_view const &,
 		sge::parse::json::object const &,
+		flakelib::build_options const &,
 		simulation::arrow_image_cache const &,
 		simulation::scalar_image_cache const &,
 		utility::object &,

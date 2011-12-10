@@ -1,5 +1,6 @@
 #include <flakelib/exception.hpp>
 #include <flakelib/laplace_tester.hpp>
+#include <flakelib/media_path_from_string.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/laplace_solver/jacobi.hpp>
 #include <flakelib/laplace_solver/multigrid.hpp>
@@ -52,7 +53,9 @@
 #include <sge/window/simple_parameters.hpp>
 #include <fcppt/exception.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/to_std_string.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
+#include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/io/cerr.hpp>
 #include <fcppt/signal/scoped_connection.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -107,21 +110,31 @@ try
 			CL_R,
 			CL_FLOAT));
 
+	flakelib::build_options global_build_options(
+		"-I "+
+		fcppt::to_std_string(
+			fcppt::filesystem::path_to_string(
+				flakelib::media_path_from_string(
+					FCPPT_TEXT("kernels")))));
+
 	flakelib::laplace_solver::jacobi jacobi_solver(
 		cache,
 		opencl_system.command_queue(),
+		global_build_options,
 		flakelib::laplace_solver::grid_scale(
 			1.0f),
 		flakelib::laplace_solver::iterations(
 			15));
 
 	flakelib::utility::object utility_object(
-		opencl_system.command_queue());
+		opencl_system.command_queue(),
+		global_build_options);
 
 	flakelib::laplace_solver::multigrid multigrid_solver(
 		cache,
 		utility_object,
 		opencl_system.command_queue(),
+		global_build_options,
 		jacobi_solver,
 		flakelib::laplace_solver::grid_scale(
 			1.0f),
@@ -138,7 +151,8 @@ try
 		sys.viewport_manager(),
 		opencl_system.command_queue(),
 		sys.font_system(),
-		sys.image_system());
+		sys.image_system(),
+		global_build_options);
 
 	bool running =
 		true;

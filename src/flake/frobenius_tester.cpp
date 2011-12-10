@@ -1,3 +1,4 @@
+#include <flakelib/media_path_from_string.hpp>
 #include <flakelib/cl/planar_image_view_to_cl_image.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/image/capabilities_field.hpp>
@@ -13,7 +14,9 @@
 #include <fcppt/exception.hpp>
 #include <fcppt/from_std_string.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/to_std_string.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
+#include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/io/cerr.hpp>
 #include <fcppt/io/cout.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -49,6 +52,13 @@ try
 		(sge::opencl::optional_renderer()),
 		sge::opencl::context::optional_error_callback());
 
+	flakelib::build_options global_build_options(
+		"-I "+
+		fcppt::to_std_string(
+			fcppt::filesystem::path_to_string(
+				flakelib::media_path_from_string(
+					FCPPT_TEXT("kernels")))));
+
 	fcppt::unique_ptr<sge::opencl::memory_object::image::planar> input_image(
 		flakelib::cl::planar_image_view_to_cl_image(
 			sys.image_system().load(
@@ -57,7 +67,8 @@ try
 			opencl_system.command_queue()));
 
 	flakelib::utility::object utility(
-		opencl_system.command_queue());
+		opencl_system.command_queue(),
+		global_build_options);
 
 	fcppt::io::cout()
 		<< FCPPT_TEXT("The frobenius norm of the image (or the image's red channel if it's multichannel) is\n\n")

@@ -59,9 +59,11 @@
 #include <fcppt/exception.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/to_std_string.hpp>
 #include <fcppt/chrono/duration_comparison.hpp>
 #include <fcppt/chrono/seconds.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
+#include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/io/cerr.hpp>
 #include <fcppt/log/activate_levels.hpp>
 #include <fcppt/log/context.hpp>
@@ -145,6 +147,13 @@ try
 			sys.renderer()),
 		sge::opencl::context::optional_error_callback());
 
+	flakelib::build_options global_build_options(
+		"-I "+
+		fcppt::to_std_string(
+			fcppt::filesystem::path_to_string(
+				flakelib::media_path_from_string(
+					FCPPT_TEXT("kernels")))));
+
 	sge::image2d::file_ptr boundary_image =
 		sys.image_system().load(
 			flakelib::media_path()
@@ -167,7 +176,8 @@ try
 			CL_FLOAT));
 
 	flakelib::utility::object utility_object(
-		opencl_system.command_queue());
+		opencl_system.command_queue(),
+		global_build_options);
 
 	flakelib::laplace_solver::dynamic_factory configurable_solver(
 		scalar_pool,
@@ -176,6 +186,7 @@ try
 			config_file,
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("simulation-solver"))),
+		global_build_options,
 		utility_object);
 
 	flakelib::simulation::stam::object simulation(
@@ -186,6 +197,7 @@ try
 			config_file,
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("stam-test"))),
+		global_build_options,
 		flakelib::simulation::arrow_image_cache(
 			arrow_pool),
 		flakelib::simulation::scalar_image_cache(
@@ -199,6 +211,7 @@ try
 		opencl_system.command_queue(),
 		simulation,
 		sys.font_system(),
+		global_build_options,
 		flakelib::boundary_view(
 			boundary_image->view()),
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(

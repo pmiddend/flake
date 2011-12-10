@@ -1,6 +1,7 @@
 #ifndef FLAKELIB_UTILITY_OBJECT_HPP_INCLUDED
 #define FLAKELIB_UTILITY_OBJECT_HPP_INCLUDED
 
+#include <flakelib/build_options.hpp>
 #include <flakelib/utility/from.hpp>
 #include <flakelib/utility/multiplier.hpp>
 #include <flakelib/utility/to.hpp>
@@ -23,7 +24,8 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	object(
-		sge::opencl::command_queue::object &);
+		sge::opencl::command_queue::object &,
+		flakelib::build_options const &);
 
 	void
 	null_image(

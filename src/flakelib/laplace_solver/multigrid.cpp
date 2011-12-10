@@ -27,6 +27,7 @@ flakelib::laplace_solver::multigrid::multigrid(
 	flakelib::planar_pool::object &_planar_cache,
 	flakelib::utility::object &_utility,
 	sge::opencl::command_queue::object &_command_queue,
+	flakelib::build_options const &_build_options,
 	laplace_solver::base &_inner_solver,
 	laplace_solver::grid_scale const &_grid_scale,
 	laplace_solver::termination_size const &_termination_size,
@@ -52,7 +53,9 @@ flakelib::laplace_solver::multigrid::multigrid(
 			flakelib::media_path_from_string(
 				FCPPT_TEXT("kernels/multigrid.cl"))),
 		sge::opencl::program::optional_build_parameters(
-			sge::opencl::program::build_parameters())),
+			sge::opencl::program::build_parameters()
+				.options(
+					_build_options.get()))),
 	laplacian_residual_kernel_(
 		main_program_,
 		sge::opencl::kernel::name(

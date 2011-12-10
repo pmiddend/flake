@@ -1,6 +1,7 @@
 #ifndef FLAKELIB_LAPLACE_SOLVER_MULTIGRID_HPP_INCLUDED
 #define FLAKELIB_LAPLACE_SOLVER_MULTIGRID_HPP_INCLUDED
 
+#include <flakelib/build_options.hpp>
 #include <flakelib/laplace_solver/base.hpp>
 #include <flakelib/laplace_solver/debug_output.hpp>
 #include <flakelib/laplace_solver/from.hpp>
@@ -34,6 +35,7 @@ public:
 		flakelib::planar_pool::object &,
 		flakelib::utility::object &,
 		sge::opencl::command_queue::object &,
+		flakelib::build_options const &,
 		laplace_solver::base &inner_solver,
 		laplace_solver::grid_scale const &,
 		laplace_solver::termination_size const &,

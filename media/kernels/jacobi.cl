@@ -1,15 +1,12 @@
 #define WEIGHTED_JACOBI
 
+#include "float_handling.cl"
+#include "positions.cl"
+
 sampler_t const absolute_clamping_nearest =
 	CLK_NORMALIZED_COORDS_FALSE |
 	CLK_ADDRESS_CLAMP_TO_EDGE |
 	CLK_FILTER_NEAREST;
-
-constant int2 const
-	pos_left = (int2)(-1,0),
-	pos_right = (int2)(1,0),
-	pos_top = (int2)(0,1),
-	pos_bottom = (int2)(0,-1);
 
 /**
 	Solve the special equation
@@ -17,7 +14,7 @@ constant int2 const
 	Ax=0
 
 	where A is the Laplace operator.
- */
+*/
 kernel void
 jacobi(
 	/* 0 */float const alpha,
@@ -34,79 +31,79 @@ jacobi(
 			get_global_id(
 				1));
 
-	float const
+	flake_real const
 		left_boundary =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				boundary,
 				absolute_clamping_nearest,
 				position + pos_left).x,
 		right_boundary =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				boundary,
 				absolute_clamping_nearest,
 				position + pos_right).x,
 		top_boundary =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				boundary,
 				absolute_clamping_nearest,
 				position + pos_top).x,
 		bottom_boundary =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				boundary,
 				absolute_clamping_nearest,
 				position + pos_bottom).x;
 
-	float
+	flake_real
 		center =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				x,
 				absolute_clamping_nearest,
 				position).x,
 		left =
 			left_boundary *
 			center +
-			(1.0f - left_boundary) *
-			read_imagef(
+			(FLAKE_REAL_LIT(1.0) - left_boundary) *
+			FLAKE_READ_IMAGE_FUNCTION(
 				x,
 				absolute_clamping_nearest,
 				position + pos_left).x,
 		right =
 			right_boundary *
 			center +
-			(1.0f - right_boundary) *
-			read_imagef(
+			(FLAKE_REAL_LIT(1.0) - right_boundary) *
+			FLAKE_READ_IMAGE_FUNCTION(
 				x,
 				absolute_clamping_nearest,
 				position + pos_right).x,
 		top =
 			top_boundary *
 			center +
-			(1.0f - top_boundary) *
-			read_imagef(
+			(FLAKE_REAL_LIT(1.0) - top_boundary) *
+			FLAKE_READ_IMAGE_FUNCTION(
 				x,
 				absolute_clamping_nearest,
 				position + pos_top).x,
 		bottom =
 			bottom_boundary *
 			center +
-			(1.0f - bottom_boundary) *
-			read_imagef(
+			(FLAKE_REAL_LIT(1.0) - bottom_boundary) *
+			FLAKE_READ_IMAGE_FUNCTION(
 				x,
 				absolute_clamping_nearest,
 				position + pos_bottom).x;
 
-	float const b_value =
-		read_imagef(
+	flake_real const b_value =
+		FLAKE_READ_IMAGE_FUNCTION(
 				rhs,
 				absolute_clamping_nearest,
 				position).x;
 
-	write_imagef(
+	FLAKE_WRITE_IMAGE_FUNCTION(
 		output,
 		position,
-//#ifndef WEIGHTED_JACOBI
-		(float4)((left + right + top + bottom + alpha * b_value) * beta,0.0f,0.0f,0.0f));
-//#else
-//		(float4)(1.0f/3.0f * center + 2.0f / 3.0f * (left + right + top + bottom + alpha * b_value) * beta,0.0f,0.0f,0.0f));
-//#endif
+#ifndef WEIGHTED_JACOBI
+		(flake_real4)((left + right + top + bottom + alpha * b_value) * beta,FLAKE_REAL_LIT(0.0),FLAKE_REAL_LIT(0.0),FLAKE_REAL_LIT(0.0)));
+#else
+		(flake_real4)(FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(3.0) * center + FLAKE_REAL_LIT(2.0) / FLAKE_REAL_LIT(3.0) * (left + right + top + bottom + alpha * b_value) * beta,FLAKE_REAL_LIT(0.0),FLAKE_REAL_LIT(0.0),FLAKE_REAL_LIT(0.0)));
+#endif
 }

@@ -1,6 +1,7 @@
 #ifndef FLAKELIB_LAPLACE_SOLVER_DYNAMIC_FACTORY_HPP_INCLUDED
 #define FLAKELIB_LAPLACE_SOLVER_DYNAMIC_FACTORY_HPP_INCLUDED
 
+#include <flakelib/build_options.hpp>
 #include <flakelib/laplace_solver/base_fwd.hpp>
 #include <flakelib/planar_pool/object_fwd.hpp>
 #include <flakelib/utility/object_fwd.hpp>
@@ -44,6 +45,7 @@ public:
 		flakelib::planar_pool::object &_planar_pool,
 		sge::opencl::command_queue::object &_command_queue,
 		sge::parse::json::object const &_config_file,
+		flakelib::build_options const &,
 		utility::object &_utility);
 
 	/**

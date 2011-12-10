@@ -47,6 +47,7 @@ flakelib::simulation::stam::object::object(
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::boundary_view const &_boundary_image,
 	sge::parse::json::object const &_config_file,
+	flakelib::build_options const &_build_options,
 	simulation::arrow_image_cache const &_arrow_image_cache,
 	simulation::scalar_image_cache const &_scalar_image_cache,
 	utility::object &_utility,
@@ -83,7 +84,9 @@ flakelib::simulation::stam::object::object(
 			flakelib::media_path_from_string(
 				FCPPT_TEXT("kernels/stam.cl"))),
 		sge::opencl::program::optional_build_parameters(
-			sge::opencl::program::build_parameters())),
+			sge::opencl::program::build_parameters()
+				.options(
+					_build_options.get()))),
 	advect_kernel_(
 		main_program_,
 		sge::opencl::kernel::name(

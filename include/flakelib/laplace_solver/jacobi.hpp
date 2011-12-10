@@ -1,6 +1,7 @@
 #ifndef FLAKELIB_LAPLACE_SOLVER_JACOBI_HPP_INCLUDED
 #define FLAKELIB_LAPLACE_SOLVER_JACOBI_HPP_INCLUDED
 
+#include <flakelib/build_options.hpp>
 #include <flakelib/laplace_solver/base.hpp>
 #include <flakelib/laplace_solver/grid_scale.hpp>
 #include <flakelib/laplace_solver/iterations.hpp>
@@ -26,6 +27,7 @@ public:
 	jacobi(
 		flakelib::planar_pool::object &,
 		sge::opencl::command_queue::object &,
+		flakelib::build_options const &,
 		laplace_solver::grid_scale const &,
 		laplace_solver::iterations const &);
 

@@ -2,13 +2,13 @@
 #include <flakelib/density/cursor_splatter.hpp>
 #include <sge/input/cursor/button_event.hpp>
 #include <sge/input/cursor/object.hpp>
-#include <sge/renderer/device.hpp>
-#include <sge/renderer/onscreen_target.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
+#include <sge/renderer/device.hpp>
+#include <sge/renderer/onscreen_target.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assign/make_array.hpp>
 #include <fcppt/math/box/contains_point.hpp>
@@ -16,9 +16,7 @@
 #include <fcppt/math/vector/arithmetic.hpp>
 #include <fcppt/math/vector/structure_cast.hpp>
 #include <fcppt/tr1/functional.hpp>
-// DEBUG
-#include <iostream>
-#include <fcppt/math/vector/output.hpp>
+
 
 namespace
 {
@@ -39,6 +37,7 @@ flakelib::density::cursor_splatter::cursor_splatter(
 	density::source_image const &_source_image,
 	sge::input::cursor::object &_cursor,
 	sge::renderer::device &_renderer,
+	flakelib::build_options const &_build_options,
 	density::splat_radius const &_splat_radius)
 :
 	command_queue_(
@@ -57,7 +56,9 @@ flakelib::density::cursor_splatter::cursor_splatter(
 			flakelib::media_path_from_string(
 				FCPPT_TEXT("kernels/density_splatter.cl"))),
 		sge::opencl::program::optional_build_parameters(
-			sge::opencl::program::build_parameters())),
+			sge::opencl::program::build_parameters()
+				.options(
+					_build_options.get()))),
 	splat_kernel_(
 		program_,
 		sge::opencl::kernel::name(

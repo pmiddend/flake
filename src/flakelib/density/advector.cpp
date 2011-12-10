@@ -17,6 +17,7 @@ flakelib::density::advector::advector(
 	sge::opencl::command_queue::object &_command_queue,
 	planar_pool::object &_image_pool,
 	utility::object &_utility,
+	flakelib::build_options const &_build_options,
 	density::grid_dimensions const &_grid_dimensions,
 	density::grid_scale const &_grid_scale)
 :
@@ -32,7 +33,9 @@ flakelib::density::advector::advector(
 			flakelib::media_path_from_string(
 				FCPPT_TEXT("kernels/density_advector.cl"))),
 		sge::opencl::program::optional_build_parameters(
-			sge::opencl::program::build_parameters())),
+			sge::opencl::program::build_parameters()
+				.options(
+					_build_options.get()))),
 	apply_sources_kernel_(
 		program_,
 		sge::opencl::kernel::name(

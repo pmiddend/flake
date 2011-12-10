@@ -34,6 +34,7 @@ flakelib::planar_framework::planar_framework(
 	sge::opencl::command_queue::object &_command_queue,
 	simulation::base &_simulation,
 	sge::font::system &_font_system,
+	flakelib::build_options const &_build_options,
 	flakelib::boundary_view const &_boundary,
 	sge::parse::json::object const &_config_file,
 	sge::input::cursor::object &_cursor,
@@ -57,7 +58,8 @@ flakelib::planar_framework::planar_framework(
 		monitor::font_color(
 			sge::image::colors::black())),
 	planar_converter_(
-		_command_queue),
+		_command_queue,
+		_build_options),
 	viewport_widget_(
 		_viewport_manager,
 		_renderer),
@@ -103,6 +105,7 @@ flakelib::planar_framework::planar_framework(
 		_command_queue,
 		_scalar_pool,
 		_utility,
+		_build_options,
 		density::grid_dimensions(
 			fcppt::math::dim::structure_cast<density::grid_dimensions::value_type>(
 				sge::image2d::view::size(
@@ -118,6 +121,7 @@ flakelib::planar_framework::planar_framework(
 			density_advector_.source_image()),
 		_cursor,
 		renderer_,
+		_build_options,
 		density::splat_radius(
 			sge::parse::json::find_and_convert_member<density::splat_radius::value_type>(
 				_config_file,

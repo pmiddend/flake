@@ -1,6 +1,7 @@
 #ifndef FLAKELIB_MONITOR_PLANAR_CONVERTER_HPP_INCLUDED
 #define FLAKELIB_MONITOR_PLANAR_CONVERTER_HPP_INCLUDED
 
+#include <flakelib/build_options.hpp>
 #include <flakelib/planar_object.hpp>
 #include <flakelib/monitor/arrow_scale.hpp>
 #include <flakelib/monitor/grid_scale.hpp>
@@ -23,7 +24,8 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	planar_converter(
-		sge::opencl::command_queue::object &);
+		sge::opencl::command_queue::object &,
+		flakelib::build_options const &);
 
 	void
 	to_vb(

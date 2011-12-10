@@ -1,3 +1,6 @@
+#include "float_handling.cl"
+#include "positions.cl"
+
 sampler_t const absolute_clamping_nearest =
 	CLK_NORMALIZED_COORDS_FALSE |
 	CLK_ADDRESS_CLAMP_TO_EDGE |
@@ -7,12 +10,6 @@ sampler_t const absolute_clamping_linear =
 	CLK_NORMALIZED_COORDS_FALSE |
 	CLK_ADDRESS_CLAMP_TO_EDGE |
 	CLK_FILTER_LINEAR;
-
-constant int2 const
-	pos_left = (int2)(-1,0),
-	pos_right = (int2)(1,0),
-	pos_top = (int2)(0,1),
-	pos_bottom = (int2)(0,-1);
 
 kernel void
 advect(
@@ -32,18 +29,18 @@ advect(
 	// Retrieve the (imagined) particle's current velocity. We can
 	// get this using a nearest filter, since we're at an exact
 	// pixel location (given by the kernel's global id)
-	float2 const current_velocity =
-		read_imagef(
+	flake_real2 const current_velocity =
+		FLAKE_READ_IMAGE_FUNCTION(
 			velocity,
 			absolute_clamping_nearest,
 			position).xy;
 
 	// From the current position, assume the particle moves "back
 	// in time". Use its current velocity and move it by -dt.
-	float2 const advected_vector =
-		convert_float2(position) -
-		dt *
-		(1.0f / grid_scale) *
+	flake_real2 const advected_vector =
+		FLAKE_CONVERT_REAL2(position) -
+		FLAKE_FROM_FLOAT(dt) *
+		(FLAKE_REAL_LIT(1.0) / FLAKE_FROM_FLOAT(grid_scale)) *
 		current_velocity;
 
 	// After moving back in time, we do not always end up exactly at a grid
@@ -63,15 +60,15 @@ advect(
 	//
 	// Also note that using CLAMP_TO_EDGE leads to border vectors on the left
 	// that point to the right (zero y coordinate) to not be changed.
-	float4 const interpolated_density =
-		read_imagef(
+	flake_real4 const interpolated_density =
+		FLAKE_READ_IMAGE_FUNCTION(
 			input,
 			absolute_clamping_linear,
 			// Linear interpolation uses (u,v) - (0.5,0.5) as "reference", so
 			// compensate for that using an addition here.
-			advected_vector + (float2)(0.5f,0.5f));
+			advected_vector + (flake_real2)(FLAKE_REAL_LIT(0.5)));
 
-	write_imagef(
+	FLAKE_WRITE_IMAGE_FUNCTION(
 		output,
 		position,
 		interpolated_density);
@@ -90,13 +87,13 @@ apply_sources(
 				1));
 
 	if(
-		read_imagef(
+		FLAKE_READ_IMAGE_FUNCTION(
 			sources,
 			absolute_clamping_nearest,
-			position).x > 0.5f)
-		write_imagef(
+			position).x > FLAKE_REAL_LIT(0.5))
+		FLAKE_WRITE_IMAGE_FUNCTION(
 			density,
 			position,
-			(float4)(
-				1.0f));
+			(flake_real4)(
+				FLAKE_REAL_LIT(1.0)));
 }

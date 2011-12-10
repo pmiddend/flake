@@ -1,5 +1,8 @@
 #define LAPLACIAN_RESIDUAL_USES_BOUNDARY
 
+#include "float_handling.cl"
+#include "positions.cl"
+
 sampler_t const absolute_clamping_nearest =
 	CLK_NORMALIZED_COORDS_FALSE |
 	CLK_ADDRESS_CLAMP_TO_EDGE |
@@ -9,12 +12,6 @@ sampler_t const absolute_clamping_linear =
 	CLK_NORMALIZED_COORDS_FALSE |
 	CLK_ADDRESS_CLAMP_TO_EDGE |
 	CLK_FILTER_LINEAR;
-
-constant int2 const
-	pos_left = (int2)(-1,0),
-	pos_right = (int2)(1,0),
-	pos_top = (int2)(0,1),
-	pos_bottom = (int2)(0,-1);
 
 kernel void
 add(
@@ -27,14 +24,14 @@ add(
 			get_global_id(0),
 			get_global_id(1));
 
-	write_imagef(
+	FLAKE_WRITE_IMAGE_FUNCTION(
 		output,
 		position,
-		read_imagef(
+		FLAKE_READ_IMAGE_FUNCTION(
 			p1,
 			absolute_clamping_nearest,
 			position) +
-		read_imagef(
+		FLAKE_READ_IMAGE_FUNCTION(
 			p2,
 			absolute_clamping_nearest,
 			position));
@@ -53,70 +50,70 @@ downsample(
 			2 * get_global_id(0),
 			2 * get_global_id(1));
 
-	float
+	flake_real
 		center =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				from,
 				absolute_clamping_nearest,
 				position).x,
 		left =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				from,
 				absolute_clamping_nearest,
 				position + pos_left).x,
 		right =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				from,
 				absolute_clamping_nearest,
 				position + pos_right).x,
 		top =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				from,
 				absolute_clamping_nearest,
 				position + pos_top).x,
 		bottom =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				from,
 				absolute_clamping_nearest,
 				position + pos_bottom).x,
 		lefttop =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				from,
 				absolute_clamping_nearest,
 				position + pos_top + pos_left).x,
 		leftbottom =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				from,
 				absolute_clamping_nearest,
 				position + pos_bottom + pos_left).x,
 		rightbottom =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				from,
 				absolute_clamping_nearest,
 				position + pos_bottom + pos_right).x,
 		righttop =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				from,
 				absolute_clamping_nearest,
 				position + pos_top + pos_right).x;
 
-	float const
+	flake_real const
 		diagonals =
 			leftbottom + lefttop + righttop + rightbottom,
 		von_neumann =
 			left + right + top + bottom,
 		output =
-			1.0f/16.0f * (diagonals + 2.0f * von_neumann + 4.0f * center);
+			FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(16.0) * (diagonals + FLAKE_REAL_LIT(2.0) * von_neumann + FLAKE_REAL_LIT(4.0) * center);
 
-	write_imagef(
+	FLAKE_WRITE_IMAGE_FUNCTION(
 		to,
 		// position is the "bigger" position
 		position / 2,
-		(float4)(
+		(flake_real4)(
 			output,
-			0.0f,
-			0.0f,
-			0.0f));
+			FLAKE_REAL_LIT(0.0),
+			FLAKE_REAL_LIT(0.0),
+			FLAKE_REAL_LIT(0.0)));
 }
 
 // from = small
@@ -132,15 +129,15 @@ upsample_(
 			get_global_id(0),
 			get_global_id(1));
 
-	write_imagef(
+	FLAKE_WRITE_IMAGE_FUNCTION(
 		to,
 		position_in_big_image,
-		read_imagef(
+		FLAKE_READ_IMAGE_FUNCTION(
 			from,
 			absolute_clamping_linear,
-			convert_float2(get_image_dim(from)) *
-			convert_float2(position_in_big_image) /
-			convert_float2(get_image_dim(to)) + (float2)(0.5f,0.5f)));
+			FLAKE_CONVERT_REAL2(get_image_dim(from)) *
+			FLAKE_CONVERT_REAL2(position_in_big_image) /
+			FLAKE_CONVERT_REAL2(get_image_dim(to)) + (flake_real2)(FLAKE_REAL_LIT(0.5))));
 	/*
 	int2 const position =
 		(int2)(
@@ -212,32 +209,32 @@ laplacian_residual(
 				1));
 
 #ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
-	float const
+	flake_real const
 		left_boundary =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				boundary,
 				absolute_clamping_nearest,
 				position + pos_left).x,
 		right_boundary =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				boundary,
 				absolute_clamping_nearest,
 				position + pos_right).x,
 		top_boundary =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				boundary,
 				absolute_clamping_nearest,
 				position + pos_top).x,
 		bottom_boundary =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				boundary,
 				absolute_clamping_nearest,
 				position + pos_bottom).x;
 #endif
 
-	float
+	flake_real
 		center =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				from,
 				absolute_clamping_nearest,
 				position).x,
@@ -245,9 +242,9 @@ laplacian_residual(
 #ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
 			left_boundary *
 			center +
-			(1.0f - left_boundary) *
+			(FLAKE_REAL_LIT(1.0) - left_boundary) *
 #endif
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				from,
 				absolute_clamping_nearest,
 				position + pos_left).x,
@@ -255,9 +252,9 @@ laplacian_residual(
 #ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
 			right_boundary *
 			center +
-			(1.0f - right_boundary) *
+			(FLAKE_REAL_LIT(1.0) - right_boundary) *
 #endif
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				from,
 				absolute_clamping_nearest,
 				position + pos_right).x,
@@ -265,9 +262,9 @@ laplacian_residual(
 #ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
 			top_boundary *
 			center +
-			(1.0f - top_boundary) *
+			(FLAKE_REAL_LIT(1.0) - top_boundary) *
 #endif
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				from,
 				absolute_clamping_nearest,
 				position + pos_top).x,
@@ -275,29 +272,29 @@ laplacian_residual(
 #ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
 			bottom_boundary *
 			center +
-			(1.0f - bottom_boundary) *
+			(FLAKE_REAL_LIT(1.0) - bottom_boundary) *
 #endif
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				from,
 				absolute_clamping_nearest,
 				position + pos_bottom).x;
 
 	float const
 		laplace =
-			(left + right + top + bottom - 4.0f * center) / (grid_scale * grid_scale),
+			(left + right + top + bottom - FLAKE_REAL_LIT(4.0) * center) / (grid_scale * grid_scale),
 		rhs_value =
-			read_imagef(
+			FLAKE_READ_IMAGE_FUNCTION(
 				rhs,
 				absolute_clamping_nearest,
 				position).x;
 
-	write_imagef(
+	FLAKE_WRITE_IMAGE_FUNCTION(
 		to,
 		position,
-		(float4)(
+		(flake_real4)(
 			//fabs(laplace - rhs_value),
 			rhs_value - laplace,
-			0.0f,
-			0.0f,
-			0.0f));
+			FLAKE_REAL_LIT(0.0),
+			FLAKE_REAL_LIT(0.0),
+			FLAKE_REAL_LIT(0.0)));
 }

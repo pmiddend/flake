@@ -12,9 +12,6 @@
 #include <sge/image2d/system.hpp>
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/opencl/command_queue/object.hpp>
-#include <sge/opencl/memory_object/create_image_format.hpp>
-#include <sge/opencl/program/build_parameters.hpp>
-#include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/container/ptr/push_back_unique_ptr.hpp>
@@ -28,7 +25,8 @@ flakelib::laplace_tester::laplace_tester(
 	sge::viewport::manager &_viewport_manager,
 	sge::opencl::command_queue::object &_command_queue,
 	sge::font::system &_font_system,
-	sge::image2d::system &_image_loader)
+	sge::image2d::system &_image_loader,
+	flakelib::build_options const &_build_options)
 :
 	solver_(
 		_solver),
@@ -57,7 +55,8 @@ flakelib::laplace_tester::laplace_tester(
 		monitor::font_color(
 			sge::image::colors::black())),
 	planar_converter_(
-		command_queue_),
+		command_queue_,
+		_build_options),
 	master_widget_(
 		_viewport_manager,
 		_renderer),

@@ -16,6 +16,7 @@ flakelib::laplace_solver::dynamic_factory::dynamic_factory(
 	flakelib::planar_pool::object &_planar_pool,
 	sge::opencl::command_queue::object &_command_queue,
 	sge::parse::json::object const &_config_file,
+	flakelib::build_options const &_build_options,
 	utility::object &_utility)
 :
 	solver_(),
@@ -50,6 +51,7 @@ flakelib::laplace_solver::dynamic_factory::dynamic_factory(
 					_command_queue),
 				fcppt::cref(
 					inner_json),
+				_build_options,
 				fcppt::ref(
 					_utility)));
 
@@ -61,6 +63,7 @@ flakelib::laplace_solver::dynamic_factory::dynamic_factory(
 					_utility),
 				fcppt::ref(
 					_command_queue),
+				_build_options,
 				fcppt::ref(
 					inner_factory_->value()),
 				laplace_solver::grid_scale(
@@ -81,6 +84,7 @@ flakelib::laplace_solver::dynamic_factory::dynamic_factory(
 					_planar_pool),
 				fcppt::ref(
 					_command_queue),
+				_build_options,
 				laplace_solver::grid_scale(
 					grid_scale),
 				laplace_solver::iterations(

@@ -1,6 +1,7 @@
 #ifndef FLAKELIB_DENSITY_CURSOR_SPLATTER_HPP_INCLUDED
 #define FLAKELIB_DENSITY_CURSOR_SPLATTER_HPP_INCLUDED
 
+#include <flakelib/build_options.hpp>
 #include <flakelib/density/cursor_rectangle.hpp>
 #include <flakelib/density/source_image.hpp>
 #include <flakelib/density/splat_radius.hpp>
@@ -41,6 +42,7 @@ public:
 		density::source_image const &,
 		sge::input::cursor::object &,
 		sge::renderer::device &,
+		flakelib::build_options const &,
 		density::splat_radius const &);
 
 	void

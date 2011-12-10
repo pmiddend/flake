@@ -1,3 +1,5 @@
+#include "float_handling.cl"
+
 sampler_t const absolute_clamping_nearest =
 	CLK_NORMALIZED_COORDS_FALSE |
 	CLK_ADDRESS_CLAMP_TO_EDGE |
@@ -32,19 +34,20 @@ image_to_vb(
 			(float)this_pos.x,
 			(float)this_pos.y);
 
-	vb[base_index].start_position = 
+	vb[base_index].start_position =
 		grid_scale * (this_pos_float + 0.5f);
-	vb[base_index].end_position = 
+	vb[base_index].end_position =
 		vb[base_index].start_position +
 			arrow_scale *
-			read_imagef(
-				vector_field,
-				absolute_clamping_nearest,
-				this_pos).xy;
+			convert_float2(
+				FLAKE_READ_IMAGE_FUNCTION(
+					vector_field,
+					absolute_clamping_nearest,
+					this_pos)).xy;
 
-	vb[base_index].start_color = 
+	vb[base_index].start_color =
 		(float4)(1.0f,0.0f,0.0f,1.0);
-	vb[base_index].end_color = 
+	vb[base_index].end_color =
 		(float4)(0.0f,1.0f,0.0f,1.0);
 }
 
@@ -70,14 +73,14 @@ buffer_to_vb(
 			(float)this_pos.x,
 			(float)this_pos.y);
 
-	vb[base_index].start_position = 
+	vb[base_index].start_position =
 		grid_scale * (this_pos_float + 0.5f);
-	vb[base_index].end_position = 
+	vb[base_index].end_position =
 		vb[base_index].start_position + arrow_scale * buffer[base_index];
 
-	vb[base_index].start_color = 
+	vb[base_index].start_color =
 		(float4)(1.0f,0.0f,0.0f,1.0f);
-	vb[base_index].end_color = 
+	vb[base_index].end_color =
 		(float4)(0.0f,1.0f,0.0f,1.0f);
 }
 
@@ -101,7 +104,6 @@ image_to_image(
 	write_imagef(
 		output,
 		this_pos,
-//		scaling * current_pixel);
 		(float4)(scaling * current_pixel.xyz,1.0f));
 }
 
