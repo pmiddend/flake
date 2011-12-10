@@ -101,13 +101,13 @@ flakelib::density::advector::update(
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
-		grid_scale_);
+		static_cast<cl_float>(
+			_dt.count()));
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			4),
-		static_cast<cl_float>(
-			_dt.count()));
+		grid_scale_);
 
 	flakelib::cl::apply_kernel_to_planar_image(
 		advect_kernel_,

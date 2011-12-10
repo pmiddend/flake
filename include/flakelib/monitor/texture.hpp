@@ -58,6 +58,12 @@ public:
 	rucksack::widget::base const &
 	widget() const;
 
+	rucksack::widget::base &
+	content_widget();
+
+	rucksack::widget::base const &
+	content_widget() const;
+
 	~texture();
 private:
 	fcppt::string const name_;

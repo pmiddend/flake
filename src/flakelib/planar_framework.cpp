@@ -117,6 +117,7 @@ flakelib::planar_framework::planar_framework(
 		density::source_image(
 			density_advector_.source_image()),
 		_cursor,
+		renderer_,
 		density::splat_radius(
 			sge::parse::json::find_and_convert_member<density::splat_radius::value_type>(
 				_config_file,

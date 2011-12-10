@@ -42,9 +42,9 @@ flakelib::density::monitor_proxy::rectangle() const
 	return
 		density::cursor_rectangle(
 			fcppt::math::vector::structure_cast<density::cursor_rectangle::vector>(
-				density_texture_.widget().position()),
+				density_texture_.content_widget().position()),
 			fcppt::math::dim::structure_cast<density::cursor_rectangle::dim>(
-				density_texture_.widget().size()));
+				density_texture_.content_widget().size()));
 }
 
 flakelib::monitor::texture &

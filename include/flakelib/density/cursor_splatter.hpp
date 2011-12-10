@@ -11,6 +11,7 @@
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <sge/opencl/program/object.hpp>
+#include <sge/renderer/device_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/signal/scoped_connection.hpp>
@@ -20,6 +21,15 @@ namespace flakelib
 {
 namespace density
 {
+/**
+\brief Modify source image using mouse clicks
+
+This class takes a cursor, a rectangle to click inside and the source image.
+When the mouse is clicked inside the rectangle, the cursor position is
+translated from window coordinates to viewport coordinates. After that, the
+position inside the source grid is determined and a splat is inserted at the
+corresponding position.
+*/
 class cursor_splatter
 {
 FCPPT_NONCOPYABLE(
@@ -30,6 +40,7 @@ public:
 		sge::opencl::command_queue::object &,
 		density::source_image const &,
 		sge::input::cursor::object &,
+		sge::renderer::device &,
 		density::splat_radius const &);
 
 	void
@@ -41,6 +52,7 @@ private:
 	sge::opencl::command_queue::object &command_queue_;
 	sge::opencl::memory_object::image::planar &source_image_;
 	sge::input::cursor::object &cursor_;
+	sge::renderer::device &renderer_;
 	sge::opencl::memory_object::size_type const splat_radius_;
 	sge::opencl::program::object program_;
 	sge::opencl::kernel::object splat_kernel_;
@@ -56,6 +68,9 @@ private:
 	void
 	cursor_move_callback(
 		sge::input::cursor::move_event const &);
+
+	void
+	splat_at_cursor_position();
 };
 }
 }

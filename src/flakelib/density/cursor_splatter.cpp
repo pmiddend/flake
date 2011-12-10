@@ -2,6 +2,8 @@
 #include <flakelib/density/cursor_splatter.hpp>
 #include <sge/input/cursor/button_event.hpp>
 #include <sge/input/cursor/object.hpp>
+#include <sge/renderer/device.hpp>
+#include <sge/renderer/onscreen_target.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
@@ -12,15 +14,31 @@
 #include <fcppt/math/box/contains_point.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
+#include <fcppt/math/vector/structure_cast.hpp>
 #include <fcppt/tr1/functional.hpp>
 // DEBUG
 #include <iostream>
 #include <fcppt/math/vector/output.hpp>
 
+namespace
+{
+sge::input::cursor::position const
+window_position_to_viewport_position(
+	sge::renderer::device &_renderer,
+	sge::input::cursor::position const &_position)
+{
+	return
+		_position -
+		fcppt::math::vector::structure_cast<sge::input::cursor::position>(
+			_renderer.onscreen_target().viewport().get().pos());
+}
+}
+
 flakelib::density::cursor_splatter::cursor_splatter(
 	sge::opencl::command_queue::object &_command_queue,
 	density::source_image const &_source_image,
 	sge::input::cursor::object &_cursor,
+	sge::renderer::device &_renderer,
 	density::splat_radius const &_splat_radius)
 :
 	command_queue_(
@@ -29,6 +47,8 @@ flakelib::density::cursor_splatter::cursor_splatter(
 		_source_image.get()),
 	cursor_(
 		_cursor),
+	renderer_(
+		_renderer),
 	splat_radius_(
 		_splat_radius.get()),
 	program_(
@@ -75,11 +95,21 @@ void
 flakelib::density::cursor_splatter::cursor_button_callback(
 	sge::input::cursor::button_event const &e)
 {
-	if(e.button_code() != sge::input::cursor::button_code::left)
-		return;
-
-	is_being_dragged_ =
-		e.pressed();
+	switch(e.button_code())
+	{
+		case sge::input::cursor::button_code::right:
+			is_being_dragged_ =
+				e.pressed();
+			break;
+		case sge::input::cursor::button_code::left:
+			if(e.pressed())
+				this->splat_at_cursor_position();
+			break;
+		case sge::input::cursor::button_code::middle:
+			break;
+		case sge::input::cursor::button_code::unknown:
+			break;
+	}
 }
 
 void
@@ -89,16 +119,22 @@ flakelib::density::cursor_splatter::cursor_move_callback(
 	if(!is_being_dragged_ || !cursor_.position())
 		return;
 
+	this->splat_at_cursor_position();
+}
+
+void
+flakelib::density::cursor_splatter::splat_at_cursor_position()
+{
 	sge::input::cursor::position const cursor_position(
-		*cursor_.position());
+		::window_position_to_viewport_position(
+			renderer_,
+			*cursor_.position()));
 
 	if(
 		!fcppt::math::box::contains_point(
 			cursor_rectangle_,
 			cursor_position))
 		return;
-
-	std::cout << "Cursor position: " << cursor_position << ", rectangle origin: " << cursor_rectangle_.pos() << "\n";
 
 	sge::input::cursor::position const
 		relative_position(
@@ -109,8 +145,6 @@ flakelib::density::cursor_splatter::cursor_move_callback(
 				source_image_.size()) /
 			fcppt::math::dim::structure_cast<sge::input::cursor::position>(
 				cursor_rectangle_.size()));
-
-	std::cout << "Relative position: " << relative_position << ", grid position: " << grid_position << "\n";
 
 	splat_kernel_.argument(
 		sge::opencl::kernel::argument_index(

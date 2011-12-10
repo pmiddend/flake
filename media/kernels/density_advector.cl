@@ -14,17 +14,6 @@ constant int2 const
 	pos_top = (int2)(0,1),
 	pos_bottom = (int2)(0,-1);
 
-bool
-is_solid(
-	global read_only image2d_t boundary,
-	int2 const position)
-{
-	return
-		read_imagei(
-			boundary,
-			absolute_clamping_nearest,position).x != 0;
-}
-
 kernel void
 advect(
 	global read_only image2d_t input,
