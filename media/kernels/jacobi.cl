@@ -60,37 +60,37 @@ jacobi(
 				absolute_clamping_nearest,
 				position).x,
 		left =
-			left_boundary *
-			center +
-			(FLAKE_REAL_LIT(1.0) - left_boundary) *
-			FLAKE_READ_IMAGE_FUNCTION(
-				x,
-				absolute_clamping_nearest,
-				position + pos_left).x,
+			mix(
+				FLAKE_READ_IMAGE_FUNCTION(
+					x,
+					absolute_clamping_nearest,
+					position + pos_left).x,
+				center,
+				left_boundary),
 		right =
-			right_boundary *
-			center +
-			(FLAKE_REAL_LIT(1.0) - right_boundary) *
-			FLAKE_READ_IMAGE_FUNCTION(
-				x,
-				absolute_clamping_nearest,
-				position + pos_right).x,
+			mix(
+				FLAKE_READ_IMAGE_FUNCTION(
+					x,
+					absolute_clamping_nearest,
+					position + pos_right).x,
+				center,
+				right_boundary),
 		top =
-			top_boundary *
-			center +
-			(FLAKE_REAL_LIT(1.0) - top_boundary) *
-			FLAKE_READ_IMAGE_FUNCTION(
-				x,
-				absolute_clamping_nearest,
-				position + pos_top).x,
+			mix(
+				FLAKE_READ_IMAGE_FUNCTION(
+					x,
+					absolute_clamping_nearest,
+					position + pos_top).x,
+				center,
+				top_boundary),
 		bottom =
-			bottom_boundary *
-			center +
-			(FLAKE_REAL_LIT(1.0) - bottom_boundary) *
-			FLAKE_READ_IMAGE_FUNCTION(
-				x,
-				absolute_clamping_nearest,
-				position + pos_bottom).x;
+			mix(
+				FLAKE_READ_IMAGE_FUNCTION(
+					x,
+					absolute_clamping_nearest,
+					position + pos_bottom).x,
+				center,
+				bottom_boundary);
 
 	flake_real const b_value =
 		FLAKE_READ_IMAGE_FUNCTION(
@@ -104,6 +104,12 @@ jacobi(
 #ifndef WEIGHTED_JACOBI
 		(flake_real4)((left + right + top + bottom + alpha * b_value) * beta,FLAKE_REAL_LIT(0.0),FLAKE_REAL_LIT(0.0),FLAKE_REAL_LIT(0.0)));
 #else
-		(flake_real4)(FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(3.0) * center + FLAKE_REAL_LIT(2.0) / FLAKE_REAL_LIT(3.0) * (left + right + top + bottom + alpha * b_value) * beta,FLAKE_REAL_LIT(0.0),FLAKE_REAL_LIT(0.0),FLAKE_REAL_LIT(0.0)));
+		//(flake_real4)(FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(3.0) * center + FLAKE_REAL_LIT(2.0) / FLAKE_REAL_LIT(3.0) * (left + right + top + bottom + alpha * b_value) * beta,FLAKE_REAL_LIT(0.0),FLAKE_REAL_LIT(0.0),FLAKE_REAL_LIT(0.0)));
+		(flake_real4)(
+			FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(3.0) * center +
+			FLAKE_REAL_LIT(2.0)/FLAKE_REAL_LIT(3.0) * (left + right + top + bottom + alpha * b_value) * beta,
+			FLAKE_REAL_LIT(0.0),
+			FLAKE_REAL_LIT(0.0),
+			FLAKE_REAL_LIT(0.0)));
 #endif
 }

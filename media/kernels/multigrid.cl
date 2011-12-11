@@ -1,5 +1,3 @@
-#define LAPLACIAN_RESIDUAL_USES_BOUNDARY
-
 #include "float_handling.cl"
 #include "positions.cl"
 
@@ -138,57 +136,6 @@ upsample_(
 			FLAKE_CONVERT_REAL2(get_image_dim(from)) *
 			FLAKE_CONVERT_REAL2(position_in_big_image) /
 			FLAKE_CONVERT_REAL2(get_image_dim(to)) + (flake_real2)(FLAKE_REAL_LIT(0.5))));
-	/*
-	int2 const position =
-		(int2)(
-			get_global_id(0),
-			get_global_id(1));
-
-	if(position.x % 2 == 0 && position.y % 2 == 0)
-	{
-		write(
-			to,
-			position,
-			read(
-				from,
-				position/2));
-	}
-	else if(position.x % 2 == 0)
-	{
-		float const sum =
-			read(from,(int2)(position.x/2,position.y)) +
-			read(from,(int2)(position.x/2+1,position.y))
-
-		write(
-			to,
-			position,
-			0.5f * sum);
-	}
-	else if(position.y % 2 == 0)
-	{
-		float const sum =
-			read(from,(int2)(position.x,position.y/2)) +
-			read(from,(int2)(position.x,position.y/2+1))
-
-		write(
-			to,
-			position,
-			0.5f * sum);
-	}
-	else
-	{
-		float const sum =
-			read(from,(int2)((position.x-1)/2,(position.y-1)/2)) +
-			read(from,(int2)((position.x+1)/2,(position.y+1)/2)) +
-			read(from,(int2)((position.x-1)/2,(position.y+1)/2)) +
-			read(from,(int2)((position.x+1)/2,(position.y-1)/2));
-
-		write(
-			to,
-			position,
-			0.25 * sum);
-	}
-	*/
 }
 
 
@@ -208,7 +155,6 @@ laplacian_residual(
 			get_global_id(
 				1));
 
-#ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
 	flake_real const
 		left_boundary =
 			FLAKE_READ_IMAGE_FUNCTION(
@@ -230,7 +176,6 @@ laplacian_residual(
 				boundary,
 				absolute_clamping_nearest,
 				position + pos_bottom).x;
-#endif
 
 	flake_real
 		center =
@@ -239,49 +184,41 @@ laplacian_residual(
 				absolute_clamping_nearest,
 				position).x,
 		left =
-#ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
-			left_boundary *
-			center +
-			(FLAKE_REAL_LIT(1.0) - left_boundary) *
-#endif
-			FLAKE_READ_IMAGE_FUNCTION(
-				from,
-				absolute_clamping_nearest,
-				position + pos_left).x,
+			mix(
+				FLAKE_READ_IMAGE_FUNCTION(
+					from,
+					absolute_clamping_nearest,
+					position + pos_left).x,
+				center,
+				left_boundary),
 		right =
-#ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
-			right_boundary *
-			center +
-			(FLAKE_REAL_LIT(1.0) - right_boundary) *
-#endif
-			FLAKE_READ_IMAGE_FUNCTION(
-				from,
-				absolute_clamping_nearest,
-				position + pos_right).x,
+			mix(
+				FLAKE_READ_IMAGE_FUNCTION(
+					from,
+					absolute_clamping_nearest,
+					position + pos_right).x,
+				center,
+				right_boundary),
 		top =
-#ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
-			top_boundary *
-			center +
-			(FLAKE_REAL_LIT(1.0) - top_boundary) *
-#endif
-			FLAKE_READ_IMAGE_FUNCTION(
-				from,
-				absolute_clamping_nearest,
-				position + pos_top).x,
+			mix(
+				FLAKE_READ_IMAGE_FUNCTION(
+					from,
+					absolute_clamping_nearest,
+					position + pos_top).x,
+				center,
+				top_boundary),
 		bottom =
-#ifdef LAPLACIAN_RESIDUAL_USES_BOUNDARY
-			bottom_boundary *
-			center +
-			(FLAKE_REAL_LIT(1.0) - bottom_boundary) *
-#endif
-			FLAKE_READ_IMAGE_FUNCTION(
-				from,
-				absolute_clamping_nearest,
-				position + pos_bottom).x;
+			mix(
+				FLAKE_READ_IMAGE_FUNCTION(
+					from,
+					absolute_clamping_nearest,
+					position + pos_bottom).x,
+				center,
+				bottom_boundary);
 
-	float const
+	flake_real const
 		laplace =
-			(left + right + top + bottom - FLAKE_REAL_LIT(4.0) * center) / (grid_scale * grid_scale),
+			native_divide(left + right + top + bottom - FLAKE_REAL_LIT(4.0) * center,grid_scale * grid_scale),
 		rhs_value =
 			FLAKE_READ_IMAGE_FUNCTION(
 				rhs,
@@ -292,7 +229,6 @@ laplacian_residual(
 		to,
 		position,
 		(flake_real4)(
-			//fabs(laplace - rhs_value),
 			rhs_value - laplace,
 			FLAKE_REAL_LIT(0.0),
 			FLAKE_REAL_LIT(0.0),

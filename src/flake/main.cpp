@@ -148,6 +148,8 @@ try
 		sge::opencl::context::optional_error_callback());
 
 	flakelib::build_options global_build_options(
+		std::string(
+			"-cl-mad-enable -cl-fast-relaxed-math -Werror ")+
 		"-I "+
 		fcppt::to_std_string(
 			fcppt::filesystem::path_to_string(

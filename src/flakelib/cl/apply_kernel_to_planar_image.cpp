@@ -18,6 +18,6 @@ flakelib::cl::apply_kernel_to_planar_image(
 			(_image.size()[0])
 			(_image.size()[1]).container(),
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(1)
-			(1).container());
+			(8)
+			(8).container());
 }
