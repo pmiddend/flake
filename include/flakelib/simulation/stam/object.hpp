@@ -63,6 +63,9 @@ public:
 	flakelib::additional_planar_data const &
 	additional_planar_data() const;
 
+	profiler::object const &
+	parent_profiler() const;
+
 	void
 	update(
 		flakelib::duration const &);

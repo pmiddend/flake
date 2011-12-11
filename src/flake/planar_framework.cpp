@@ -8,11 +8,23 @@
 #include <flakelib/planar_pool/object.hpp>
 #include <flakelib/simulation/stam/object.hpp>
 #include <flakelib/utility/object.hpp>
+#include <sge/console/arg_list.hpp>
+#include <sge/console/gfx.hpp>
+#include <sge/console/muxing_fcppt_streambuf.hpp>
+#include <sge/console/muxing_narrow_streambuf.hpp>
+#include <sge/console/object.hpp>
+#include <sge/console/sprite_object.hpp>
+#include <sge/console/sprite_parameters.hpp>
+#include <sge/console/callback/from_functor.hpp>
+#include <sge/font/text/lit.hpp>
+#include <sge/config/media_path.hpp>
 #include <sge/image/capabilities_field.hpp>
+#include <sge/image/colors.hpp>
 #include <sge/image2d/file.hpp>
 #include <sge/image2d/file_ptr.hpp>
 #include <sge/image2d/system.hpp>
 #include <sge/image2d/view/const_object.hpp>
+#include <sge/font/system.hpp>
 #include <sge/input/keyboard/action.hpp>
 #include <sge/input/keyboard/device.hpp>
 #include <sge/input/keyboard/key_code.hpp>
@@ -56,15 +68,20 @@
 #include <sge/window/dim.hpp>
 #include <sge/window/instance.hpp>
 #include <sge/window/simple_parameters.hpp>
+#include <sge/sprite/parameters.hpp>
 #include <fcppt/exception.hpp>
 #include <fcppt/ref.hpp>
+#include <fcppt/cref.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/io/cout.hpp>
 #include <fcppt/to_std_string.hpp>
+#include <fcppt/tr1/functional.hpp>
 #include <fcppt/chrono/duration_comparison.hpp>
 #include <fcppt/chrono/seconds.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/io/cerr.hpp>
+#include <fcppt/io/clog.hpp>
 #include <fcppt/log/activate_levels.hpp>
 #include <fcppt/log/context.hpp>
 #include <fcppt/log/level.hpp>
@@ -93,6 +110,21 @@ update_simulation_and_visualization(
 			_visual.update(
 				_delta);
 }
+
+void
+toggle_console_active(
+	sge::console::gfx &_console_gfx)
+{
+	_console_gfx.active(
+		!_console_gfx.active());
+}
+
+void
+stats_console_callback(
+	flakelib::simulation::stam::object const &_simulation)
+{
+	fcppt::io::cout() << _simulation.parent_profiler() << FCPPT_TEXT("\n");
+}
 }
 
 int
@@ -119,6 +151,10 @@ try
 				argc,
 				argv));
 
+	sge::window::dim const window_size(
+		1280,
+		1024);
+
 	sge::systems::instance sys(
 		sge::systems::list()
 			(sge::systems::image2d(
@@ -127,7 +163,7 @@ try
 			(sge::systems::window(
 				sge::window::simple_parameters(
 					FCPPT_TEXT("Simulation of fluid dynamics via Stam's Method"),
-					sge::window::dim(1280,1024))))
+					window_size)))
 			(sge::systems::renderer(
 				sge::renderer::parameters(
 					sge::renderer::visual_depth::depth32,
@@ -135,12 +171,65 @@ try
 					sge::renderer::vsync::on,
 					sge::renderer::no_multi_sampling),
 				sge::viewport::center_on_resize(
-					sge::window::dim(1280,1024))))
+					window_size)))
 			(sge::systems::parameterless::font)
 			(sge::systems::input(
 				sge::systems::input_helper_field(
 					sge::systems::input_helper::keyboard_collector) | sge::systems::input_helper::cursor_demuxer,
 				sge::systems::cursor_option_field::null())));
+
+	sge::font::metrics_ptr const font_metrics(
+		sys.font_system().create_font(
+			sge::config::media_path()
+				/ FCPPT_TEXT("fonts")
+				/ FCPPT_TEXT("default.ttf"),
+			15));
+
+	sge::console::object console_object(
+		SGE_FONT_TEXT_LIT('/'));
+
+	sge::console::muxing_fcppt_streambuf fcpptout_streambuf(
+		fcppt::io::cout(),
+		console_object,
+		sge::console::muxing::enabled);
+
+	sge::console::muxing_fcppt_streambuf fcppterr_streambuf(
+		fcppt::io::cerr(),
+		console_object,
+		sge::console::muxing::enabled);
+
+	sge::console::muxing_fcppt_streambuf fcpptlog_streambuf(
+		fcppt::io::clog(),
+		console_object,
+		sge::console::muxing::enabled);
+
+	sge::console::gfx console_gfx(
+		console_object,
+		sys.renderer(),
+		sge::image::colors::black(),
+		*font_metrics,
+		sys.keyboard_collector(),
+		sge::console::sprite_object(
+			sge::console::sprite_parameters()
+			.pos(
+				sge::console::sprite_object::vector::null())
+			.size(
+				sge::console::sprite_object::dim(
+					static_cast<sge::console::sprite_object::unit>(
+						window_size.w()),
+					static_cast<sge::console::sprite_object::unit>(
+						window_size.h()/2)))),
+		static_cast<sge::console::output_line_limit>(
+			100));
+
+	fcppt::signal::scoped_connection const console_cb(
+		sys.keyboard_collector().key_callback(
+			sge::input::keyboard::action(
+				sge::input::keyboard::key_code::f1,
+				std::tr1::bind(
+					&toggle_console_active,
+					fcppt::ref(
+						console_gfx)))));
 
 	sge::opencl::single_device_system opencl_system(
 		sge::opencl::optional_renderer(
@@ -206,6 +295,20 @@ try
 			scalar_pool),
 		utility_object,
 		configurable_solver.value());
+
+	fcppt::signal::scoped_connection const stats_cb(
+		console_object.insert(
+			sge::console::callback::from_functor<void()>(
+				std::tr1::bind(
+					&stats_console_callback,
+					fcppt::cref(
+						simulation)),
+				sge::console::callback::name(
+					SGE_FONT_TEXT_LIT("stats")),
+				sge::console::callback::short_description(
+					SGE_FONT_TEXT_LIT("Usage: /stats")))
+				.long_description(
+					SGE_FONT_TEXT_LIT("Outputs simulation profiling statistics"))));
 
 	flakelib::planar_framework visualization(
 		sys.viewport_manager(),
@@ -288,6 +391,9 @@ try
 			sys.renderer());
 
 		visualization.render();
+
+		if(console_gfx.active())
+			console_gfx.render();
 	}
 }
 catch(fcppt::exception const &e)

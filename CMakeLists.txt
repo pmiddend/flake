@@ -50,6 +50,7 @@ FIND_PACKAGE(
 	sprite
 	camera
 	texture
+	console
 	font
 	fonttext
 	parse
@@ -124,13 +125,14 @@ FCPPT_UTILS_ADD_SOURCE_GROUPS("${FLAKELIB_FILES}")
 ADD_LIBRARY(
 	flakelib STATIC ${FLAKELIB_FILES})
 
-# main begin
+# planar_framework begin
 ADD_EXECUTABLE(
-	main
-	src/flake/main.cpp)
+	planar_framework
+	WIN32
+	src/flake/planar_framework.cpp)
 
 TARGET_LINK_LIBRARIES(
-	main
+	planar_framework
 	flakelib
 	${Fcppt_LIBRARIES}
 	${SGE_LIBRARIES}
@@ -139,14 +141,15 @@ TARGET_LINK_LIBRARIES(
 
 INSTALL(
 	TARGETS
-	main
+	planar_framework
 	DESTINATION
 	${INSTALL_BINARY_DIR})
-# main end
+# planar_framework end
 
 # benchmark begin
 ADD_EXECUTABLE(
 	benchmark
+	WIN32
 	src/flake/benchmark.cpp)
 
 TARGET_LINK_LIBRARIES(
@@ -167,6 +170,7 @@ INSTALL(
 # pde_tester begin
 ADD_EXECUTABLE(
 	pde_tester
+	WIN32
 	src/flake/pde_tester.cpp)
 
 TARGET_LINK_LIBRARIES(
@@ -187,6 +191,7 @@ INSTALL(
 # frobenius_tester begin
 ADD_EXECUTABLE(
 	frobenius_tester
+	WIN32
 	src/flake/frobenius_tester.cpp)
 
 TARGET_LINK_LIBRARIES(

@@ -240,6 +240,12 @@ flakelib::simulation::stam::object::additional_planar_data() const
 		additional_planar_data_;
 }
 
+flakelib::profiler::object const &
+flakelib::simulation::stam::object::parent_profiler() const
+{
+	return parent_profiler_;
+}
+
 void
 flakelib::simulation::stam::object::update(
 	flakelib::duration const &dt)
