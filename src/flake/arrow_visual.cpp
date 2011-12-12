@@ -8,8 +8,10 @@
 #include <flakelib/planar_pool/object.hpp>
 #include <flakelib/simulation/stam/object.hpp>
 #include <flakelib/utility/object.hpp>
+#include <flakelib/arrow_visual.hpp>
 #include <sge/config/media_path.hpp>
 #include <sge/console/arg_list.hpp>
+#include <sge/renderer/state/color.hpp>
 #include <sge/console/gfx.hpp>
 #include <sge/console/muxing_fcppt_streambuf.hpp>
 #include <sge/console/muxing_narrow_streambuf.hpp>
@@ -96,37 +98,6 @@
 #include <fcppt/config/external_end.hpp>
 
 
-namespace
-{
-void
-update_simulation_and_visualization(
-	flakelib::simulation::stam::object &_simulation,
-	flakelib::planar_framework &_visual,
-	flakelib::duration const &_delta)
-{
-			_simulation.update(
-				_delta);
-
-			_visual.update(
-				_delta);
-}
-
-void
-toggle_console_active(
-	sge::console::gfx &_console_gfx)
-{
-	_console_gfx.active(
-		!_console_gfx.active());
-}
-
-void
-stats_console_callback(
-	flakelib::simulation::stam::object const &_simulation)
-{
-	fcppt::io::cout() << _simulation.parent_profiler() << FCPPT_TEXT("\n");
-}
-}
-
 int
 main(
 	int argc,
@@ -177,59 +148,6 @@ try
 				sge::systems::input_helper_field(
 					sge::systems::input_helper::keyboard_collector) | sge::systems::input_helper::cursor_demuxer,
 				sge::systems::cursor_option_field::null())));
-
-	sge::font::metrics_ptr const font_metrics(
-		sys.font_system().create_font(
-			sge::config::media_path()
-				/ FCPPT_TEXT("fonts")
-				/ FCPPT_TEXT("default.ttf"),
-			15));
-
-	sge::console::object console_object(
-		SGE_FONT_TEXT_LIT('/'));
-
-	sge::console::muxing_fcppt_streambuf fcpptout_streambuf(
-		fcppt::io::cout(),
-		console_object,
-		sge::console::muxing::enabled);
-
-	sge::console::muxing_fcppt_streambuf fcppterr_streambuf(
-		fcppt::io::cerr(),
-		console_object,
-		sge::console::muxing::enabled);
-
-	sge::console::muxing_fcppt_streambuf fcpptlog_streambuf(
-		fcppt::io::clog(),
-		console_object,
-		sge::console::muxing::enabled);
-
-	sge::console::gfx console_gfx(
-		console_object,
-		sys.renderer(),
-		sge::image::colors::black(),
-		*font_metrics,
-		sys.keyboard_collector(),
-		sge::console::sprite_object(
-			sge::console::sprite_parameters()
-			.pos(
-				sge::console::sprite_object::vector::null())
-			.size(
-				sge::console::sprite_object::dim(
-					static_cast<sge::console::sprite_object::unit>(
-						window_size.w()),
-					static_cast<sge::console::sprite_object::unit>(
-						window_size.h()/2)))),
-		static_cast<sge::console::output_line_limit>(
-			100));
-
-	fcppt::signal::scoped_connection const console_cb(
-		sys.keyboard_collector().key_callback(
-			sge::input::keyboard::action(
-				sge::input::keyboard::key_code::f1,
-				std::tr1::bind(
-					&toggle_console_active,
-					fcppt::ref(
-						console_gfx)))));
 
 	sge::opencl::single_device_system opencl_system(
 		sge::opencl::optional_renderer(
@@ -296,36 +214,19 @@ try
 		utility_object,
 		configurable_solver.value());
 
-	fcppt::signal::scoped_connection const stats_cb(
-		console_object.insert(
-			sge::console::callback::from_functor<void()>(
-				std::tr1::bind(
-					&stats_console_callback,
-					fcppt::cref(
-						simulation)),
-				sge::console::callback::name(
-					SGE_FONT_TEXT_LIT("stats")),
-				sge::console::callback::short_description(
-					SGE_FONT_TEXT_LIT("Usage: /stats")))
-				.long_description(
-					SGE_FONT_TEXT_LIT("Outputs simulation profiling statistics"))));
-
-	flakelib::planar_framework visualization(
-		sys.viewport_manager(),
+	flakelib::arrow_visual visualization(
+		simulation,
 		sys.renderer(),
 		opencl_system.command_queue(),
-		simulation,
 		sys.font_system(),
-		global_build_options,
-		flakelib::boundary_view(
-			boundary_image->view()),
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
 			config_file,
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("arrow-visualization"))),
-		sys.cursor_demuxer(),
-		scalar_pool,
-		utility_object);
+		global_build_options,
+		sys.viewport_manager(),
+		flakelib::boundary_view(
+			boundary_image->view()));
 
 	bool running =
 		true;
@@ -336,19 +237,6 @@ try
 				sge::input::keyboard::key_code::escape,
 				sge::systems::running_to_false(
 					running))));
-
-	fcppt::signal::scoped_connection const cb_sim(
-		sys.keyboard_collector().key_callback(
-			sge::input::keyboard::action(
-				sge::input::keyboard::key_code::space,
-				std::tr1::bind(
-					&update_simulation_and_visualization,
-					fcppt::ref(
-						simulation),
-					fcppt::ref(
-						visualization),
-					flakelib::duration(
-						0.01f)))));
 
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer(
 		sge::timer::parameters<sge::timer::clocks::standard>(
@@ -364,18 +252,13 @@ try
 			50.0f * sge::timer::elapsed_and_reset<flakelib::duration>(
 				delta_timer);
 
-		/*
-		if(delta > flakelib::duration(0.3f))
-		*/
-		{
-			simulation.update(
-				delta);
+		simulation.update(
+			delta);
 
-			visualization.update(
-				delta);
+		visualization.update(
+			delta);
 
-			delta = flakelib::duration(0.0f);
-		}
+		delta = flakelib::duration(0.0f);
 
 		// If we have no viewport (yet), don't do anything (this is just a
 		// precaution, we _might_ divide by zero somewhere below, otherwise)
@@ -385,15 +268,14 @@ try
 
 		sge::renderer::state::scoped scoped_state(
 			sys.renderer(),
-			visualization.render_states());
+			sge::renderer::state::list
+				(sge::renderer::state::bool_::clear_back_buffer = true)
+				(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::paleturquoise()));
 
 		sge::renderer::scoped_block const block_(
 			sys.renderer());
 
 		visualization.render();
-
-		if(console_gfx.active())
-			console_gfx.render();
 	}
 }
 catch(fcppt::exception const &e)

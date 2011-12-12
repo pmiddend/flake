@@ -86,6 +86,7 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 
 SET(
 	FLAKELIB_FILES
+	src/flakelib/arrow_visual.cpp
 	src/flakelib/cl/apply_kernel_to_planar_image.cpp
 	src/flakelib/cl/planar_image_view_to_cl_image.cpp
 	src/flakelib/density/advector.cpp
@@ -145,6 +146,27 @@ INSTALL(
 	DESTINATION
 	${INSTALL_BINARY_DIR})
 # planar_framework end
+
+# arrow_visual begin
+ADD_EXECUTABLE(
+	arrow_visual
+	WIN32
+	src/flake/arrow_visual.cpp)
+
+TARGET_LINK_LIBRARIES(
+	arrow_visual
+	flakelib
+	${Fcppt_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Rucksack_LIBRARIES}
+	${Boost_LIBRARIES})
+
+INSTALL(
+	TARGETS
+	arrow_visual
+	DESTINATION
+	${INSTALL_BINARY_DIR})
+# arrow_visual end
 
 # benchmark begin
 ADD_EXECUTABLE(
