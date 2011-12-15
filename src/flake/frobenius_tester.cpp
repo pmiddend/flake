@@ -1,4 +1,5 @@
 #include <flakelib/media_path_from_string.hpp>
+#include <flakelib/main_head.hpp>
 #include <flakelib/cl/planar_image_view_to_cl_image.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/image/capabilities_field.hpp>
@@ -26,11 +27,7 @@
 #include <ostream>
 #include <fcppt/config/external_end.hpp>
 
-
-int
-main(
-	int const argc,
-	char *argv[])
+FLAKELIB_MAIN_HEAD
 try
 {
 	if(argc != 2)

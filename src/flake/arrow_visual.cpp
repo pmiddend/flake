@@ -1,5 +1,6 @@
 #include <flakelib/duration.hpp>
 #include <flakelib/exception.hpp>
+#include <flakelib/main_head.hpp>
 #include <flakelib/media_path.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/planar_framework.hpp>
@@ -88,6 +89,7 @@
 #include <fcppt/log/level.hpp>
 #include <fcppt/log/location.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
+#include <fcppt/config/platform.hpp>
 #include <fcppt/signal/scoped_connection.hpp>
 #include <fcppt/tr1/functional.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -97,11 +99,7 @@
 #include <ostream>
 #include <fcppt/config/external_end.hpp>
 
-
-int
-main(
-	int argc,
-	char *argv[])
+FLAKELIB_MAIN_HEAD
 try
 {
 	sge::log::global_context().apply(

@@ -1,6 +1,7 @@
 #include <flakelib/duration.hpp>
 #include <flakelib/media_path.hpp>
 #include <flakelib/media_path_from_string.hpp>
+#include <flakelib/main_head.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/laplace_solver/dynamic_factory.hpp>
 #include <flakelib/planar_pool/object.hpp>
@@ -45,11 +46,7 @@
 #include <ostream>
 #include <fcppt/config/external_end.hpp>
 
-
-int
-main(
-	int argc,
-	char *argv[])
+FLAKELIB_MAIN_HEAD
 try
 {
 	sge::log::global_context().apply(

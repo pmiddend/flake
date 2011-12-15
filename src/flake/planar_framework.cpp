@@ -1,5 +1,6 @@
 #include <flakelib/duration.hpp>
 #include <flakelib/exception.hpp>
+#include <flakelib/main_head.hpp>
 #include <flakelib/media_path.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/planar_framework.hpp>
@@ -127,10 +128,7 @@ stats_console_callback(
 }
 }
 
-int
-main(
-	int argc,
-	char *argv[])
+FLAKELIB_MAIN_HEAD
 try
 {
 	sge::log::global_context().apply(

@@ -1,5 +1,6 @@
 #include <flakelib/exception.hpp>
 #include <flakelib/laplace_tester.hpp>
+#include <flakelib/main_head.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/laplace_solver/jacobi.hpp>
@@ -65,10 +66,7 @@
 #include <fcppt/config/external_end.hpp>
 
 
-int
-main(
-	int,
-	char *[])
+FLAKELIB_MAIN_HEAD
 try
 {
 	sge::window::dim const window_dim(
