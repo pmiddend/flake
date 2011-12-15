@@ -32,6 +32,8 @@ window_position_to_viewport_position(
 }
 }
 
+FCPPT_PP_PUSH_WARNING
+FCPPT_PP_DISABLE_VC_WARNING(4355)
 flakelib::density::cursor_splatter::cursor_splatter(
 	sge::opencl::command_queue::object &_command_queue,
 	density::source_image const &_source_image,
@@ -79,6 +81,7 @@ flakelib::density::cursor_splatter::cursor_splatter(
 		false)
 {
 }
+FCPPT_PP_POP_WARNING
 
 void
 flakelib::density::cursor_splatter::update_cursor_rectangle(

@@ -3,7 +3,7 @@
 
 #include <fcppt/config/platform.hpp>
 
-#ifdef FCPPT_CONFIG_PLATFORM_WINDOWS
+#ifdef FCPPT_CONFIG_WINDOWS_PLATFORM
 
 #include <fcppt/config/include_windows.hpp>
 
