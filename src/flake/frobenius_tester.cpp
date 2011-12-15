@@ -30,7 +30,7 @@
 FLAKELIB_MAIN_HEAD
 try
 {
-#ifndef FCPPT_CONFIG_WINDOWS_PLATFORM
+#if 0
 	if(argc != 2)
 	{
 		fcppt::io::cerr()
