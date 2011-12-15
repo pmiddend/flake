@@ -8,20 +8,19 @@
 #include <fcppt/config/include_windows.hpp>
 
 #define FLAKELIB_MAIN_HEAD \
-int CALLBACK\
+int CALLBACK \
 WinMain(\
-	HINSTANCE hInstance,\
-	HINSTANCE hPrevInstance,\
-	LPSTR lpCmdLine,\
-	int nCmdShow)
+	HINSTANCE,\
+	HINSTANCE,\
+	LPSTR,\
+	int)
 #else
 
 #define FLAKELIB_MAIN_HEAD \
 int \
 main(\
-	int argc,\
-	char *argv[])
-
+	int,\
+	char *[])
 #endif
 
 #endif
