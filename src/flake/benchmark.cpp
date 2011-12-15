@@ -58,14 +58,10 @@ try
 			fcppt::log::level::verbose));
 
 	sge::parse::json::object const config_file =
-		sge::parse::json::config::merge_command_line_parameters(
-			sge::parse::json::parse_string_exn(
-				flakelib::utf8_file_to_fcppt_string(
-					flakelib::media_path_from_string(
-						FCPPT_TEXT("config.json")))),
-			sge::parse::json::config::create_command_line_parameters(
-				argc,
-				argv));
+		sge::parse::json::parse_string_exn(
+			flakelib::utf8_file_to_fcppt_string(
+				flakelib::media_path_from_string(
+					FCPPT_TEXT("config.json"))));
 
 	sge::opencl::single_device_system opencl_system(
 		(sge::opencl::optional_renderer()),

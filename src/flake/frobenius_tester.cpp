@@ -30,6 +30,7 @@
 FLAKELIB_MAIN_HEAD
 try
 {
+#ifndef FCPPT_CONFIG_WINDOWS_PLATFORM
 	if(argc != 2)
 	{
 		fcppt::io::cerr()
@@ -70,7 +71,7 @@ try
 	fcppt::io::cout()
 		<< FCPPT_TEXT("The frobenius norm of the image (or the image's red channel if it's multichannel) is\n\n")
 		<< utility.frobenius_norm(*input_image) << FCPPT_TEXT("\n");
-
+#endif
 }
 catch(fcppt::exception const &e)
 {
