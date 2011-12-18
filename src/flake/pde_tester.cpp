@@ -50,8 +50,8 @@
 #include <sge/timer/clocks/standard.hpp>
 #include <sge/viewport/center_on_resize.hpp>
 #include <sge/window/dim.hpp>
-#include <sge/window/instance.hpp>
-#include <sge/window/simple_parameters.hpp>
+#include <sge/window/system.hpp>
+#include <sge/window/parameters.hpp>
 #include <fcppt/exception.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/to_std_string.hpp>
@@ -79,8 +79,9 @@ try
 				sge::image::capabilities_field::null(),
 				sge::media::all_extensions))
 			(sge::systems::window(
-				sge::window::simple_parameters(
-					FCPPT_TEXT("Test of different pde solvers"),
+				sge::window::parameters(
+					sge::window::title(
+						FCPPT_TEXT("Test of different pde solvers")),
 					sge::window::dim(1920,1080))))
 			(sge::systems::renderer(
 				sge::renderer::parameters(
@@ -90,7 +91,7 @@ try
 					sge::renderer::no_multi_sampling),
 				sge::viewport::center_on_resize(
 					window_dim)))
-			(sge::systems::parameterless::font)
+			(sge::systems::font())
 			(sge::systems::input(
 				sge::systems::input_helper_field(
 					sge::systems::input_helper::keyboard_collector) | sge::systems::input_helper::mouse_collector,
@@ -164,7 +165,7 @@ try
 
 	tester.update();
 
-	sys.window().dispatch();
+	sys.window_system().poll();
 
 	sge::camera::ortho_freelook::object camera(
 		sge::camera::ortho_freelook::parameters(
@@ -195,7 +196,7 @@ try
 			static_cast<flakelib::scoped_frame_limiter::fps_type>(
 				60));
 
-		sys.window().dispatch();
+		sys.window_system().poll();
 
 		camera.update(
 			sge::timer::elapsed<sge::camera::duration>(

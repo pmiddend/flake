@@ -70,8 +70,8 @@
 #include <sge/timer/clocks/standard.hpp>
 #include <sge/viewport/center_on_resize.hpp>
 #include <sge/window/dim.hpp>
-#include <sge/window/instance.hpp>
-#include <sge/window/simple_parameters.hpp>
+#include <sge/window/system.hpp>
+#include <sge/window/parameters.hpp>
 #include <fcppt/cref.hpp>
 #include <fcppt/exception.hpp>
 #include <fcppt/ref.hpp>
@@ -128,8 +128,9 @@ try
 				sge::image::capabilities_field::null(),
 				sge::media::all_extensions))
 			(sge::systems::window(
-				sge::window::simple_parameters(
-					FCPPT_TEXT("Simulation of fluid dynamics via Stam's Method"),
+				sge::window::parameters(
+					sge::window::title(
+						FCPPT_TEXT("Simulation of fluid dynamics via Stam's Method")),
 					window_size)))
 			(sge::systems::renderer(
 				sge::renderer::parameters(
@@ -139,7 +140,7 @@ try
 					sge::renderer::no_multi_sampling),
 				sge::viewport::center_on_resize(
 					window_size)))
-			(sge::systems::parameterless::font)
+			(sge::systems::font())
 			(sge::systems::input(
 				sge::systems::input_helper_field(
 					sge::systems::input_helper::keyboard_collector) | sge::systems::input_helper::cursor_demuxer,
@@ -242,7 +243,7 @@ try
 
 	while(running)
 	{
-		sys.window().dispatch();
+		sys.window_system().poll();
 
 		delta +=
 			50.0f * sge::timer::elapsed_and_reset<flakelib::duration>(
