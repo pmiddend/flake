@@ -401,8 +401,8 @@ flakelib::laplace_solver::multigrid::upsample(
 			(_to.get().size()[0])
 			(_to.get().size()[1]).container(),
 		fcppt::assign::make_array<std::size_t>
-			(1)
-			(1).container());
+			(8)
+			(8).container());
 }
 
 void
@@ -439,8 +439,8 @@ flakelib::laplace_solver::multigrid::add(
 			(_to.get().size()[0])
 			(_to.get().size()[1]).container(),
 		fcppt::assign::make_array<std::size_t>
-			(1)
-			(1).container());
+			(8)
+			(8).container());
 }
 
 void

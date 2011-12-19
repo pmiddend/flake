@@ -1,5 +1,4 @@
 #include <flakelib/media_path_from_string.hpp>
-#include <flakelib/main_head.hpp>
 #include <flakelib/cl/planar_image_view_to_cl_image.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/image/capabilities_field.hpp>
@@ -26,6 +25,7 @@
 #include <iostream>
 #include <ostream>
 #include <fcppt/config/external_end.hpp>
+#include <flakelib/main_head.hpp>
 
 FLAKELIB_MAIN_HEAD
 try
