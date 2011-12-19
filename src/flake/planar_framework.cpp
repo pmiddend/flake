@@ -1,6 +1,5 @@
 #include <flakelib/duration.hpp>
 #include <flakelib/exception.hpp>
-#include <flakelib/main_head.hpp>
 #include <flakelib/media_path.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/planar_framework.hpp>
@@ -95,6 +94,7 @@
 #include <iostream>
 #include <ostream>
 #include <fcppt/config/external_end.hpp>
+#include <flakelib/main_head.hpp>
 
 
 namespace
