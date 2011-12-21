@@ -3,7 +3,7 @@
 
 #include <flakelib/additional_planar_data.hpp>
 #include <flakelib/duration.hpp>
-#include <flakelib/planar_object.hpp>
+#include <flakelib/planar_buffer_fwd.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 
@@ -23,7 +23,7 @@ public:
 	update(
 		flakelib::duration const &) = 0;
 
-	virtual flakelib::planar_object const
+	virtual flakelib::planar_buffer const &
 	velocity() = 0;
 
 	virtual

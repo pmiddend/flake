@@ -4,7 +4,7 @@
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/laplace_solver/jacobi.hpp>
 #include <flakelib/laplace_solver/multigrid.hpp>
-#include <flakelib/planar_pool/object.hpp>
+#include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/exception.hpp>
 #include <sge/camera/ortho_freelook/object.hpp>
@@ -17,7 +17,6 @@
 #include <sge/log/global_context.hpp>
 #include <sge/media/all_extensions.hpp>
 #include <sge/opencl/single_device_system.hpp>
-#include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/renderer/depth_stencil_buffer.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/no_multi_sampling.hpp>
@@ -103,11 +102,8 @@ try
 			sys.renderer()),
 		sge::opencl::context::optional_error_callback());
 
-	flakelib::planar_pool::object cache(
-		opencl_system.context(),
-		sge::opencl::memory_object::create_image_format(
-			CL_R,
-			CL_FLOAT));
+	flakelib::buffer_pool::object cache(
+		opencl_system.context());
 
 	flakelib::build_options global_build_options(
 		"-I "+
@@ -129,6 +125,7 @@ try
 		opencl_system.command_queue(),
 		global_build_options);
 
+#if 0
 	flakelib::laplace_solver::multigrid multigrid_solver(
 		cache,
 		utility_object,
@@ -141,9 +138,14 @@ try
 			128),
 		flakelib::laplace_solver::debug_output(
 			true));
+#endif
 
 	flakelib::laplace_tester tester(
+#if 0
 		multigrid_solver,
+#else
+		jacobi_solver,
+#endif
 		cache,
 		utility_object,
 		sys.renderer(),
@@ -239,3 +241,4 @@ catch(...)
 	std::cerr << "unknown exception caught\n";
 	return EXIT_FAILURE;
 }
+

@@ -4,6 +4,7 @@
 #include <flakelib/planar_pool/object.hpp>
 #include <flakelib/planar_pool/scoped_lock.hpp>
 #include <flakelib/utility/object.hpp>
+#include <flakelib/planar_buffer.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>

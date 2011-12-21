@@ -1,7 +1,8 @@
 #ifndef FLAKELIB_LAPLACE_SOLVER_FROM_HPP_INCLUDED
 #define FLAKELIB_LAPLACE_SOLVER_FROM_HPP_INCLUDED
 
-#include <sge/opencl/memory_object/image/planar_fwd.hpp>
+#include <flakelib/buffer/planar_view.hpp>
+#include <sge/opencl/clinclude.hpp>
 #include <fcppt/strong_typedef.hpp>
 
 namespace flakelib
@@ -9,7 +10,7 @@ namespace flakelib
 namespace laplace_solver
 {
 FCPPT_MAKE_STRONG_TYPEDEF(
-	sge::opencl::memory_object::image::planar &,
+	flakelib::buffer::planar_view<cl_float> const &,
 	from);
 }
 }

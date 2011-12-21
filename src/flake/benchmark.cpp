@@ -1,3 +1,4 @@
+#if 0
 #include <flakelib/duration.hpp>
 #include <flakelib/media_path.hpp>
 #include <flakelib/media_path_from_string.hpp>
@@ -164,3 +165,10 @@ catch(...)
 	return EXIT_FAILURE;
 }
 
+#else
+#include <flakelib/main_head.hpp>
+
+FLAKELIB_MAIN_HEAD
+{
+}
+#endif

@@ -1,4 +1,5 @@
 #include "float_handling.cl"
+#include "positions.cl"
 
 sampler_t const absolute_clamping_nearest =
 	CLK_NORMALIZED_COORDS_FALSE |
@@ -6,9 +7,9 @@ sampler_t const absolute_clamping_nearest =
 	CLK_FILTER_NEAREST;
 
 kernel void
-copy_image(
-	global read_only image2d_t from,
-	global write_only image2d_t to,
+copy_float_buffer(
+	global float const *from,
+	global float *to,
 	float const multiplier)
 {
 	int2 const position =
@@ -18,34 +19,22 @@ copy_image(
 			get_global_id(
 				1));
 
-	FLAKE_WRITE_IMAGE_FUNCTION(
-		to,
-		position,
-		FLAKE_FROM_FLOAT(multiplier) *
-		FLAKE_READ_IMAGE_FUNCTION(
-			from,
-			absolute_clamping_nearest,
-			position));
+	to[get_global_id(0)] =
+		multiplier * from[get_global_id(0)];
 }
 
 kernel void
-null_image(
-	global write_only image2d_t f)
+null_float_buffer(
+	global float *f)
 {
-	FLAKE_WRITE_IMAGE_FUNCTION(
-		f,
-		(int2)(
-			get_global_id(
-				0),
-			get_global_id(
-				1)),
-		(flake_real4)(
-			FLAKE_REAL_LIT(0.0)));
+	f[get_global_id(0)] =
+		0.0f;
 }
 
 kernel void
-generate_oscillation(
-	global write_only image2d_t input)
+generate_float_oscillation(
+	global flake_real *input,
+	int const buffer_width)
 {
 	int2 const position =
 		(int2)(
@@ -53,29 +42,31 @@ generate_oscillation(
 				0),
 			get_global_id(
 				1));
+	if(true)
+	{
+	input[256 * position.y + position.x] =
+		position.x/256.0f;
+	}
+	else
+	{
 
 	flake_real const oscillations =
-		FLAKE_REAL_LIT(32.0);
+		FLAKE_REAL_LIT(1.0);
 
 	flake_real const
 		sine1 =
-			sinpi(FLAKE_REAL_LIT(2.0) * oscillations * position.x / get_image_width(input)),
+			sinpi(FLAKE_REAL_LIT(2.0) * oscillations * position.x / buffer_width),
 		sine2 =
-			sinpi(FLAKE_REAL_LIT(2.0) * oscillations * position.y / get_image_height(input)),
+			sinpi(FLAKE_REAL_LIT(2.0) * oscillations * position.y / buffer_width),
 		sine3 =
-			sinpi(FLAKE_REAL_LIT(2.0) * FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(4.0) * oscillations * position.x / get_image_width(input)),
+			FLAKE_REAL_LIT(0.0)/*sinpi(FLAKE_REAL_LIT(2.0) * FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(4.0) * oscillations * position.x / buffer_width)*/,
 		sine4 =
-			sinpi(FLAKE_REAL_LIT(2.0) * FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(4.0) * oscillations * position.y / get_image_height(input)),
+			FLAKE_REAL_LIT(0.0)/*sinpi(FLAKE_REAL_LIT(2.0) * FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(4.0) * oscillations * position.y / buffer_width)*/,
 		sum = clamp(sine1 + sine2 + sine3 + sine4,FLAKE_REAL_LIT(-1.0),FLAKE_REAL_LIT(1.0));
 
-	FLAKE_WRITE_IMAGE_FUNCTION(
-		input,
-		position,
-		(flake_real4)(
-			(sum + FLAKE_REAL_LIT(1.0))/FLAKE_REAL_LIT(2.0),
-			FLAKE_REAL_LIT(1.0),
-			FLAKE_REAL_LIT(1.0),
-			FLAKE_REAL_LIT(1.0)));
+	input[FLAKE_AT(buffer_width,position)] =
+		(sum + FLAKE_REAL_LIT(1.0))/FLAKE_REAL_LIT(2.0);
+	}
 }
 
 kernel void

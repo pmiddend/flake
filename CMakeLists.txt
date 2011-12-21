@@ -38,6 +38,12 @@ INCLUDE_DIRECTORIES(${OPENCL_INCLUDE_DIR})
 ADD_DEFINITIONS(${OpenCL_DEFINITIONS})
 # OpenCL end
 
+# awl begin
+FIND_PACKAGE(Awl REQUIRED)
+INCLUDE_DIRECTORIES(${Awl_INCLUDE_DIR})
+ADD_DEFINITIONS(${Awl_DEFINITIONS})
+# awl end
+
 # sge begin
 FIND_PACKAGE(
 	SGE REQUIRED COMPONENTS
@@ -86,17 +92,18 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 
 SET(
 	FLAKELIB_FILES
-	src/flakelib/arrow_visual.cpp
+	#	src/flakelib/arrow_visual.cpp
 	src/flakelib/cl/apply_kernel_to_planar_image.cpp
 	src/flakelib/cl/planar_image_view_to_cl_image.cpp
-	src/flakelib/density/advector.cpp
-	src/flakelib/density/cursor_splatter.cpp
-	src/flakelib/density/monitor_proxy.cpp
+	src/flakelib/cl/planar_image_view_to_float_buffer.cpp
+	#src/flakelib/density/advector.cpp
+	#src/flakelib/density/cursor_splatter.cpp
+	#src/flakelib/density/monitor_proxy.cpp
 	src/flakelib/exception.cpp
 	src/flakelib/laplace_solver/base.cpp
 	src/flakelib/laplace_solver/dynamic_factory.cpp
 	src/flakelib/laplace_solver/jacobi.cpp
-	src/flakelib/laplace_solver/multigrid.cpp
+	#	src/flakelib/laplace_solver/multigrid.cpp
 	src/flakelib/laplace_tester.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
@@ -105,16 +112,14 @@ SET(
 	src/flakelib/monitor/planar_arrows.cpp
 	src/flakelib/monitor/planar_converter.cpp
 	src/flakelib/monitor/texture.cpp
-	src/flakelib/planar_buffer.cpp
-	src/flakelib/planar_framework.cpp
-	src/flakelib/planar_object_size.cpp
-	src/flakelib/planar_pool/object.cpp
-	src/flakelib/planar_pool/scoped_lock.cpp
+	#src/flakelib/planar_buffer.cpp
+	#	src/flakelib/planar_framework.cpp
+	src/flakelib/buffer_pool/object.cpp
 	src/flakelib/profiler/object.cpp
 	src/flakelib/profiler/scoped.cpp
 	src/flakelib/scoped_frame_limiter.cpp
-	src/flakelib/simulation/base.cpp
-	src/flakelib/simulation/stam/object.cpp
+	#	src/flakelib/simulation/base.cpp
+	#	src/flakelib/simulation/stam/object.cpp
 	src/flakelib/sprite_drawer_3d.cpp
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/utility/object.cpp

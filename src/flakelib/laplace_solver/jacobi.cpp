@@ -1,10 +1,10 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/cl/apply_kernel_to_planar_image.hpp>
 #include <flakelib/laplace_solver/jacobi.hpp>
-#include <flakelib/planar_pool/object.hpp>
-#include <flakelib/planar_pool/scoped_lock.hpp>
+#include <flakelib/buffer_pool/planar_lock.hpp>
 #include <sge/opencl/command_queue/object.hpp>
-#include <sge/opencl/memory_object/image/planar.hpp>
+#include <sge/opencl/command_queue/enqueue_kernel.hpp>
+#include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <fcppt/text.hpp>
@@ -17,14 +17,14 @@
 
 
 flakelib::laplace_solver::jacobi::jacobi(
-	flakelib::planar_pool::object &_planar_cache,
+	flakelib::buffer_pool::object &_buffer_cache,
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::build_options const &_build_options,
 	laplace_solver::grid_scale const &_grid_scale,
 	laplace_solver::iterations const &_iterations)
 :
-	planar_cache_(
-		_planar_cache),
+	buffer_cache_(
+		_buffer_cache),
 	command_queue_(
 		_command_queue),
 	grid_scale_(
@@ -66,9 +66,9 @@ flakelib::laplace_solver::jacobi::solve(
 	FCPPT_ASSERT_PRE(
 		_initial_guess.get().size() == _destination.get().size());
 
-	flakelib::planar_pool::scoped_lock p0(
-		planar_cache_,
-		_rhs.get().size()[0]);
+	flakelib::buffer_pool::planar_lock<cl_float> p0(
+		buffer_cache_,
+		_rhs.get().size());
 
 	// Alpha
 	jacobi_kernel_.argument(
@@ -80,37 +80,44 @@ flakelib::laplace_solver::jacobi::solve(
 	jacobi_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		1.0f/4.0f);
+		static_cast<cl_float>(
+			1.0f/4.0f));
+
+	// buffer width
+	jacobi_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		static_cast<cl_int>(
+			_rhs.get().size()[0]));
 
 	// rhs
 	jacobi_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			2),
-		_rhs.get());
-
+			3),
+		_rhs.get().buffer());
 
 	// boundary
 	jacobi_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			3),
-		_boundary.get());
+			4),
+		_boundary.get().buffer());
 
-	sge::opencl::memory_object::image::planar
+	sge::opencl::memory_object::buffer
 		*current_source =
-			&_initial_guess.get(),
+			&_initial_guess.get().buffer(),
 		*current_dest =
-			&_destination.get();
+			&_destination.get().buffer();
 
 	for(iterations::value_type i = 0; i < iterations_; ++i)
 	{
 		jacobi_kernel_.argument(
 			sge::opencl::kernel::argument_index(
-				4),
+				5),
 			*current_source);
 
 		jacobi_kernel_.argument(
 			sge::opencl::kernel::argument_index(
-				5),
+				6),
 			*current_dest);
 
 		if(i == 0)
@@ -118,7 +125,7 @@ flakelib::laplace_solver::jacobi::solve(
 			current_source =
 				current_dest;
 			current_dest =
-				&p0.value();
+				&p0.value().buffer();
 		}
 		else
 		{
@@ -127,10 +134,15 @@ flakelib::laplace_solver::jacobi::solve(
 				current_dest);
 		}
 
-		flakelib::cl::apply_kernel_to_planar_image(
-			jacobi_kernel_,
+		sge::opencl::command_queue::enqueue_kernel(
 			command_queue_,
-			*current_source);
+			jacobi_kernel_,
+			fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+				(_rhs.get().size()[0])
+				(_rhs.get().size()[1]).container(),
+			fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+				(64)
+				(1).container());
 	}
 }
 

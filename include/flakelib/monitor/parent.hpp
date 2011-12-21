@@ -1,7 +1,6 @@
 #ifndef FLAKELIB_MONITOR_PARENT_HPP_INCLUDED
 #define FLAKELIB_MONITOR_PARENT_HPP_INCLUDED
 
-#include <flakelib/planar_object.hpp>
 #include <flakelib/sprite_drawer_3d.hpp>
 #include <flakelib/monitor/arrow_scale.hpp>
 #include <flakelib/monitor/child.hpp>
@@ -18,7 +17,6 @@
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
-#include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>

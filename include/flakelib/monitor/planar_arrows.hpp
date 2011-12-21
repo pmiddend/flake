@@ -1,7 +1,6 @@
 #ifndef FLAKELIB_MONITOR_PLANAR_ARROWS_HPP_INCLUDED
 #define FLAKELIB_MONITOR_PLANAR_ARROWS_HPP_INCLUDED
 
-#include <flakelib/planar_object.hpp>
 #include <flakelib/monitor/arrow_scale.hpp>
 #include <flakelib/monitor/child.hpp>
 #include <flakelib/monitor/grid_dimensions.hpp>

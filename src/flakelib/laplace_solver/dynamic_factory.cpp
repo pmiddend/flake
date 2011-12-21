@@ -1,7 +1,7 @@
 #include <flakelib/exception.hpp>
 #include <flakelib/laplace_solver/dynamic_factory.hpp>
 #include <flakelib/laplace_solver/jacobi.hpp>
-#include <flakelib/laplace_solver/multigrid.hpp>
+//#include <flakelib/laplace_solver/multigrid.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/object.hpp>
 #include <sge/parse/json/string_to_path.hpp>
@@ -13,7 +13,7 @@
 
 
 flakelib::laplace_solver::dynamic_factory::dynamic_factory(
-	flakelib::planar_pool::object &_planar_pool,
+	flakelib::buffer_pool::object &_buffer_pool,
 	sge::opencl::command_queue::object &_command_queue,
 	sge::parse::json::object const &_config_file,
 	flakelib::build_options const &_build_options,
@@ -35,6 +35,7 @@ flakelib::laplace_solver::dynamic_factory::dynamic_factory(
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("grid-scale")));
 
+#if 0
 	if(type == FCPPT_TEXT("multigrid"))
 	{
 		sge::parse::json::object const &inner_json =
@@ -46,7 +47,7 @@ flakelib::laplace_solver::dynamic_factory::dynamic_factory(
 		inner_factory_.take(
 			fcppt::make_unique_ptr<dynamic_factory>(
 				fcppt::ref(
-					_planar_pool),
+					_buffer_pool),
 				fcppt::ref(
 					_command_queue),
 				fcppt::cref(
@@ -58,7 +59,7 @@ flakelib::laplace_solver::dynamic_factory::dynamic_factory(
 		solver_.take(
 			fcppt::make_unique_ptr<laplace_solver::multigrid>(
 				fcppt::ref(
-					_planar_pool),
+					_buffer_pool),
 				fcppt::ref(
 					_utility),
 				fcppt::ref(
@@ -77,11 +78,13 @@ flakelib::laplace_solver::dynamic_factory::dynamic_factory(
 					false)));
 	}
 	else if (type == FCPPT_TEXT("jacobi"))
+#endif
+	if (type == FCPPT_TEXT("jacobi"))
 	{
 		solver_.take(
 			fcppt::make_unique_ptr<laplace_solver::jacobi>(
 				fcppt::ref(
-					_planar_pool),
+					_buffer_pool),
 				fcppt::ref(
 					_command_queue),
 				_build_options,

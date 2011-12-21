@@ -1,8 +1,8 @@
 #include <flakelib/laplace_tester.hpp>
+#include <flakelib/buffer/linear_view.hpp>
 #include <flakelib/media_path_from_string.hpp>
-#include <flakelib/planar_object_size.hpp>
 #include <flakelib/cl/apply_kernel_to_planar_image.hpp>
-#include <flakelib/cl/planar_image_view_to_cl_image.hpp>
+#include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
 #include <flakelib/laplace_solver/base.hpp>
 #include <flakelib/monitor/texture.hpp>
 #include <flakelib/utility/object.hpp>
@@ -11,15 +11,17 @@
 #include <sge/image2d/file.hpp>
 #include <sge/image2d/system.hpp>
 #include <sge/image2d/view/const_object.hpp>
+#include <sge/image2d/view/size.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/container/ptr/push_back_unique_ptr.hpp>
+#include <fcppt/math/dim/structure_cast.hpp>
 
 
 flakelib::laplace_tester::laplace_tester(
 	laplace_solver::base &_solver,
-	flakelib::planar_pool::object &_planar_cache,
+	flakelib::buffer_pool::object &_buffer_cache,
 	utility::object &_utility,
 	sge::renderer::device &_renderer,
 	sge::viewport::manager &_viewport_manager,
@@ -30,20 +32,19 @@ flakelib::laplace_tester::laplace_tester(
 :
 	solver_(
 		_solver),
-	renderer_(
-		_renderer),
 	command_queue_(
 		_command_queue),
-	planar_cache_(
-		_planar_cache),
 	utility_(
 		_utility),
+	boundary_image_file_(
+		_image_loader.load(
+			flakelib::media_path_from_string(
+				FCPPT_TEXT("images/boundary_256_black.png")))),
 	boundary_(
-		cl::planar_image_view_to_cl_image(
-			_image_loader.load(
-				flakelib::media_path_from_string(
-					FCPPT_TEXT("images/boundary_1024_black.png")))->view(),
-			command_queue_)),
+		_buffer_cache,
+		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
+			sge::image2d::view::size(
+				boundary_image_file_->view()))),
 	monitor_parent_(
 		_renderer,
 		command_queue_,
@@ -67,21 +68,27 @@ flakelib::laplace_tester::laplace_tester(
 			1,
 			1)),
 	initial_guess_image_(
-		planar_cache_,
-		boundary_->size()[0]),
+		_buffer_cache,
+		boundary_.value().size()),
 	rhs_(
-		planar_cache_,
-		boundary_->size()[0]),
+		_buffer_cache,
+		boundary_.value().size()),
 	destination_(
-		planar_cache_,
-		boundary_->size()[0]),
+		_buffer_cache,
+		boundary_.value().size()),
 	additional_data_()
 {
 	master_widget_.child(
 		enumeration_widget_);
 
-	utility_.null_image(
-		rhs_.value());
+	utility_.null_buffer(
+		buffer::linear_view<cl_float>(
+			rhs_.value().buffer()));
+
+	cl::planar_image_view_to_float_buffer(
+		command_queue_,
+		boundary_image_file_->view(),
+		boundary_.value());
 }
 
 void
@@ -108,79 +115,17 @@ flakelib::laplace_tester::update()
 		laplace_solver::initial_guess(
 			initial_guess_image_.value()),
 		laplace_solver::boundary(
-			*boundary_));
+			boundary_.value()));
 
-	utility_.copy_image(
-		utility::from(
-			destination_.value()),
-		utility::to(
-			initial_guess_image_.value()),
+	utility_.copy_buffer(
+		utility::copy_from(
+			buffer::linear_view<cl_float>(
+				destination_.value().buffer())),
+		utility::copy_to(
+			buffer::linear_view<cl_float>(
+				initial_guess_image_.value().buffer())),
 		utility::multiplier(
 			1.0f));
-
-	solver_.solve(
-		laplace_solver::rhs(
-			rhs_.value()),
-		laplace_solver::destination(
-			destination_.value()),
-		laplace_solver::initial_guess(
-			initial_guess_image_.value()),
-		laplace_solver::boundary(
-			*boundary_));
-
-	utility_.copy_image(
-		utility::from(
-			destination_.value()),
-		utility::to(
-			initial_guess_image_.value()),
-		utility::multiplier(
-			1.0f));
-
-	solver_.solve(
-		laplace_solver::rhs(
-			rhs_.value()),
-		laplace_solver::destination(
-			destination_.value()),
-		laplace_solver::initial_guess(
-			initial_guess_image_.value()),
-		laplace_solver::boundary(
-			*boundary_));
-
-	utility_.copy_image(
-		utility::from(
-			destination_.value()),
-		utility::to(
-			initial_guess_image_.value()),
-		utility::multiplier(
-			1.0f));
-
-	solver_.solve(
-		laplace_solver::rhs(
-			rhs_.value()),
-		laplace_solver::destination(
-			destination_.value()),
-		laplace_solver::initial_guess(
-			initial_guess_image_.value()),
-		laplace_solver::boundary(
-			*boundary_));
-
-	utility_.copy_image(
-		utility::from(
-			destination_.value()),
-		utility::to(
-			initial_guess_image_.value()),
-		utility::multiplier(
-			1.0f));
-
-	solver_.solve(
-		laplace_solver::rhs(
-			rhs_.value()),
-		laplace_solver::destination(
-			destination_.value()),
-		laplace_solver::initial_guess(
-			initial_guess_image_.value()),
-		laplace_solver::boundary(
-			*boundary_));
 
 	additional_data_.clear();
 
@@ -199,9 +144,8 @@ flakelib::laplace_tester::update()
 			monitor::scaling_factor(
 				1.0f)));
 
-	planar_converter_.to_texture(
-		flakelib::planar_object(
-			&initial_guess_image_.value()),
+	planar_converter_.scalar_to_texture(
+		initial_guess_image_.value(),
 		additional_data_.back().cl_texture(),
 		monitor::scaling_factor(
 			1.0f));
@@ -216,8 +160,7 @@ flakelib::laplace_tester::update()
 		++it)
 	{
 		sge::opencl::memory_object::dim2 const object_size =
-			flakelib::planar_object_size(
-				it->value());
+			it->value()->size();
 
 		fcppt::container::ptr::push_back_unique_ptr(
 			additional_data_,
@@ -234,8 +177,8 @@ flakelib::laplace_tester::update()
 				monitor::scaling_factor(
 					1.0f)));
 
-		planar_converter_.to_texture(
-			it->value(),
+		planar_converter_.scalar_to_texture(
+			*(it->value()),
 			additional_data_.back().cl_texture(),
 			monitor::scaling_factor(
 				1.0f));
@@ -259,9 +202,8 @@ flakelib::laplace_tester::update()
 			monitor::scaling_factor(
 				1.0f)));
 
-	planar_converter_.to_texture(
-		flakelib::planar_object(
-			&destination_.value()),
+	planar_converter_.scalar_to_texture(
+		destination_.value(),
 		additional_data_.back().cl_texture(),
 		monitor::scaling_factor(
 			1.0f));

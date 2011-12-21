@@ -1,6 +1,10 @@
 #ifndef FLAKE_FLOAT_HANDLING_CL_INCLUDED
 #define FLAKE_FLOAT_HANDLING_CL_INCLUDED
 
+typedef
+float
+flake_argument_real;
+
 #ifndef FLAKE_USE_HALF
 
 #define FLAKE_READ_IMAGE_FUNCTION read_imagef

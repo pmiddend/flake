@@ -1,7 +1,6 @@
 #ifndef FLAKELIB_MONITOR_CHILD_HPP_INCLUDED
 #define FLAKELIB_MONITOR_CHILD_HPP_INCLUDED
 
-#include <flakelib/planar_object.hpp>
 #include <flakelib/monitor/optional_projection.hpp>
 #include <flakelib/monitor/parent_fwd.hpp>
 #include <rucksack/widget/base_fwd.hpp>

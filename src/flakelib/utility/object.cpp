@@ -1,12 +1,13 @@
 #include <flakelib/media_path_from_string.hpp>
-#include <flakelib/cl/apply_kernel_to_planar_image.hpp>
 #include <flakelib/utility/object.hpp>
+#include <flakelib/buffer/planar_view.hpp>
+#include <flakelib/buffer/linear_view.hpp>
 #include <sge/opencl/command_queue/dim2.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <sge/opencl/memory_object/image/planar.hpp>
+#include <sge/opencl/memory_object/size_type.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <fcppt/text.hpp>
@@ -33,17 +34,17 @@ flakelib::utility::object::object(
 			sge::opencl::program::build_parameters()
 				.options(
 					_build_options.get()))),
-	copy_image_kernel_(
+	copy_float_buffer_kernel_(
 		program_,
 		sge::opencl::kernel::name(
-			"copy_image")),
-	null_image_kernel_(
+			"copy_float_buffer")),
+	null_float_buffer_kernel_(
 		program_,
 		sge::opencl::kernel::name(
-			"null_image")),
-	generate_oscillation_kernel_(
+			"null_float_buffer")),
+	generate_float_oscillation_kernel_(
 		program_,
-		sge::opencl::kernel::name("generate_oscillation")),
+		sge::opencl::kernel::name("generate_float_oscillation")),
 	frobenius_norm_tile_kernel_(
 		program_,
 		sge::opencl::kernel::name("frobenius_norm_tile")),
@@ -57,47 +58,54 @@ flakelib::utility::object::object(
 }
 
 void
-flakelib::utility::object::null_image(
-	sge::opencl::memory_object::image::planar &_f)
+flakelib::utility::object::null_buffer(
+	buffer::linear_view<cl_float> const &_f)
 {
-	null_image_kernel_.argument(
+	null_float_buffer_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		_f);
+		_f.buffer());
 
-	flakelib::cl::apply_kernel_to_planar_image(
-		null_image_kernel_,
+	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
-		_f);
+		null_float_buffer_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_f.size()).container(),
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(64).container());
 }
 
 void
-flakelib::utility::object::copy_image(
-	utility::from const &_from,
-	utility::to const &_to,
+flakelib::utility::object::copy_buffer(
+	utility::copy_from const &_from,
+	utility::copy_to const &_to,
 	utility::multiplier const &_multiplier)
 {
-	copy_image_kernel_.argument(
+	copy_float_buffer_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		_from.get());
+		_from.get().buffer());
 
-	copy_image_kernel_.argument(
+	copy_float_buffer_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		_to.get());
+		_to.get().buffer());
 
-	copy_image_kernel_.argument(
+	copy_float_buffer_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
 		_multiplier.get());
 
-	flakelib::cl::apply_kernel_to_planar_image(
-		copy_image_kernel_,
+	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
-		_from.get());
+		copy_float_buffer_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_from.get().size()).container(),
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(64).container());
 }
 
+#if 0
 void
 flakelib::utility::object::planar_vector_magnitude(
 	utility::from const &_from,
@@ -119,39 +127,56 @@ flakelib::utility::object::planar_vector_magnitude(
 			2),
 		_multiplier.get());
 
-	flakelib::cl::apply_kernel_to_planar_image(
-		planar_vector_magnitude_kernel_,
+	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
-		_from.get());
+		planar_vector_magnitude_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_from.get().buffer().size()[0])
+			(_from.get().buffer().size()[1]).container(),
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(8)
+			(8).container());
 }
+#endif
 
 void
 flakelib::utility::object::generate_oscillation(
-	sge::opencl::memory_object::image::planar &_f)
+	buffer::planar_view<cl_float> const &_f)
 {
-	generate_oscillation_kernel_.argument(
+	generate_float_oscillation_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		_f);
+		_f.buffer());
 
-	flakelib::cl::apply_kernel_to_planar_image(
-		generate_oscillation_kernel_,
+	generate_float_oscillation_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		static_cast<cl_int>(
+			_f.size().w()));
+
+	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
-		_f);
+		generate_float_oscillation_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_f.size()[0])
+			(_f.size()[1]).container(),
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(8)
+			(8).container());
 }
 
+#if 0
 cl_float
 flakelib::utility::object::frobenius_norm(
-	sge::opencl::memory_object::image::planar &_image)
+	flakelib::planar_buffer &_scalar_float_buffer)
 {
+	return 0.0f;
 	std::size_t const work_group_size =
 		frobenius_norm_kernel_.work_group_size(
 			command_queue_.device());
 
-	//fcppt::io::cerr() << FCPPT_TEXT("Work group size: ") << work_group_size << FCPPT_TEXT("\n");
-
 	// NOTE: This is optimized for square work group dimensions and thus
-	// for square images.
+	// for square scalar_float_buffers.
 
 	// We can't round up here because the work group size could be
 	// surpassed
@@ -160,13 +185,6 @@ flakelib::utility::object::frobenius_norm(
 			std::sqrt(
 				static_cast<double>(
 					work_group_size)));
-
-	/*
-	fcppt::io::cerr()
-		<< FCPPT_TEXT("Group size is: ")
-		<< rounded_down_root << FCPPT_TEXT("x") << rounded_down_root
-		<< FCPPT_TEXT("\n");
-		*/
 
 	sge::opencl::memory_object::buffer partial_results(
 		command_queue_.context(),
@@ -178,7 +196,7 @@ flakelib::utility::object::frobenius_norm(
 	frobenius_norm_tile_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		_image);
+		_scalar_float_buffer);
 
 	frobenius_norm_tile_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -240,6 +258,7 @@ flakelib::utility::object::frobenius_norm(
 			*static_cast<cl_float *>(
 				scoped_lock.ptr()));
 }
+#endif
 
 flakelib::utility::object::~object()
 {

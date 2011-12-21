@@ -1,3 +1,4 @@
+#if 0
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/cl/planar_image_view_to_cl_image.hpp>
 #include <flakelib/utility/object.hpp>
@@ -88,3 +89,10 @@ catch(...)
 	std::cerr << "unknown exception caught\n";
 	return EXIT_FAILURE;
 }
+#else
+#include <flakelib/main_head.hpp>
+
+FLAKELIB_MAIN_HEAD
+{
+}
+#endif

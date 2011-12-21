@@ -3,7 +3,7 @@
 
 #include <flakelib/build_options.hpp>
 #include <flakelib/laplace_solver/base_fwd.hpp>
-#include <flakelib/planar_pool/object_fwd.hpp>
+#include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/parse/json/object_fwd.hpp>
@@ -32,7 +32,7 @@ FCPPT_NONCOPYABLE(
 public:
 	/**
 	\brief Constructs the appropriate solvers
-	\param _planar_pool The planar pool needed for laplace_solver::jacobi and laplace_solver::multigrid
+	\param _buffer_pool The buffer pool needed for laplace_solver::jacobi and laplace_solver::multigrid
 	\param _command_queue The command queue needed for all the solvers
 	\param _config_file The part of the configuration file specifying the "root" solver.
 	\param _utility The utility object needed for most of the solvers
@@ -42,7 +42,7 @@ public:
 	*/
 	explicit
 	dynamic_factory(
-		flakelib::planar_pool::object &_planar_pool,
+		flakelib::buffer_pool::object &_buffer_pool,
 		sge::opencl::command_queue::object &_command_queue,
 		sge::parse::json::object const &_config_file,
 		flakelib::build_options const &,

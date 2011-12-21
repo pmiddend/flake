@@ -1,22 +1,18 @@
-#ifndef FLAKELIB_PLANAR_POOL_HPP_INCLUDED
-#define FLAKELIB_PLANAR_POOL_HPP_INCLUDED
+#ifndef FLAKELIB_BUFFER_POOL_OBJECT_HPP_INCLUDED
+#define FLAKELIB_BUFFER_POOL_OBJECT_HPP_INCLUDED
 
 #include <sge/opencl/context/object_fwd.hpp>
-#include <sge/opencl/memory_object/dim2.hpp>
-#include <flakelib/planar_buffer_fwd.hpp>
-#include <flakelib/buffer_element_stride.hpp>
-#include <flakelib/planar_pool/unique_lock.hpp>
+#include <sge/opencl/memory_object/buffer_fwd.hpp>
+#include <sge/opencl/memory_object/byte_size.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/unique_ptr.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <set>
 #include <fcppt/config/external_end.hpp>
 
-
 namespace flakelib
 {
-namespace planar_pool
+namespace buffer_pool
 {
 class object
 {
@@ -27,30 +23,27 @@ public:
 	object(
 		sge::opencl::context::object &);
 
-	planar_pool::unique_lock
-	get_planar(
-		sge::opencl::memory_object::dim2 const &,
-		flakelib::buffer_element_stride const &);
+	sge::opencl::memory_object::buffer &
+	get_and_lock(
+		sge::opencl::memory_object::byte_size const &);
+
+	void
+	unlock(
+		sge::opencl::memory_object::buffer &);
 
 	~object();
 private:
-	friend class planar_pool::scoped_lock;
-
 	typedef
 	boost::ptr_vector<sge::opencl::memory_object::buffer>
-	image_pool;
+	pool_container;
 
 	typedef
 	std::set<sge::opencl::memory_object::buffer *>
 	locked_buffers;
 
 	sge::opencl::context::object &context_;
-	image_pool image_pool_;
+	pool_container pool_;
 	locked_buffers locked_buffers_;
-
-	void
-	unlock(
-		sge::opencl::memory_object::buffer &);
 };
 }
 }

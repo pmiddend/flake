@@ -5,7 +5,7 @@
 #include <flakelib/laplace_solver/base.hpp>
 #include <flakelib/laplace_solver/grid_scale.hpp>
 #include <flakelib/laplace_solver/iterations.hpp>
-#include <flakelib/planar_pool/object_fwd.hpp>
+#include <flakelib/buffer_pool/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/program/object.hpp>
@@ -25,7 +25,7 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	jacobi(
-		flakelib::planar_pool::object &,
+		flakelib::buffer_pool::object &,
 		sge::opencl::command_queue::object &,
 		flakelib::build_options const &,
 		laplace_solver::grid_scale const &,
@@ -43,7 +43,7 @@ public:
 
 	~jacobi();
 private:
-	flakelib::planar_pool::object &planar_cache_;
+	flakelib::buffer_pool::object &buffer_cache_;
 	sge::opencl::command_queue::object &command_queue_;
 	grid_scale::value_type const grid_scale_;
 	iterations::value_type const iterations_;
