@@ -39,7 +39,7 @@ flakelib::laplace_tester::laplace_tester(
 	boundary_image_file_(
 		_image_loader.load(
 			flakelib::media_path_from_string(
-				FCPPT_TEXT("images/boundary_256_black.png")))),
+				FCPPT_TEXT("images/boundary_jagged_256.png")))),
 	boundary_(
 		_buffer_cache,
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
