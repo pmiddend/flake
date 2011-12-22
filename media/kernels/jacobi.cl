@@ -15,8 +15,8 @@ jacobi(
 {
 	int2 const currentpos =
 		(int2)(
-			get_global_id(0)+1,
-			get_global_id(1)+1);
+			get_global_id(0),
+			get_global_id(1));
 
 	int const
 		current_index =

@@ -117,16 +117,6 @@ flakelib::laplace_tester::update()
 		laplace_solver::boundary(
 			boundary_.value()));
 
-	utility_.copy_buffer(
-		utility::copy_from(
-			buffer::linear_view<cl_float>(
-				destination_.value().buffer())),
-		utility::copy_to(
-			buffer::linear_view<cl_float>(
-				initial_guess_image_.value().buffer())),
-		utility::multiplier(
-			1.0f));
-
 	additional_data_.clear();
 
 	fcppt::container::ptr::push_back_unique_ptr(

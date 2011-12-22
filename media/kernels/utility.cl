@@ -42,31 +42,31 @@ generate_float_oscillation(
 				0),
 			get_global_id(
 				1));
-	if(true)
-	{
-	input[256 * position.y + position.x] =
-		position.x/256.0f;
-	}
-	else
-	{
 
 	flake_real const oscillations =
-		FLAKE_REAL_LIT(1.0);
+		FLAKE_REAL_LIT(64.0);
 
 	flake_real const
 		sine1 =
-			sinpi(FLAKE_REAL_LIT(2.0) * oscillations * position.x / buffer_width),
+			sinpi(
+				FLAKE_REAL_LIT(2.0) * oscillations * position.x / buffer_width),
 		sine2 =
-			sinpi(FLAKE_REAL_LIT(2.0) * oscillations * position.y / buffer_width),
+			sinpi(
+				FLAKE_REAL_LIT(2.0) * oscillations * position.y / buffer_width),
 		sine3 =
-			FLAKE_REAL_LIT(0.0)/*sinpi(FLAKE_REAL_LIT(2.0) * FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(4.0) * oscillations * position.x / buffer_width)*/,
+			sinpi(
+				FLAKE_REAL_LIT(2.0) * oscillations/FLAKE_REAL_LIT(16.0) * position.x / buffer_width),
 		sine4 =
-			FLAKE_REAL_LIT(0.0)/*sinpi(FLAKE_REAL_LIT(2.0) * FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(4.0) * oscillations * position.y / buffer_width)*/,
-		sum = clamp(sine1 + sine2 + sine3 + sine4,FLAKE_REAL_LIT(-1.0),FLAKE_REAL_LIT(1.0));
+			sinpi(
+				FLAKE_REAL_LIT(2.0) * oscillations/FLAKE_REAL_LIT(16.0) * position.y / buffer_width),
+		sum =
+			clamp(
+				sine1 + sine2 + sine3 + sine4,
+				FLAKE_REAL_LIT(-1.0),
+				FLAKE_REAL_LIT(1.0));
 
 	input[FLAKE_AT(buffer_width,position)] =
 		(sum + FLAKE_REAL_LIT(1.0))/FLAKE_REAL_LIT(2.0);
-	}
 }
 
 kernel void

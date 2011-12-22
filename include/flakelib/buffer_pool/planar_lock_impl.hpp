@@ -4,9 +4,6 @@
 #include <flakelib/buffer_pool/planar_lock_decl.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 
-#include <fcppt/math/dim/output.hpp>
-#include <iostream>
-
 template<typename T>
 flakelib::buffer_pool::planar_lock<T>::planar_lock(
 	buffer_pool::object &_pool,
@@ -24,11 +21,6 @@ flakelib::buffer_pool::planar_lock<T>::planar_lock(
 						sizeof(T))))),
 		_size)
 {
-	std::cout << "Given size was " << _size << ", bytes resulting: " << (static_cast<sge::opencl::memory_object::byte_size::value_type>(
-					static_cast<sge::opencl::memory_object::byte_size::value_type>(
-						_size.content()) *
-					static_cast<sge::opencl::memory_object::byte_size::value_type>(
-						sizeof(T)))) << "\n";
 }
 
 template<typename T>
