@@ -71,54 +71,33 @@ generate_float_oscillation(
 
 kernel void
 frobenius_norm_tile(
-	global read_only image2d_t input,
-	global float *workgroup_results)
+	global float const *input,
+	global float *workgroup_results,
+	int const input_size,
+	int const pixels_to_process)
 {
-	int2 const pixels_per_work_unit =
-		(int2)(
-			(int)ceil((float)get_image_width(input) / (float)get_global_size(0)),
-			(int)ceil((float)get_image_height(input) / (float)get_global_size(1)));
-
-	int2 const image_starting_position =
-		(int2)(
-			get_global_id(0) * pixels_per_work_unit.x,
-			get_global_id(1) * pixels_per_work_unit.y);
-
 	float partial_result = 0.0f;
 
-	for(int y = image_starting_position.y; y < image_starting_position.y + pixels_per_work_unit.y; ++y)
+	for(
+		size_t
+			x =
+				(size_t)(pixels_to_process * get_global_id(0)),
+			end =
+				min((size_t)(input_size-1), (size_t)(x + pixels_to_process));
+		x < end;
+		++x)
 	{
-		for(int x = image_starting_position.x; x < image_starting_position.x + pixels_per_work_unit.x; ++x)
-		{
-			if(x >= get_image_width(input) || y >= get_image_height(input))
-				continue;
+		float const current_value =
+			input[x];
 
-			float const current_value =
-				read_imagef(
-					input,
-					absolute_clamping_nearest,
-					(int2)(x,y)).x;
+		float const target_value =
+			fabs(current_value) * fabs(current_value);
 
-			float const target_value =
-				fabs(current_value) * fabs(current_value);
-
-			partial_result += target_value;
-		}
+		partial_result += target_value;
 	}
 
-	workgroup_results[get_global_id(1) * get_global_size(0) + get_global_id(0)] =
+	workgroup_results[get_global_id(0)] =
 		partial_result;
-}
-
-kernel void
-frobenius_norm(
-	global float *workgroup_results,
-	uint const elements,
-	global float *total_results)
-{
-	total_results[0] = 0.0f;
-	for(size_t i = 0; i < elements; ++i)
-		total_results[0] += workgroup_results[i];
 }
 
 kernel void

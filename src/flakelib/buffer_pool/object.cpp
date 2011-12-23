@@ -34,6 +34,11 @@ flakelib::buffer_pool::object::get_and_lock(
 		if(it->byte_size() != _byte_size.get())
 			continue;
 
+		// We found one (that was already created), so put it in
+		// locked_buffers and return it.
+		locked_buffers_.insert(
+			&(*it));
+
 		return
 			*it;
 	}

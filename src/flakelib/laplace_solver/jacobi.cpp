@@ -110,11 +110,13 @@ flakelib::laplace_solver::jacobi::solve(
 
 	for(iterations::value_type i = 0; i < iterations_; ++i)
 	{
+		// x
 		jacobi_kernel_.argument(
 			sge::opencl::kernel::argument_index(
 				5),
 			*current_source);
 
+		// output
 		jacobi_kernel_.argument(
 			sge::opencl::kernel::argument_index(
 				6),

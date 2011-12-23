@@ -48,9 +48,6 @@ flakelib::utility::object::object(
 	frobenius_norm_tile_kernel_(
 		program_,
 		sge::opencl::kernel::name("frobenius_norm_tile")),
-	frobenius_norm_kernel_(
-		program_,
-		sge::opencl::kernel::name("frobenius_norm")),
 	planar_vector_magnitude_kernel_(
 		program_,
 		sge::opencl::kernel::name("planar_vector_magnitude"))
@@ -165,26 +162,13 @@ flakelib::utility::object::generate_oscillation(
 			(8).container());
 }
 
-#if 0
 cl_float
 flakelib::utility::object::frobenius_norm(
-	flakelib::planar_buffer &_scalar_float_buffer)
+	buffer::linear_view<cl_float> const &_scalar_float_buffer)
 {
-	return 0.0f;
 	std::size_t const work_group_size =
-		frobenius_norm_kernel_.work_group_size(
+		frobenius_norm_tile_kernel_.work_group_size(
 			command_queue_.device());
-
-	// NOTE: This is optimized for square work group dimensions and thus
-	// for square scalar_float_buffers.
-
-	// We can't round up here because the work group size could be
-	// surpassed
-	std::size_t const rounded_down_root =
-		static_cast<std::size_t>(
-			std::sqrt(
-				static_cast<double>(
-					work_group_size)));
 
 	sge::opencl::memory_object::buffer partial_results(
 		command_queue_.context(),
@@ -196,69 +180,54 @@ flakelib::utility::object::frobenius_norm(
 	frobenius_norm_tile_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		_scalar_float_buffer);
+		_scalar_float_buffer.buffer());
 
 	frobenius_norm_tile_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
 		partial_results);
 
+	frobenius_norm_tile_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		static_cast<cl_int>(
+			_scalar_float_buffer.size()));
+
+	frobenius_norm_tile_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			3),
+		static_cast<cl_int>(
+			_scalar_float_buffer.size() / work_group_size + 1u));
+
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		frobenius_norm_tile_kernel_,
 		fcppt::assign::make_array<std::size_t>
-			(rounded_down_root)
-			(rounded_down_root).container(),
+			(work_group_size).container(),
 		fcppt::assign::make_array<std::size_t>
-			(rounded_down_root)
-			(rounded_down_root).container());
-
-	sge::opencl::memory_object::buffer total_result(
-		command_queue_.context(),
-		sge::opencl::memory_object::flags_field(
-			sge::opencl::memory_object::flags::write) | sge::opencl::memory_object::flags::read,
-		sge::opencl::memory_object::byte_size(
-			sizeof(cl_float)));
-
-	frobenius_norm_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
-		partial_results);
-
-	frobenius_norm_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			1),
-		static_cast<cl_uint>(
-			rounded_down_root * rounded_down_root));
-
-	frobenius_norm_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			2),
-		total_result);
-
-	sge::opencl::command_queue::enqueue_kernel(
-		command_queue_,
-		frobenius_norm_kernel_,
-		fcppt::assign::make_array<std::size_t>
-			(1).container(),
-		fcppt::assign::make_array<std::size_t>
-			(1).container());
+			(work_group_size).container());
 
 	sge::opencl::command_queue::scoped_buffer_mapping scoped_lock(
 		command_queue_,
-		total_result,
+		partial_results,
 		CL_MAP_READ,
 		sge::opencl::memory_object::byte_offset(
 			0),
 		sge::opencl::memory_object::byte_size(
-			sizeof(cl_float)));
+			partial_results.byte_size()));
+
+	cl_float result =
+		0.0f;
+
+	for(std::size_t i = 0; i < work_group_size; ++i)
+		result +=
+			static_cast<cl_float const *>(
+				scoped_lock.ptr())[i];
 
 	return
 		std::sqrt(
-			*static_cast<cl_float *>(
-				scoped_lock.ptr()));
+			result);
 }
-#endif
 
 flakelib::utility::object::~object()
 {

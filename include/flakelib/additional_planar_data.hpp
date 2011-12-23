@@ -12,7 +12,7 @@ typedef
 flakelib::association_list::object
 <
 	fcppt::string,
-	flakelib::buffer::planar_view<cl_float> *
+	flakelib::buffer::planar_view<cl_float> const *
 >
 additional_planar_data;
 }

@@ -57,12 +57,14 @@ jacobi(
 	flake_real const rhs_value =
 		rhs[current_index];
 
+	flake_real const result =
+		(left + right + top + bottom + alpha * rhs_value) * beta;
+
 	output[current_index] =
 #ifndef WEIGHTED_JACOBI
-		(left + right + top + bottom + alpha * rhs_value) * beta
+		result;
 #else
-			FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(3.0) * center +
-			FLAKE_REAL_LIT(2.0)/FLAKE_REAL_LIT(3.0) * (left + right + top + bottom + alpha * rhs_value) * beta
+		FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(3.0) * center +
+		FLAKE_REAL_LIT(2.0)/FLAKE_REAL_LIT(3.0) * result;
 #endif
-			;
 }

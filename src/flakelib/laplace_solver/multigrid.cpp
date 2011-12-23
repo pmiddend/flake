@@ -1,22 +1,24 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/cl/apply_kernel_to_planar_image.hpp>
 #include <flakelib/laplace_solver/multigrid.hpp>
-#include <flakelib/planar_pool/object.hpp>
-#include <flakelib/planar_pool/scoped_lock.hpp>
 #include <flakelib/utility/object.hpp>
-#include <flakelib/planar_buffer.hpp>
+#include <flakelib/buffer/linear_view.hpp>
+#include <flakelib/buffer_pool/planar_lock.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <fcppt/format.hpp>
+#include <fcppt/ref.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_array.hpp>
 #include <fcppt/math/is_power_of_2.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/output.hpp>
+#include <fcppt/container/ptr/push_back_unique_ptr.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <algorithm>
 #include <cstddef>
@@ -25,7 +27,7 @@
 
 
 flakelib::laplace_solver::multigrid::multigrid(
-	flakelib::planar_pool::object &_planar_cache,
+	flakelib::buffer_pool::object &_buffer_cache,
 	flakelib::utility::object &_utility,
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::build_options const &_build_options,
@@ -34,8 +36,8 @@ flakelib::laplace_solver::multigrid::multigrid(
 	laplace_solver::termination_size const &_termination_size,
 	laplace_solver::debug_output const &_debug_output)
 :
-	planar_cache_(
-		_planar_cache),
+	buffer_cache_(
+		_buffer_cache),
 	utility_(
 		_utility),
 	command_queue_(
@@ -73,6 +75,7 @@ flakelib::laplace_solver::multigrid::multigrid(
 		main_program_,
 		sge::opencl::kernel::name(
 			"add")),
+	debug_buffers_(),
 	additional_planar_data_()
 {
 }
@@ -100,20 +103,26 @@ flakelib::laplace_solver::multigrid::solve(
 	sge::opencl::memory_object::size_type const size =
 		_destination.get().size()[0];
 
-	flakelib::planar_pool::scoped_lock
+	flakelib::buffer_pool::planar_lock<cl_float>
 		p0(
-			planar_cache_,
-			size),
+			buffer_cache_,
+			sge::opencl::memory_object::dim2(
+				size,
+				size)),
 		first_smoothing(
-			planar_cache_,
-			size);
+			buffer_cache_,
+			sge::opencl::memory_object::dim2(
+				size,
+				size));
 
 	// Initial guess
-	utility_.copy_image(
-		utility::from(
-			_initial_guess.get()),
-		utility::to(
-			p0.value()),
+	utility_.copy_buffer(
+		utility::copy_from(
+			flakelib::buffer::linear_view<cl_float>(
+				_initial_guess.get().buffer())),
+		utility::copy_to(
+			flakelib::buffer::linear_view<cl_float>(
+				p0.value().buffer())),
 		utility::multiplier(
 			1.0f));
 
@@ -169,16 +178,22 @@ flakelib::laplace_solver::multigrid::solve(
 		p0.value(),
 		FCPPT_TEXT("residual"));
 
-	flakelib::planar_pool::scoped_lock
+	flakelib::buffer_pool::planar_lock<cl_float>
 		rd(
-			planar_cache_,
-			size/2),
+			buffer_cache_,
+			sge::opencl::memory_object::dim2(
+				size/2,
+				size/2)),
 		coarse_error(
-			planar_cache_,
-			size/2),
+			buffer_cache_,
+			sge::opencl::memory_object::dim2(
+				size/2,
+				size/2)),
 		coarse_boundary(
-			planar_cache_,
-			size/2);
+			buffer_cache_,
+			sge::opencl::memory_object::dim2(
+				size/2,
+				size/2));
 
 	// Downsample the residual, store in rd
 	this->downsample(
@@ -201,12 +216,15 @@ flakelib::laplace_solver::multigrid::solve(
 	// To recursively call the solve function again, we need to provide an
 	// initial guess. For the recursion steps, we use 0 as the initial
 	// guess (or rather, the matrix containing all zeroes)
-	flakelib::planar_pool::scoped_lock temporary_initial_guess(
-		planar_cache_,
-		size/2);
+	flakelib::buffer_pool::planar_lock<cl_float> temporary_initial_guess(
+		buffer_cache_,
+		sge::opencl::memory_object::dim2(
+				size/2,
+				size/2));
 
-	utility_.null_image(
-		temporary_initial_guess.value());
+	utility_.null_buffer(
+		flakelib::buffer::linear_view<cl_float>(
+			temporary_initial_guess.value().buffer()));
 
 	this->solve(
 		laplace_solver::rhs(
@@ -249,9 +267,11 @@ flakelib::laplace_solver::multigrid::solve(
 		p0.value(),
 		FCPPT_TEXT("upsampled error"));
 
-	flakelib::planar_pool::scoped_lock h(
-		planar_cache_,
-		size);
+	flakelib::buffer_pool::planar_lock<cl_float> h(
+		buffer_cache_,
+		sge::opencl::memory_object::dim2(
+			size,
+			size));
 
 	this->add(
 		laplace_solver::from(
@@ -321,32 +341,43 @@ flakelib::laplace_solver::multigrid::laplacian_residual(
 	laplacian_residual_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		_rhs.get());
+		_rhs.get().buffer());
 
 	laplacian_residual_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		_boundary.get());
+		_boundary.get().buffer());
 
 	laplacian_residual_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
-		_from.get());
+		_from.get().buffer());
 
 	laplacian_residual_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
-		_to.get());
+		_to.get().buffer());
 
 	laplacian_residual_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			4),
+		static_cast<cl_int>(
+			_rhs.get().size()[0]));
+
+	laplacian_residual_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			5),
 		grid_scale_);
 
-	flakelib::cl::apply_kernel_to_planar_image(
-		laplacian_residual_kernel_,
+	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
-		_to.get());
+		laplacian_residual_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_rhs.get().size()[0])
+			(_rhs.get().size()[1]).container(),
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(8)
+			(8).container());
 }
 
 // from = big
@@ -362,17 +393,28 @@ flakelib::laplace_solver::multigrid::downsample(
 	downsample_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		_from.get());
+		_from.get().buffer());
 
 	downsample_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		_to.get());
+		_to.get().buffer());
 
-	flakelib::cl::apply_kernel_to_planar_image(
-		downsample_kernel_,
+	downsample_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		static_cast<cl_int>(
+			_from.get().size()[0]));
+
+	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
-		_to.get());
+		downsample_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_to.get().size()[0])
+			(_to.get().size()[1]).container(),
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(8)
+			(8).container());
 }
 
 // from = small
@@ -388,20 +430,26 @@ flakelib::laplace_solver::multigrid::upsample(
 	upsample_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		_from.get());
+		_from.get().buffer());
 
 	upsample_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		_to.get());
+		_to.get().buffer());
+
+	upsample_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		static_cast<cl_int>(
+			_from.get().size()[0]));
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		upsample_kernel_,
-		fcppt::assign::make_array<std::size_t>
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(_to.get().size()[0])
 			(_to.get().size()[1]).container(),
-		fcppt::assign::make_array<std::size_t>
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(8)
 			(8).container());
 }
@@ -421,49 +469,53 @@ flakelib::laplace_solver::multigrid::add(
 	add_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		_from0.get());
+		_from0.get().buffer());
 
 	add_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		_from1.get());
+		_from1.get().buffer());
 
 	add_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
-		_to.get());
+		_to.get().buffer());
 
+	// This is a _linear_ operation, so specify it in one dimension
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		add_kernel_,
 		fcppt::assign::make_array<std::size_t>
-			(_to.get().size()[0])
-			(_to.get().size()[1]).container(),
+			(_to.get().size().content()).container(),
 		fcppt::assign::make_array<std::size_t>
-			(8)
-			(8).container());
+			(64).container());
 }
 
 void
 flakelib::laplace_solver::multigrid::copy_to_planar_data(
-	sge::opencl::memory_object::image::planar &_image,
+	buffer::planar_view<cl_float> const &_image,
 	fcppt::string const &_description)
 {
 	if(!debug_output_)
 		return;
 
-	sge::opencl::memory_object::image::planar &temp =
-		planar_cache_.get(
-			_image.size());
+	fcppt::container::ptr::push_back_unique_ptr(
+		debug_buffers_,
+		fcppt::make_unique_ptr
+		<
+			buffer_pool::planar_lock<cl_float>
+		>(
+			fcppt::ref(
+				buffer_cache_),
+			_image.size()));
 
-	planar_cache_.lock(
-		temp);
-
-	utility_.copy_image(
-		utility::from(
-			_image),
-		utility::to(
-			temp),
+	utility_.copy_buffer(
+		utility::copy_from(
+			buffer::linear_view<cl_float>(
+				_image.buffer())),
+		utility::copy_to(
+			buffer::linear_view<cl_float>(
+				debug_buffers_.back().value().buffer())),
 		utility::multiplier(
 			10.0f));
 
@@ -472,7 +524,6 @@ flakelib::laplace_solver::multigrid::copy_to_planar_data(
 			(fcppt::format(FCPPT_TEXT("%1%: %2%\nN: %3%"))
 				% _image.size()[0]
 				% _description
-				% utility_.frobenius_norm(_image)).str(),
-			flakelib::planar_object(
-				&temp)));
+				% utility_.frobenius_norm(buffer::linear_view<cl_float>(_image.buffer()))).str(),
+			&debug_buffers_.back().value()));
 }

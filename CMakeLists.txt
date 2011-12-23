@@ -103,7 +103,7 @@ SET(
 	src/flakelib/laplace_solver/base.cpp
 	src/flakelib/laplace_solver/dynamic_factory.cpp
 	src/flakelib/laplace_solver/jacobi.cpp
-	#	src/flakelib/laplace_solver/multigrid.cpp
+	src/flakelib/laplace_solver/multigrid.cpp
 	src/flakelib/laplace_tester.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp

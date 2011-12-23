@@ -11,12 +11,16 @@
 #include <flakelib/laplace_solver/rhs.hpp>
 #include <flakelib/laplace_solver/termination_size.hpp>
 #include <flakelib/laplace_solver/to.hpp>
-#include <flakelib/planar_pool/object_fwd.hpp>
+#include <flakelib/buffer_pool/object_fwd.hpp>
+#include <flakelib/buffer_pool/planar_lock_fwd.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
+#include <fcppt/config/external_end.hpp>
 
 
 namespace flakelib
@@ -32,7 +36,7 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	multigrid(
-		flakelib::planar_pool::object &,
+		flakelib::buffer_pool::object &,
 		flakelib::utility::object &,
 		sge::opencl::command_queue::object &,
 		flakelib::build_options const &,
@@ -53,7 +57,11 @@ public:
 
 	~multigrid();
 private:
-	flakelib::planar_pool::object &planar_cache_;
+	typedef
+	boost::ptr_vector<flakelib::buffer_pool::planar_lock<cl_float> >
+	debug_buffer_sequence;
+
+	flakelib::buffer_pool::object &buffer_cache_;
 	flakelib::utility::object &utility_;
 	sge::opencl::command_queue::object &command_queue_;
 	laplace_solver::base &inner_solver_;
@@ -65,6 +73,7 @@ private:
 	sge::opencl::kernel::object downsample_kernel_;
 	sge::opencl::kernel::object upsample_kernel_;
 	sge::opencl::kernel::object add_kernel_;
+	debug_buffer_sequence debug_buffers_;
 	flakelib::additional_planar_data additional_planar_data_;
 
 	void
@@ -92,7 +101,7 @@ private:
 
 	void
 	copy_to_planar_data(
-		sge::opencl::memory_object::image::planar &,
+		buffer::planar_view<cl_float> const &,
 		fcppt::string const &);
 };
 }

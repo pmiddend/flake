@@ -48,11 +48,11 @@ public:
 		utility::from const &,
 		utility::to const &,
 		utility::multiplier const &);
+	*/
 
 	cl_float
 	frobenius_norm(
-		flakelib::planar_buffer &);
-		*/
+		buffer::linear_view<cl_float> const &);
 
 	~object();
 private:
@@ -62,7 +62,6 @@ private:
 	sge::opencl::kernel::object null_float_buffer_kernel_;
 	sge::opencl::kernel::object generate_float_oscillation_kernel_;
 	sge::opencl::kernel::object frobenius_norm_tile_kernel_;
-	sge::opencl::kernel::object frobenius_norm_kernel_;
 	sge::opencl::kernel::object planar_vector_magnitude_kernel_;
 };
 }
