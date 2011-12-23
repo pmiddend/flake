@@ -44,7 +44,7 @@ flakelib::monitor::planar_converter::planar_converter(
 
 void
 flakelib::monitor::planar_converter::to_arrow_vb(
-	buffer::planar_view<cl_float> const &_planar_buffer,
+	buffer::planar_view<cl_float2> const &_planar_buffer,
 	sge::opencl::memory_object::buffer &_vb,
 	monitor::grid_scale const &_grid_scale,
 	monitor::arrow_scale const &_arrow_scale)

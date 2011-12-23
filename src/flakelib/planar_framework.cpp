@@ -38,7 +38,7 @@ flakelib::planar_framework::planar_framework(
 	flakelib::boundary_view const &_boundary,
 	sge::parse::json::object const &_config_file,
 	sge::input::cursor::object &_cursor,
-	planar_pool::object &_scalar_pool,
+	buffer_pool::object &_scalar_pool,
 	utility::object &_utility)
 :
 	renderer_(
@@ -101,6 +101,7 @@ flakelib::planar_framework::planar_framework(
 				sge::renderer::texture::address_mode::clamp),
 			sge::renderer::resource_flags_field(
 				sge::renderer::resource_flags::none))),
+	/*
 	density_advector_(
 		_command_queue,
 		_scalar_pool,
@@ -138,7 +139,7 @@ flakelib::planar_framework::planar_framework(
 				velocity_arrows_.widget().axis_policy().x().minimum_size()),
 			static_cast<monitor::scalar>(
 				velocity_arrows_.widget().axis_policy().y().minimum_size())),
-		planar_converter_),
+		planar_converter_),*/
 	additional_data_()
 {
 	viewport_widget_.child(
@@ -151,9 +152,11 @@ flakelib::planar_framework::planar_framework(
 		velocity_arrows_.widget(),
 		rucksack::alignment::left_or_top);
 
+	/*
 	master_box_.push_back_child(
 		density_monitor_.monitor().widget(),
 		rucksack::alignment::left_or_top);
+		*/
 
 	for(
 		flakelib::additional_planar_data::const_iterator it =
@@ -193,6 +196,7 @@ void
 flakelib::planar_framework::update(
 	flakelib::duration const &_dt)
 {
+	/*
 	density_cursor_splatter_.update_cursor_rectangle(
 		density_monitor_.rectangle());
 
@@ -203,10 +207,10 @@ flakelib::planar_framework::update(
 
 	density_monitor_.update(
 		density_advector_.density_image());
+		*/
 
-	planar_converter_.to_vb(
-		flakelib::planar_object(
-			simulation_.velocity()),
+	planar_converter_.to_arrow_vb(
+		simulation_.velocity(),
 		velocity_arrows_.cl_buffer(),
 		monitor::grid_scale(
 			velocity_arrows_.grid_scale()),
@@ -227,8 +231,8 @@ flakelib::planar_framework::update(
 			if(it->key() != it2->first)
 				continue;
 
-			planar_converter_.to_texture(
-				it->value(),
+			planar_converter_.scalar_to_texture(
+				*it->value(),
 				it2->second->cl_texture(),
 				monitor::scaling_factor(
 					it2->second->scaling_factor()));

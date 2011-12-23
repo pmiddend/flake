@@ -1,4 +1,3 @@
-#if 0
 #include <flakelib/duration.hpp>
 #include <flakelib/exception.hpp>
 #include <flakelib/media_path.hpp>
@@ -6,7 +5,7 @@
 #include <flakelib/planar_framework.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/laplace_solver/dynamic_factory.hpp>
-#include <flakelib/planar_pool/object.hpp>
+#include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/simulation/stam/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/config/media_path.hpp>
@@ -32,7 +31,6 @@
 #include <sge/log/global_context.hpp>
 #include <sge/media/all_extensions.hpp>
 #include <sge/opencl/single_device_system.hpp>
-#include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/parse/json/array.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/object.hpp>
@@ -252,17 +250,8 @@ try
 					config_file,
 					sge::parse::json::string_to_path(FCPPT_TEXT("stam-test/boundary-file"))));
 
-	flakelib::planar_pool::object scalar_pool(
-		opencl_system.context(),
-		sge::opencl::memory_object::create_image_format(
-			CL_R,
-			CL_FLOAT));
-
-	flakelib::planar_pool::object arrow_pool(
-		opencl_system.context(),
-		sge::opencl::memory_object::create_image_format(
-			CL_RG,
-			CL_FLOAT));
+	flakelib::buffer_pool::object scalar_pool(
+		opencl_system.context());
 
 	flakelib::utility::object utility_object(
 		opencl_system.command_queue(),
@@ -287,10 +276,7 @@ try
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("stam-test"))),
 		global_build_options,
-		flakelib::simulation::arrow_image_cache(
-			arrow_pool),
-		flakelib::simulation::scalar_image_cache(
-			scalar_pool),
+		scalar_pool,
 		utility_object,
 		configurable_solver.value());
 
@@ -409,10 +395,3 @@ catch(...)
 	std::cerr << "unknown exception caught\n";
 	return EXIT_FAILURE;
 }
-#else
-#include <flakelib/main_head.hpp>
-
-FLAKELIB_MAIN_HEAD
-{
-}
-#endif

@@ -1,7 +1,8 @@
 #ifndef FLAKELIB_SIMULATION_STAM_PRESSURE_HPP_INCLUDED
 #define FLAKELIB_SIMULATION_STAM_PRESSURE_HPP_INCLUDED
 
-#include <sge/opencl/memory_object/image/planar_fwd.hpp>
+#include <flakelib/buffer/planar_view_fwd.hpp>
+#include <sge/opencl/clinclude.hpp>
 #include <fcppt/strong_typedef.hpp>
 
 namespace flakelib
@@ -11,7 +12,7 @@ namespace simulation
 namespace stam
 {
 FCPPT_MAKE_STRONG_TYPEDEF(
-	sge::opencl::memory_object::image::planar &,
+	flakelib::buffer::planar_view<cl_float> const &,
 	pressure);
 }
 }

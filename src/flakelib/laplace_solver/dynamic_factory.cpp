@@ -1,7 +1,7 @@
 #include <flakelib/exception.hpp>
 #include <flakelib/laplace_solver/dynamic_factory.hpp>
 #include <flakelib/laplace_solver/jacobi.hpp>
-//#include <flakelib/laplace_solver/multigrid.hpp>
+#include <flakelib/laplace_solver/multigrid.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/object.hpp>
 #include <sge/parse/json/string_to_path.hpp>
@@ -35,7 +35,6 @@ flakelib::laplace_solver::dynamic_factory::dynamic_factory(
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("grid-scale")));
 
-#if 0
 	if(type == FCPPT_TEXT("multigrid"))
 	{
 		sge::parse::json::object const &inner_json =
@@ -78,8 +77,6 @@ flakelib::laplace_solver::dynamic_factory::dynamic_factory(
 					false)));
 	}
 	else if (type == FCPPT_TEXT("jacobi"))
-#endif
-	if (type == FCPPT_TEXT("jacobi"))
 	{
 		solver_.take(
 			fcppt::make_unique_ptr<laplace_solver::jacobi>(

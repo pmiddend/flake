@@ -29,7 +29,7 @@ public:
 
 	void
 	to_arrow_vb(
-		buffer::planar_view<cl_float> const &,
+		buffer::planar_view<cl_float2> const &,
 		// Technically a planar buffer as well, but one coming from
 		// OpenGL.
 		sge::opencl::memory_object::buffer &,

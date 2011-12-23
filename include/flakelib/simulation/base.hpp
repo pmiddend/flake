@@ -3,8 +3,8 @@
 
 #include <flakelib/additional_planar_data.hpp>
 #include <flakelib/duration.hpp>
-#include <flakelib/planar_buffer_fwd.hpp>
-#include <sge/opencl/memory_object/image/planar_fwd.hpp>
+#include <flakelib/buffer/planar_view.hpp>
+#include <sge/opencl/clinclude.hpp>
 #include <fcppt/noncopyable.hpp>
 
 
@@ -23,7 +23,7 @@ public:
 	update(
 		flakelib::duration const &) = 0;
 
-	virtual flakelib::planar_buffer const &
+	virtual flakelib::buffer::planar_view<cl_float2> const
 	velocity() = 0;
 
 	virtual

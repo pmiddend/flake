@@ -112,14 +112,13 @@ SET(
 	src/flakelib/monitor/planar_arrows.cpp
 	src/flakelib/monitor/planar_converter.cpp
 	src/flakelib/monitor/texture.cpp
-	#src/flakelib/planar_buffer.cpp
-	#	src/flakelib/planar_framework.cpp
+	src/flakelib/planar_framework.cpp
 	src/flakelib/buffer_pool/object.cpp
 	src/flakelib/profiler/object.cpp
 	src/flakelib/profiler/scoped.cpp
 	src/flakelib/scoped_frame_limiter.cpp
-	#	src/flakelib/simulation/base.cpp
-	#	src/flakelib/simulation/stam/object.cpp
+	src/flakelib/simulation/base.cpp
+	src/flakelib/simulation/stam/object.cpp
 	src/flakelib/sprite_drawer_3d.cpp
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/utility/object.cpp

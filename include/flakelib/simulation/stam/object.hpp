@@ -5,20 +5,19 @@
 #include <flakelib/boundary_view.hpp>
 #include <flakelib/build_options.hpp>
 #include <flakelib/laplace_solver/base_fwd.hpp>
-#include <flakelib/planar_pool/unique_lock.hpp>
+#include <flakelib/buffer_pool/planar_lock.hpp>
+#include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/profiler/object.hpp>
-#include <flakelib/simulation/arrow_image_cache.hpp>
 #include <flakelib/simulation/base.hpp>
-#include <flakelib/simulation/scalar_image_cache.hpp>
 #include <flakelib/simulation/stam/pressure.hpp>
 #include <flakelib/simulation/stam/rhs.hpp>
 #include <flakelib/simulation/stam/solution.hpp>
 #include <flakelib/simulation/stam/vector_field.hpp>
 #include <flakelib/utility/object_fwd.hpp>
+#include <fcppt/unique_ptr.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
-#include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <sge/parse/json/object_fwd.hpp>
 
@@ -50,13 +49,12 @@ public:
 		flakelib::boundary_view const &,
 		sge::parse::json::object const &,
 		flakelib::build_options const &,
-		simulation::arrow_image_cache const &,
-		simulation::scalar_image_cache const &,
+		buffer_pool::object &,
 		utility::object &,
 		laplace_solver::base &);
 
 	// @override
-	flakelib::planar_object const
+	buffer::planar_view<cl_float2> const
 	velocity();
 
 	// @override
@@ -72,10 +70,33 @@ public:
 
 	~object();
 private:
+	typedef
+	flakelib::buffer_pool::planar_lock<cl_float>
+	planar_float_lock;
+
+	typedef
+	flakelib::buffer_pool::planar_lock<cl_float2>
+	planar_float2_lock;
+
+	typedef
+	fcppt::unique_ptr<planar_float_lock>
+	unique_planar_float_lock;
+
+	typedef
+	fcppt::unique_ptr<planar_float2_lock>
+	unique_planar_float2_lock;
+
+	typedef
+	flakelib::buffer::planar_view<cl_float>
+	planar_float_view;
+
+	typedef
+	flakelib::buffer::planar_view<cl_float2>
+	planar_float2_view;
+
 	sge::opencl::command_queue::object &command_queue_;
 	utility::object &utility_;
-	planar_pool::object &arrow_image_cache_;
-	planar_pool::object &scalar_image_cache_;
+	buffer_pool::object &buffer_cache_;
 	laplace_solver::base &laplace_solver_;
 	cl_float const external_force_magnitude_;
 	cl_float const grid_scale_;
@@ -93,48 +114,47 @@ private:
 	flakelib::profiler::object project_profiler_;
 	flakelib::profiler::object solve_profiler_;
 	mutable flakelib::additional_planar_data additional_planar_data_;
-	sge::opencl::memory_object::image::planar boundary_image_;
-	flakelib::planar_pool::unique_lock velocity_image_;
-	flakelib::planar_pool::unique_lock divergence_image_;
-	flakelib::planar_pool::unique_lock vector_magnitude_image_;
-	flakelib::planar_pool::unique_lock residual_image_;
-	flakelib::planar_pool::unique_lock pressure_image_;
+	planar_float_lock boundary_image_;
+	unique_planar_float2_lock velocity_image_;
+	unique_planar_float_lock divergence_image_;
+	unique_planar_float_lock vector_magnitude_image_;
+	unique_planar_float_lock residual_image_;
+	unique_planar_float_lock pressure_image_;
 
-	planar_pool::unique_lock
+	unique_planar_float2_lock
 	advect(
-		sge::opencl::memory_object::image::planar &,
+		planar_float2_view const &,
 		flakelib::duration const &);
 
-	planar_pool::unique_lock
+	void
 	apply_forces(
-		sge::opencl::memory_object::image::planar &,
-		flakelib::duration const &);
+		planar_float2_view const &);
 
-	planar_pool::unique_lock
+	unique_planar_float_lock
 	divergence(
-		sge::opencl::memory_object::image::planar &);
+		planar_float2_view const &);
 
-	planar_pool::unique_lock
+	unique_planar_float_lock
 	solve(
-		sge::opencl::memory_object::image::planar &);
+		planar_float_view const &);
 
-	planar_pool::unique_lock
+	unique_planar_float2_lock
 	gradient_and_subtract(
 		stam::vector_field const &,
 		stam::pressure const &);
 
-	planar_pool::unique_lock
+	unique_planar_float_lock
 	laplacian_residual(
 		stam::solution const &,
 		stam::rhs const &);
 
-	planar_pool::unique_lock
+	unique_planar_float_lock
 	vector_magnitude(
-		sge::opencl::memory_object::image::planar &);
+		planar_float2_view const &);
 
-	planar_pool::unique_lock
+	unique_planar_float2_lock
 	gradient(
-		sge::opencl::memory_object::image::planar &);
+		planar_float_view const &);
 };
 }
 }
