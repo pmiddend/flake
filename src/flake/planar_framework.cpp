@@ -30,8 +30,9 @@
 #include <sge/input/keyboard/key_code.hpp>
 #include <sge/log/global_context.hpp>
 #include <sge/media/all_extensions.hpp>
-#include <sge/opencl/single_device_system.hpp>
 #include <sge/opencl/memory_object/create_image_format.hpp>
+#include <sge/opencl/single_device_system/object.hpp>
+#include <sge/opencl/single_device_system/parameters.hpp>
 #include <sge/parse/json/array.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/object.hpp>
@@ -228,10 +229,10 @@ try
 					fcppt::ref(
 						console_gfx)))));
 
-	sge::opencl::single_device_system opencl_system(
-		sge::opencl::optional_renderer(
-			sys.renderer()),
-		sge::opencl::context::optional_error_callback());
+	sge::opencl::single_device_system::object opencl_system(
+		sge::opencl::single_device_system::parameters()
+			.renderer(
+				sys.renderer()));
 
 	flakelib::build_options global_build_options(
 		std::string(

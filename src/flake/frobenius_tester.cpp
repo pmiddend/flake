@@ -6,7 +6,7 @@
 #include <sge/image2d/system.hpp>
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/media/all_extensions.hpp>
-#include <sge/opencl/single_device_system.hpp>
+#include <sge/opencl/single_device_system/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/systems/image2d.hpp>
 #include <sge/systems/instance.hpp>

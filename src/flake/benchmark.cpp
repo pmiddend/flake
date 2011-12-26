@@ -13,7 +13,8 @@
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/log/global_context.hpp>
 #include <sge/media/all_extensions.hpp>
-#include <sge/opencl/single_device_system.hpp>
+#include <sge/opencl/single_device_system/object.hpp>
+#include <sge/opencl/single_device_system/parameters.hpp>
 #include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/parse/json/array.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
@@ -63,9 +64,8 @@ try
 				flakelib::media_path_from_string(
 					FCPPT_TEXT("config.json"))));
 
-	sge::opencl::single_device_system opencl_system(
-		(sge::opencl::optional_renderer()),
-		(sge::opencl::context::optional_error_callback()));
+	sge::opencl::single_device_system::object opencl_system(
+		(sge::opencl::single_device_system::parameters()));
 
 	flakelib::build_options global_build_options(
 		std::string(
