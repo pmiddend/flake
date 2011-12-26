@@ -67,9 +67,7 @@ flakelib::utility::object::null_buffer(
 		command_queue_,
 		null_float_buffer_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(_f.size()).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(64).container());
+			(_f.size()).container());
 }
 
 void
@@ -97,9 +95,7 @@ flakelib::utility::object::copy_buffer(
 		command_queue_,
 		copy_float_buffer_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(_from.get().size()).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(64).container());
+			(_from.get().size()).container());
 }
 
 #if 0
@@ -156,10 +152,7 @@ flakelib::utility::object::generate_oscillation(
 		generate_float_oscillation_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(_f.size()[0])
-			(_f.size()[1]).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(8)
-			(8).container());
+			(_f.size()[1]).container());
 }
 
 cl_float

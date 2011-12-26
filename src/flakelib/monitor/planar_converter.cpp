@@ -88,10 +88,7 @@ flakelib::monitor::planar_converter::to_arrow_vb(
 		to_arrow_vb_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(_planar_buffer.size().w())
-			(_planar_buffer.size().h()).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(64)
-			(1).container());
+			(_planar_buffer.size().h()).container());
 }
 
 void
@@ -131,10 +128,7 @@ flakelib::monitor::planar_converter::scalar_to_texture(
 		scalar_to_texture_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(_planar_buffer.size().w())
-			(_planar_buffer.size().h()).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(64)
-			(1).container());
+			(_planar_buffer.size().h()).container());
 }
 
 flakelib::monitor::planar_converter::~planar_converter()

@@ -121,7 +121,8 @@ apply_external_forces(
 	// Left border (fill with force magnitude)
 	input[buffer_width * i] =
 		(flake_real2)(
-			force_magnitude);
+			force_magnitude,
+			FLAKE_REAL_LIT(0.0));
 
 	// Top border (fill with top+1 border)
 	input[i] =
@@ -174,7 +175,7 @@ divergence(
 			(FLAKE_REAL_LIT(1.0) - boundary[bottom_index]) * input[bottom_index];
 
 	output[current_index] =
-		((right.x - left.x) + (top.y - bottom.y)) / (FLAKE_REAL_LIT(2.0) * FLAKE_FROM_FLOAT(grid_scale));
+		((right.x - left.x) + (top.y - bottom.y)) / (FLAKE_REAL_LIT(2.0) * grid_scale);
 }
 
 // Calculate the gradient of p and calculate
@@ -262,7 +263,7 @@ gradient_and_subtract(
 		w[current_index];
 
 	flake_real2 const pressure_gradient =
-		(FLAKE_REAL_LIT(0.5) / FLAKE_FROM_FLOAT(grid_scale)) *
+		(FLAKE_REAL_LIT(0.5) / grid_scale) *
 			(flake_real2)(
 				right-left,
 				top-bottom);

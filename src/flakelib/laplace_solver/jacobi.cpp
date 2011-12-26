@@ -141,10 +141,7 @@ flakelib::laplace_solver::jacobi::solve(
 			jacobi_kernel_,
 			fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 				(_rhs.get().size()[0])
-				(_rhs.get().size()[1]).container(),
-			fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-				(64)
-				(1).container());
+				(_rhs.get().size()[1]).container());
 	}
 }
 

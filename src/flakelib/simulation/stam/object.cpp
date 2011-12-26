@@ -325,10 +325,7 @@ flakelib::simulation::stam::object::advect(
 		advect_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(from.size()[0])
-			(from.size()[1]).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(8)
-			(8).container());
+			(from.size()[1]).container());
 
 	return
 		fcppt::move(
@@ -366,9 +363,7 @@ flakelib::simulation::stam::object::apply_forces(
 		command_queue_,
 		apply_external_forces_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(from.size()[0]).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(64).container());
+			(from.size()[0]).container());
 }
 
 flakelib::simulation::stam::object::unique_planar_float_lock
@@ -416,10 +411,7 @@ flakelib::simulation::stam::object::divergence(
 		divergence_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(from.size()[0])
-			(from.size()[1]).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(8)
-			(8).container());
+			(from.size()[1]).container());
 
 	return
 		fcppt::move(
@@ -517,10 +509,7 @@ flakelib::simulation::stam::object::gradient_and_subtract(
 		gradient_and_subtract_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(_pressure.get().size()[0])
-			(_pressure.get().size()[1]).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(8)
-			(8).container());
+			(_pressure.get().size()[1]).container());
 
 	return
 		fcppt::move(
@@ -577,10 +566,7 @@ flakelib::simulation::stam::object::laplacian_residual(
 		laplacian_residual_absolute_value_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(_solution.get().size()[0])
-			(_solution.get().size()[1]).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(8)
-			(8).container());
+			(_solution.get().size()[1]).container());
 
 	return
 		fcppt::move(

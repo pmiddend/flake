@@ -374,10 +374,7 @@ flakelib::laplace_solver::multigrid::laplacian_residual(
 		laplacian_residual_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(_rhs.get().size()[0])
-			(_rhs.get().size()[1]).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(8)
-			(8).container());
+			(_rhs.get().size()[1]).container());
 }
 
 // from = big
@@ -411,10 +408,7 @@ flakelib::laplace_solver::multigrid::downsample(
 		downsample_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(_to.get().size()[0])
-			(_to.get().size()[1]).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(8)
-			(8).container());
+			(_to.get().size()[1]).container());
 }
 
 // from = small
@@ -448,10 +442,7 @@ flakelib::laplace_solver::multigrid::upsample(
 		upsample_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(_to.get().size()[0])
-			(_to.get().size()[1]).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(8)
-			(8).container());
+			(_to.get().size()[1]).container());
 }
 
 void
@@ -486,9 +477,7 @@ flakelib::laplace_solver::multigrid::add(
 		command_queue_,
 		add_kernel_,
 		fcppt::assign::make_array<std::size_t>
-			(_to.get().size().content()).container(),
-		fcppt::assign::make_array<std::size_t>
-			(64).container());
+			(_to.get().size().content()).container());
 }
 
 void
