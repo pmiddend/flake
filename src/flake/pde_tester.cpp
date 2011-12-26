@@ -16,7 +16,8 @@
 #include <sge/input/keyboard/key_code.hpp>
 #include <sge/log/global_context.hpp>
 #include <sge/media/all_extensions.hpp>
-#include <sge/opencl/single_device_system.hpp>
+#include <sge/opencl/single_device_system/object.hpp>
+#include <sge/opencl/single_device_system/parameters.hpp>
 #include <sge/renderer/depth_stencil_buffer.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/no_multi_sampling.hpp>
@@ -97,10 +98,10 @@ try
 				sge::systems::cursor_option_field(
 					sge::systems::cursor_option::exclusive))));
 
-	sge::opencl::single_device_system opencl_system(
-		sge::opencl::optional_renderer(
-			sys.renderer()),
-		sge::opencl::context::optional_error_callback());
+	sge::opencl::single_device_system::object opencl_system(
+		sge::opencl::single_device_system::parameters()
+			.renderer(
+				sys.renderer()));
 
 	flakelib::buffer_pool::object cache(
 		opencl_system.context());
