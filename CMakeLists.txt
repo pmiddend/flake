@@ -135,7 +135,8 @@ ADD_EXECUTABLE(
 TARGET_LINK_LIBRARIES(
 	planar_framework
 	flakelib
-	${Fcppt_LIBRARIES}
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
 	${SGE_LIBRARIES}
 	${Rucksack_LIBRARIES}
 	${Boost_LIBRARIES})
@@ -156,7 +157,8 @@ ADD_EXECUTABLE(
 TARGET_LINK_LIBRARIES(
 	arrow_visual
 	flakelib
-	${Fcppt_LIBRARIES}
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
 	${SGE_LIBRARIES}
 	${Rucksack_LIBRARIES}
 	${Boost_LIBRARIES})
@@ -177,7 +179,8 @@ ADD_EXECUTABLE(
 TARGET_LINK_LIBRARIES(
 	benchmark
 	flakelib
-	${Fcppt_LIBRARIES}
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
 	${SGE_LIBRARIES}
 	${Rucksack_LIBRARIES}
 	${Boost_LIBRARIES})
@@ -198,7 +201,8 @@ ADD_EXECUTABLE(
 TARGET_LINK_LIBRARIES(
 	pde_tester
 	flakelib
-	${Fcppt_LIBRARIES}
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
 	${SGE_LIBRARIES}
 	${Rucksack_LIBRARIES}
 	${Boost_LIBRARIES})
@@ -219,7 +223,8 @@ ADD_EXECUTABLE(
 TARGET_LINK_LIBRARIES(
 	frobenius_tester
 	flakelib
-	${Fcppt_LIBRARIES}
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
 	${SGE_LIBRARIES}
 	${Boost_LIBRARIES})
 
