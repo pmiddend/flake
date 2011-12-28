@@ -235,7 +235,7 @@ try
 
 	flakelib::build_options global_build_options(
 		std::string(
-			"-cl-mad-enable -cl-fast-relaxed-math -Werror ")+
+			"-Werror ")+
 		"-I "+
 		fcppt::to_std_string(
 			fcppt::filesystem::path_to_string(
@@ -333,7 +333,7 @@ try
 					fcppt::ref(
 						visualization),
 					flakelib::duration(
-						0.01f)))));
+						1.00f)))));
 
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer(
 		sge::timer::parameters<sge::timer::clocks::standard>(
@@ -350,8 +350,6 @@ try
 				delta_timer);
 
 		/*
-		if(delta > flakelib::duration(0.3f))
-		*/
 		{
 			simulation.update(
 				delta);
@@ -361,6 +359,7 @@ try
 
 			delta = flakelib::duration(0.0f);
 		}
+		*/
 
 		// If we have no viewport (yet), don't do anything (this is just a
 		// precaution, we _might_ divide by zero somewhere below, otherwise)

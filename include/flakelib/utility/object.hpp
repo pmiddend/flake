@@ -6,6 +6,8 @@
 #include <flakelib/buffer/linear_view_fwd.hpp>
 #include <flakelib/utility/copy_from.hpp>
 #include <flakelib/utility/copy_to.hpp>
+#include <flakelib/utility/planar_vector_magnitude_from.hpp>
+#include <flakelib/utility/planar_vector_magnitude_to.hpp>
 #include <flakelib/utility/multiplier.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
@@ -42,13 +44,11 @@ public:
 	generate_oscillation(
 		buffer::planar_view<cl_float> const &);
 
-	/*
 	void
 	planar_vector_magnitude(
-		utility::from const &,
-		utility::to const &,
+		utility::planar_vector_magnitude_from const &,
+		utility::planar_vector_magnitude_to const &,
 		utility::multiplier const &);
-	*/
 
 	cl_float
 	frobenius_norm(

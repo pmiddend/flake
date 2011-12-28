@@ -1,24 +1,12 @@
 #include "float_handling.cl"
 #include "positions.cl"
 
-sampler_t const absolute_clamping_nearest =
-	CLK_NORMALIZED_COORDS_FALSE |
-	CLK_ADDRESS_CLAMP_TO_EDGE |
-	CLK_FILTER_NEAREST;
-
 kernel void
 copy_float_buffer(
 	global float const *from,
 	global float *to,
 	float const multiplier)
 {
-	int2 const position =
-		(int2)(
-			get_global_id(
-				0),
-			get_global_id(
-				1));
-
 	to[get_global_id(0)] =
 		multiplier * from[get_global_id(0)];
 }
@@ -102,8 +90,9 @@ frobenius_norm_tile(
 
 kernel void
 planar_vector_magnitude(
-	global read_only image2d_t input,
-	global write_only image2d_t output,
+	global float2 const *input,
+	global float *output,
+	int const buffer_width,
 	float const scaling)
 {
 	int2 const position =
@@ -113,16 +102,8 @@ planar_vector_magnitude(
 			get_global_id(
 				1));
 
-	FLAKE_WRITE_IMAGE_FUNCTION(
-		output,
-		position,
-		(flake_real4)(
-			length(
-				FLAKE_READ_IMAGE_FUNCTION(
-					input,
-					absolute_clamping_nearest,
-					position).xy) * scaling,
-			FLAKE_REAL_LIT(0.0),
-			FLAKE_REAL_LIT(0.0),
-			FLAKE_REAL_LIT(0.0)));
+	output[position.y * buffer_width + position.x] =
+		scaling *
+		length(
+			input[position.y * buffer_width + position.x]);
 }

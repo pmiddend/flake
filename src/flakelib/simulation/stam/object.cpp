@@ -98,6 +98,10 @@ flakelib::simulation::stam::object::object(
 		main_program_,
 		sge::opencl::kernel::name(
 			"gradient_and_subtract")),
+	gradient_kernel_(
+		main_program_,
+		sge::opencl::kernel::name(
+			"gradient")),
 	parent_profiler_(
 		FCPPT_TEXT("stam simulation"),
 		profiler::optional_parent(),
@@ -141,6 +145,11 @@ flakelib::simulation::stam::object::object(
 			fcppt::ref(
 				buffer_cache_),
 			boundary_image_.value().size())),
+	gradient_image_(
+		fcppt::make_unique_ptr<planar_float2_lock>(
+			fcppt::ref(
+				buffer_cache_),
+			boundary_image_.value().size())),
 	// All of those images are initialized "along the way" in object::update
 	divergence_image_(),
 	vector_magnitude_image_(),
@@ -179,10 +188,12 @@ flakelib::simulation::stam::object::object(
 flakelib::buffer::planar_view<cl_float2> const
 flakelib::simulation::stam::object::velocity()
 {
-	FCPPT_ASSERT_PRE(
-		velocity_image_);
+	//FCPPT_ASSERT_PRE(
+	//	velocity_image_);
 
 	return
+	//	old_velocity_image_->value();
+//		gradient_image_->value();
 		velocity_image_->value();
 }
 
@@ -226,7 +237,7 @@ flakelib::simulation::stam::object::update(
 	this->apply_forces(
 		velocity_image_->value());
 
-	unique_planar_float2_lock advected =
+	old_velocity_image_ =
 		this->advect(
 			velocity_image_->value(),
 			dt);
@@ -239,7 +250,7 @@ flakelib::simulation::stam::object::update(
 	// but we want to visualize it.
 	divergence_image_ =
 		this->divergence(
-			advected->value());
+			old_velocity_image_->value());
 
 	// Now, the pressure, we don't need later. We could discard it after
 	// gradient_and_subtract, but we want to visualize it.
@@ -247,10 +258,14 @@ flakelib::simulation::stam::object::update(
 		this->solve(
 			divergence_image_->value());
 
+	gradient_image_ =
+		this->gradient(
+			pressure_image_->value());
+
 	velocity_image_ =
 		this->gradient_and_subtract(
 			stam::vector_field(
-				advected->value()),
+				old_velocity_image_->value()),
 			stam::pressure(
 				pressure_image_->value()));
 
@@ -287,6 +302,9 @@ flakelib::simulation::stam::object::advect(
 				buffer_cache_),
 			from.size()));
 
+	FCPPT_ASSERT_PRE(
+		&(result->value().buffer()) != &(from.buffer()));
+
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
@@ -318,7 +336,6 @@ flakelib::simulation::stam::object::advect(
 		sge::opencl::kernel::argument_index(
 			5),
 		grid_scale_);
-
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
@@ -379,6 +396,9 @@ flakelib::simulation::stam::object::divergence(
 			fcppt::ref(
 				buffer_cache_),
 			from.size()));
+
+	FCPPT_ASSERT_PRE(
+		&(result->value().buffer()) != &(from.buffer()));
 
 	divergence_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -583,15 +603,61 @@ flakelib::simulation::stam::object::vector_magnitude(
 				buffer_cache_),
 			_from.size()));
 
-	/*
 	utility_.planar_vector_magnitude(
-		utility::from(
+		utility::planar_vector_magnitude_from(
 			_from),
-		utility::to(
+		utility::planar_vector_magnitude_to(
 			result->value()),
 		utility::multiplier(
 			1.0f));
-			*/
+
+	return
+		fcppt::move(
+			result);
+}
+
+flakelib::simulation::stam::object::unique_planar_float2_lock
+flakelib::simulation::stam::object::gradient(
+	planar_float_view const &_pressure)
+{
+	unique_planar_float2_lock result(
+		fcppt::make_unique_ptr<planar_float2_lock>(
+			fcppt::ref(
+				buffer_cache_),
+			_pressure.size()));
+
+	gradient_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		_pressure.buffer());
+
+	gradient_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		boundary_image_.value().buffer());
+
+	gradient_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		result->value().buffer());
+
+	gradient_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			3),
+		static_cast<cl_int>(
+			boundary_image_.value().size()[0]));
+
+	gradient_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			4),
+		grid_scale_);
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		gradient_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_pressure.size()[0])
+			(_pressure.size()[1]).container());
 
 	return
 		fcppt::move(

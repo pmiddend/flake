@@ -3,10 +3,10 @@
 
 bool
 is_solid(
-	global float const *boundary,
+	global flake_real const *boundary,
 	size_t const index)
 {
-	return boundary[index] > FLAKE_REAL_LIT(0.2);
+	return boundary[index] > FLAKE_REAL_LIT(0.5);
 }
 
 kernel void
@@ -14,7 +14,7 @@ advect(
 	global flake_real2 const *input,
 	global flake_real2 *output,
 	global flake_real const *boundary,
-	int buffer_width,
+	int const buffer_width,
 	flake_real const dt,
 	flake_real const grid_scale)
 {
@@ -36,61 +36,54 @@ advect(
 		return;
 	}
 
-	// Retrieve the (imagined) particle's current velocity.
 	flake_real2 const current_velocity =
 		input[current_index];
 
-	// From the current position, assume the particle moves "back
-	// in time". Use its current velocity and move it by -dt.
 	flake_real2 const advected_vector =
 		FLAKE_CONVERT_REAL2(position) -
 		dt *
 		(FLAKE_REAL_LIT(1.0) / grid_scale) *
 		current_velocity;
 
-	// Clamp to the image space
-	flake_real2 const clamped_advected_vector =
-		(flake_real2)(
-			clamp(
-				advected_vector,
-				(flake_real2)(
-					FLAKE_REAL_LIT(0.0)),
-				(flake_real2)(
-					buffer_width-1)));
+	int2 advected_lefttop =
+		(int2)(
+			(int)floor(advected_vector.x),
+			(int)floor(advected_vector.y));
 
-	// Take left top and figure out the neighbors of the advected vector.
-	int2 const left_top_advected =
-		convert_int2(
-			clamped_advected_vector);
-
-	flake_real2 const
-		left =
-			input[current_index],
-		right =
-			input[FLAKE_RIGHT_OF(buffer_width,left_top_advected)],
-		leftbottom =
-			input[FLAKE_BOTTOM_OF(buffer_width,left_top_advected)],
-		rightbottom =
-			input[FLAKE_RIGHT_BOTTOM_OF(buffer_width,left_top_advected)];
+	int2 clamped_advected_vector =
+		clamp(
+			advected_lefttop,
+			(int2)(0,0),
+			(int2)(buffer_width-1,buffer_width-1));
 
 	flake_real2
 		floors,
 		fractions =
 			fract(
-				clamped_advected_vector,
+				advected_vector,
 				&floors);
 
-	// After moving back in time, we do not always end up exactly at a grid
-	// cell's center, we might be inbetween grid cells. Luckily, we can
-	// interpolate.
-	//
-	// Also note that this is the place where "diffusion" occurs. At cells with
-	// zero velocity, the only thing we do is take the current position as an
-	// integer, convert it to real and subtract (0,0) from it. Then we write it back.
-	// However, the conversion to real loses information and we end up with a
-	// slighly off-grid position. Together with linear interpolation, this leads to
-	// diffusion.
+
+	size_t const index_lefttop =
+		FLAKE_AT(buffer_width,clamped_advected_vector);
+
+	flake_real2 const
+		left =
+			input[index_lefttop],
+		right =
+			input[FLAKE_RIGHT_OF(buffer_width,clamped_advected_vector)],
+		leftbottom =
+			input[FLAKE_BOTTOM_OF(buffer_width,clamped_advected_vector)],
+		rightbottom =
+			input[FLAKE_RIGHT_BOTTOM_OF(buffer_width,clamped_advected_vector)];
+
 	output[current_index] =
+		/*
+		(1.0f - fractions.x) * (1.0f - fractions.y) * left +
+		fractions.x * (1.0f - fractions.y) * right +
+		(1.0f - fractions.x) * fractions.y * leftbottom +
+		fractions.x * fractions.y * rightbottom;
+		*/
 		mix(
 			mix(
 				left,
@@ -164,18 +157,105 @@ divergence(
 		bottom_index =
 			FLAKE_BOTTOM_OF(buffer_width,currentpos);
 
-	flake_real2 const
+	flake_real2
 		left =
-			(FLAKE_REAL_LIT(1.0) - boundary[left_index]) * input[left_index],
+//			(FLAKE_REAL_LIT(1.0) - boundary[left_index]) * input[left_index],
+			input[left_index],
 		right =
-			(FLAKE_REAL_LIT(1.0) - boundary[right_index]) * input[right_index],
+//			(FLAKE_REAL_LIT(1.0) - boundary[right_index]) * input[right_index],
+			input[right_index],
 		top =
-			(FLAKE_REAL_LIT(1.0) - boundary[top_index]) * input[top_index],
+//			(FLAKE_REAL_LIT(1.0) - boundary[top_index]) * input[top_index],
+			input[top_index],
 		bottom =
-			(FLAKE_REAL_LIT(1.0) - boundary[bottom_index]) * input[bottom_index];
+//			(FLAKE_REAL_LIT(1.0) - boundary[bottom_index]) * input[bottom_index];
+			input[bottom_index];
+
+	if(is_solid(boundary,left_index))
+		left = (float2)(0.0f);
+	if(is_solid(boundary,right_index))
+		right = (float2)(0.0f);
+	if(is_solid(boundary,top_index))
+		top = (float2)(0.0f);
+	if(is_solid(boundary,bottom_index))
+		bottom = (float2)(0.0f);
 
 	output[current_index] =
-		((right.x - left.x) + (top.y - bottom.y)) / (FLAKE_REAL_LIT(2.0) * grid_scale);
+//		((right.x - left.x) + (top.y - bottom.y)) / (FLAKE_REAL_LIT(2.0) * grid_scale);
+		((right.x - left.x) + (bottom.y - top.y)) / (FLAKE_REAL_LIT(2.0) * grid_scale);
+}
+
+// Calculate the gradient of p and calculate
+// w - gradient(p)
+kernel void
+gradient(
+	/* 0 */global flake_real const *p,
+	/* 1 */global flake_real const *boundary,
+	/* 2 */global flake_real2 *output,
+	/* 3 */int const buffer_width,
+	/* 4 */flake_real const grid_scale)
+{
+	int2 const currentpos =
+		(int2)(
+			get_global_id(
+				0),
+			get_global_id(
+				1));
+
+	int const
+		current_index =
+			FLAKE_AT(buffer_width,currentpos),
+		left_index =
+			FLAKE_LEFT_OF(buffer_width,currentpos),
+		right_index =
+			FLAKE_RIGHT_OF(buffer_width,currentpos),
+		top_index =
+			FLAKE_TOP_OF(buffer_width,currentpos),
+		bottom_index =
+			FLAKE_BOTTOM_OF(buffer_width,currentpos);
+
+	// Could be replaced by a mix on the output value below (but that would
+	// mean a lot of computations for returning 0 in the end)
+	if(is_solid(boundary,current_index))
+	{
+		output[current_index] =
+			(flake_real2)(
+				FLAKE_REAL_LIT(0.0));
+		return;
+	}
+
+	flake_real
+		center =
+			p[current_index],
+		left =
+			p[left_index],
+		right =
+			p[right_index],
+		top =
+			p[top_index],
+		bottom =
+			p[bottom_index];
+
+	// Use mix here? What about the vmask?
+	if(is_solid(boundary,left_index))
+		left = center;
+
+	if(is_solid(boundary,right_index))
+		right = center;
+
+	if(is_solid(boundary,top_index))
+		top = center;
+
+	if(is_solid(boundary,bottom_index))
+		bottom = center;
+
+	flake_real2 const pressure_gradient =
+		10.0f * (FLAKE_REAL_LIT(0.5) / grid_scale) *
+			(flake_real2)(
+				right-left,
+				bottom-top);
+
+	output[current_index] = pressure_gradient;
 }
 
 // Calculate the gradient of p and calculate
@@ -266,7 +346,7 @@ gradient_and_subtract(
 		(FLAKE_REAL_LIT(0.5) / grid_scale) *
 			(flake_real2)(
 				right-left,
-				top-bottom);
+				bottom-top);
 
 	flake_real2 result =
 		vmask * (velocity - pressure_gradient);

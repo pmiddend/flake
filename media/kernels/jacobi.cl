@@ -37,22 +37,22 @@ jacobi(
 			mix(
 				x[left_index],
 				center,
-				boundary[left_index]),
+				boundary[left_index] > 0.2f ? 1.0f : 0.0f),
 		right =
 			mix(
 				x[right_index],
 				center,
-				boundary[right_index]),
+				boundary[right_index] > 0.2f ? 1.0f : 0.0f),
 		top =
 			mix(
 				x[top_index],
 				center,
-				boundary[top_index]),
+				boundary[top_index] > 0.2f ? 1.0f : 0.0f),
 		bottom =
 			mix(
 				x[bottom_index],
 				center,
-				boundary[bottom_index]);
+				boundary[bottom_index] > 0.2f ? 1.0f : 0.0f);
 
 	flake_real const rhs_value =
 		rhs[current_index];

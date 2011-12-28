@@ -98,39 +98,40 @@ flakelib::utility::object::copy_buffer(
 			(_from.get().size()).container());
 }
 
-#if 0
 void
 flakelib::utility::object::planar_vector_magnitude(
-	utility::from const &_from,
-	utility::to const &_to,
+	utility::planar_vector_magnitude_from const &_from,
+	utility::planar_vector_magnitude_to const &_to,
 	utility::multiplier const &_multiplier)
 {
 	planar_vector_magnitude_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		_from.get());
+		_from.get().buffer());
 
 	planar_vector_magnitude_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		_to.get());
+		_to.get().buffer());
 
 	planar_vector_magnitude_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
+		static_cast<cl_int>(
+			_from.get().size()[0]));
+
+	planar_vector_magnitude_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			3),
 		_multiplier.get());
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		planar_vector_magnitude_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(_from.get().buffer().size()[0])
-			(_from.get().buffer().size()[1]).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(8)
-			(8).container());
+			(_from.get().size()[0])
+			(_from.get().size()[1]).container());
 }
-#endif
 
 void
 flakelib::utility::object::generate_oscillation(

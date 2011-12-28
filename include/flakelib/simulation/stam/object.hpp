@@ -107,6 +107,7 @@ private:
 	sge::opencl::kernel::object divergence_kernel_;
 	sge::opencl::kernel::object laplacian_residual_absolute_value_kernel_;
 	sge::opencl::kernel::object gradient_and_subtract_kernel_;
+	sge::opencl::kernel::object gradient_kernel_;
 	flakelib::profiler::object parent_profiler_;
 	flakelib::profiler::object advection_profiler_;
 	flakelib::profiler::object external_forces_profiler_;
@@ -115,7 +116,7 @@ private:
 	flakelib::profiler::object solve_profiler_;
 	mutable flakelib::additional_planar_data additional_planar_data_;
 	planar_float_lock boundary_image_;
-	unique_planar_float2_lock velocity_image_;
+	unique_planar_float2_lock velocity_image_,old_velocity_image_,gradient_image_;
 	unique_planar_float_lock divergence_image_;
 	unique_planar_float_lock vector_magnitude_image_;
 	unique_planar_float_lock residual_image_;

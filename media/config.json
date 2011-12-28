@@ -3,14 +3,14 @@
 	"window-size" : [1280,1024],
 	"arrow-visualization" :
 	{
-		"arrow-scale" : 1.0,
+		"arrow-scale" : 2.0,
 		"density-splat-radius" : 4,
 		"pressure-scale" : 1.00,
 		"velocity-magnitude-scale" : 0.2,
 		"divergence-scale" : 100.00,
 		"residual-scale" : 1.0,
 		"grid-position" : [10.0,10.0],
-		"grid-scale" : 2.0,
+		"grid-scale" : 8.0,
 		"border-size" : 2,
 		"font-size" : 20
 	},
@@ -19,15 +19,15 @@
 		"profiling" : true,
 		"external-force-magnitude" : 7.0,
 		"grid-scale" : 1.0,
-		"boundary-file" : "boundary_jagged_256.png"
+		"boundary-file" : "boundary_circle.png"
 	},
-	"simulation-solver-jac" :
+	"simulation-solver" :
 	{
 		"type" : "jacobi",
 		"grid-scale" : 1.0,
-		"iterations" : 51
+		"iterations" : 101
 	},
-	"simulation-solver" :
+	"simulation-solver-mg" :
 	{
 		"type" : "multigrid",
 		"grid-scale" : 1.0,

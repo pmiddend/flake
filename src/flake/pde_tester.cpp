@@ -120,7 +120,7 @@ try
 		flakelib::laplace_solver::grid_scale(
 			1.0f),
 		flakelib::laplace_solver::iterations(
-			15));
+			5*15));
 
 	flakelib::utility::object utility_object(
 		opencl_system.command_queue(),
@@ -140,7 +140,8 @@ try
 			true));
 
 	flakelib::laplace_tester tester(
-		multigrid_solver,
+		//multigrid_solver,
+		jacobi_solver,
 		cache,
 		utility_object,
 		sys.renderer(),

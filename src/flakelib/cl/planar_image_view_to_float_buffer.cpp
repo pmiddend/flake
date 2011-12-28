@@ -33,10 +33,12 @@ struct convert
 	{
 		_dest.set(
 			mizuiro::color::channel::red(),
+			_src.get(mizuiro::color::channel::luminance()) > 0 ? 1.0f : 0.0f
+			/*
 			static_cast<float>(
 				_src.get(
 					mizuiro::color::channel::luminance())/
-			255.f));
+			255.f)*/);
 	}
 };
 }
