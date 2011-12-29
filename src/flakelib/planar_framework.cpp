@@ -38,7 +38,7 @@ flakelib::planar_framework::planar_framework(
 	flakelib::boundary_view const &_boundary,
 	sge::parse::json::object const &_config_file,
 	sge::input::cursor::object &_cursor,
-	buffer_pool::object &_scalar_pool,
+	buffer_pool::object &_buffer_pool,
 	utility::object &_utility)
 :
 	renderer_(
@@ -101,10 +101,9 @@ flakelib::planar_framework::planar_framework(
 				sge::renderer::texture::address_mode::clamp),
 			sge::renderer::resource_flags_field(
 				sge::renderer::resource_flags::none))),
-	/*
 	density_advector_(
 		_command_queue,
-		_scalar_pool,
+		_buffer_pool,
 		_utility,
 		_build_options,
 		density::grid_dimensions(
@@ -139,7 +138,7 @@ flakelib::planar_framework::planar_framework(
 				velocity_arrows_.widget().axis_policy().x().minimum_size()),
 			static_cast<monitor::scalar>(
 				velocity_arrows_.widget().axis_policy().y().minimum_size())),
-		planar_converter_),*/
+		planar_converter_),
 	additional_data_()
 {
 	viewport_widget_.child(
@@ -152,11 +151,9 @@ flakelib::planar_framework::planar_framework(
 		velocity_arrows_.widget(),
 		rucksack::alignment::left_or_top);
 
-	/*
 	master_box_.push_back_child(
 		density_monitor_.monitor().widget(),
 		rucksack::alignment::left_or_top);
-		*/
 
 	for(
 		flakelib::additional_planar_data::const_iterator it =
@@ -196,18 +193,16 @@ void
 flakelib::planar_framework::update(
 	flakelib::duration const &_dt)
 {
-	/*
 	density_cursor_splatter_.update_cursor_rectangle(
 		density_monitor_.rectangle());
 
 	density_advector_.update(
 		density::velocity_image(
-			*simulation_.velocity().get<sge::opencl::memory_object::image::planar *>()),
+			simulation_.velocity()),
 		_dt);
 
 	density_monitor_.update(
 		density_advector_.density_image());
-		*/
 
 	planar_converter_.to_arrow_vb(
 		simulation_.velocity(),

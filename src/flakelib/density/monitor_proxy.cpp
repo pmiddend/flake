@@ -26,11 +26,10 @@ flakelib::density::monitor_proxy::monitor_proxy(
 
 void
 flakelib::density::monitor_proxy::update(
-	sge::opencl::memory_object::image::planar &_image)
+	flakelib::buffer::planar_view<cl_float> const &_image)
 {
-	planar_converter_.to_texture(
-		flakelib::planar_object(
-			&_image),
+	planar_converter_.scalar_to_texture(
+		_image,
 		density_texture_.cl_texture(),
 		monitor::scaling_factor(
 			density_texture_.scaling_factor()));

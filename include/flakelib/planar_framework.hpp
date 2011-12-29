@@ -4,9 +4,9 @@
 #include <flakelib/boundary_view.hpp>
 #include <flakelib/build_options.hpp>
 #include <flakelib/duration.hpp>
-//#include <flakelib/density/advector.hpp>
-//#include <flakelib/density/cursor_splatter.hpp>
-//#include <flakelib/density/monitor_proxy.hpp>
+#include <flakelib/density/advector.hpp>
+#include <flakelib/density/cursor_splatter.hpp>
+#include <flakelib/density/monitor_proxy.hpp>
 #include <flakelib/monitor/parent.hpp>
 #include <flakelib/monitor/planar_arrows.hpp>
 #include <flakelib/monitor/planar_converter.hpp>
@@ -77,9 +77,9 @@ private:
 	rucksack::widget::master_and_slaves master_and_slaves_;
 	rucksack::widget::box::base master_box_;
 	monitor::planar_arrows velocity_arrows_;
-	//density::advector density_advector_;
-	//density::cursor_splatter density_cursor_splatter_;
-	//density::monitor_proxy density_monitor_;
+	density::advector density_advector_;
+	density::cursor_splatter density_cursor_splatter_;
+	density::monitor_proxy density_monitor_;
 	additional_data_monitors additional_data_;
 };
 }

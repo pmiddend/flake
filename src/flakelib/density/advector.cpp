@@ -1,21 +1,24 @@
 #include <flakelib/media_path_from_string.hpp>
-#include <flakelib/cl/apply_kernel_to_planar_image.hpp>
 #include <flakelib/density/advector.hpp>
 #include <flakelib/utility/object.hpp>
+#include <flakelib/buffer/linear_view.hpp>
+#include <flakelib/buffer/planar_view.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
+#include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/assign/make_array.hpp>
 #include <fcppt/chrono/duration.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
 
 
 flakelib::density::advector::advector(
 	sge::opencl::command_queue::object &_command_queue,
-	planar_pool::object &_image_pool,
+	buffer_pool::object &_buffer_pool,
 	utility::object &_utility,
 	flakelib::build_options const &_build_options,
 	density::grid_dimensions const &_grid_dimensions,
@@ -23,8 +26,8 @@ flakelib::density::advector::advector(
 :
 	command_queue_(
 		_command_queue),
-	image_pool_(
-		_image_pool),
+	buffer_pool_(
+		_buffer_pool),
 	grid_scale_(
 		_grid_scale.get()),
 	program_(
@@ -45,19 +48,21 @@ flakelib::density::advector::advector(
 		sge::opencl::kernel::name(
 			"advect")),
 	sources_(
-		image_pool_,
+		buffer_pool_,
 		_grid_dimensions.get()),
 	current_density_(
-		fcppt::make_unique_ptr<planar_pool::scoped_lock>(
+		fcppt::make_unique_ptr<buffer_pool::planar_lock<cl_float> >(
 			fcppt::ref(
-				image_pool_),
+				buffer_pool_),
 			_grid_dimensions.get()))
 {
-	_utility.null_image(
-		sources_.value());
+	_utility.null_buffer(
+		buffer::linear_view<cl_float>(
+			sources_.value().buffer()));
 
-	_utility.null_image(
-		current_density_->value());
+	_utility.null_buffer(
+		buffer::linear_view<cl_float>(
+			current_density_->value().buffer()));
 }
 
 void
@@ -68,66 +73,75 @@ flakelib::density::advector::update(
 	apply_sources_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		sources_.value());
+		sources_.value().buffer());
 
 	apply_sources_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		current_density_->value());
+		current_density_->value().buffer());
 
-	flakelib::cl::apply_kernel_to_planar_image(
-		apply_sources_kernel_,
+	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
-		current_density_->value());
+		apply_sources_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(sources_.value().size().content()).container());
 
-	flakelib::planar_pool::unique_lock target_density(
-		fcppt::make_unique_ptr<planar_pool::scoped_lock>(
+	unique_planar_float_lock target_density(
+		fcppt::make_unique_ptr<buffer_pool::planar_lock<cl_float> >(
 			fcppt::ref(
-				image_pool_),
+				buffer_pool_),
 			current_density_->value().size()));
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		current_density_->value());
+		current_density_->value().buffer());
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		target_density->value());
+		target_density->value().buffer());
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
-		_velocity.get());
+		_velocity.get().buffer());
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
+		static_cast<cl_int>(
+			_velocity.get().size()[0]));
+
+	advect_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			4),
 		static_cast<cl_float>(
 			_dt.count()));
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			4),
+			5),
 		grid_scale_);
 
-	flakelib::cl::apply_kernel_to_planar_image(
-		advect_kernel_,
+	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
-		current_density_->value());
+		advect_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(sources_.value().size()[0])
+			(sources_.value().size()[1]).container());
 
 	current_density_.swap(
 		target_density);
 }
 
-sge::opencl::memory_object::image::planar &
+flakelib::buffer::planar_view<cl_float> const
 flakelib::density::advector::density_image()
 {
 	return current_density_->value();
 }
 
-sge::opencl::memory_object::image::planar &
+flakelib::buffer::planar_view<cl_float> const
 flakelib::density::advector::source_image()
 {
 	return sources_.value();

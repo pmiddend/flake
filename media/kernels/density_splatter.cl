@@ -1,11 +1,10 @@
-sampler_t const absolute_clamping_nearest =
-	CLK_NORMALIZED_COORDS_FALSE |
-	CLK_ADDRESS_CLAMP_TO_EDGE |
-	CLK_FILTER_NEAREST;
+#include "positions.cl"
+#include "float_handling.cl"
 
 kernel void
 splat(
-	global write_only image2d_t output,
+	global flake_real *output,
+	int const buffer_width,
 	int const start_x,
 	int const start_y)
 {
@@ -16,9 +15,12 @@ splat(
 			get_global_id(
 				1));
 
-	write_imagef(
-		output,
-		(int2)(start_x,start_y) + position,
-		(float4)(
-			1.0f));
+	int2 const target_position =
+		position +
+		(int2)(
+			start_x,
+			start_y);
+
+	output[FLAKE_AT(buffer_width,target_position)] =
+		FLAKE_REAL_LIT(1.0);
 }

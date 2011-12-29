@@ -4,7 +4,7 @@
 #include <sge/input/cursor/object.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
-#include <sge/opencl/memory_object/image/planar.hpp>
+#include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <sge/renderer/device.hpp>
@@ -16,6 +16,7 @@
 #include <fcppt/math/vector/arithmetic.hpp>
 #include <fcppt/math/vector/structure_cast.hpp>
 #include <fcppt/tr1/functional.hpp>
+#include <fcppt/variant/object.hpp>
 
 
 namespace
@@ -153,17 +154,23 @@ flakelib::density::cursor_splatter::splat_at_cursor_position()
 	splat_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		source_image_);
+		source_image_.buffer());
 
 	splat_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
 		static_cast<cl_int>(
-			grid_position.x()));
+			source_image_.size()[0]));
 
 	splat_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
+		static_cast<cl_int>(
+			grid_position.x()));
+
+	splat_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			3),
 		static_cast<cl_int>(
 			grid_position.y()));
 
@@ -172,8 +179,5 @@ flakelib::density::cursor_splatter::splat_at_cursor_position()
 		splat_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(splat_radius_)
-			(splat_radius_).container(),
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(1)
-			(1).container());
+			(splat_radius_).container());
 }

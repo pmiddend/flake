@@ -4,6 +4,7 @@
 #include <flakelib/build_options.hpp>
 #include <flakelib/density/cursor_rectangle.hpp>
 #include <flakelib/density/source_image.hpp>
+#include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/density/splat_radius.hpp>
 #include <sge/input/cursor/button_event_fwd.hpp>
 #include <sge/input/cursor/move_event_fwd.hpp>
@@ -52,7 +53,7 @@ public:
 	~cursor_splatter();
 private:
 	sge::opencl::command_queue::object &command_queue_;
-	sge::opencl::memory_object::image::planar &source_image_;
+	flakelib::buffer::planar_view<cl_float> source_image_;
 	sge::input::cursor::object &cursor_;
 	sge::renderer::device &renderer_;
 	sge::opencl::memory_object::size_type const splat_radius_;

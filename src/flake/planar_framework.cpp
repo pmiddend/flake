@@ -346,10 +346,9 @@ try
 		sys.window_system().poll();
 
 		delta +=
-			50.0f * sge::timer::elapsed_and_reset<flakelib::duration>(
+			10.0f * sge::timer::elapsed_and_reset<flakelib::duration>(
 				delta_timer);
 
-		/*
 		{
 			simulation.update(
 				delta);
@@ -359,7 +358,6 @@ try
 
 			delta = flakelib::duration(0.0f);
 		}
-		*/
 
 		// If we have no viewport (yet), don't do anything (this is just a
 		// precaution, we _might_ divide by zero somewhere below, otherwise)

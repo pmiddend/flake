@@ -96,9 +96,9 @@ SET(
 	src/flakelib/cl/apply_kernel_to_planar_image.cpp
 	src/flakelib/cl/planar_image_view_to_cl_image.cpp
 	src/flakelib/cl/planar_image_view_to_float_buffer.cpp
-	#src/flakelib/density/advector.cpp
-	#src/flakelib/density/cursor_splatter.cpp
-	#src/flakelib/density/monitor_proxy.cpp
+	src/flakelib/density/advector.cpp
+	src/flakelib/density/cursor_splatter.cpp
+	src/flakelib/density/monitor_proxy.cpp
 	src/flakelib/exception.cpp
 	src/flakelib/laplace_solver/base.cpp
 	src/flakelib/laplace_solver/dynamic_factory.cpp

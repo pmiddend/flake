@@ -1,7 +1,8 @@
 #ifndef FLAKELIB_DENSITY_SOURCE_IMAGE_HPP_INCLUDED
 #define FLAKELIB_DENSITY_SOURCE_IMAGE_HPP_INCLUDED
 
-#include <sge/opencl/memory_object/image/planar_fwd.hpp>
+#include <flakelib/buffer/planar_view_fwd.hpp>
+#include <sge/opencl/clinclude.hpp>
 #include <fcppt/strong_typedef.hpp>
 
 namespace flakelib
@@ -9,7 +10,7 @@ namespace flakelib
 namespace density
 {
 FCPPT_MAKE_STRONG_TYPEDEF(
-	sge::opencl::memory_object::image::planar &,
+	flakelib::buffer::planar_view<cl_float>,
 	source_image);
 }
 }

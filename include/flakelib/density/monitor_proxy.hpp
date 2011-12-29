@@ -1,13 +1,13 @@
 #ifndef FLAKELIB_DENSITY_MONITOR_PROXY_HPP_INCLUDED
 #define FLAKELIB_DENSITY_MONITOR_PROXY_HPP_INCLUDED
 
+#include <flakelib/buffer/planar_view_fwd.hpp>
 #include <flakelib/density/cursor_rectangle.hpp>
 #include <flakelib/monitor/dim.hpp>
 #include <flakelib/monitor/grid_dimensions.hpp>
 #include <flakelib/monitor/parent_fwd.hpp>
 #include <flakelib/monitor/planar_converter_fwd.hpp>
 #include <flakelib/monitor/texture.hpp>
-#include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 
 
@@ -29,7 +29,7 @@ public:
 
 	void
 	update(
-		sge::opencl::memory_object::image::planar &);
+		flakelib::buffer::planar_view<cl_float> const &);
 
 	density::cursor_rectangle const
 	rectangle() const;

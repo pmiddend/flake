@@ -31,7 +31,7 @@ advect(
 	if(is_solid(boundary,current_index))
 	{
 		output[current_index] =
-			(float2)(
+			(flake_real2)(
 				FLAKE_REAL_LIT(0.0));
 		return;
 	}
