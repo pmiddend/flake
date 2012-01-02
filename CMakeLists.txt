@@ -53,6 +53,9 @@ FIND_PACKAGE(
 	image2d
 	input
 	renderer
+	log
+	media
+	core
 	sprite
 	camera
 	texture

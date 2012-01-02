@@ -93,8 +93,6 @@ flakelib::monitor::texture::texture(
 					_grid_dimensions.get()),
 				sge::image::color::format::r32f,
 				sge::renderer::texture::mipmap::off(),
-				sge::renderer::texture::address_mode2(
-					sge::renderer::texture::address_mode::clamp),
 				sge::renderer::resource_flags_field(
 					sge::renderer::resource_flags::none),
 				sge::renderer::texture::capabilities_field::null()))),
