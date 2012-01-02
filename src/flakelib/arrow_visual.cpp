@@ -70,8 +70,6 @@ flakelib::arrow_visual::arrow_visual(
 			_renderer,
 			_boundary.get(),
 			sge::renderer::texture::mipmap::off(),
-			sge::renderer::texture::address_mode2(
-				sge::renderer::texture::address_mode::clamp),
 			sge::renderer::resource_flags_field(
 				sge::renderer::resource_flags::none)))
 {

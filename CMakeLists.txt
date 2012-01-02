@@ -45,6 +45,9 @@ FIND_PACKAGE(
 	config
 	image
 	image2d
+	log
+	media
+	core
 	input
 	renderer
 	sprite
