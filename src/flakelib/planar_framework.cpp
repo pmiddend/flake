@@ -35,7 +35,7 @@ flakelib::planar_framework::planar_framework(
 	simulation::base &_simulation,
 	sge::font::system &_font_system,
 	flakelib::build_options const &_build_options,
-	flakelib::boundary_view const &_boundary,
+	flakelib::planar_boundary_view const &_boundary,
 	sge::parse::json::object const &_config_file,
 	sge::input::cursor::object &_cursor,
 	buffer_pool::object &_buffer_pool,

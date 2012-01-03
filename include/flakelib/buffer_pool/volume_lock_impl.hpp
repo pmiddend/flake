@@ -1,14 +1,14 @@
-#ifndef FLAKELIB_BUFFER_POOL_PLANAR_LOCK_IMPL_HPP_INCLUDED
-#define FLAKELIB_BUFFER_POOL_PLANAR_LOCK_IMPL_HPP_INCLUDED
+#ifndef FLAKELIB_BUFFER_POOL_VOLUME_LOCK_IMPL_HPP_INCLUDED
+#define FLAKELIB_BUFFER_POOL_VOLUME_LOCK_IMPL_HPP_INCLUDED
 
 #include <flakelib/buffer_pool/object.hpp>
-#include <flakelib/buffer_pool/planar_lock_decl.hpp>
+#include <flakelib/buffer_pool/volume_lock_decl.hpp>
 
 
 template<typename T>
-flakelib::buffer_pool::planar_lock<T>::planar_lock(
+flakelib::buffer_pool::volume_lock<T>::volume_lock(
 	buffer_pool::object &_pool,
-	sge::opencl::memory_object::dim2 const &_size)
+	sge::opencl::memory_object::dim3 const &_size)
 :
 	pool_(
 		_pool),
@@ -25,14 +25,14 @@ flakelib::buffer_pool::planar_lock<T>::planar_lock(
 }
 
 template<typename T>
-flakelib::buffer::planar_view<T> const &
-flakelib::buffer_pool::planar_lock<T>::value() const
+flakelib::buffer::volume_view<T> const &
+flakelib::buffer_pool::volume_lock<T>::value() const
 {
 	return value_;
 }
 
 template<typename T>
-flakelib::buffer_pool::planar_lock<T>::~planar_lock()
+flakelib::buffer_pool::volume_lock<T>::~volume_lock()
 {
 	pool_.unlock(
 		value_.buffer());

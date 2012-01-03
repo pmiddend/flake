@@ -1,9 +1,9 @@
-#ifndef FLAKELIB_LAPLACE_SOLVER_DYNAMIC_FACTORY_HPP_INCLUDED
-#define FLAKELIB_LAPLACE_SOLVER_DYNAMIC_FACTORY_HPP_INCLUDED
+#ifndef FLAKELIB_LAPLACE_SOLVER_PLANAR_DYNAMIC_FACTORY_HPP_INCLUDED
+#define FLAKELIB_LAPLACE_SOLVER_PLANAR_DYNAMIC_FACTORY_HPP_INCLUDED
 
 #include <flakelib/build_options.hpp>
-#include <flakelib/laplace_solver/base_fwd.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
+#include <flakelib/laplace_solver/planar/base_fwd.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/parse/json/object_fwd.hpp>
@@ -13,6 +13,8 @@
 namespace flakelib
 {
 namespace laplace_solver
+{
+namespace planar
 {
 /**
 \brief A factory creating a solver based on a json object
@@ -32,7 +34,7 @@ FCPPT_NONCOPYABLE(
 public:
 	/**
 	\brief Constructs the appropriate solvers
-	\param _buffer_pool The buffer pool needed for laplace_solver::jacobi and laplace_solver::multigrid
+	\param _buffer_pool The buffer pool needed for laplace_solver::planar::jacobi and laplace_solver::planar::multigrid
 	\param _command_queue The command queue needed for all the solvers
 	\param _config_file The part of the configuration file specifying the "root" solver.
 	\param _utility The utility object needed for most of the solvers
@@ -51,15 +53,16 @@ public:
 	/**
 	\brief Returns the solver that was created from the json file
 	*/
-	laplace_solver::base &
+	laplace_solver::planar::base &
 	value() const;
 
 	/** \brief noncopyable classes need a destructor */
 	~dynamic_factory();
 private:
-	fcppt::scoped_ptr<laplace_solver::base> solver_;
+	fcppt::scoped_ptr<laplace_solver::planar::base> solver_;
 	fcppt::scoped_ptr<dynamic_factory> inner_factory_;
 };
+}
 }
 }
 

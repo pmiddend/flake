@@ -95,7 +95,7 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 
 SET(
 	FLAKELIB_FILES
-	#	src/flakelib/arrow_visual.cpp
+	src/flakelib/buffer_pool/object.cpp
 	src/flakelib/cl/apply_kernel_to_planar_image.cpp
 	src/flakelib/cl/planar_image_view_to_cl_image.cpp
 	src/flakelib/cl/planar_image_view_to_float_buffer.cpp
@@ -103,10 +103,10 @@ SET(
 	src/flakelib/density/cursor_splatter.cpp
 	src/flakelib/density/monitor_proxy.cpp
 	src/flakelib/exception.cpp
-	src/flakelib/laplace_solver/base.cpp
-	src/flakelib/laplace_solver/dynamic_factory.cpp
-	src/flakelib/laplace_solver/jacobi.cpp
-	src/flakelib/laplace_solver/multigrid.cpp
+	src/flakelib/laplace_solver/planar/base.cpp
+	src/flakelib/laplace_solver/planar/dynamic_factory.cpp
+	src/flakelib/laplace_solver/planar/jacobi.cpp
+	src/flakelib/laplace_solver/planar/multigrid.cpp
 	src/flakelib/laplace_tester.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
@@ -116,7 +116,6 @@ SET(
 	src/flakelib/monitor/planar_converter.cpp
 	src/flakelib/monitor/texture.cpp
 	src/flakelib/planar_framework.cpp
-	src/flakelib/buffer_pool/object.cpp
 	src/flakelib/profiler/object.cpp
 	src/flakelib/profiler/scoped.cpp
 	src/flakelib/scoped_frame_limiter.cpp
@@ -155,50 +154,6 @@ INSTALL(
 	${INSTALL_BINARY_DIR})
 # planar_framework end
 
-# arrow_visual begin
-ADD_EXECUTABLE(
-	arrow_visual
-	WIN32
-	src/flake/arrow_visual.cpp)
-
-TARGET_LINK_LIBRARIES(
-	arrow_visual
-	flakelib
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Rucksack_LIBRARIES}
-	${Boost_LIBRARIES})
-
-INSTALL(
-	TARGETS
-	arrow_visual
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# arrow_visual end
-
-# benchmark begin
-ADD_EXECUTABLE(
-	benchmark
-	WIN32
-	src/flake/benchmark.cpp)
-
-TARGET_LINK_LIBRARIES(
-	benchmark
-	flakelib
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Rucksack_LIBRARIES}
-	${Boost_LIBRARIES})
-
-INSTALL(
-	TARGETS
-	benchmark
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# benchmark end
-
 # pde_tester begin
 ADD_EXECUTABLE(
 	pde_tester
@@ -220,24 +175,3 @@ INSTALL(
 	DESTINATION
 	${INSTALL_BINARY_DIR})
 # pde_tester end
-
-# frobenius_tester begin
-ADD_EXECUTABLE(
-	frobenius_tester
-	WIN32
-	src/flake/frobenius_tester.cpp)
-
-TARGET_LINK_LIBRARIES(
-	frobenius_tester
-	flakelib
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Boost_LIBRARIES})
-
-INSTALL(
-	TARGETS
-	frobenius_tester
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# frobenius_tester end

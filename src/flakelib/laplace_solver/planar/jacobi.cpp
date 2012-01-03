@@ -1,9 +1,9 @@
 #include <flakelib/media_path_from_string.hpp>
-#include <flakelib/cl/apply_kernel_to_planar_image.hpp>
-#include <flakelib/laplace_solver/jacobi.hpp>
 #include <flakelib/buffer_pool/planar_lock.hpp>
-#include <sge/opencl/command_queue/object.hpp>
+#include <flakelib/cl/apply_kernel_to_planar_image.hpp>
+#include <flakelib/laplace_solver/planar/jacobi.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
+#include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
@@ -16,12 +16,12 @@
 #include <fcppt/config/external_end.hpp>
 
 
-flakelib::laplace_solver::jacobi::jacobi(
+flakelib::laplace_solver::planar::jacobi::jacobi(
 	flakelib::buffer_pool::object &_buffer_cache,
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::build_options const &_build_options,
-	laplace_solver::grid_scale const &_grid_scale,
-	laplace_solver::iterations const &_iterations)
+	laplace_solver::planar::grid_scale const &_grid_scale,
+	laplace_solver::planar::iterations const &_iterations)
 :
 	buffer_cache_(
 		_buffer_cache),
@@ -48,11 +48,11 @@ flakelib::laplace_solver::jacobi::jacobi(
 }
 
 void
-flakelib::laplace_solver::jacobi::solve(
-	laplace_solver::rhs const &_rhs,
-	laplace_solver::destination const &_destination,
-	laplace_solver::initial_guess const &_initial_guess,
-	laplace_solver::boundary const &_boundary)
+flakelib::laplace_solver::planar::jacobi::solve(
+	laplace_solver::planar::rhs const &_rhs,
+	laplace_solver::planar::destination const &_destination,
+	laplace_solver::planar::initial_guess const &_initial_guess,
+	laplace_solver::planar::boundary const &_boundary)
 {
 	FCPPT_ASSERT_PRE(
 		iterations_ % 2 != 0);
@@ -146,11 +146,11 @@ flakelib::laplace_solver::jacobi::solve(
 }
 
 flakelib::additional_planar_data const &
-flakelib::laplace_solver::jacobi::additional_planar_data() const
+flakelib::laplace_solver::planar::jacobi::additional_planar_data() const
 {
 	return additional_planar_data_;
 }
 
-flakelib::laplace_solver::jacobi::~jacobi()
+flakelib::laplace_solver::planar::jacobi::~jacobi()
 {
 }

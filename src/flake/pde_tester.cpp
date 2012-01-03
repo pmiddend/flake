@@ -1,10 +1,11 @@
 #include <flakelib/exception.hpp>
 #include <flakelib/laplace_tester.hpp>
+#include <flakelib/main_head.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
-#include <flakelib/laplace_solver/jacobi.hpp>
-#include <flakelib/laplace_solver/multigrid.hpp>
 #include <flakelib/buffer_pool/object.hpp>
+#include <flakelib/laplace_solver/planar/jacobi.hpp>
+#include <flakelib/laplace_solver/planar/multigrid.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/exception.hpp>
 #include <sge/camera/ortho_freelook/object.hpp>
@@ -49,8 +50,8 @@
 #include <sge/timer/clocks/standard.hpp>
 #include <sge/viewport/center_on_resize.hpp>
 #include <sge/window/dim.hpp>
-#include <sge/window/system.hpp>
 #include <sge/window/parameters.hpp>
+#include <sge/window/system.hpp>
 #include <fcppt/exception.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/to_std_string.hpp>
@@ -63,7 +64,6 @@
 #include <iostream>
 #include <ostream>
 #include <fcppt/config/external_end.hpp>
-#include <flakelib/main_head.hpp>
 
 
 FLAKELIB_MAIN_HEAD
@@ -113,30 +113,30 @@ try
 				flakelib::media_path_from_string(
 					FCPPT_TEXT("kernels")))));
 
-	flakelib::laplace_solver::jacobi jacobi_solver(
+	flakelib::laplace_solver::planar::jacobi jacobi_solver(
 		cache,
 		opencl_system.command_queue(),
 		global_build_options,
-		flakelib::laplace_solver::grid_scale(
+		flakelib::laplace_solver::planar::grid_scale(
 			1.0f),
-		flakelib::laplace_solver::iterations(
+		flakelib::laplace_solver::planar::iterations(
 			5*15));
 
 	flakelib::utility::object utility_object(
 		opencl_system.command_queue(),
 		global_build_options);
 
-	flakelib::laplace_solver::multigrid multigrid_solver(
+	flakelib::laplace_solver::planar::multigrid multigrid_solver(
 		cache,
 		utility_object,
 		opencl_system.command_queue(),
 		global_build_options,
 		jacobi_solver,
-		flakelib::laplace_solver::grid_scale(
+		flakelib::laplace_solver::planar::grid_scale(
 			1.0f),
-		flakelib::laplace_solver::termination_size(
+		flakelib::laplace_solver::planar::termination_size(
 			64),
-		flakelib::laplace_solver::debug_output(
+		flakelib::laplace_solver::planar::debug_output(
 			true));
 
 	flakelib::laplace_tester tester(

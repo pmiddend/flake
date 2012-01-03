@@ -1,24 +1,24 @@
 #include <flakelib/media_path_from_string.hpp>
-#include <flakelib/cl/apply_kernel_to_planar_image.hpp>
-#include <flakelib/laplace_solver/multigrid.hpp>
-#include <flakelib/utility/object.hpp>
 #include <flakelib/buffer/linear_view.hpp>
 #include <flakelib/buffer_pool/planar_lock.hpp>
+#include <flakelib/cl/apply_kernel_to_planar_image.hpp>
+#include <flakelib/laplace_solver/planar/multigrid.hpp>
+#include <flakelib/utility/object.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <fcppt/format.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_array.hpp>
+#include <fcppt/container/ptr/push_back_unique_ptr.hpp>
 #include <fcppt/math/is_power_of_2.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/output.hpp>
-#include <fcppt/container/ptr/push_back_unique_ptr.hpp>
-#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <algorithm>
 #include <cstddef>
@@ -26,15 +26,15 @@
 #include <fcppt/config/external_end.hpp>
 
 
-flakelib::laplace_solver::multigrid::multigrid(
+flakelib::laplace_solver::planar::multigrid::multigrid(
 	flakelib::buffer_pool::object &_buffer_cache,
 	flakelib::utility::object &_utility,
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::build_options const &_build_options,
-	laplace_solver::base &_inner_solver,
-	laplace_solver::grid_scale const &_grid_scale,
-	laplace_solver::termination_size const &_termination_size,
-	laplace_solver::debug_output const &_debug_output)
+	laplace_solver::planar::base &_inner_solver,
+	laplace_solver::planar::grid_scale const &_grid_scale,
+	laplace_solver::planar::termination_size const &_termination_size,
+	laplace_solver::planar::debug_output const &_debug_output)
 :
 	buffer_cache_(
 		_buffer_cache),
@@ -81,11 +81,11 @@ flakelib::laplace_solver::multigrid::multigrid(
 }
 
 void
-flakelib::laplace_solver::multigrid::solve(
-	laplace_solver::rhs const &_rhs,
-	laplace_solver::destination const &_destination,
-	laplace_solver::initial_guess const &_initial_guess,
-	laplace_solver::boundary const &_boundary)
+flakelib::laplace_solver::planar::multigrid::solve(
+	laplace_solver::planar::rhs const &_rhs,
+	laplace_solver::planar::destination const &_destination,
+	laplace_solver::planar::initial_guess const &_initial_guess,
+	laplace_solver::planar::boundary const &_boundary)
 {
 	FCPPT_ASSERT_PRE(
 		_destination.get().size()[0] == _destination.get().size()[1]);
@@ -130,9 +130,9 @@ flakelib::laplace_solver::multigrid::solve(
 	// x^(n)
 	inner_solver_.solve(
 		_rhs,
-		laplace_solver::destination(
+		laplace_solver::planar::destination(
 			first_smoothing.value()),
-		laplace_solver::initial_guess(
+		laplace_solver::planar::initial_guess(
 			p0.value()),
 		_boundary);
 
@@ -150,7 +150,7 @@ flakelib::laplace_solver::multigrid::solve(
 		inner_solver_.solve(
 			_rhs,
 			_destination,
-			laplace_solver::initial_guess(
+			laplace_solver::planar::initial_guess(
 				first_smoothing.value()),
 			_boundary);
 
@@ -168,9 +168,9 @@ flakelib::laplace_solver::multigrid::solve(
 	// The residual is stored in p0
 	this->laplacian_residual(
 		_rhs,
-		laplace_solver::from(
+		laplace_solver::planar::from(
 			first_smoothing.value()),
-		laplace_solver::to(
+		laplace_solver::planar::to(
 			p0.value()),
 		_boundary);
 
@@ -197,16 +197,16 @@ flakelib::laplace_solver::multigrid::solve(
 
 	// Downsample the residual, store in rd
 	this->downsample(
-		laplace_solver::from(
+		laplace_solver::planar::from(
 			p0.value()),
-		laplace_solver::to(
+		laplace_solver::planar::to(
 			rd.value()));
 
 	// Downsample the boundary, store in coarse_boundary
 	this->downsample(
-		laplace_solver::from(
+		laplace_solver::planar::from(
 			_boundary.get()),
-		laplace_solver::to(
+		laplace_solver::planar::to(
 			coarse_boundary.value()));
 
 	this->copy_to_planar_data(
@@ -227,13 +227,13 @@ flakelib::laplace_solver::multigrid::solve(
 			temporary_initial_guess.value().buffer()));
 
 	this->solve(
-		laplace_solver::rhs(
+		laplace_solver::planar::rhs(
 			rd.value()),
-		laplace_solver::destination(
+		laplace_solver::planar::destination(
 			coarse_error.value()),
-		laplace_solver::initial_guess(
+		laplace_solver::planar::initial_guess(
 			temporary_initial_guess.value()),
-		laplace_solver::boundary(
+		laplace_solver::planar::boundary(
 			coarse_boundary.value()));
 
 	this->copy_to_planar_data(
@@ -243,13 +243,13 @@ flakelib::laplace_solver::multigrid::solve(
 	if(debug_output_)
 	{
 		this->laplacian_residual(
-			laplace_solver::rhs(
+			laplace_solver::planar::rhs(
 				rd.value()),
-			laplace_solver::from(
+			laplace_solver::planar::from(
 				coarse_error.value()),
-			laplace_solver::to(
+			laplace_solver::planar::to(
 				temporary_initial_guess.value()),
-			laplace_solver::boundary(
+			laplace_solver::planar::boundary(
 				coarse_boundary.value()));
 
 		this->copy_to_planar_data(
@@ -258,9 +258,9 @@ flakelib::laplace_solver::multigrid::solve(
 	}
 
 	this->upsample(
-		laplace_solver::from(
+		laplace_solver::planar::from(
 			coarse_error.value()),
-		laplace_solver::to(
+		laplace_solver::planar::to(
 			p0.value()));
 
 	this->copy_to_planar_data(
@@ -274,13 +274,13 @@ flakelib::laplace_solver::multigrid::solve(
 			size));
 
 	this->add(
-		laplace_solver::from(
+		laplace_solver::planar::from(
 			first_smoothing.value()),
-		laplace_solver::from(
+		laplace_solver::planar::from(
 			p0.value()),
-		laplace_solver::to(
+		laplace_solver::planar::to(
 			h.value()));
-//		laplace_solver::to(
+//		laplace_solver::planar::to(
 //			_destination.get()));
 
 	this->copy_to_planar_data(
@@ -291,7 +291,7 @@ flakelib::laplace_solver::multigrid::solve(
 	inner_solver_.solve(
 		_rhs,
 		_destination,
-		laplace_solver::initial_guess(
+		laplace_solver::planar::initial_guess(
 			h.value()),
 		_boundary);
 
@@ -303,9 +303,9 @@ flakelib::laplace_solver::multigrid::solve(
 	{
 		this->laplacian_residual(
 			_rhs,
-			laplace_solver::from(
+			laplace_solver::planar::from(
 				_destination.get()),
-			laplace_solver::to(
+			laplace_solver::planar::to(
 				p0.value()),
 			_boundary);
 
@@ -316,21 +316,21 @@ flakelib::laplace_solver::multigrid::solve(
 }
 
 flakelib::additional_planar_data const &
-flakelib::laplace_solver::multigrid::additional_planar_data() const
+flakelib::laplace_solver::planar::multigrid::additional_planar_data() const
 {
 	return additional_planar_data_;
 }
 
-flakelib::laplace_solver::multigrid::~multigrid()
+flakelib::laplace_solver::planar::multigrid::~multigrid()
 {
 }
 
 void
-flakelib::laplace_solver::multigrid::laplacian_residual(
-	laplace_solver::rhs const &_rhs,
-	laplace_solver::from const &_from,
-	laplace_solver::to const &_to,
-	laplace_solver::boundary const &_boundary)
+flakelib::laplace_solver::planar::multigrid::laplacian_residual(
+	laplace_solver::planar::rhs const &_rhs,
+	laplace_solver::planar::from const &_from,
+	laplace_solver::planar::to const &_to,
+	laplace_solver::planar::boundary const &_boundary)
 {
 	FCPPT_ASSERT_PRE(
 		_from.get().size() == _to.get().size());
@@ -380,9 +380,9 @@ flakelib::laplace_solver::multigrid::laplacian_residual(
 // from = big
 // to = small
 void
-flakelib::laplace_solver::multigrid::downsample(
-	laplace_solver::from const &_from,
-	laplace_solver::to const &_to)
+flakelib::laplace_solver::planar::multigrid::downsample(
+	laplace_solver::planar::from const &_from,
+	laplace_solver::planar::to const &_to)
 {
 	FCPPT_ASSERT_PRE(
 		_from.get().size() > _to.get().size());
@@ -414,9 +414,9 @@ flakelib::laplace_solver::multigrid::downsample(
 // from = small
 // to = big
 void
-flakelib::laplace_solver::multigrid::upsample(
-	laplace_solver::from const &_from,
-	laplace_solver::to const &_to)
+flakelib::laplace_solver::planar::multigrid::upsample(
+	laplace_solver::planar::from const &_from,
+	laplace_solver::planar::to const &_to)
 {
 	FCPPT_ASSERT_PRE(
 		_from.get().size() < _to.get().size());
@@ -446,10 +446,10 @@ flakelib::laplace_solver::multigrid::upsample(
 }
 
 void
-flakelib::laplace_solver::multigrid::add(
-	laplace_solver::from const &_from0,
-	laplace_solver::from const &_from1,
-	laplace_solver::to const &_to)
+flakelib::laplace_solver::planar::multigrid::add(
+	laplace_solver::planar::from const &_from0,
+	laplace_solver::planar::from const &_from1,
+	laplace_solver::planar::to const &_to)
 {
 	FCPPT_ASSERT_PRE(
 		_from0.get().size() == _from1.get().size());
@@ -481,7 +481,7 @@ flakelib::laplace_solver::multigrid::add(
 }
 
 void
-flakelib::laplace_solver::multigrid::copy_to_planar_data(
+flakelib::laplace_solver::planar::multigrid::copy_to_planar_data(
 	buffer::planar_view<cl_float> const &_image,
 	fcppt::string const &_description)
 {

@@ -3,17 +3,17 @@
 
 #include <flakelib/build_options.hpp>
 #include <flakelib/viewport_pager.hpp>
-#include <flakelib/laplace_solver/base_fwd.hpp>
+#include <flakelib/buffer_pool/object_fwd.hpp>
+#include <flakelib/buffer_pool/planar_lock.hpp>
+#include <flakelib/laplace_solver/planar/base_fwd.hpp>
 #include <flakelib/monitor/parent.hpp>
 #include <flakelib/monitor/planar_converter.hpp>
 #include <flakelib/monitor/texture_fwd.hpp>
-#include <flakelib/buffer_pool/object_fwd.hpp>
-#include <flakelib/buffer_pool/planar_lock.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <rucksack/widget/enumeration.hpp>
 #include <sge/font/system_fwd.hpp>
-#include <sge/image2d/system_fwd.hpp>
 #include <sge/image2d/file_ptr.hpp>
+#include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
@@ -37,7 +37,7 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	laplace_tester(
-		laplace_solver::base &,
+		laplace_solver::planar::base &,
 		flakelib::buffer_pool::object &,
 		flakelib::utility::object &,
 		sge::renderer::device &,
@@ -60,7 +60,7 @@ private:
 	boost::ptr_vector<monitor::texture>
 	additional_data_monitors;
 
-	laplace_solver::base &solver_;
+	laplace_solver::planar::base &solver_;
 	sge::opencl::command_queue::object &command_queue_;
 	utility::object &utility_;
 	sge::image2d::file_ptr boundary_image_file_;

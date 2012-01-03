@@ -1,11 +1,12 @@
 #include <flakelib/duration.hpp>
 #include <flakelib/exception.hpp>
+#include <flakelib/main_head.hpp>
 #include <flakelib/media_path.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/planar_framework.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
-#include <flakelib/laplace_solver/dynamic_factory.hpp>
 #include <flakelib/buffer_pool/object.hpp>
+#include <flakelib/laplace_solver/planar/dynamic_factory.hpp>
 #include <flakelib/simulation/stam/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/config/media_path.hpp>
@@ -67,8 +68,8 @@
 #include <sge/timer/clocks/standard.hpp>
 #include <sge/viewport/center_on_resize.hpp>
 #include <sge/window/dim.hpp>
-#include <sge/window/system.hpp>
 #include <sge/window/parameters.hpp>
+#include <sge/window/system.hpp>
 #include <fcppt/cref.hpp>
 #include <fcppt/exception.hpp>
 #include <fcppt/ref.hpp>
@@ -94,7 +95,6 @@
 #include <iostream>
 #include <ostream>
 #include <fcppt/config/external_end.hpp>
-#include <flakelib/main_head.hpp>
 
 
 namespace
@@ -258,7 +258,7 @@ try
 		opencl_system.command_queue(),
 		global_build_options);
 
-	flakelib::laplace_solver::dynamic_factory configurable_solver(
+	flakelib::laplace_solver::planar::dynamic_factory configurable_solver(
 		scalar_pool,
 		opencl_system.command_queue(),
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
@@ -270,7 +270,7 @@ try
 
 	flakelib::simulation::stam::object simulation(
 		opencl_system.command_queue(),
-		flakelib::boundary_view(
+		flakelib::planar_boundary_view(
 			boundary_image->view()),
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
 			config_file,
@@ -302,7 +302,7 @@ try
 		simulation,
 		sys.font_system(),
 		global_build_options,
-		flakelib::boundary_view(
+		flakelib::planar_boundary_view(
 			boundary_image->view()),
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
 			config_file,

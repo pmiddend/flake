@@ -1,11 +1,12 @@
 #ifndef FLAKELIB_BUFFER_POOL_PLANAR_LOCK_DECL_HPP_INCLUDED
 #define FLAKELIB_BUFFER_POOL_PLANAR_LOCK_DECL_HPP_INCLUDED
 
-#include <flakelib/buffer_pool/planar_lock_fwd.hpp>
-#include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/buffer/planar_view.hpp>
+#include <flakelib/buffer_pool/object_fwd.hpp>
+#include <flakelib/buffer_pool/planar_lock_fwd.hpp>
 #include <sge/opencl/memory_object/dim2.hpp>
 #include <fcppt/nonassignable.hpp>
+
 
 namespace flakelib
 {

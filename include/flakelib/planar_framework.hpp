@@ -1,9 +1,10 @@
 #ifndef FLAKELIB_PLANAR_FRAMEWORK_HPP_INCLUDED
 #define FLAKELIB_PLANAR_FRAMEWORK_HPP_INCLUDED
 
-#include <flakelib/boundary_view.hpp>
 #include <flakelib/build_options.hpp>
 #include <flakelib/duration.hpp>
+#include <flakelib/planar_boundary_view.hpp>
+#include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/density/advector.hpp>
 #include <flakelib/density/cursor_splatter.hpp>
 #include <flakelib/density/monitor_proxy.hpp>
@@ -12,7 +13,6 @@
 #include <flakelib/monitor/planar_converter.hpp>
 #include <flakelib/monitor/texture.hpp>
 #include <flakelib/monitor/texture_fwd.hpp>
-#include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/simulation/base_fwd.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <rucksack/widget/master_and_slaves.hpp>
@@ -47,7 +47,7 @@ public:
 		simulation::base &,
 		sge::font::system &,
 		flakelib::build_options const &,
-		flakelib::boundary_view const &,
+		flakelib::planar_boundary_view const &,
 		sge::parse::json::object const &,
 		sge::input::cursor::object &,
 		buffer_pool::object &,

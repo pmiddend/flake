@@ -2,9 +2,9 @@
 #define FLAKELIB_DENSITY_CURSOR_SPLATTER_HPP_INCLUDED
 
 #include <flakelib/build_options.hpp>
+#include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/density/cursor_rectangle.hpp>
 #include <flakelib/density/source_image.hpp>
-#include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/density/splat_radius.hpp>
 #include <sge/input/cursor/button_event_fwd.hpp>
 #include <sge/input/cursor/move_event_fwd.hpp>

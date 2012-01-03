@@ -2,13 +2,13 @@
 #define FLAKELIB_UTILITY_OBJECT_HPP_INCLUDED
 
 #include <flakelib/build_options.hpp>
-#include <flakelib/buffer/planar_view_fwd.hpp>
 #include <flakelib/buffer/linear_view_fwd.hpp>
+#include <flakelib/buffer/planar_view_fwd.hpp>
 #include <flakelib/utility/copy_from.hpp>
 #include <flakelib/utility/copy_to.hpp>
+#include <flakelib/utility/multiplier.hpp>
 #include <flakelib/utility/planar_vector_magnitude_from.hpp>
 #include <flakelib/utility/planar_vector_magnitude_to.hpp>
-#include <flakelib/utility/multiplier.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>

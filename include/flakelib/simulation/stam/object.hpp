@@ -2,11 +2,11 @@
 #define FLAKELIB_SIMULATION_STAM_OBJECT_HPP_INCLUDED
 
 #include <flakelib/additional_planar_data.hpp>
-#include <flakelib/boundary_view.hpp>
 #include <flakelib/build_options.hpp>
-#include <flakelib/laplace_solver/base_fwd.hpp>
-#include <flakelib/buffer_pool/planar_lock.hpp>
+#include <flakelib/planar_boundary_view.hpp>
 #include <flakelib/buffer/planar_view.hpp>
+#include <flakelib/buffer_pool/planar_lock.hpp>
+#include <flakelib/laplace_solver/planar/base_fwd.hpp>
 #include <flakelib/profiler/object.hpp>
 #include <flakelib/simulation/base.hpp>
 #include <flakelib/simulation/stam/pressure.hpp>
@@ -14,12 +14,12 @@
 #include <flakelib/simulation/stam/solution.hpp>
 #include <flakelib/simulation/stam/vector_field.hpp>
 #include <flakelib/utility/object_fwd.hpp>
-#include <fcppt/unique_ptr.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <sge/parse/json/object_fwd.hpp>
+#include <fcppt/unique_ptr.hpp>
 
 
 namespace flakelib
@@ -46,12 +46,12 @@ public:
 	explicit
 	object(
 		sge::opencl::command_queue::object &,
-		flakelib::boundary_view const &,
+		flakelib::planar_boundary_view const &,
 		sge::parse::json::object const &,
 		flakelib::build_options const &,
 		buffer_pool::object &,
 		utility::object &,
-		laplace_solver::base &);
+		laplace_solver::planar::base &);
 
 	// @override
 	buffer::planar_view<cl_float2> const
@@ -97,7 +97,7 @@ private:
 	sge::opencl::command_queue::object &command_queue_;
 	utility::object &utility_;
 	buffer_pool::object &buffer_cache_;
-	laplace_solver::base &laplace_solver_;
+	laplace_solver::planar::base &laplace_solver_;
 	cl_float const external_force_magnitude_;
 	cl_float const grid_scale_;
 	bool const profiling_enabled_;

@@ -1,11 +1,11 @@
-#include <flakelib/simulation/stam/object.hpp>
 #include <flakelib/media_path_from_string.hpp>
-#include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
-#include <flakelib/laplace_solver/base.hpp>
-#include <flakelib/buffer_pool/planar_lock.hpp>
 #include <flakelib/buffer/linear_view.hpp>
 #include <flakelib/buffer/planar_view.hpp>
+#include <flakelib/buffer_pool/planar_lock.hpp>
+#include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
+#include <flakelib/laplace_solver/planar/base.hpp>
 #include <flakelib/profiler/scoped.hpp>
+#include <flakelib/simulation/stam/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/image2d/view/size.hpp>
 #include <sge/opencl/command_queue/dim2.hpp>
@@ -39,12 +39,12 @@
 
 flakelib::simulation::stam::object::object(
 	sge::opencl::command_queue::object &_command_queue,
-	flakelib::boundary_view const &_boundary_image,
+	flakelib::planar_boundary_view const &_boundary_image,
 	sge::parse::json::object const &_config_file,
 	flakelib::build_options const &_build_options,
 	buffer_pool::object &_buffer_cache,
 	utility::object &_utility,
-	laplace_solver::base &_laplace_solver)
+	laplace_solver::planar::base &_laplace_solver)
 :
 	command_queue_(
 		_command_queue),
@@ -463,13 +463,13 @@ flakelib::simulation::stam::object::solve(
 			initial_guess->value().buffer()));
 
 	laplace_solver_.solve(
-		laplace_solver::rhs(
+		laplace_solver::planar::rhs(
 			_rhs),
-		laplace_solver::destination(
+		laplace_solver::planar::destination(
 			result->value()),
-		laplace_solver::initial_guess(
+		laplace_solver::planar::initial_guess(
 			initial_guess->value()),
-		laplace_solver::boundary(
+		laplace_solver::planar::boundary(
 			boundary_image_.value()));
 
 	return

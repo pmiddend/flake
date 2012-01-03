@@ -1,12 +1,13 @@
 #ifndef FLAKELIB_BUFFER_LINEAR_VIEW_IMPL_HPP_INCLUDED
 #define FLAKELIB_BUFFER_LINEAR_VIEW_IMPL_HPP_INCLUDED
 
-#include <sge/opencl/memory_object/buffer.hpp>
 #include <flakelib/buffer/linear_view_decl.hpp>
+#include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <cstdlib>
 #include <fcppt/config/external_end.hpp>
+
 
 template<typename T>
 flakelib::buffer::linear_view<T>::linear_view(

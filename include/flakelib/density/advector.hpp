@@ -3,11 +3,11 @@
 
 #include <flakelib/build_options.hpp>
 #include <flakelib/duration.hpp>
+#include <flakelib/buffer/planar_view.hpp>
+#include <flakelib/buffer_pool/planar_lock.hpp>
 #include <flakelib/density/grid_dimensions.hpp>
 #include <flakelib/density/grid_scale.hpp>
 #include <flakelib/density/velocity_image.hpp>
-#include <flakelib/buffer/planar_view.hpp>
-#include <flakelib/buffer_pool/planar_lock.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>

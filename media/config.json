@@ -10,7 +10,7 @@
 		"divergence-scale" : 100.00,
 		"residual-scale" : 1.0,
 		"grid-position" : [10.0,10.0],
-		"grid-scale" : 8.0,
+		"grid-scale" : 2.0,
 		"border-size" : 2,
 		"font-size" : 20
 	},
@@ -19,13 +19,13 @@
 		"profiling" : true,
 		"external-force-magnitude" : 7.0,
 		"grid-scale" : 1.0,
-		"boundary-file" : "boundary_circle.png"
+		"boundary-file" : "boundary_balls_256.png"
 	},
 	"simulation-solver" :
 	{
 		"type" : "jacobi",
 		"grid-scale" : 1.0,
-		"iterations" : 101
+		"iterations" : 51
 	},
 	"simulation-solver-mg" :
 	{
@@ -36,7 +36,7 @@
 		{
 			"type" : "jacobi",
 			"grid-scale" : 1.0,
-			"iterations" : 7
+			"iterations" : 5
 		}
 	}
 }

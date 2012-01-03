@@ -1,7 +1,7 @@
 #include <flakelib/media_path_from_string.hpp>
-#include <flakelib/utility/object.hpp>
-#include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/buffer/linear_view.hpp>
+#include <flakelib/buffer/planar_view.hpp>
+#include <flakelib/utility/object.hpp>
 #include <sge/opencl/command_queue/dim2.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>

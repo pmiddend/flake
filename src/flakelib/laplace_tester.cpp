@@ -1,9 +1,9 @@
 #include <flakelib/laplace_tester.hpp>
-#include <flakelib/buffer/linear_view.hpp>
 #include <flakelib/media_path_from_string.hpp>
+#include <flakelib/buffer/linear_view.hpp>
 #include <flakelib/cl/apply_kernel_to_planar_image.hpp>
 #include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
-#include <flakelib/laplace_solver/base.hpp>
+#include <flakelib/laplace_solver/planar/base.hpp>
 #include <flakelib/monitor/texture.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/font/system.hpp>
@@ -20,7 +20,7 @@
 
 
 flakelib::laplace_tester::laplace_tester(
-	laplace_solver::base &_solver,
+	laplace_solver::planar::base &_solver,
 	flakelib::buffer_pool::object &_buffer_cache,
 	utility::object &_utility,
 	sge::renderer::device &_renderer,
@@ -108,13 +108,13 @@ flakelib::laplace_tester::update()
 
 	// Solve the homogenous problem
 	solver_.solve(
-		laplace_solver::rhs(
+		laplace_solver::planar::rhs(
 			rhs_.value()),
-		laplace_solver::destination(
+		laplace_solver::planar::destination(
 			destination_.value()),
-		laplace_solver::initial_guess(
+		laplace_solver::planar::initial_guess(
 			initial_guess_image_.value()),
-		laplace_solver::boundary(
+		laplace_solver::planar::boundary(
 			boundary_.value()));
 
 	additional_data_.clear();

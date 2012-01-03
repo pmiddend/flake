@@ -1,10 +1,11 @@
 #ifndef FLAKELIB_ADDITIONAL_PLANAR_DATA_HPP_INCLUDED
 #define FLAKELIB_ADDITIONAL_PLANAR_DATA_HPP_INCLUDED
 
-#include <flakelib/buffer/planar_view_fwd.hpp>
 #include <flakelib/association_list/object.hpp>
-#include <fcppt/string.hpp>
+#include <flakelib/buffer/planar_view_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
+#include <fcppt/string.hpp>
+
 
 namespace flakelib
 {

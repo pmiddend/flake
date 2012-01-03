@@ -1,12 +1,12 @@
 #include <flakelib/media_path_from_string.hpp>
-#include <flakelib/density/advector.hpp>
-#include <flakelib/utility/object.hpp>
 #include <flakelib/buffer/linear_view.hpp>
 #include <flakelib/buffer/planar_view.hpp>
+#include <flakelib/density/advector.hpp>
+#include <flakelib/utility/object.hpp>
+#include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
-#include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
