@@ -99,28 +99,28 @@ SET(
 	src/flakelib/cl/apply_kernel_to_planar_image.cpp
 	src/flakelib/cl/planar_image_view_to_cl_image.cpp
 	src/flakelib/cl/planar_image_view_to_float_buffer.cpp
-	src/flakelib/density/advector.cpp
-	src/flakelib/density/cursor_splatter.cpp
-	src/flakelib/density/monitor_proxy.cpp
 	src/flakelib/exception.cpp
-	src/flakelib/laplace_solver/planar/base.cpp
-	src/flakelib/laplace_solver/planar/dynamic_factory.cpp
-	src/flakelib/laplace_solver/planar/jacobi.cpp
-	src/flakelib/laplace_solver/planar/multigrid.cpp
-	src/flakelib/laplace_tester.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
-	src/flakelib/monitor/child.cpp
-	src/flakelib/monitor/parent.cpp
-	src/flakelib/monitor/planar_arrows.cpp
-	src/flakelib/monitor/planar_converter.cpp
-	src/flakelib/monitor/texture.cpp
-	src/flakelib/planar_framework.cpp
+	src/flakelib/planar/density/advector.cpp
+	src/flakelib/planar/density/cursor_splatter.cpp
+	src/flakelib/planar/density/monitor_proxy.cpp
+	src/flakelib/planar/framework.cpp
+	src/flakelib/planar/laplace_solver/base.cpp
+	src/flakelib/planar/laplace_solver/dynamic_factory.cpp
+	src/flakelib/planar/laplace_solver/jacobi.cpp
+	src/flakelib/planar/laplace_solver/multigrid.cpp
+	src/flakelib/planar/laplace_tester.cpp
+	src/flakelib/planar/monitor/child.cpp
+	src/flakelib/planar/monitor/parent.cpp
+	src/flakelib/planar/monitor/planar_arrows.cpp
+	src/flakelib/planar/monitor/planar_converter.cpp
+	src/flakelib/planar/monitor/texture.cpp
+	src/flakelib/planar/simulation/base.cpp
+	src/flakelib/planar/simulation/stam/object.cpp
 	src/flakelib/profiler/object.cpp
 	src/flakelib/profiler/scoped.cpp
 	src/flakelib/scoped_frame_limiter.cpp
-	src/flakelib/simulation/base.cpp
-	src/flakelib/simulation/stam/object.cpp
 	src/flakelib/sprite_drawer_3d.cpp
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/utility/object.cpp

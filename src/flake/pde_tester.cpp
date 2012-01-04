@@ -1,11 +1,11 @@
 #include <flakelib/exception.hpp>
-#include <flakelib/laplace_tester.hpp>
 #include <flakelib/main_head.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/buffer_pool/object.hpp>
-#include <flakelib/laplace_solver/planar/jacobi.hpp>
-#include <flakelib/laplace_solver/planar/multigrid.hpp>
+#include <flakelib/planar/laplace_tester.hpp>
+#include <flakelib/planar/laplace_solver/jacobi.hpp>
+#include <flakelib/planar/laplace_solver/multigrid.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/exception.hpp>
 #include <sge/camera/ortho_freelook/object.hpp>
@@ -113,33 +113,33 @@ try
 				flakelib::media_path_from_string(
 					FCPPT_TEXT("kernels")))));
 
-	flakelib::laplace_solver::planar::jacobi jacobi_solver(
+	flakelib::planar::laplace_solver::jacobi jacobi_solver(
 		cache,
 		opencl_system.command_queue(),
 		global_build_options,
-		flakelib::laplace_solver::planar::grid_scale(
+		flakelib::planar::laplace_solver::grid_scale(
 			1.0f),
-		flakelib::laplace_solver::planar::iterations(
+		flakelib::planar::laplace_solver::iterations(
 			5*15));
 
 	flakelib::utility::object utility_object(
 		opencl_system.command_queue(),
 		global_build_options);
 
-	flakelib::laplace_solver::planar::multigrid multigrid_solver(
+	flakelib::planar::laplace_solver::multigrid multigrid_solver(
 		cache,
 		utility_object,
 		opencl_system.command_queue(),
 		global_build_options,
 		jacobi_solver,
-		flakelib::laplace_solver::planar::grid_scale(
+		flakelib::planar::laplace_solver::grid_scale(
 			1.0f),
-		flakelib::laplace_solver::planar::termination_size(
+		flakelib::planar::laplace_solver::termination_size(
 			64),
-		flakelib::laplace_solver::planar::debug_output(
+		flakelib::planar::laplace_solver::debug_output(
 			true));
 
-	flakelib::laplace_tester tester(
+	flakelib::planar::laplace_tester tester(
 		//multigrid_solver,
 		jacobi_solver,
 		cache,
@@ -218,7 +218,7 @@ try
 			sys.renderer());
 
 		tester.render(
-			flakelib::monitor::optional_projection(
+			flakelib::planar::monitor::optional_projection(
 				camera.projection()));
 	}
 }

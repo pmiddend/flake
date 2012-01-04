@@ -3,11 +3,11 @@
 #include <flakelib/main_head.hpp>
 #include <flakelib/media_path.hpp>
 #include <flakelib/media_path_from_string.hpp>
-#include <flakelib/planar_framework.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/buffer_pool/object.hpp>
-#include <flakelib/laplace_solver/planar/dynamic_factory.hpp>
-#include <flakelib/simulation/stam/object.hpp>
+#include <flakelib/planar/framework.hpp>
+#include <flakelib/planar/laplace_solver/dynamic_factory.hpp>
+#include <flakelib/planar/simulation/stam/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/config/media_path.hpp>
 #include <sge/console/arg_list.hpp>
@@ -101,8 +101,8 @@ namespace
 {
 void
 update_simulation_and_visualization(
-	flakelib::simulation::stam::object &_simulation,
-	flakelib::planar_framework &_visual,
+	flakelib::planar::simulation::stam::object &_simulation,
+	flakelib::planar::framework &_visual,
 	flakelib::duration const &_delta)
 {
 			_simulation.update(
@@ -122,7 +122,7 @@ toggle_console_active(
 
 void
 stats_console_callback(
-	flakelib::simulation::stam::object const &_simulation)
+	flakelib::planar::simulation::stam::object const &_simulation)
 {
 	fcppt::io::cout() << _simulation.parent_profiler() << FCPPT_TEXT("\n");
 }
@@ -258,7 +258,7 @@ try
 		opencl_system.command_queue(),
 		global_build_options);
 
-	flakelib::laplace_solver::planar::dynamic_factory configurable_solver(
+	flakelib::planar::laplace_solver::dynamic_factory configurable_solver(
 		scalar_pool,
 		opencl_system.command_queue(),
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
@@ -268,9 +268,9 @@ try
 		global_build_options,
 		utility_object);
 
-	flakelib::simulation::stam::object simulation(
+	flakelib::planar::simulation::stam::object simulation(
 		opencl_system.command_queue(),
-		flakelib::planar_boundary_view(
+		flakelib::planar::boundary_view(
 			boundary_image->view()),
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
 			config_file,
@@ -295,14 +295,14 @@ try
 				.long_description(
 					SGE_FONT_TEXT_LIT("Outputs simulation profiling statistics"))));
 
-	flakelib::planar_framework visualization(
+	flakelib::planar::framework visualization(
 		sys.viewport_manager(),
 		sys.renderer(),
 		opencl_system.command_queue(),
 		simulation,
 		sys.font_system(),
 		global_build_options,
-		flakelib::planar_boundary_view(
+		flakelib::planar::boundary_view(
 			boundary_image->view()),
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
 			config_file,
