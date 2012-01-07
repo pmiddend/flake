@@ -1,26 +1,35 @@
-#include <flakelib/buffer/volume_view.hpp>
-#include <sge/opencl/memory_object/size_type.hpp>
-#include <sge/opencl/memory_object/buffer.hpp>
-#include <flakelib/volume/conversion/object.hpp>
-#include <sge/shader/object_parameters.hpp>
+#include <flakelib/volume/boundary/object.hpp>
 #include <fcppt/assign/make_array.hpp>
-#include <sge/opencl/command_queue/enqueue_kernel.hpp>
-#include <sge/opencl/program/build_parameters.hpp>
-#include <flakelib/media_path_from_string.hpp>
-#include <sge/opencl/program/file_to_source_string_sequence.hpp>
-#include <sge/opencl/program/object.hpp>
-#include <sge/opencl/single_device_system/parameters.hpp>
-#include <sge/opencl/single_device_system/object.hpp>
-#include <flakelib/media_path_from_string.hpp>
+#include <fcppt/assign/make_container.hpp>
+#include <fcppt/chrono/seconds.hpp>
+#include <fcppt/container/bitfield/basic_impl.hpp>
+#include <fcppt/exception.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
+#include <fcppt/io/cerr.hpp>
+#include <fcppt/log/activate_levels.hpp>
+#include <fcppt/log/level.hpp>
+#include <fcppt/math/box/basic_impl.hpp>
+#include <fcppt/math/deg_to_rad.hpp>
+#include <fcppt/math/dim/basic_impl.hpp>
+#include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/matrix/basic_impl.hpp>
+#include <fcppt/math/twopi.hpp>
+#include <fcppt/math/vector/basic_impl.hpp>
+#include <fcppt/ref.hpp>
+#include <fcppt/signal/scoped_connection.hpp>
+#include <fcppt/text.hpp>
 #include <fcppt/to_std_string.hpp>
+#include <fcppt/tr1/functional.hpp>
+#include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/build_options.hpp>
 #include <flakelib/media_path_from_string.hpp>
+#include <flakelib/media_path_from_string.hpp>
+#include <flakelib/media_path_from_string.hpp>
+#include <flakelib/volume/conversion/object.hpp>
+#include <sge/camera/first_person/object.hpp>
+#include <sge/camera/first_person/parameters.hpp>
 #include <sge/camera/projection/object.hpp>
 #include <sge/camera/projection/update_perspective_from_viewport.hpp>
-#include <sge/camera/spherical/movement_speed.hpp>
-#include <sge/camera/spherical/object.hpp>
-#include <sge/camera/spherical/parameters.hpp>
 #include <sge/config/media_path.hpp>
 #include <sge/font/metrics_ptr.hpp>
 #include <sge/font/rect.hpp>
@@ -28,8 +37,8 @@
 #include <sge/font/system.hpp>
 #include <sge/font/text/align_h.hpp>
 #include <sge/font/text/align_v.hpp>
-#include <sge/font/text/draw.hpp>
 #include <sge/font/text/drawer_3d.hpp>
+#include <sge/font/text/draw.hpp>
 #include <sge/font/text/flags_none.hpp>
 #include <sge/font/text/lit.hpp>
 #include <sge/font/text/part.hpp>
@@ -43,6 +52,14 @@
 #include <sge/media/extension.hpp>
 #include <sge/media/extension_set.hpp>
 #include <sge/media/optional_extension_set.hpp>
+#include <sge/opencl/command_queue/enqueue_kernel.hpp>
+#include <sge/opencl/memory_object/buffer.hpp>
+#include <sge/opencl/memory_object/size_type.hpp>
+#include <sge/opencl/program/build_parameters.hpp>
+#include <sge/opencl/program/file_to_source_string_sequence.hpp>
+#include <sge/opencl/program/object.hpp>
+#include <sge/opencl/single_device_system/object.hpp>
+#include <sge/opencl/single_device_system/parameters.hpp>
 #include <sge/renderer/active_target.hpp>
 #include <sge/renderer/depth_stencil_buffer.hpp>
 #include <sge/renderer/device.hpp>
@@ -52,23 +69,15 @@
 #include <sge/renderer/no_multi_sampling.hpp>
 #include <sge/renderer/nonindexed_primitive_type.hpp>
 #include <sge/renderer/parameters.hpp>
+#include <sge/renderer/projection/far.hpp>
+#include <sge/renderer/projection/fov.hpp>
+#include <sge/renderer/projection/near.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/scalar.hpp>
 #include <sge/renderer/scoped_block.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/scoped_vertex_lock.hpp>
-#include <sge/renderer/target_base.hpp>
-#include <sge/renderer/vertex_buffer.hpp>
-#include <sge/renderer/vertex_buffer_ptr.hpp>
-#include <sge/renderer/vertex_count.hpp>
-#include <sge/renderer/vertex_declaration_ptr.hpp>
-#include <sge/renderer/viewport.hpp>
-#include <sge/renderer/visual_depth.hpp>
-#include <sge/renderer/vsync.hpp>
-#include <sge/renderer/projection/far.hpp>
-#include <sge/renderer/projection/fov.hpp>
-#include <sge/renderer/projection/near.hpp>
 #include <sge/renderer/state/bool.hpp>
 #include <sge/renderer/state/color.hpp>
 #include <sge/renderer/state/cull_mode.hpp>
@@ -77,9 +86,16 @@
 #include <sge/renderer/state/float.hpp>
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/stencil_func.hpp>
+#include <sge/renderer/target_base.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
-#include <sge/renderer/texture/planar_ptr.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
+#include <sge/renderer/texture/planar_ptr.hpp>
+#include <sge/renderer/vertex_buffer.hpp>
+#include <sge/renderer/vertex_buffer_ptr.hpp>
+#include <sge/renderer/vertex_count.hpp>
+#include <sge/renderer/vertex_declaration_ptr.hpp>
+#include <sge/renderer/vf/dynamic/make_format.hpp>
+#include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <sge/renderer/vf/format.hpp>
 #include <sge/renderer/vf/iterator.hpp>
 #include <sge/renderer/vf/make_unspecified_tag.hpp>
@@ -90,13 +106,15 @@
 #include <sge/renderer/vf/vector.hpp>
 #include <sge/renderer/vf/vertex.hpp>
 #include <sge/renderer/vf/view.hpp>
-#include <sge/renderer/vf/dynamic/make_format.hpp>
-#include <sge/renderer/vf/dynamic/make_part_index.hpp>
+#include <sge/renderer/viewport.hpp>
+#include <sge/renderer/visual_depth.hpp>
+#include <sge/renderer/vsync.hpp>
 #include <sge/shader/activate_everything.hpp>
 #include <sge/shader/activation_method.hpp>
-#include <sge/shader/matrix.hpp>
 #include <sge/shader/matrix_flags.hpp>
+#include <sge/shader/matrix.hpp>
 #include <sge/shader/object.hpp>
+#include <sge/shader/object_parameters.hpp>
 #include <sge/shader/object_parameters.hpp>
 #include <sge/shader/sampler_sequence.hpp>
 #include <sge/shader/scoped.hpp>
@@ -108,44 +126,26 @@
 #include <sge/systems/cursor_option_field.hpp>
 #include <sge/systems/font.hpp>
 #include <sge/systems/image2d.hpp>
-#include <sge/systems/input.hpp>
-#include <sge/systems/input_helper.hpp>
 #include <sge/systems/input_helper_field.hpp>
+#include <sge/systems/input_helper.hpp>
+#include <sge/systems/input.hpp>
 #include <sge/systems/instance.hpp>
 #include <sge/systems/list.hpp>
 #include <sge/systems/renderer.hpp>
 #include <sge/systems/running_to_false.hpp>
 #include <sge/systems/window.hpp>
 #include <sge/timer/basic.hpp>
-#include <sge/timer/elapsed.hpp>
+#include <sge/timer/clocks/standard.hpp>
 #include <sge/timer/elapsed_fractional.hpp>
+#include <sge/timer/elapsed.hpp>
 #include <sge/timer/parameters.hpp>
 #include <sge/timer/reset_when_expired.hpp>
-#include <sge/timer/clocks/standard.hpp>
 #include <sge/viewport/fill_on_resize.hpp>
 #include <sge/viewport/manager.hpp>
 #include <sge/window/dim.hpp>
 #include <sge/window/parameters.hpp>
 #include <sge/window/system.hpp>
 #include <sge/window/title.hpp>
-#include <fcppt/exception.hpp>
-#include <fcppt/ref.hpp>
-#include <fcppt/text.hpp>
-#include <fcppt/assign/make_container.hpp>
-#include <fcppt/chrono/seconds.hpp>
-#include <fcppt/container/bitfield/basic_impl.hpp>
-#include <fcppt/io/cerr.hpp>
-#include <fcppt/log/activate_levels.hpp>
-#include <fcppt/log/level.hpp>
-#include <fcppt/math/deg_to_rad.hpp>
-#include <fcppt/math/twopi.hpp>
-#include <fcppt/math/box/basic_impl.hpp>
-#include <fcppt/math/dim/basic_impl.hpp>
-#include <fcppt/math/dim/structure_cast.hpp>
-#include <fcppt/math/matrix/basic_impl.hpp>
-#include <fcppt/math/vector/basic_impl.hpp>
-#include <fcppt/signal/scoped_connection.hpp>
-#include <fcppt/tr1/functional.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/mpl/vector/vector10.hpp>
 #include <cmath>
@@ -264,18 +264,14 @@ try
 				sge::systems::running_to_false(
 					running))));
 
-	sge::camera::spherical::object camera(
-		sge::camera::spherical::parameters(
-			// Movement speed.
-			sge::camera::spherical::movement_speed(
-				2.0f),
-			// min_radius
-			0.5f,
-			sys.keyboard_collector())
-			.radius(
-				3.f)
-			.damping(
-				0.97f));
+	sge::camera::first_person::object camera(
+		sge::camera::first_person::parameters(
+			sge::camera::first_person::movement_speed(
+				4.f),
+			sge::camera::first_person::rotation_speed(
+				200.f),
+			sys.keyboard_collector(),
+			sys.mouse_collector()));
 
 	// Adapt the camera to the viewport
 	fcppt::signal::scoped_connection const viewport_connection(
@@ -373,6 +369,45 @@ try
 				.options(
 					global_build_options.get())));
 
+	flakelib::buffer_pool::object buffer_pool(
+		opencl_system.context());
+
+	flakelib::volume::boundary::object boundary_object(
+		opencl_system.command_queue(),
+		buffer_pool,
+		global_build_options,
+		sge::opencl::memory_object::dim3(
+			grid_size,
+			grid_size,
+			grid_size));
+
+	boundary_object.add_cube(
+		flakelib::volume::boundary::cube_position(
+			sge::opencl::memory_object::dim3(
+				0,
+				0,
+				0)),
+		flakelib::volume::boundary::cube_width(
+			grid_size/8));
+
+	boundary_object.add_sphere(
+		flakelib::volume::boundary::sphere_center(
+			sge::opencl::memory_object::dim3(
+				grid_size/2,
+				grid_size/2,
+				grid_size/2)),
+		flakelib::volume::boundary::radius(
+			grid_size/10));
+
+	boundary_object.add_sphere(
+		flakelib::volume::boundary::sphere_center(
+			sge::opencl::memory_object::dim3(
+				grid_size - grid_size/10,
+				grid_size - grid_size/10,
+				grid_size - grid_size/10)),
+		flakelib::volume::boundary::radius(
+			grid_size/5));
+
 	sge::opencl::kernel::object fill_program_kernel(
 		fill_program,
 		sge::opencl::kernel::name(
@@ -383,11 +418,18 @@ try
 			0),
 		cl_buffer);
 
+	fill_program_kernel.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		boundary_object.get().buffer());
+
 	sge::opencl::command_queue::enqueue_kernel(
 		opencl_system.command_queue(),
 		fill_program_kernel,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(cl_buffer.byte_size() / 4 / 4).container());
+			(grid_size)
+			(grid_size)
+			(grid_size).container());
 
 	conversion_object.to_arrow_vb(
 		flakelib::volume::conversion::cl_buffer(
@@ -400,7 +442,7 @@ try
 		flakelib::volume::conversion::gl_buffer(
 			gl_buffer),
 		flakelib::volume::conversion::arrow_scale(
-			1.0f),
+			0.25f),
 		flakelib::volume::conversion::grid_scale(
 			1.0f));
 

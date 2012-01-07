@@ -35,11 +35,15 @@ to_arrow_vb(
 	gl_buffer[pos_index].start_position =
 		grid_scale * (pos_float + 0.5f);
 
+	gl_buffer[pos_index].start_position.w = 1.0f;
+
 	gl_buffer[pos_index].end_position =
 		gl_buffer[pos_index].start_position +
 		arrow_scale *
 		cl_buffer[
 			pos_index];
+
+	gl_buffer[pos_index].end_position.w = 1.0f;
 
 	gl_buffer[pos_index].start_color =
 		(float4)(1.0f,0.0f,0.0f,1.0f);

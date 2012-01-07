@@ -125,6 +125,7 @@ SET(
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/utility/object.cpp
 	src/flakelib/viewport_pager.cpp
+	src/flakelib/volume/boundary/object.cpp
 	src/flakelib/volume/conversion/object.cpp
 )
 

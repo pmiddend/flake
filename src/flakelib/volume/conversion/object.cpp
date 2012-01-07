@@ -40,7 +40,6 @@ flakelib::volume::conversion::object::to_arrow_vb(
 	conversion::arrow_scale const &_arrow_scale,
 	conversion::grid_scale const &_grid_scale)
 {
-
 	to_arrow_vb_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
