@@ -26,7 +26,7 @@ advect(
 				1));
 
 	size_t const current_index =
-		FLAKE_AT(buffer_width,position);
+		FLAKE_PLANAR_AT(buffer_width,position);
 
 	if(is_solid(boundary,current_index))
 	{
@@ -65,17 +65,17 @@ advect(
 
 
 	size_t const index_lefttop =
-		FLAKE_AT(buffer_width,clamped_advected_vector);
+		FLAKE_PLANAR_AT(buffer_width,clamped_advected_vector);
 
 	flake_real2 const
 		left =
 			input[index_lefttop],
 		right =
-			input[FLAKE_RIGHT_OF(buffer_width,clamped_advected_vector)],
+			input[FLAKE_PLANAR_RIGHT_OF(buffer_width,clamped_advected_vector)],
 		leftbottom =
-			input[FLAKE_BOTTOM_OF(buffer_width,clamped_advected_vector)],
+			input[FLAKE_PLANAR_BOTTOM_OF(buffer_width,clamped_advected_vector)],
 		rightbottom =
-			input[FLAKE_RIGHT_BOTTOM_OF(buffer_width,clamped_advected_vector)];
+			input[FLAKE_PLANAR_RIGHT_BOTTOM_OF(buffer_width,clamped_advected_vector)];
 
 	output[current_index] =
 		/*
@@ -147,15 +147,15 @@ divergence(
 
 	int const
 		current_index =
-			FLAKE_AT(buffer_width,currentpos),
+			FLAKE_PLANAR_AT(buffer_width,currentpos),
 		left_index =
-			FLAKE_LEFT_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_LEFT_OF(buffer_width,currentpos),
 		right_index =
-			FLAKE_RIGHT_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_RIGHT_OF(buffer_width,currentpos),
 		top_index =
-			FLAKE_TOP_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_TOP_OF(buffer_width,currentpos),
 		bottom_index =
-			FLAKE_BOTTOM_OF(buffer_width,currentpos);
+			FLAKE_PLANAR_BOTTOM_OF(buffer_width,currentpos);
 
 	flake_real2
 		left =
@@ -204,15 +204,15 @@ gradient(
 
 	int const
 		current_index =
-			FLAKE_AT(buffer_width,currentpos),
+			FLAKE_PLANAR_AT(buffer_width,currentpos),
 		left_index =
-			FLAKE_LEFT_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_LEFT_OF(buffer_width,currentpos),
 		right_index =
-			FLAKE_RIGHT_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_RIGHT_OF(buffer_width,currentpos),
 		top_index =
-			FLAKE_TOP_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_TOP_OF(buffer_width,currentpos),
 		bottom_index =
-			FLAKE_BOTTOM_OF(buffer_width,currentpos);
+			FLAKE_PLANAR_BOTTOM_OF(buffer_width,currentpos);
 
 	// Could be replaced by a mix on the output value below (but that would
 	// mean a lot of computations for returning 0 in the end)
@@ -278,15 +278,15 @@ gradient_and_subtract(
 
 	int const
 		current_index =
-			FLAKE_AT(buffer_width,currentpos),
+			FLAKE_PLANAR_AT(buffer_width,currentpos),
 		left_index =
-			FLAKE_LEFT_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_LEFT_OF(buffer_width,currentpos),
 		right_index =
-			FLAKE_RIGHT_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_RIGHT_OF(buffer_width,currentpos),
 		top_index =
-			FLAKE_TOP_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_TOP_OF(buffer_width,currentpos),
 		bottom_index =
-			FLAKE_BOTTOM_OF(buffer_width,currentpos);
+			FLAKE_PLANAR_BOTTOM_OF(buffer_width,currentpos);
 
 	// Could be replaced by a mix on the output value below (but that would
 	// mean a lot of computations for returning 0 in the end)
@@ -372,15 +372,15 @@ laplacian_residual_absolute_value(
 
 	int const
 		current_index =
-			FLAKE_AT(buffer_width,currentpos),
+			FLAKE_PLANAR_AT(buffer_width,currentpos),
 		left_index =
-			FLAKE_LEFT_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_LEFT_OF(buffer_width,currentpos),
 		right_index =
-			FLAKE_RIGHT_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_RIGHT_OF(buffer_width,currentpos),
 		top_index =
-			FLAKE_TOP_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_TOP_OF(buffer_width,currentpos),
 		bottom_index =
-			FLAKE_BOTTOM_OF(buffer_width,currentpos);
+			FLAKE_PLANAR_BOTTOM_OF(buffer_width,currentpos);
 
 	flake_real const
 		center =

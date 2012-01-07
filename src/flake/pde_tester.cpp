@@ -1,5 +1,4 @@
 #include <flakelib/exception.hpp>
-#include <flakelib/main_head.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/buffer_pool/object.hpp>
@@ -64,7 +63,8 @@
 #include <iostream>
 #include <ostream>
 #include <fcppt/config/external_end.hpp>
-
+// Separator
+#include <flakelib/main_head.hpp>
 
 FLAKELIB_MAIN_HEAD
 try

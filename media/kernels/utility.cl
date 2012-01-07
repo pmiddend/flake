@@ -53,7 +53,7 @@ generate_float_oscillation(
 				FLAKE_REAL_LIT(-1.0),
 				FLAKE_REAL_LIT(1.0));
 
-	input[FLAKE_AT(buffer_width,position)] =
+	input[FLAKE_PLANAR_AT(buffer_width,position)] =
 		(sum + FLAKE_REAL_LIT(1.0))/FLAKE_REAL_LIT(2.0);
 }
 

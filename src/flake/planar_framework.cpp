@@ -1,6 +1,5 @@
 #include <flakelib/duration.hpp>
 #include <flakelib/exception.hpp>
-#include <flakelib/main_head.hpp>
 #include <flakelib/media_path.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
@@ -95,6 +94,8 @@
 #include <iostream>
 #include <ostream>
 #include <fcppt/config/external_end.hpp>
+// Separator
+#include <flakelib/main_head.hpp>
 
 
 namespace
@@ -235,7 +236,7 @@ try
 
 	flakelib::build_options global_build_options(
 		std::string(
-			"-Werror ")+
+			"-cl-mad-enable -cl-fast-relaxed-math -Werror ")+
 		"-I "+
 		fcppt::to_std_string(
 			fcppt::filesystem::path_to_string(

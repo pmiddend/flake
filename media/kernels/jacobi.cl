@@ -20,15 +20,15 @@ jacobi(
 
 	int const
 		current_index =
-			FLAKE_AT(buffer_width,currentpos),
+			FLAKE_PLANAR_AT(buffer_width,currentpos),
 		left_index =
-			FLAKE_LEFT_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_LEFT_OF(buffer_width,currentpos),
 		right_index =
-			FLAKE_RIGHT_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_RIGHT_OF(buffer_width,currentpos),
 		top_index =
-			FLAKE_TOP_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_TOP_OF(buffer_width,currentpos),
 		bottom_index =
-			FLAKE_BOTTOM_OF(buffer_width,currentpos);
+			FLAKE_PLANAR_BOTTOM_OF(buffer_width,currentpos);
 
 	flake_real const
 		center =

@@ -125,6 +125,7 @@ SET(
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/utility/object.cpp
 	src/flakelib/viewport_pager.cpp
+	src/flakelib/volume/conversion/object.cpp
 )
 
 FCPPT_UTILS_ADD_SOURCE_GROUPS("${FLAKELIB_FILES}")
@@ -175,3 +176,24 @@ INSTALL(
 	DESTINATION
 	${INSTALL_BINARY_DIR})
 # pde_tester end
+
+# volume_test begin
+ADD_EXECUTABLE(
+	volume_test
+	WIN32
+	src/flake/volume_test.cpp)
+
+TARGET_LINK_LIBRARIES(
+	volume_test
+	flakelib
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Boost_LIBRARIES})
+
+INSTALL(
+	TARGETS
+	volume_test
+	DESTINATION
+	${INSTALL_BINARY_DIR})
+# volume_test end

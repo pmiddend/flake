@@ -21,6 +21,6 @@ splat(
 			start_x,
 			start_y);
 
-	output[FLAKE_AT(buffer_width,target_position)] =
+	output[FLAKE_PLANAR_AT(buffer_width,target_position)] =
 		FLAKE_REAL_LIT(1.0);
 }

@@ -29,23 +29,23 @@ downsample(
 	// test
 	int const
 		current_index =
-			FLAKE_AT(large_buffer_width,currentpos),
+			FLAKE_PLANAR_AT(large_buffer_width,currentpos),
 		left_index =
-			FLAKE_LEFT_OF(large_buffer_width,currentpos),
+			FLAKE_PLANAR_LEFT_OF(large_buffer_width,currentpos),
 		right_index =
-			FLAKE_RIGHT_OF(large_buffer_width,currentpos),
+			FLAKE_PLANAR_RIGHT_OF(large_buffer_width,currentpos),
 		top_index =
-			FLAKE_TOP_OF(large_buffer_width,currentpos),
+			FLAKE_PLANAR_TOP_OF(large_buffer_width,currentpos),
 		bottom_index =
-			FLAKE_BOTTOM_OF(large_buffer_width,currentpos),
+			FLAKE_PLANAR_BOTTOM_OF(large_buffer_width,currentpos),
 		lefttop_index =
-			FLAKE_LEFT_TOP_OF(large_buffer_width,currentpos),
+			FLAKE_PLANAR_LEFT_TOP_OF(large_buffer_width,currentpos),
 		righttop_index =
-			FLAKE_RIGHT_TOP_OF(large_buffer_width,currentpos),
+			FLAKE_PLANAR_RIGHT_TOP_OF(large_buffer_width,currentpos),
 		leftbottom_index =
-			FLAKE_LEFT_BOTTOM_OF(large_buffer_width,currentpos),
+			FLAKE_PLANAR_LEFT_BOTTOM_OF(large_buffer_width,currentpos),
 		rightbottom_index =
-			FLAKE_RIGHT_BOTTOM_OF(large_buffer_width,currentpos);
+			FLAKE_PLANAR_RIGHT_BOTTOM_OF(large_buffer_width,currentpos);
 
 	flake_real
 		center =
@@ -79,7 +79,7 @@ downsample(
 	int2 const small_position =
 		currentpos/2;
 
-	to[FLAKE_AT(large_buffer_width/2,small_position)] =
+	to[FLAKE_PLANAR_AT(large_buffer_width/2,small_position)] =
 		//center;
 		output;
 }
@@ -103,13 +103,13 @@ upsample_(
 
 	flake_real const
 		left =
-			from[FLAKE_AT(small_buffer_width,position_small)],
+			from[FLAKE_PLANAR_AT(small_buffer_width,position_small)],
 		right =
-			from[FLAKE_RIGHT_OF(small_buffer_width,position_small)],
+			from[FLAKE_PLANAR_RIGHT_OF(small_buffer_width,position_small)],
 		leftbottom =
-			from[FLAKE_BOTTOM_OF(small_buffer_width,position_small)],
+			from[FLAKE_PLANAR_BOTTOM_OF(small_buffer_width,position_small)],
 		rightbottom =
-			from[FLAKE_RIGHT_BOTTOM_OF(small_buffer_width,position_small)];
+			from[FLAKE_PLANAR_RIGHT_BOTTOM_OF(small_buffer_width,position_small)];
 
 	flake_real const
 		fraction_x =
@@ -149,15 +149,15 @@ laplacian_residual(
 
 	int const
 		current_index =
-			FLAKE_AT(buffer_width,currentpos),
+			FLAKE_PLANAR_AT(buffer_width,currentpos),
 		left_index =
-			FLAKE_LEFT_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_LEFT_OF(buffer_width,currentpos),
 		right_index =
-			FLAKE_RIGHT_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_RIGHT_OF(buffer_width,currentpos),
 		top_index =
-			FLAKE_TOP_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_TOP_OF(buffer_width,currentpos),
 		bottom_index =
-			FLAKE_BOTTOM_OF(buffer_width,currentpos);
+			FLAKE_PLANAR_BOTTOM_OF(buffer_width,currentpos);
 
 	flake_real const
 		center =

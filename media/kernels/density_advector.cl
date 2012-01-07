@@ -18,7 +18,7 @@ advect(
 				1));
 
 	size_t const current_index =
-		FLAKE_AT(buffer_width,position);
+		FLAKE_PLANAR_AT(buffer_width,position);
 
 	flake_real2 const current_velocity =
 		velocity[current_index];
@@ -49,17 +49,17 @@ advect(
 
 
 	size_t const index_lefttop =
-		FLAKE_AT(buffer_width,clamped_advected_vector);
+		FLAKE_PLANAR_AT(buffer_width,clamped_advected_vector);
 
 	flake_real const
 		left =
 			input[index_lefttop],
 		right =
-			input[FLAKE_RIGHT_OF(buffer_width,clamped_advected_vector)],
+			input[FLAKE_PLANAR_RIGHT_OF(buffer_width,clamped_advected_vector)],
 		leftbottom =
-			input[FLAKE_BOTTOM_OF(buffer_width,clamped_advected_vector)],
+			input[FLAKE_PLANAR_BOTTOM_OF(buffer_width,clamped_advected_vector)],
 		rightbottom =
-			input[FLAKE_RIGHT_BOTTOM_OF(buffer_width,clamped_advected_vector)];
+			input[FLAKE_PLANAR_RIGHT_BOTTOM_OF(buffer_width,clamped_advected_vector)];
 
 	output[current_index] =
 		mix(

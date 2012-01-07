@@ -10,8 +10,6 @@ main()
 	color_interp =
 		color;
 	gl_Position =
-		projection *
-		vec4(
-			initial_position + position,
-			1.0);
+		mvp *
+		(vec4(initial_position,1.0) + position);
 }
