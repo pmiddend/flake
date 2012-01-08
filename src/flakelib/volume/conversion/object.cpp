@@ -21,7 +21,7 @@ flakelib::volume::conversion::object::object(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
 			flakelib::media_path_from_string(
-				FCPPT_TEXT("kernels/volume_conversion.cl"))),
+				FCPPT_TEXT("kernels/volume/conversion.cl"))),
 		sge::opencl::program::optional_build_parameters(
 			sge::opencl::program::build_parameters()
 				.options(

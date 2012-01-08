@@ -1,30 +1,27 @@
-#include <flakelib/media_path_from_string.hpp>
-#include <flakelib/buffer_pool/planar_lock.hpp>
-#include <flakelib/cl/apply_kernel_to_planar_image.hpp>
-#include <flakelib/planar/laplace_solver/jacobi.hpp>
-#include <sge/opencl/command_queue/enqueue_kernel.hpp>
-#include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <sge/opencl/program/build_parameters.hpp>
-#include <sge/opencl/program/file_to_source_string_sequence.hpp>
-#include <fcppt/text.hpp>
-#include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_array.hpp>
+#include <sge/opencl/command_queue/enqueue_kernel.hpp>
+#include <flakelib/volume/laplace_solver/jacobi.hpp>
 #include <fcppt/math/dim/comparison.hpp>
-#include <fcppt/config/external_begin.hpp>
-#include <algorithm>
-#include <fcppt/config/external_end.hpp>
+#include <sge/opencl/kernel/name.hpp>
+#include <sge/opencl/program/build_parameters.hpp>
+#include <flakelib/media_path_from_string.hpp>
+#include <flakelib/buffer/volume_view.hpp>
+#include <flakelib/buffer_pool/volume_lock.hpp>
+#include <sge/opencl/program/file_to_source_string_sequence.hpp>
+#include <sge/opencl/command_queue/object.hpp>
+#include <fcppt/assert/pre.hpp>
 
-
-flakelib::planar::laplace_solver::jacobi::jacobi(
-	flakelib::buffer_pool::object &_buffer_cache,
+flakelib::volume::laplace_solver::jacobi::jacobi(
+	flakelib::buffer_pool::object &_buffer_pool,
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::build_options const &_build_options,
-	planar::laplace_solver::grid_scale const &_grid_scale,
-	planar::laplace_solver::iterations const &_iterations)
+	volume::laplace_solver::boundary const &_boundary,
+	volume::laplace_solver::grid_scale const &_grid_scale,
+	volume::laplace_solver::iterations const &_iterations)
 :
-	buffer_cache_(
-		_buffer_cache),
+	buffer_pool_(
+		_buffer_pool),
 	command_queue_(
 		_command_queue),
 	grid_scale_(
@@ -35,7 +32,7 @@ flakelib::planar::laplace_solver::jacobi::jacobi(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
 			flakelib::media_path_from_string(
-				FCPPT_TEXT("kernels/planar/jacobi.cl"))),
+				FCPPT_TEXT("kernels/volume/jacobi.cl"))),
 		sge::opencl::program::optional_build_parameters(
 			sge::opencl::program::build_parameters()
 				.options(
@@ -45,20 +42,26 @@ flakelib::planar::laplace_solver::jacobi::jacobi(
 		sge::opencl::kernel::name(
 			"jacobi"))
 {
-}
-
-void
-flakelib::planar::laplace_solver::jacobi::solve(
-	planar::laplace_solver::rhs const &_rhs,
-	planar::laplace_solver::destination const &_destination,
-	planar::laplace_solver::initial_guess const &_initial_guess,
-	planar::laplace_solver::boundary const &_boundary)
-{
 	FCPPT_ASSERT_PRE(
 		iterations_ % 2 != 0);
 
+	// boundary
+	jacobi_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			4),
+		_boundary.get().buffer());
+
+}
+
+void
+flakelib::volume::laplace_solver::jacobi::solve(
+	volume::laplace_solver::rhs const &_rhs,
+	volume::laplace_solver::destination const &_destination,
+	volume::laplace_solver::initial_guess const &_initial_guess)
+{
 	FCPPT_ASSERT_PRE(
-		_rhs.get().size()[0] == _rhs.get().size()[1]);
+		_rhs.get().size()[0] == _rhs.get().size()[1] &&
+		_rhs.get().size()[1] == _rhs.get().size()[2]);
 
 	FCPPT_ASSERT_PRE(
 		_rhs.get().size() == _destination.get().size());
@@ -66,8 +69,8 @@ flakelib::planar::laplace_solver::jacobi::solve(
 	FCPPT_ASSERT_PRE(
 		_initial_guess.get().size() == _destination.get().size());
 
-	flakelib::buffer_pool::planar_lock<cl_float> p0(
-		buffer_cache_,
+	flakelib::buffer_pool::volume_lock<cl_float> p0(
+		buffer_pool_,
 		_rhs.get().size());
 
 	// Alpha
@@ -81,7 +84,7 @@ flakelib::planar::laplace_solver::jacobi::solve(
 		sge::opencl::kernel::argument_index(
 			1),
 		static_cast<cl_float>(
-			1.0f/4.0f));
+			1.0f/6.0f));
 
 	// buffer width
 	jacobi_kernel_.argument(
@@ -95,12 +98,6 @@ flakelib::planar::laplace_solver::jacobi::solve(
 		sge::opencl::kernel::argument_index(
 			3),
 		_rhs.get().buffer());
-
-	// boundary
-	jacobi_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			4),
-		_boundary.get().buffer());
 
 	sge::opencl::memory_object::buffer
 		*current_source =
@@ -141,16 +138,11 @@ flakelib::planar::laplace_solver::jacobi::solve(
 			jacobi_kernel_,
 			fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 				(_rhs.get().size()[0])
-				(_rhs.get().size()[1]).container());
+				(_rhs.get().size()[1])
+				(_rhs.get().size()[2]).container());
 	}
 }
 
-flakelib::planar::additional_scalar_data const &
-flakelib::planar::laplace_solver::jacobi::additional_scalar_data() const
-{
-	return additional_scalar_data_;
-}
-
-flakelib::planar::laplace_solver::jacobi::~jacobi()
+flakelib::volume::laplace_solver::jacobi::~jacobi()
 {
 }

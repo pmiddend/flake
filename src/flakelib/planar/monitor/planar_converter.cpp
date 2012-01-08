@@ -26,7 +26,7 @@ flakelib::planar::monitor::planar_converter::planar_converter(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
 			flakelib::media_path_from_string(
-				FCPPT_TEXT("kernels/vertex_buffer_conversions.cl"))),
+				FCPPT_TEXT("kernels/planar/vertex_buffer_conversions.cl"))),
 		sge::opencl::program::optional_build_parameters(
 			sge::opencl::program::build_parameters()
 				.options(

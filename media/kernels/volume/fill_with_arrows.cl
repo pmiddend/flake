@@ -1,4 +1,4 @@
-#include "positions.cl"
+#include "volume/positions.cl"
 
 kernel void fill_with_arrows(
 	global float4 *buffer,

@@ -127,6 +127,9 @@ SET(
 	src/flakelib/viewport_pager.cpp
 	src/flakelib/volume/boundary/object.cpp
 	src/flakelib/volume/conversion/object.cpp
+	src/flakelib/volume/laplace_solver/base.cpp
+	src/flakelib/volume/laplace_solver/jacobi.cpp
+	src/flakelib/volume/simulation/stam/object.cpp
 )
 
 FCPPT_UTILS_ADD_SOURCE_GROUPS("${FLAKELIB_FILES}")

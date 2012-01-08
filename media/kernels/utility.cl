@@ -1,5 +1,4 @@
-#include "float_handling.cl"
-#include "positions.cl"
+#include "planar/positions.cl"
 
 kernel void
 copy_float_buffer(
@@ -21,7 +20,7 @@ null_float_buffer(
 
 kernel void
 generate_float_oscillation(
-	global flake_real *input,
+	global float *input,
 	int const buffer_width)
 {
 	int2 const position =
@@ -31,30 +30,30 @@ generate_float_oscillation(
 			get_global_id(
 				1));
 
-	flake_real const oscillations =
-		FLAKE_REAL_LIT(64.0);
+	float const oscillations =
+		64.0f;
 
-	flake_real const
+	float const
 		sine1 =
 			sinpi(
-				FLAKE_REAL_LIT(2.0) * oscillations * position.x / buffer_width),
+				2.0f * oscillations * position.x / buffer_width),
 		sine2 =
 			sinpi(
-				FLAKE_REAL_LIT(2.0) * oscillations * position.y / buffer_width),
+				2.0f * oscillations * position.y / buffer_width),
 		sine3 =
 			sinpi(
-				FLAKE_REAL_LIT(2.0) * oscillations/FLAKE_REAL_LIT(16.0) * position.x / buffer_width),
+				2.0f * oscillations/16.0f * position.x / buffer_width),
 		sine4 =
 			sinpi(
-				FLAKE_REAL_LIT(2.0) * oscillations/FLAKE_REAL_LIT(16.0) * position.y / buffer_width),
+				2.0f * oscillations/16.0f * position.y / buffer_width),
 		sum =
 			clamp(
 				sine1 + sine2 + sine3 + sine4,
-				FLAKE_REAL_LIT(-1.0),
-				FLAKE_REAL_LIT(1.0));
+				-1.0f,
+				1.0f);
 
 	input[FLAKE_PLANAR_AT(buffer_width,position)] =
-		(sum + FLAKE_REAL_LIT(1.0))/FLAKE_REAL_LIT(2.0);
+		(sum + 1.0f)/2.0f;
 }
 
 kernel void

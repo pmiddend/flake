@@ -21,6 +21,13 @@
 		"grid-scale" : 1.0,
 		"boundary-file" : "boundary_balls_256.png"
 	},
+	"stam-volume-test" :
+	{
+		"profiling" : true,
+		"external-force-magnitude" : 7.0,
+		"grid-scale" : 1.0,
+		"arrow-scale" : 0.1
+	},
 	"simulation-solver" :
 	{
 		"type" : "jacobi",

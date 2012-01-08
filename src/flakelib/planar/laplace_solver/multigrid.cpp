@@ -54,7 +54,7 @@ flakelib::planar::laplace_solver::multigrid::multigrid(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
 			flakelib::media_path_from_string(
-				FCPPT_TEXT("kernels/multigrid.cl"))),
+				FCPPT_TEXT("kernels/planar/multigrid.cl"))),
 		sge::opencl::program::optional_build_parameters(
 			sge::opencl::program::build_parameters()
 				.options(

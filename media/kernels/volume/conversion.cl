@@ -1,4 +1,4 @@
-#include "positions.cl"
+#include "volume/positions.cl"
 
 struct __attribute__((packed)) vertex
 {
@@ -46,8 +46,8 @@ to_arrow_vb(
 	gl_buffer[pos_index].end_position.w = 1.0f;
 
 	gl_buffer[pos_index].start_color =
-		(float4)(1.0f,0.0f,0.0f,1.0f);
+		(float4)(1.0f,0.0f,0.0f,0.1f);
 
 	gl_buffer[pos_index].end_color =
-		(float4)(0.0f,1.0f,0.0f,1.0f);
+		(float4)(0.0f,1.0f,0.0f,0.1f);
 }

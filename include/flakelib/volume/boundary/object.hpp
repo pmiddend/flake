@@ -4,8 +4,10 @@
 #include <flakelib/build_options.hpp>
 #include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
+#include <flakelib/utility/object_fwd.hpp>
 #include <flakelib/buffer_pool/volume_lock.hpp>
 #include <flakelib/volume/boundary/cube_position.hpp>
+#include <flakelib/volume/boundary/view.hpp>
 #include <flakelib/volume/boundary/cube_width.hpp>
 #include <flakelib/volume/boundary/radius.hpp>
 #include <flakelib/volume/boundary/sphere_center.hpp>
@@ -30,11 +32,12 @@ public:
 	explicit
 	object(
 		sge::opencl::command_queue::object &,
+		flakelib::utility::object &,
 		flakelib::buffer_pool::object &,
 		flakelib::build_options const &,
 		sge::opencl::memory_object::dim3 const &);
 
-	flakelib::buffer::volume_view<cl_float> const
+	boundary::view::value_type const
 	get();
 
 	void

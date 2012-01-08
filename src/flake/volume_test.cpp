@@ -1,6 +1,22 @@
 #include <flakelib/volume/boundary/object.hpp>
+#include <flakelib/volume/simulation/stam/object.hpp>
+#include <sge/parse/json/array.hpp>
+#include <flakelib/utf8_file_to_fcppt_string.hpp>
+#include <sge/parse/json/find_and_convert_member.hpp>
+#include <sge/parse/json/object.hpp>
+#include <sge/parse/json/parse_string_exn.hpp>
+#include <sge/parse/json/path.hpp>
+#include <sge/parse/json/string_to_path.hpp>
+#include <sge/parse/json/config/create_command_line_parameters.hpp>
+#include <sge/parse/json/config/merge_command_line_parameters.hpp>
+#include <flakelib/utility/object.hpp>
+#include <flakelib/volume/laplace_solver/jacobi.hpp>
 #include <fcppt/assign/make_array.hpp>
 #include <fcppt/assign/make_container.hpp>
+#include <sge/timer/basic.hpp>
+#include <sge/timer/elapsed_and_reset.hpp>
+#include <sge/timer/parameters.hpp>
+#include <sge/timer/clocks/standard.hpp>
 #include <fcppt/chrono/seconds.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/exception.hpp>
@@ -33,6 +49,7 @@
 #include <sge/config/media_path.hpp>
 #include <sge/font/metrics_ptr.hpp>
 #include <sge/font/rect.hpp>
+#include <fcppt/io/cout.hpp>
 #include <sge/font/size_type.hpp>
 #include <sge/font/system.hpp>
 #include <sge/font/text/align_h.hpp>
@@ -219,13 +236,25 @@ format_part_view;
 FLAKELIB_MAIN_HEAD
 try
 {
+	sge::parse::json::object const config_file =
+		sge::parse::json::parse_string_exn(
+			flakelib::utf8_file_to_fcppt_string(
+				flakelib::media_path_from_string(
+					FCPPT_TEXT("config.json"))));
+
+	sge::window::dim const window_size =
+		sge::parse::json::find_and_convert_member<sge::window::dim>(
+			config_file,
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("window-size")));
+
 	sge::systems::instance const sys(
 		sge::systems::list()
 			(sge::systems::window(
 				sge::window::parameters(
 					sge::window::title(
-						FCPPT_TEXT("sge test for sge::shader::object")),
-					sge::window::dim(1024,768))))
+						FCPPT_TEXT("Test for 3D stuff")),
+					window_size)))
 			(sge::systems::renderer(
 				sge::renderer::parameters(
 					sge::renderer::visual_depth::depth32,
@@ -347,33 +376,21 @@ try
 				grid_size * grid_size * grid_size * 2u),
 			sge::renderer::resource_flags::none));
 
-	sge::opencl::memory_object::buffer cl_buffer(
-		opencl_system.context(),
-		sge::opencl::memory_object::flags_field(
-			sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
-		sge::opencl::memory_object::byte_size(
-			grid_size * grid_size * grid_size * 4 * sizeof(cl_float)));
-
 	sge::opencl::memory_object::buffer gl_buffer(
 		opencl_system.context(),
 		*vb,
 		sge::opencl::memory_object::renderer_buffer_lock_mode::read_write);
 
-	sge::opencl::program::object fill_program(
-		opencl_system.context(),
-		sge::opencl::program::file_to_source_string_sequence(
-			flakelib::media_path_from_string(
-				FCPPT_TEXT("kernels/fill_with_arrows.cl"))),
-		sge::opencl::program::optional_build_parameters(
-			sge::opencl::program::build_parameters()
-				.options(
-					global_build_options.get())));
-
 	flakelib::buffer_pool::object buffer_pool(
 		opencl_system.context());
 
+	flakelib::utility::object utility_object(
+		opencl_system.command_queue(),
+		global_build_options);
+
 	flakelib::volume::boundary::object boundary_object(
 		opencl_system.command_queue(),
+		utility_object,
 		buffer_pool,
 		global_build_options,
 		sge::opencl::memory_object::dim3(
@@ -381,6 +398,7 @@ try
 			grid_size,
 			grid_size));
 
+	/*
 	boundary_object.add_cube(
 		flakelib::volume::boundary::cube_position(
 			sge::opencl::memory_object::dim3(
@@ -389,6 +407,7 @@ try
 				0)),
 		flakelib::volume::boundary::cube_width(
 			grid_size/8));
+			*/
 
 	boundary_object.add_sphere(
 		flakelib::volume::boundary::sphere_center(
@@ -397,8 +416,9 @@ try
 				grid_size/2,
 				grid_size/2)),
 		flakelib::volume::boundary::radius(
-			grid_size/10));
+			grid_size/3));
 
+	/*
 	boundary_object.add_sphere(
 		flakelib::volume::boundary::sphere_center(
 			sge::opencl::memory_object::dim3(
@@ -407,44 +427,33 @@ try
 				grid_size - grid_size/10)),
 		flakelib::volume::boundary::radius(
 			grid_size/5));
+	*/
 
-	sge::opencl::kernel::object fill_program_kernel(
-		fill_program,
-		sge::opencl::kernel::name(
-			"fill_with_arrows"));
 
-	fill_program_kernel.argument(
-		sge::opencl::kernel::argument_index(
-			0),
-		cl_buffer);
-
-	fill_program_kernel.argument(
-		sge::opencl::kernel::argument_index(
-			1),
-		boundary_object.get().buffer());
-
-	sge::opencl::command_queue::enqueue_kernel(
+	flakelib::volume::laplace_solver::jacobi jacobi_solver(
+		buffer_pool,
 		opencl_system.command_queue(),
-		fill_program_kernel,
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(grid_size)
-			(grid_size)
-			(grid_size).container());
+		global_build_options,
+		flakelib::volume::laplace_solver::boundary(
+			boundary_object.get()),
+		flakelib::volume::laplace_solver::grid_scale(
+			1.0f),
+		flakelib::volume::laplace_solver::iterations(
+			51));
 
-	conversion_object.to_arrow_vb(
-		flakelib::volume::conversion::cl_buffer(
-			flakelib::buffer::volume_view<cl_float4>(
-				cl_buffer,
-				sge::opencl::memory_object::dim3(
-					grid_size,
-					grid_size,
-					grid_size))),
-		flakelib::volume::conversion::gl_buffer(
-			gl_buffer),
-		flakelib::volume::conversion::arrow_scale(
-			0.25f),
-		flakelib::volume::conversion::grid_scale(
-			1.0f));
+	flakelib::volume::simulation::stam::object stam_simulation(
+		opencl_system.command_queue(),
+		flakelib::volume::boundary::view(
+			boundary_object.get()),
+		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
+			config_file,
+			sge::parse::json::path(
+				FCPPT_TEXT("stam-volume-test"))),
+		global_build_options,
+		buffer_pool,
+		utility_object,
+		jacobi_solver);
+
 
 	// Some render states
 	sys.renderer().state(
@@ -481,15 +490,48 @@ try
 			static_cast<sge::font::size_type>(
 				30)));
 
+	sge::timer::basic<sge::timer::clocks::standard> delta_timer(
+		sge::timer::parameters<sge::timer::clocks::standard>(
+			fcppt::chrono::seconds(1)));
+
+	flakelib::duration delta(0.0f);
+
 	while(running)
 	{
 		sys.window_system().poll();
+
+		delta +=
+			1.0f * sge::timer::elapsed_and_reset<flakelib::duration>(
+				delta_timer);
+
+		{
+			stam_simulation.update(
+				delta);
+
+			delta = flakelib::duration(0.0f);
+		}
 
 		camera.update(
 			sge::timer::elapsed<sge::camera::duration>(
 				camera_timer));
 
 		camera_timer.reset();
+
+		conversion_object.to_arrow_vb(
+			flakelib::volume::conversion::cl_buffer(
+				stam_simulation.velocity()),
+			flakelib::volume::conversion::gl_buffer(
+				gl_buffer),
+			flakelib::volume::conversion::arrow_scale(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					config_file,
+					sge::parse::json::path(
+						FCPPT_TEXT("stam-volume-test")) / FCPPT_TEXT("arrow-scale"))),
+			flakelib::volume::conversion::grid_scale(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					config_file,
+					sge::parse::json::path(
+						FCPPT_TEXT("stam-volume-test")) / FCPPT_TEXT("grid-scale"))));
 
 		sge::renderer::scoped_block const block_(
 			sys.renderer());
@@ -534,6 +576,8 @@ try
 			sge::font::text::flags::none);
 			*/
 	}
+
+	fcppt::io::cout() << stam_simulation.parent_profiler() << FCPPT_TEXT("\n");
 }
 catch(
 	fcppt::exception const &_error

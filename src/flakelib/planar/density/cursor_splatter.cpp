@@ -57,7 +57,7 @@ flakelib::planar::density::cursor_splatter::cursor_splatter(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
 			flakelib::media_path_from_string(
-				FCPPT_TEXT("kernels/density_splatter.cl"))),
+				FCPPT_TEXT("kernels/planar/density_splatter.cl"))),
 		sge::opencl::program::optional_build_parameters(
 			sge::opencl::program::build_parameters()
 				.options(

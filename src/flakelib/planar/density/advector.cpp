@@ -34,7 +34,7 @@ flakelib::planar::density::advector::advector(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
 			flakelib::media_path_from_string(
-				FCPPT_TEXT("kernels/density_advector.cl"))),
+				FCPPT_TEXT("kernels/planar/density_advector.cl"))),
 		sge::opencl::program::optional_build_parameters(
 			sge::opencl::program::build_parameters()
 				.options(

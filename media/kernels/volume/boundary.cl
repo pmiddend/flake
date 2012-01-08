@@ -1,4 +1,4 @@
-#include "positions.cl"
+#include "volume/positions.cl"
 
 kernel void add_sphere(
 	global float *boundary,

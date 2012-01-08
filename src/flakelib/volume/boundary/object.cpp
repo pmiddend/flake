@@ -1,5 +1,7 @@
+#include <flakelib/buffer/linear_view.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <flakelib/media_path_from_string.hpp>
+#include <flakelib/utility/object.hpp>
 #include <flakelib/volume/boundary/object.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
@@ -11,6 +13,7 @@
 
 flakelib::volume::boundary::object::object(
 	sge::opencl::command_queue::object &_command_queue,
+	flakelib::utility::object &_utility,
 	flakelib::buffer_pool::object &_buffer_pool,
 	flakelib::build_options const &_build_options,
 	sge::opencl::memory_object::dim3 const &_size)
@@ -24,7 +27,7 @@ flakelib::volume::boundary::object::object(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
 			flakelib::media_path_from_string(
-				FCPPT_TEXT("kernels/volume_boundary.cl"))),
+				FCPPT_TEXT("kernels/volume/boundary.cl"))),
 		sge::opencl::program::optional_build_parameters(
 			sge::opencl::program::build_parameters()
 				.options(
@@ -38,9 +41,12 @@ flakelib::volume::boundary::object::object(
 		sge::opencl::kernel::name(
 			"add_cube"))
 {
+	_utility.null_buffer(
+		buffer::linear_view<cl_float>(
+			buffer_lock_.value().buffer()));
 }
 
-flakelib::buffer::volume_view<cl_float> const
+flakelib::volume::boundary::view::value_type const
 flakelib::volume::boundary::object::get()
 {
 	return buffer_lock_.value();
