@@ -6,11 +6,9 @@
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <flakelib/buffer_pool/volume_lock.hpp>
-#include <flakelib/volume/boundary/cube_position.hpp>
+#include <flakelib/volume/boundary/sphere/object_fwd.hpp>
+#include <flakelib/volume/boundary/cube/object_fwd.hpp>
 #include <flakelib/volume/boundary/view.hpp>
-#include <flakelib/volume/boundary/cube_width.hpp>
-#include <flakelib/volume/boundary/radius.hpp>
-#include <flakelib/volume/boundary/sphere_center.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
@@ -41,14 +39,12 @@ public:
 	get();
 
 	void
-	add_sphere(
-		boundary::sphere_center const &,
-		boundary::radius const &);
+	add(
+		boundary::sphere::object const &);
 
 	void
-	add_cube(
-		boundary::cube_position const &,
-		boundary::cube_width const &);
+	add(
+		boundary::cube::object const &);
 
 	~object();
 private:

@@ -1,5 +1,5 @@
-#ifndef FLAKELIB_VOLUME_BOUNDARY_SPHERE_CENTER_HPP_INCLUDED
-#define FLAKELIB_VOLUME_BOUNDARY_SPHERE_CENTER_HPP_INCLUDED
+#ifndef FLAKELIB_VOLUME_VISUALIZATION_GRID_SIZE_HPP_INCLUDED
+#define FLAKELIB_VOLUME_VISUALIZATION_GRID_SIZE_HPP_INCLUDED
 
 #include <sge/opencl/memory_object/dim3.hpp>
 #include <fcppt/strong_typedef.hpp>
@@ -8,11 +8,11 @@ namespace flakelib
 {
 namespace volume
 {
-namespace boundary
+namespace visualization
 {
 FCPPT_MAKE_STRONG_TYPEDEF(
 	sge::opencl::memory_object::dim3,
-	sphere_center);
+	grid_size);
 }
 }
 }

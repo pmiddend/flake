@@ -59,6 +59,7 @@ FIND_PACKAGE(
 	sprite
 	camera
 	texture
+	modelobj
 	console
 	font
 	fonttext
@@ -125,11 +126,19 @@ SET(
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/utility/object.cpp
 	src/flakelib/viewport_pager.cpp
+	src/flakelib/volume/boundary/cube/object.cpp
 	src/flakelib/volume/boundary/object.cpp
+	src/flakelib/volume/boundary/sphere/object.cpp
 	src/flakelib/volume/conversion/object.cpp
+	src/flakelib/volume/density/advector.cpp
+	src/flakelib/volume/framework.cpp
 	src/flakelib/volume/laplace_solver/base.cpp
 	src/flakelib/volume/laplace_solver/jacobi.cpp
 	src/flakelib/volume/simulation/stam/object.cpp
+	src/flakelib/volume/visualization/arrows.cpp
+	src/flakelib/volume/visualization/arrows_manager.cpp
+	src/flakelib/volume/visualization/compiled_model.cpp
+	src/flakelib/volume/visualization/shape_manager.cpp
 )
 
 FCPPT_UTILS_ADD_SOURCE_GROUPS("${FLAKELIB_FILES}")
@@ -181,14 +190,14 @@ INSTALL(
 	${INSTALL_BINARY_DIR})
 # pde_tester end
 
-# volume_test begin
+# volume_framework begin
 ADD_EXECUTABLE(
-	volume_test
+	volume_framework
 	WIN32
-	src/flake/volume_test.cpp)
+	src/flake/volume_framework.cpp)
 
 TARGET_LINK_LIBRARIES(
-	volume_test
+	volume_framework
 	flakelib
 	${Fcppt_core_LIBRARIES}
 	${Fcppt_filesystem_LIBRARIES}
@@ -197,7 +206,7 @@ TARGET_LINK_LIBRARIES(
 
 INSTALL(
 	TARGETS
-	volume_test
+	volume_framework
 	DESTINATION
 	${INSTALL_BINARY_DIR})
 # volume_test end

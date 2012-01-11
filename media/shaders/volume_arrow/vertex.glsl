@@ -11,5 +11,5 @@ main()
 		color;
 	gl_Position =
 		mvp *
-		(vec4(initial_position,1.0) + position);
+		/*(vec4(initial_position,1.0) + */position/*)*/;
 }

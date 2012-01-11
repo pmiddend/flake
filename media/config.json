@@ -45,5 +45,14 @@
 			"grid-scale" : 1.0,
 			"iterations" : 5
 		}
+	},
+	"volume-framework" :
+	{
+		"grid-size" : [64,64,64],
+		"jacobi-iterations" : 51,
+		"external-force-magnitude" : 7.0,
+		"profiling-enabled" : true,
+		"arrow-scale" : 1.0,
+		"arrow-grid-scale" : 1.0
 	}
 }

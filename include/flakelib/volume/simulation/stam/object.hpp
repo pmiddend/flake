@@ -9,6 +9,9 @@
 #include <flakelib/volume/simulation/stam/pressure.hpp>
 #include <flakelib/volume/simulation/stam/rhs.hpp>
 #include <flakelib/volume/simulation/stam/solution.hpp>
+#include <flakelib/volume/simulation/stam/external_force_magnitude.hpp>
+#include <flakelib/volume/simulation/stam/grid_scale.hpp>
+#include <flakelib/volume/simulation/stam/profiling_enabled.hpp>
 #include <flakelib/volume/simulation/stam/vector_field.hpp>
 #include <flakelib/profiler/object.hpp>
 #include <flakelib/utility/object_fwd.hpp>
@@ -17,7 +20,6 @@
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/program/object.hpp>
-#include <sge/parse/json/object_fwd.hpp>
 #include <fcppt/unique_ptr.hpp>
 
 namespace flakelib
@@ -45,7 +47,9 @@ public:
 	object(
 		sge::opencl::command_queue::object &,
 		volume::boundary::view const &,
-		sge::parse::json::object const &,
+		stam::external_force_magnitude const &,
+		stam::grid_scale const &,
+		stam::profiling_enabled const &,
 		flakelib::build_options const &,
 		buffer_pool::object &,
 		utility::object &,

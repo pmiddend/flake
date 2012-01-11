@@ -1,0 +1,70 @@
+#ifndef FLAKELIB_VOLUME_DENSITY_ADVECTOR_HPP_INCLUDED
+#define FLAKELIB_VOLUME_DENSITY_ADVECTOR_HPP_INCLUDED
+
+#if 0
+#include <sge/opencl/clinclude.hpp>
+#include <sge/opencl/command_queue/object_fwd.hpp>
+#include <sge/parse/json/object_fwd.hpp>
+#include <flakelib/buffer_pool/object_fwd.hpp>
+#include <flakelib/buffer/volume_view.hpp>
+#include <flakelib/build_options.hpp>
+#include <flakelib/duration.hpp>
+#include <flakelib/utility/object_fwd.hpp>
+#include <flakelib/volume/boundary/view.hpp>
+#include <fcppt/noncopyable.hpp>
+
+namespace flakelib
+{
+namespace volume
+{
+namespace density
+{
+class advector
+{
+FCPPT_NONCOPYABLE(
+	advector);
+public:
+	explicit
+	advector(
+		sge::opencl::command_queue::object &,
+		volume::boundary::view const &,
+		sge::parse::json::object const &,
+		flakelib::build_options const &,
+		buffer_pool::object &,
+		utility::object &);
+
+	void
+	update(
+		flakelib::duration const &);
+
+	buffer::volume_view<cl_float> const
+	get();
+
+	~advector();
+private:
+	typedef
+	flakelib::buffer_pool::volume_lock<cl_float>
+	volume_float_lock;
+
+	typedef
+	fcppt::unique_ptr<volume_float_lock>
+	unique_volume_float_lock;
+
+	sge::opencl::command_queue::object &command_queue_;
+	buffer_pool::object &buffer_pool_;
+	cl_float const grid_scale_;
+	sge::opencl::program::object program_;
+	sge::opencl::kernel::object apply_sources_kernel_;
+	sge::opencl::kernel::object advect_kernel_;
+	volume_float_lock sources_;
+	// The current density always changes (since it's advected and thereby
+	// moved to a different container). The source is modified, but
+	// in-place, and is thus fixed.
+	unique_volume_float_lock current_density_;
+};
+}
+}
+}
+#endif
+
+#endif

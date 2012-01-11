@@ -3,6 +3,8 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/utility/object.hpp>
 #include <flakelib/volume/boundary/object.hpp>
+#include <flakelib/volume/boundary/sphere/object.hpp>
+#include <flakelib/volume/boundary/cube/object.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/size_type.hpp>
@@ -53,9 +55,8 @@ flakelib::volume::boundary::object::get()
 }
 
 void
-flakelib::volume::boundary::object::add_sphere(
-	boundary::sphere_center const &_sphere_center,
-	boundary::radius const &_radius)
+flakelib::volume::boundary::object::add(
+	boundary::sphere::object const &_sphere)
 {
 	add_sphere_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -66,25 +67,25 @@ flakelib::volume::boundary::object::add_sphere(
 		sge::opencl::kernel::argument_index(
 			1),
 		static_cast<cl_int>(
-			_sphere_center.get()[0]));
+			_sphere.position().get()[0]));
 
 	add_sphere_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
 		static_cast<cl_int>(
-			_sphere_center.get()[1]));
+			_sphere.position().get()[1]));
 
 	add_sphere_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
 		static_cast<cl_int>(
-			_sphere_center.get()[2]));
+			_sphere.position().get()[2]));
 
 	add_sphere_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			4),
 		static_cast<cl_int>(
-			_radius.get()));
+			_sphere.radius().get()));
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
@@ -96,9 +97,8 @@ flakelib::volume::boundary::object::add_sphere(
 }
 
 void
-flakelib::volume::boundary::object::add_cube(
-	boundary::cube_position const &_cube_position,
-	boundary::cube_width const &_cube_width)
+flakelib::volume::boundary::object::add(
+	boundary::cube::object const &_cube)
 {
 	add_cube_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -109,25 +109,25 @@ flakelib::volume::boundary::object::add_cube(
 		sge::opencl::kernel::argument_index(
 			1),
 		static_cast<cl_int>(
-			_cube_position.get()[0]));
+			_cube.position().get()[0]));
 
 	add_cube_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
 		static_cast<cl_int>(
-			_cube_position.get()[1]));
+			_cube.position().get()[1]));
 
 	add_cube_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			3),
 		static_cast<cl_int>(
-			_cube_position.get()[2]));
+			_cube.position().get()[2]));
 
 	add_cube_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			4),
 		static_cast<cl_int>(
-			_cube_width.get()));
+			_cube.width().get()));
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,

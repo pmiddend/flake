@@ -12,8 +12,6 @@
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <sge/opencl/program/source_string_sequence.hpp>
-#include <sge/parse/json/find_and_convert_member.hpp>
-#include <sge/parse/json/string_to_path.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/optional.hpp>
 #include <fcppt/ref.hpp>
@@ -32,7 +30,9 @@
 flakelib::volume::simulation::stam::object::object(
 	sge::opencl::command_queue::object &_command_queue,
 	volume::boundary::view const &_boundary,
-	sge::parse::json::object const &_config_file,
+	stam::external_force_magnitude const &_external_force_magnitude,
+	stam::grid_scale const &_grid_scale,
+	stam::profiling_enabled const &_profiling_enabled,
 	flakelib::build_options const &_build_options,
 	buffer_pool::object &_buffer_pool,
 	utility::object &_utility,
@@ -47,20 +47,11 @@ flakelib::volume::simulation::stam::object::object(
 	laplace_solver_(
 		_laplace_solver),
 	external_force_magnitude_(
-		sge::parse::json::find_and_convert_member<cl_float>(
-			_config_file,
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("external-force-magnitude")))),
+		_external_force_magnitude.get()),
 	grid_scale_(
-		sge::parse::json::find_and_convert_member<cl_float>(
-			_config_file,
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("grid-scale")))),
+		_grid_scale.get()),
 	profiling_enabled_(
-		sge::parse::json::find_and_convert_member<bool>(
-			_config_file,
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("profiling")))),
+		_profiling_enabled.get()),
 	main_program_(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(

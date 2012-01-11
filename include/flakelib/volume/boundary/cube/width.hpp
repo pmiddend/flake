@@ -10,9 +10,12 @@ namespace volume
 {
 namespace boundary
 {
+namespace cube
+{
 FCPPT_MAKE_STRONG_TYPEDEF(
 	sge::opencl::memory_object::size_type,
-	cube_width);
+	width);
+}
 }
 }
 }
