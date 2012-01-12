@@ -31,10 +31,10 @@ public:
 
 	~compiled_model();
 private:
+	sge::renderer::device &renderer_;
 	sge::renderer::vertex_declaration const &vd_;
 	sge::renderer::vertex_buffer_ptr vb_;
 	sge::renderer::texture::planar_ptr texture_;
-	sge::renderer::device &renderer_;
 };
 }
 }

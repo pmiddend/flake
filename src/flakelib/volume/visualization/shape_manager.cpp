@@ -26,6 +26,8 @@ flakelib::volume::visualization::shape_manager::shape_manager(
 	sge::renderer::device &_renderer,
 	sge::image2d::system &_image_loader)
 :
+	renderer_(
+		_renderer),
 	obj_loader_(
 		sge::model::obj::create()),
 	vd_(
@@ -49,12 +51,10 @@ flakelib::volume::visualization::shape_manager::shape_manager(
 					sge::renderer::texture::planar_ptr())))
 				.vertex_shader(
 					flakelib::media_path_from_string(
-						FCPPT_TEXT("shaders/model/vertex.obj")))
+						FCPPT_TEXT("shaders/model/vertex.glsl")))
 				.fragment_shader(
 					flakelib::media_path_from_string(
-						FCPPT_TEXT("shaders/model/fragment.obj")))),
-	renderer_(
-		_renderer),
+						FCPPT_TEXT("shaders/model/fragment.glsl")))),
 	sphere_model_(
 		obj_loader_->load(
 			flakelib::media_path_from_string(
@@ -118,11 +118,11 @@ flakelib::volume::visualization::shape_manager::render(
 			"mvp",
 			sge::shader::matrix(
 				_mvp *
-				fcppt::math::matrix::scaling(
-					scaling_vector) *
 				fcppt::math::matrix::translation(
 					fcppt::math::dim::structure_cast<sge::renderer::vector3>(
-						it->position().get())),
+						it->position().get())) *
+				fcppt::math::matrix::scaling(
+					scaling_vector),
 				sge::shader::matrix_flags::projection));
 
 		sphere_model_.render();

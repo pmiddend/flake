@@ -31,6 +31,8 @@ flakelib::volume::visualization::compiled_model::compiled_model(
 	sge::renderer::vertex_declaration const &_vd,
 	sge::renderer::texture::planar_ptr const _texture)
 :
+	renderer_(
+		_renderer),
 	vd_(
 		_vd),
 	vb_(
@@ -44,9 +46,7 @@ flakelib::volume::visualization::compiled_model::compiled_model(
 			sge::renderer::resource_flags::none,
 			*_model)),
 	texture_(
-		_texture),
-	renderer_(
-		_renderer)
+		_texture)
 {
 }
 

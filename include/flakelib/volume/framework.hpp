@@ -6,6 +6,7 @@
 #include <sge/parse/json/object_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/matrix4.hpp>
+#include <sge/renderer/vector3.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <flakelib/volume/laplace_solver/unique_base_ptr.hpp>
 #include <flakelib/volume/visualization/shape_manager_fwd.hpp>
@@ -44,6 +45,7 @@ public:
 
 	void
 	render(
+		sge::renderer::vector3 const &,
 		sge::renderer::matrix4 const &);
 
 	~framework();

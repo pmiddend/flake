@@ -5,6 +5,7 @@
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_declaration_ptr.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>
+#include <sge/renderer/vector3.hpp>
 #include <fcppt/noncopyable.hpp>
 
 namespace flakelib
@@ -33,6 +34,10 @@ public:
 
 	sge::renderer::device &
 	renderer() const;
+
+	void
+	camera_position(
+		sge::renderer::vector3 const &);
 
 	~arrows_manager();
 private:

@@ -4,14 +4,18 @@
 #if 0
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
+#include <sge/opencl/program/object.hpp>
+#include <sge/opencl/kernel/object.hpp>
 #include <sge/parse/json/object_fwd.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
+#include <flakelib/buffer_pool/volume_lock.hpp>
 #include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/build_options.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <flakelib/volume/boundary/view.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/unique_ptr.hpp>
 
 namespace flakelib
 {
@@ -35,6 +39,7 @@ public:
 
 	void
 	update(
+		buffer::volume_view<cl_float4> const &,
 		flakelib::duration const &);
 
 	buffer::volume_view<cl_float> const

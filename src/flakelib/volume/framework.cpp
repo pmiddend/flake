@@ -1,7 +1,7 @@
+#include <sge/shader/activate_everything.hpp>
 #include <fcppt/io/cout.hpp>
 #include <flakelib/volume/visualization/arrows_manager.hpp>
 #include <sge/shader/object.hpp>
-#include <sge/shader/activate_bare.hpp>
 #include <sge/shader/scoped.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
 #include <sge/opencl/clinclude.hpp>
@@ -159,6 +159,7 @@ flakelib::volume::framework::update(
 
 void
 flakelib::volume::framework::render(
+	sge::renderer::vector3 const &_camera_position,
 	sge::renderer::matrix4 const &_mvp)
 {
 	shape_manager_->render(
@@ -166,7 +167,10 @@ flakelib::volume::framework::render(
 
 	sge::shader::scoped scoped_shader(
 		arrows_manager_->shader(),
-		sge::shader::activate_bare());
+		sge::shader::activate_everything());
+
+	arrows_manager_->camera_position(
+		_camera_position);
 
 	arrows_manager_->shader().update_uniform(
 		"mvp",

@@ -48,10 +48,10 @@ private:
 	std::vector<boundary::cube::object>
 	cube_sequence;
 
+	sge::renderer::device &renderer_;
 	sge::model::obj::loader_ptr obj_loader_;
 	sge::renderer::vertex_declaration_ptr vd_;
 	sge::shader::object shader_;
-	sge::renderer::device &renderer_;
 	visualization::compiled_model sphere_model_;
 	visualization::compiled_model cube_model_;
 	sphere_sequence spheres_;

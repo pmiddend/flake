@@ -52,13 +52,79 @@ flakelib::volume::density::advector::advector(
 
 void
 flakelib::volume::density::advector::update(
-	flakelib::duration const &)
+	buffer::volume_view<cl_float4> const &_velocity,
+	flakelib::duration const &_dt)
 {
+	apply_sources_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		sources_.value().buffer());
+
+	apply_sources_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		current_density_->value().buffer());
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		apply_sources_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(sources_.value().size().content()).container());
+
+	unique_planar_float_lock target_density(
+		fcppt::make_unique_ptr<buffer_pool::planar_lock<cl_float> >(
+			fcppt::ref(
+				buffer_pool_),
+			current_density_->value().size()));
+
+	advect_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		current_density_->value().buffer());
+
+	advect_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		target_density->value().buffer());
+
+	advect_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		_velocity.get().buffer());
+
+	advect_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			3),
+		static_cast<cl_int>(
+			_velocity.get().size()[0]));
+
+	advect_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			4),
+		static_cast<cl_float>(
+			_dt.count()));
+
+	advect_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			5),
+		grid_scale_);
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		advect_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(sources_.value().size()[0])
+			(sources_.value().size()[1])
+			(sources_.value().size()[1]).container());
+
+	current_density_.swap(
+		target_density);
 }
 
 buffer::volume_view<cl_float> const
 flakelib::volume::density::advector::get()
 {
+	return current_density_->value();
 }
 
 flakelib::volume::density::advector::~advector()

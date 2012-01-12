@@ -51,3 +51,25 @@ to_arrow_vb(
 	gl_buffer[pos_index].end_color =
 		(float4)(0.0f,1.0f,0.0f,0.1f);
 }
+
+kernel void
+to_scalar_volume_texture(
+	global float const *buffer,
+	global write_only image3d_t volume_texture,
+	float const multiplier)
+{
+	int3 const pos =
+		(int3)(
+			get_global_id(0),
+			get_global_id(1),
+			get_global_id(2));
+
+	/*
+	write_imagef(
+		volume_texture,
+		pos,
+		multiplier *
+		(float4)(
+			buffer[FLAKE_VOLUME_AT(get_image_width(volume_texture),pos)]));
+			*/
+}

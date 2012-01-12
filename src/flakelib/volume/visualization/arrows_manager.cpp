@@ -30,7 +30,11 @@ flakelib::volume::visualization::arrows_manager::arrows_manager(
 					sge::shader::variable_type::uniform,
 					sge::shader::matrix(
 						sge::renderer::matrix4::identity(),
-						sge::shader::matrix_flags::projection))),
+						sge::shader::matrix_flags::projection)))
+				(sge::shader::variable(
+					"camera_position",
+					sge::shader::variable_type::uniform,
+					sge::renderer::vector3())),
 			sge::shader::sampler_sequence())
 			.vertex_shader(
 				flakelib::media_path_from_string(
@@ -65,6 +69,15 @@ sge::renderer::device &
 flakelib::volume::visualization::arrows_manager::renderer() const
 {
 	return renderer_;
+}
+
+void
+flakelib::volume::visualization::arrows_manager::camera_position(
+	sge::renderer::vector3 const &_position)
+{
+	shader_.update_uniform(
+		"camera_position",
+		_position);
 }
 
 flakelib::volume::visualization::arrows_manager::~arrows_manager()

@@ -1,3 +1,4 @@
+#include <sge/renderer/state/scoped.hpp>
 #include <sge/systems/image2d.hpp>
 #include <sge/media/extension.hpp>
 #include <fcppt/assign/make_container.hpp>
@@ -184,7 +185,7 @@ try
 	sge::camera::first_person::object camera(
 		sge::camera::first_person::parameters(
 			sge::camera::first_person::movement_speed(
-				4.f),
+				12.f),
 			sge::camera::first_person::rotation_speed(
 				200.f),
 			sys.keyboard_collector(),
@@ -215,17 +216,19 @@ try
 		global_build_options,
 		config_file);
 
-	// Some render states
-	sys.renderer().state(
+	sge::renderer::state::scoped scoped_global_state(
+		sys.renderer(),
 		sge::renderer::state::list
 			(sge::renderer::state::bool_::clear_back_buffer = true)
 			(sge::renderer::state::bool_::clear_depth_buffer = true)
-			(sge::renderer::state::bool_::enable_alpha_blending = false)
+			(sge::renderer::state::bool_::enable_alpha_blending = true)
 			(sge::renderer::state::cull_mode::off)
 			(sge::renderer::state::depth_func::less)
 			(sge::renderer::state::draw_mode::fill)
 			(sge::renderer::state::float_::depth_buffer_clear_val = 1.f)
 			(sge::renderer::state::stencil_func::off)
+			(sge::renderer::state::source_blend_func::src_alpha)
+			(sge::renderer::state::dest_blend_func::inv_src_alpha)
 			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::black()));
 
 	sge::timer::basic<sge::timer::clocks::standard> camera_timer(
@@ -260,6 +263,7 @@ try
 			sys.renderer());
 
 		volume_framework.render(
+			camera.gizmo().position(),
 			camera.mvp());
 	}
 }
