@@ -47,17 +47,31 @@ main()
 	for(int i = 0; i < steps; i++)
 	{
 		// FIXME: Interpolate z here!
-		float value =
-			tex_value(
-				position.x,
-				position.y,
-				int(
-					position.z));
+		float first_value =
+				tex_value(
+					position.x,
+					position.y,
+					int(
+						position.z)),
+			second_value =
+				tex_value(
+					position.x,
+					position.y,
+					min(
+						int(
+							position.z)+1,
+						63)),
+			interpolated =
+				mix(
+					first_value,
+					second_value,
+					fract(
+						position.z));
 
 		dst +=
 			(1.0 - dst) *
 			density *
-			value;
+			interpolated;
 
 		position += direction * stepsize;
 
