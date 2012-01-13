@@ -1,21 +1,24 @@
 #ifndef FLAKELIB_VOLUME_DENSITY_VISUAL_HPP_INCLUDED
 #define FLAKELIB_VOLUME_DENSITY_VISUAL_HPP_INCLUDED
 
-#include <flakelib/volume/density/grid_size.hpp>
+#include <flakelib/build_options.hpp>
 #include <flakelib/buffer/volume_view.hpp>
-#include <sge/opencl/kernel/object.hpp>
-#include <sge/renderer/matrix4.hpp>
+#include <flakelib/volume/density/grid_size.hpp>
+#include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
+#include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/object.hpp>
-#include <sge/renderer/vertex_declaration_ptr.hpp>
-#include <sge/renderer/vertex_buffer_ptr.hpp>
 #include <sge/renderer/device_fwd.hpp>
-#include <fcppt/noncopyable.hpp>
-#include <sge/opencl/clinclude.hpp>
-#include <flakelib/build_options.hpp>
-#include <sge/shader/object.hpp>
+#include <sge/renderer/matrix4.hpp>
+#include <sge/renderer/vector3.hpp>
+#include <sge/renderer/vertex_buffer_ptr.hpp>
+#include <sge/renderer/vertex_declaration_ptr.hpp>
 #include <sge/renderer/texture/planar_ptr.hpp>
+#include <sge/image2d/system_fwd.hpp>
+#include <sge/shader/object.hpp>
+#include <fcppt/noncopyable.hpp>
+
 
 namespace flakelib
 {
@@ -31,6 +34,7 @@ public:
 	explicit
 	visual(
 		sge::renderer::device &,
+		sge::image2d::system &,
 		sge::opencl::command_queue::object &,
 		flakelib::build_options const &,
 		density::grid_size const &);
@@ -41,12 +45,14 @@ public:
 
 	void
 	render(
+		sge::renderer::vector3 const &,
 		sge::renderer::matrix4 const &);
 
 	~visual();
 private:
 	sge::renderer::device &renderer_;
 	sge::opencl::command_queue::object &command_queue_;
+	sge::image2d::system &image_system_;
 	// CL stuff
 	sge::renderer::texture::planar_ptr texture_;
 	sge::opencl::memory_object::image::planar cl_texture_;

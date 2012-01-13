@@ -1,11 +1,11 @@
-#include <flakelib/volume/simulation/stam/object.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/linear_view.hpp>
 #include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/buffer_pool/volume_lock.hpp>
-#include <flakelib/volume/laplace_solver/base.hpp>
 #include <flakelib/profiler/scoped.hpp>
 #include <flakelib/utility/object.hpp>
+#include <flakelib/volume/laplace_solver/base.hpp>
+#include <flakelib/volume/simulation/stam/object.hpp>
 #include <sge/image2d/view/size.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
@@ -26,6 +26,7 @@
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/vector/basic_impl.hpp>
+
 
 flakelib::volume::simulation::stam::object::object(
 	sge::opencl::command_queue::object &_command_queue,

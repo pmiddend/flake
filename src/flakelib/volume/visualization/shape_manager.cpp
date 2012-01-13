@@ -1,26 +1,27 @@
-#include <fcppt/math/vector/arithmetic.hpp>
-#include <fcppt/math/matrix/arithmetic.hpp>
-#include <sge/renderer/scoped_vertex_declaration.hpp>
-#include <fcppt/math/dim/structure_cast.hpp>
-#include <fcppt/math/matrix/translation.hpp>
-#include <fcppt/math/matrix/scaling.hpp>
-#include <sge/shader/scoped.hpp>
-#include <sge/shader/activate_bare.hpp>
-#include <sge/renderer/texture/create_planar_from_path.hpp>
 #include <flakelib/media_path_from_string.hpp>
+#include <flakelib/volume/visualization/shape_manager.hpp>
+#include <flakelib/volume/visualization/model_vf/format.hpp>
+#include <sge/model/obj/create.hpp>
 #include <sge/model/obj/loader.hpp>
+#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/scoped_vertex_buffer.hpp>
+#include <sge/renderer/scoped_vertex_declaration.hpp>
+#include <sge/renderer/texture/create_planar_from_path.hpp>
+#include <sge/renderer/texture/mipmap/all_levels.hpp>
+#include <sge/renderer/vf/dynamic/make_format.hpp>
+#include <sge/shader/activate_bare.hpp>
 #include <sge/shader/object_parameters.hpp>
+#include <sge/shader/scoped.hpp>
 #include <sge/shader/variable.hpp>
 #include <sge/shader/variable_sequence.hpp>
 #include <sge/shader/vf_to_string.hpp>
 #include <fcppt/assign/make_container.hpp>
-#include <sge/renderer/texture/mipmap/all_levels.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
-#include <sge/renderer/scoped_vertex_buffer.hpp>
-#include <sge/renderer/vf/dynamic/make_format.hpp>
-#include <flakelib/volume/visualization/shape_manager.hpp>
-#include <flakelib/volume/visualization/model_vf/format.hpp>
-#include <sge/model/obj/create.hpp>
+#include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/matrix/arithmetic.hpp>
+#include <fcppt/math/matrix/scaling.hpp>
+#include <fcppt/math/matrix/translation.hpp>
+#include <fcppt/math/vector/arithmetic.hpp>
+
 
 flakelib::volume::visualization::shape_manager::shape_manager(
 	sge::renderer::device &_renderer,

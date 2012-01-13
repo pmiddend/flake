@@ -1,38 +1,59 @@
-#include <algorithm>
-#include <fcppt/math/vector/basic_impl.hpp>
-#include <sge/renderer/vf/vertex.hpp>
-#include <sge/renderer/vf/iterator.hpp>
+#include <sge/renderer/texture/address_mode2.hpp>
+#include <sge/renderer/texture/set_address_mode2.hpp>
+#include <flakelib/media_path_from_string.hpp>
+#include <flakelib/volume/density/visual.hpp>
+#include <flakelib/volume/density/cube_vf/format.hpp>
 #include <flakelib/volume/density/cube_vf/position.hpp>
 #include <flakelib/volume/density/cube_vf/vertex_view.hpp>
-#include <sge/renderer/scoped_vertex_lock.hpp>
-#include <sge/renderer/texture/set_address_mode3.hpp>
-#include <sge/renderer/vertex_buffer.hpp>
-#include <sge/renderer/scoped_vertex_buffer.hpp>
-#include <fcppt/assign/make_container.hpp>
-#include <sge/shader/vf_to_string.hpp>
-#include <sge/shader/object_parameters.hpp>
-#include <flakelib/volume/density/cube_vf/format.hpp>
-#include <sge/renderer/vf/dynamic/make_format.hpp>
-#include <sge/renderer/device.hpp>
-#include <sge/opencl/memory_object/buffer.hpp>
-#include <flakelib/media_path_from_string.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
-#include <fcppt/assign/make_array.hpp>
 #include <sge/opencl/command_queue/object.hpp>
-#include <fcppt/math/dim/output.hpp>
+#include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
-#include <fcppt/io/cout.hpp>
-#include <sge/renderer/texture/planar.hpp>
-#include <fcppt/container/bitfield/basic_impl.hpp>
-#include <sge/renderer/resource_flags_field.hpp>
-#include <sge/renderer/texture/mipmap/off.hpp>
-#include <sge/renderer/texture/planar_parameters.hpp>
-#include <flakelib/volume/density/visual.hpp>
 #include <sge/renderer/device.hpp>
+#include <sge/renderer/resource_flags_field.hpp>
+#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/scoped_vertex_buffer.hpp>
+#include <sge/renderer/scoped_vertex_lock.hpp>
+#include <sge/renderer/vertex_buffer.hpp>
+#include <sge/opencl/memory_object/scoped_objects.hpp>
+#include <sge/renderer/state/cull_mode.hpp>
+#include <sge/renderer/state/list.hpp>
+#include <sge/renderer/state/scoped.hpp>
+#include <sge/renderer/texture/planar.hpp>
+#include <sge/renderer/texture/planar_parameters.hpp>
+#include <sge/renderer/texture/mipmap/off.hpp>
+#include <sge/renderer/vf/iterator.hpp>
+#include <sge/renderer/vf/vertex.hpp>
+#include <sge/renderer/vf/dynamic/make_format.hpp>
+#include <sge/shader/activate_everything.hpp>
+#include <sge/shader/object_parameters.hpp>
+#include <sge/shader/scoped.hpp>
+#include <sge/shader/vf_to_string.hpp>
+#include <fcppt/assign/make_array.hpp>
+#include <fcppt/assign/make_container.hpp>
+#include <fcppt/container/bitfield/basic_impl.hpp>
+#include <fcppt/io/cout.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
+#include <fcppt/math/dim/output.hpp>
+#include <fcppt/math/vector/arithmetic.hpp>
+#include <fcppt/math/vector/basic_impl.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <algorithm>
 #include <cmath>
+#include <fcppt/config/external_end.hpp>
+
+// DEBUG
+#include <sge/renderer/texture/const_scoped_planar_lock.hpp>
+#include <sge/image2d/save_from_view.hpp>
+#include <fcppt/math/dim/structure_cast.hpp>
+#include <sge/image2d/l8.hpp>
+#include <sge/image2d/dim.hpp>
+#include <sge/image2d/view/object.hpp>
+#include <sge/image2d/algorithm/copy_and_convert.hpp>
+#include <sge/image2d/view/to_const.hpp>
+#include <sge/image2d/view/to_const.hpp>
+#include <sge/image/store.hpp>
 
 namespace
 {
@@ -54,6 +75,7 @@ planar_size_from_volume_size(
 
 flakelib::volume::density::visual::visual(
 	sge::renderer::device &_renderer,
+	sge::image2d::system &_image_system,
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::build_options const &_build_options,
 	density::grid_size const &_grid_size)
@@ -62,6 +84,8 @@ flakelib::volume::density::visual::visual(
 		_renderer),
 	command_queue_(
 		_command_queue),
+	image_system_(
+		_image_system),
 	texture_(
 		_renderer.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
@@ -70,7 +94,8 @@ flakelib::volume::density::visual::visual(
 				sge::image::color::format::r32f,
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags_field(
-					sge::renderer::resource_flags::none),
+					// DEBUG
+					sge::renderer::resource_flags::readable),
 				 sge::renderer::texture::capabilities_field::null()))),
 	cl_texture_(
 		_command_queue.context(),
@@ -81,7 +106,7 @@ flakelib::volume::density::visual::visual(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
 			flakelib::media_path_from_string(
-				FCPPT_TEXT("kernels/planar/visual.cl"))),
+				FCPPT_TEXT("kernels/volume/visual.cl"))),
 		sge::opencl::program::optional_build_parameters(
 			sge::opencl::program::build_parameters()
 				.options(
@@ -116,12 +141,23 @@ flakelib::volume::density::visual::visual(
 				(sge::shader::variable(
 					"cube_position",
 					sge::shader::variable_type::uniform,
-					sge::renderer::vector3::null())),
+					sge::renderer::vector3::null()))
+				// FIXME: The edge length might be bigger due to grid scaling
 				(sge::shader::variable(
 					"cube_edge_length",
 					sge::shader::variable_type::uniform,
 					static_cast<sge::renderer::scalar>(
-						_grid_size.get()[0]))),
+						_grid_size.get()[0])))
+				(sge::shader::variable(
+					"slice_width",
+					sge::shader::variable_type::uniform,
+					static_cast<sge::renderer::glsl::uniform::int_type>(
+						_grid_size.get()[0])))
+				(sge::shader::variable(
+					"elements_per_row",
+					sge::shader::variable_type::uniform,
+					static_cast<sge::renderer::glsl::uniform::int_type>(
+						texture_->size()[0] / _grid_size.get()[0])))
 				(sge::shader::variable(
 					"camera",
 					sge::shader::variable_type::uniform,
@@ -135,7 +171,9 @@ flakelib::volume::density::visual::visual(
 						FCPPT_TEXT("shaders/cube/vertex.glsl")))
 				.fragment_shader(
 					flakelib::media_path_from_string(
-						FCPPT_TEXT("shaders/cube/fragment.glsl"))))
+						FCPPT_TEXT("shaders/cube/fragment.glsl")))
+				.name(
+					FCPPT_TEXT("cube shader")))
 {
 	fcppt::io::cout()
 		<< FCPPT_TEXT("Grid size: ")
@@ -173,7 +211,7 @@ flakelib::volume::density::visual::visual(
 
 	// copypaste (macht aus vf::vector einen fcppt::math::vector)
 	typedef
-	vf::position::packed_type
+	cube_vf::position::packed_type
 	position_vector;
 
 	// Here be dragons...
@@ -202,8 +240,11 @@ flakelib::volume::density::visual::visual(
 				res[x == 2 ? 1 : 2] = static_cast<position_vector::value_type>(
 					z);
 
-				(*vb_it++).set<vf::position>(
-					res);
+				(*vb_it++).set<cube_vf::position>(
+					// FIXME: grid scaling
+					static_cast<sge::renderer::scalar>(
+						_grid_size.get()[0])/2.0f *
+					(position_vector(1,1,1) + res));
 			}
 }
 
@@ -211,6 +252,15 @@ void
 flakelib::volume::density::visual::update(
 	flakelib::buffer::volume_view<cl_float> const &_view)
 {
+	{
+	sge::opencl::memory_object::base_ref_sequence mem_objects;
+	mem_objects.push_back(
+		&cl_texture_);
+
+	sge::opencl::memory_object::scoped_objects scoped_vb(
+		command_queue_,
+		mem_objects);
+
 	volume_image_to_planar_texture_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
@@ -223,17 +273,41 @@ flakelib::volume::density::visual::update(
 			(_view.size()[0])
 			(_view.size()[1])
 			(_view.size()[2]).container());
+	}
+
+	sge::renderer::texture::const_scoped_planar_lock slock(
+		*texture_);
+
+	typedef sge::image2d::l8 store_type;
+
+	store_type whole_store(
+		fcppt::math::dim::structure_cast<sge::image2d::dim>(
+			texture_->size()));
+
+	sge::image2d::algorithm::copy_and_convert(
+		slock.value(),
+		sge::image2d::view::object(
+			whole_store.wrapped_view()),
+		sge::image::algorithm::may_overlap::no);
+
+	sge::image2d::save_from_view(
+		image_system_,
+		sge::image2d::view::to_const(
+			sge::image2d::view::object(
+				whole_store.wrapped_view())),
+		fcppt::filesystem::path(FCPPT_TEXT("/tmp"))/FCPPT_TEXT("texture.png"));
 }
 
 void
 flakelib::volume::density::visual::render(
-	sge::renderer::matrix4 const &_mvp,
-	sge::renderer::vector3 const &_camera)
+	sge::renderer::vector3 const &_camera,
+	sge::renderer::matrix4 const &_mvp)
 {
-	sge::renderer::texture::set_address_mode3(
+	sge::renderer::texture::set_address_mode2(
 		renderer_,
-		sge::renderer::texture::stage(0u),
-		sge::renderer::texture::address_mode3(
+		sge::renderer::texture::stage(
+			0),
+		sge::renderer::texture::address_mode2(
 			sge::renderer::texture::address_mode::clamp));
 
 	sge::shader::scoped scoped_shader(
@@ -249,6 +323,11 @@ flakelib::volume::density::visual::render(
 		sge::shader::matrix(
 			_mvp,
 			sge::shader::matrix_flags::projection));
+
+	sge::renderer::state::scoped scoped_state(
+		renderer_,
+		sge::renderer::state::list
+			(sge::renderer::state::cull_mode::clockwise));
 
 	sge::renderer::scoped_vertex_buffer const vb_context(
 		renderer_,

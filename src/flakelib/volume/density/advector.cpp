@@ -1,15 +1,16 @@
-#include <fcppt/chrono/duration.hpp>
-#include <fcppt/assign/make_array.hpp>
-#include <sge/opencl/command_queue/enqueue_kernel.hpp>
-#include <flakelib/buffer/linear_view.hpp>
-#include <flakelib/utility/object.hpp>
-#include <fcppt/ref.hpp>
-#include <flakelib/buffer_pool/planar_lock.hpp>
 #include <flakelib/media_path_from_string.hpp>
+#include <flakelib/buffer/linear_view.hpp>
+#include <flakelib/buffer_pool/planar_lock.hpp>
+#include <flakelib/utility/object.hpp>
+#include <flakelib/volume/density/advector.hpp>
+#include <sge/opencl/command_queue/enqueue_kernel.hpp>
+#include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
-#include <sge/opencl/command_queue/object.hpp>
-#include <flakelib/volume/density/advector.hpp>
+#include <fcppt/ref.hpp>
+#include <fcppt/assign/make_array.hpp>
+#include <fcppt/chrono/duration.hpp>
+
 
 flakelib::volume::density::advector::advector(
 	sge::opencl::command_queue::object &_command_queue,
@@ -58,6 +59,11 @@ flakelib::volume::density::advector::advector(
 	_utility.null_buffer(
 		buffer::linear_view<cl_float>(
 			current_density_->value().buffer()));
+
+	advect_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			3),
+		_boundary.get().buffer());
 }
 
 void
@@ -80,6 +86,7 @@ flakelib::volume::density::advector::update(
 		apply_sources_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(sources_.value().size().content()).container());
+	return;
 
 	unique_volume_float_lock target_density(
 		fcppt::make_unique_ptr<buffer_pool::volume_lock<cl_float> >(
@@ -90,33 +97,33 @@ flakelib::volume::density::advector::update(
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		current_density_->value().buffer());
-
-	advect_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			1),
-		target_density->value().buffer());
-
-	advect_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			2),
 		_velocity.buffer());
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			3),
-		static_cast<cl_int>(
-			_velocity.size()[0]));
+			1),
+		current_density_->value().buffer());
+
+	advect_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		target_density->value().buffer());
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			4),
+		static_cast<cl_int>(
+			sources_.value().size()[0]));
+
+	advect_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			5),
 		static_cast<cl_float>(
 			_dt.count()));
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			5),
+			6),
 		grid_scale_);
 
 	sge::opencl::command_queue::enqueue_kernel(

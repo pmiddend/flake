@@ -1,11 +1,14 @@
 #ifndef FLAKELIB_VOLUME_VISUALIZATION_MODEL_VF_FORMAT_PART_HPP_INCLUDED
 #define FLAKELIB_VOLUME_VISUALIZATION_MODEL_VF_FORMAT_PART_HPP_INCLUDED
 
-#include <sge/renderer/vf/part.hpp>
+#include <flakelib/volume/visualization/model_vf/normal.hpp>
 #include <flakelib/volume/visualization/model_vf/position.hpp>
 #include <flakelib/volume/visualization/model_vf/texcoord.hpp>
-#include <flakelib/volume/visualization/model_vf/normal.hpp>
+#include <sge/renderer/vf/part.hpp>
+#include <fcppt/config/external_begin.hpp>
 #include <boost/mpl/vector/vector10.hpp>
+#include <fcppt/config/external_end.hpp>
+
 
 namespace flakelib
 {

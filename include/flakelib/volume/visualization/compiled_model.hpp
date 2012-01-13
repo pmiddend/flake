@@ -3,10 +3,11 @@
 
 #include <sge/model/obj/instance_ptr.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/texture/planar_ptr.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_buffer_ptr.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
+#include <sge/renderer/texture/planar_ptr.hpp>
+
 
 namespace flakelib
 {

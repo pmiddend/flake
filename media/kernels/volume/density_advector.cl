@@ -10,13 +10,13 @@ is_solid(
 
 kernel void
 advect(
-	global float4 const *velocity,
-	global float const *input,
-	global float *output,
-	global float const *boundary,
-	int const buffer_width,
-	float const dt,
-	float const grid_scale)
+	/* 0 */ global float4 const *velocity,
+	/* 1 */ global float const *input,
+	/* 2 */ global float *output,
+	/* 3 */ global float const *boundary,
+	/* 4 */ int const buffer_width,
+	/* 5 */ float const dt,
+	/* 6 */ float const grid_scale)
 {
 	int3 const position =
 		(int3)(
@@ -70,7 +70,7 @@ advect(
 				advected_vector,
 				&floors);
 
-	float4 const
+	float const
 		lefttopback =
 			input[FLAKE_VOLUME_AT(buffer_width,clamped_advected_back_vector)],
 		righttopback =
@@ -122,6 +122,7 @@ apply_sources(
 		get_global_id(
 			0);
 
-	if(sources[position] > 0.5f)
+	//if(sources[position] > 0.5f || position == 10 * 64 * 64/* + 32 * 64*/)
+	if(sources[position] > 0.5f || (position >= 32*64*64+32*64 && position < 32*64*64+32*64 + 10))
 		density[position] = 1.0f;
 }

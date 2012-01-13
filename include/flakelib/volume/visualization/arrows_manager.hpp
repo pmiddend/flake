@@ -1,12 +1,13 @@
 #ifndef FLAKELIB_VOLUME_VISUALIZATION_ARROWS_MANAGER_HPP_INCLUDED
 #define FLAKELIB_VOLUME_VISUALIZATION_ARROWS_MANAGER_HPP_INCLUDED
 
-#include <sge/shader/object.hpp>
 #include <sge/renderer/device_fwd.hpp>
-#include <sge/renderer/vertex_declaration_ptr.hpp>
-#include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/vector3.hpp>
+#include <sge/renderer/vertex_declaration_fwd.hpp>
+#include <sge/renderer/vertex_declaration_ptr.hpp>
+#include <sge/shader/object.hpp>
 #include <fcppt/noncopyable.hpp>
+
 
 namespace flakelib
 {

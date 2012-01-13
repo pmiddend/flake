@@ -2,15 +2,15 @@
 #define FLAKELIB_VOLUME_CONVERSION_OBJECT_HPP_INCLUDED
 
 #include <flakelib/build_options.hpp>
+#include <flakelib/buffer/volume_view_fwd.hpp>
 #include <flakelib/volume/conversion/arrow_scale.hpp>
 #include <flakelib/volume/conversion/cl_buffer.hpp>
 #include <flakelib/volume/conversion/gl_buffer.hpp>
 #include <flakelib/volume/conversion/grid_scale.hpp>
 #include <flakelib/volume/conversion/multiplier.hpp>
-#include <sge/opencl/memory_object/image/volume_fwd.hpp>
-#include <flakelib/buffer/volume_view_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
+#include <sge/opencl/memory_object/image/volume_fwd.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <fcppt/noncopyable.hpp>
 

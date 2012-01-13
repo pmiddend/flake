@@ -16,8 +16,8 @@ volume_image_to_planar_texture(
 	int2 const planar_pos =
 		slice_edge_size *
 		(int2)(
-			pos.z / elements_per_row,
-			pos.z % elements_per_row) +
+			volume_pos.z % elements_per_row,
+			volume_pos.z / elements_per_row) +
 		volume_pos.xy;
 
 	write_imagef(

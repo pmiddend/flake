@@ -1,29 +1,30 @@
-#include <sge/renderer/texture/planar.hpp>
-#include <sge/model/obj/vb_converter/convert.hpp>
-#include <fcppt/cref.hpp>
-#include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
-#include <fcppt/scoped_ptr.hpp>
+#include <flakelib/volume/visualization/compiled_model.hpp>
+#include <flakelib/volume/visualization/model_vf/format.hpp>
+#include <flakelib/volume/visualization/model_vf/format_part.hpp>
+#include <flakelib/volume/visualization/model_vf/format_part_view.hpp>
+#include <flakelib/volume/visualization/model_vf/from_obj_map.hpp>
+#include <flakelib/volume/visualization/model_vf/normal.hpp>
+#include <flakelib/volume/visualization/model_vf/position.hpp>
+#include <flakelib/volume/visualization/model_vf/texcoord.hpp>
 #include <sge/model/obj/instance.hpp>
+#include <sge/model/obj/vb_converter/convert.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/first_vertex.hpp>
 #include <sge/renderer/nonindexed_primitive_type.hpp>
 #include <sge/renderer/resource_flags.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
-#include <sge/renderer/texture/planar_ptr.hpp>
-#include <sge/renderer/texture/scoped.hpp>
-#include <sge/renderer/texture/stage.hpp>
 #include <sge/renderer/vertex_buffer_ptr.hpp>
 #include <sge/renderer/vertex_count.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
-#include <flakelib/volume/visualization/model_vf/position.hpp>
-#include <flakelib/volume/visualization/model_vf/normal.hpp>
-#include <flakelib/volume/visualization/model_vf/texcoord.hpp>
-#include <flakelib/volume/visualization/model_vf/format.hpp>
-#include <flakelib/volume/visualization/model_vf/format_part.hpp>
-#include <flakelib/volume/visualization/model_vf/format_part_view.hpp>
-#include <flakelib/volume/visualization/model_vf/from_obj_map.hpp>
-#include <flakelib/volume/visualization/compiled_model.hpp>
+#include <sge/renderer/texture/planar.hpp>
+#include <sge/renderer/texture/planar_ptr.hpp>
+#include <sge/renderer/texture/scoped.hpp>
+#include <sge/renderer/texture/stage.hpp>
+#include <fcppt/cref.hpp>
+#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/ref.hpp>
+#include <fcppt/scoped_ptr.hpp>
+
 
 flakelib::volume::visualization::compiled_model::compiled_model(
 	sge::model::obj::instance_ptr const _model,

@@ -1,15 +1,16 @@
-#include <sge/shader/object_parameters.hpp>
 #include <flakelib/media_path_from_string.hpp>
-#include <fcppt/text.hpp>
-#include <fcppt/math/vector/basic_impl.hpp>
-#include <sge/renderer/vector3.hpp>
-#include <sge/shader/matrix.hpp>
-#include <fcppt/assign/make_container.hpp>
-#include <flakelib/volume/visualization/arrow_vf/format.hpp>
-#include <sge/shader/vf_to_string.hpp>
 #include <flakelib/volume/visualization/arrows_manager.hpp>
-#include <sge/renderer/vf/dynamic/make_format.hpp>
+#include <flakelib/volume/visualization/arrow_vf/format.hpp>
 #include <sge/renderer/device.hpp>
+#include <sge/renderer/vector3.hpp>
+#include <sge/renderer/vf/dynamic/make_format.hpp>
+#include <sge/shader/matrix.hpp>
+#include <sge/shader/object_parameters.hpp>
+#include <sge/shader/vf_to_string.hpp>
+#include <fcppt/text.hpp>
+#include <fcppt/assign/make_container.hpp>
+#include <fcppt/math/vector/basic_impl.hpp>
+
 
 flakelib::volume::visualization::arrows_manager::arrows_manager(
 	sge::renderer::device &_renderer)

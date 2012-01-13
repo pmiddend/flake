@@ -1,12 +1,12 @@
-#include <flakelib/buffer/linear_view.hpp>
-#include <sge/opencl/memory_object/buffer.hpp>
 #include <flakelib/media_path_from_string.hpp>
+#include <flakelib/buffer/linear_view.hpp>
 #include <flakelib/utility/object.hpp>
 #include <flakelib/volume/boundary/object.hpp>
-#include <flakelib/volume/boundary/sphere/object.hpp>
 #include <flakelib/volume/boundary/cube/object.hpp>
+#include <flakelib/volume/boundary/sphere/object.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
+#include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/size_type.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>

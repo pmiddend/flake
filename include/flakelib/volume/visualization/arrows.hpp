@@ -1,19 +1,20 @@
 #ifndef FLAKELIB_VOLUME_VISUALIZATION_ARROWS_HPP_INCLUDED
 #define FLAKELIB_VOLUME_VISUALIZATION_ARROWS_HPP_INCLUDED
 
-#include <flakelib/volume/conversion/object_fwd.hpp>
-#include <flakelib/volume/conversion/arrow_scale.hpp>
-#include <flakelib/volume/visualization/arrows_manager_fwd.hpp>
 #include <flakelib/buffer/volume_view_fwd.hpp>
-#include <sge/opencl/context/object_fwd.hpp>
-#include <flakelib/volume/visualization/grid_size.hpp>
+#include <flakelib/volume/conversion/arrow_scale.hpp>
 #include <flakelib/volume/conversion/grid_scale.hpp>
-#include <sge/renderer/vertex_declaration_fwd.hpp>
+#include <flakelib/volume/conversion/object_fwd.hpp>
+#include <flakelib/volume/visualization/arrows_manager_fwd.hpp>
+#include <flakelib/volume/visualization/grid_size.hpp>
+#include <sge/opencl/clinclude.hpp>
+#include <sge/opencl/context/object_fwd.hpp>
+#include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_buffer_ptr.hpp>
-#include <sge/opencl/clinclude.hpp>
-#include <sge/opencl/memory_object/buffer.hpp>
+#include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
+
 
 namespace flakelib
 {

@@ -2,25 +2,26 @@
 #define FLAKELIB_VOLUME_SIMULATION_STAM_OBJECT_HPP_INCLUDED
 
 #include <flakelib/build_options.hpp>
+#include <flakelib/duration.hpp>
 #include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/buffer_pool/volume_lock.hpp>
-#include <flakelib/volume/boundary/view.hpp>
-#include <flakelib/volume/laplace_solver/base_fwd.hpp>
-#include <flakelib/volume/simulation/stam/pressure.hpp>
-#include <flakelib/volume/simulation/stam/rhs.hpp>
-#include <flakelib/volume/simulation/stam/solution.hpp>
-#include <flakelib/volume/simulation/stam/external_force_magnitude.hpp>
-#include <flakelib/volume/simulation/stam/grid_scale.hpp>
-#include <flakelib/volume/simulation/stam/profiling_enabled.hpp>
-#include <flakelib/volume/simulation/stam/vector_field.hpp>
 #include <flakelib/profiler/object.hpp>
 #include <flakelib/utility/object_fwd.hpp>
-#include <flakelib/duration.hpp>
+#include <flakelib/volume/boundary/view.hpp>
+#include <flakelib/volume/laplace_solver/base_fwd.hpp>
+#include <flakelib/volume/simulation/stam/external_force_magnitude.hpp>
+#include <flakelib/volume/simulation/stam/grid_scale.hpp>
+#include <flakelib/volume/simulation/stam/pressure.hpp>
+#include <flakelib/volume/simulation/stam/profiling_enabled.hpp>
+#include <flakelib/volume/simulation/stam/rhs.hpp>
+#include <flakelib/volume/simulation/stam/solution.hpp>
+#include <flakelib/volume/simulation/stam/vector_field.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <fcppt/unique_ptr.hpp>
+
 
 namespace flakelib
 {

@@ -4,13 +4,14 @@
 #include <flakelib/build_options.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/volume/laplace_solver/base.hpp>
+#include <flakelib/volume/laplace_solver/boundary.hpp>
 #include <flakelib/volume/laplace_solver/grid_scale.hpp>
 #include <flakelib/volume/laplace_solver/iterations.hpp>
-#include <flakelib/volume/laplace_solver/boundary.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <fcppt/noncopyable.hpp>
+
 
 namespace flakelib
 {

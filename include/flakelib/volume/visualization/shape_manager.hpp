@@ -2,15 +2,18 @@
 #define FLAKELIB_VOLUME_VISUALIZATION_SHAPE_MANAGER_HPP_INCLUDED
 
 #include <flakelib/volume/boundary/cube/object.hpp>
-#include <flakelib/volume/visualization/compiled_model.hpp>
 #include <flakelib/volume/boundary/sphere/object.hpp>
+#include <flakelib/volume/visualization/compiled_model.hpp>
+#include <sge/image2d/system_fwd.hpp>
 #include <sge/model/obj/loader_ptr.hpp>
 #include <sge/renderer/device_fwd.hpp>
-#include <sge/image2d/system_fwd.hpp>
-#include <sge/shader/object.hpp>
 #include <sge/renderer/matrix4.hpp>
 #include <sge/renderer/vertex_buffer_ptr.hpp>
+#include <sge/shader/object.hpp>
+#include <fcppt/config/external_begin.hpp>
 #include <vector>
+#include <fcppt/config/external_end.hpp>
+
 
 namespace flakelib
 {

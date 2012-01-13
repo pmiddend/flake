@@ -1,9 +1,10 @@
 #ifndef FLAKELIB_VOLUME_BOUNDARY_CUBE_OBJECT_HPP_INCLUDED
 #define FLAKELIB_VOLUME_BOUNDARY_CUBE_OBJECT_HPP_INCLUDED
 
-#include <flakelib/volume/boundary/cube/width.hpp>
 #include <flakelib/volume/boundary/cube/position.hpp>
+#include <flakelib/volume/boundary/cube/width.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
+
 
 namespace flakelib
 {

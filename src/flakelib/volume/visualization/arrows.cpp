@@ -1,15 +1,16 @@
 #include <flakelib/buffer/volume_view.hpp>
+#include <flakelib/volume/conversion/object.hpp>
+#include <flakelib/volume/visualization/arrows.hpp>
+#include <flakelib/volume/visualization/arrows_manager.hpp>
+#include <flakelib/volume/visualization/arrow_vf/format.hpp>
+#include <flakelib/volume/visualization/arrow_vf/format_part.hpp>
+#include <sge/renderer/device.hpp>
+#include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
-#include <fcppt/math/dim/basic_impl.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
-#include <flakelib/volume/visualization/arrow_vf/format.hpp>
-#include <flakelib/volume/visualization/arrows_manager.hpp>
-#include <flakelib/volume/visualization/arrow_vf/format_part.hpp>
-#include <flakelib/volume/conversion/object.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
-#include <sge/renderer/device.hpp>
-#include <flakelib/volume/visualization/arrows.hpp>
+#include <fcppt/math/dim/basic_impl.hpp>
+
 
 flakelib::volume::visualization::arrows::arrows(
 	sge::opencl::context::object &_context,

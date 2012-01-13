@@ -1,13 +1,14 @@
 #ifndef FLAKELIB_VOLUME_VISUALIZATION_MODEL_VF_FROM_OBJ_MAP_HPP_INCLUDED
 #define FLAKELIB_VOLUME_VISUALIZATION_MODEL_VF_FROM_OBJ_MAP_HPP_INCLUDED
 
-#include <sge/model/obj/vb_converter/convert.hpp>
 #include <flakelib/volume/visualization/model_vf/format_part.hpp>
+#include <sge/model/obj/vb_converter/convert.hpp>
 #include <fcppt/mpl/index_of.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <boost/mpl/map/map10.hpp>
 #include <boost/mpl/pair.hpp>
+#include <boost/mpl/map/map10.hpp>
 #include <fcppt/config/external_end.hpp>
+
 
 namespace flakelib
 {

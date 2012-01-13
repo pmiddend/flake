@@ -1,25 +1,28 @@
-#include <sge/shader/activate_everything.hpp>
-#include <fcppt/io/cout.hpp>
-#include <flakelib/volume/visualization/arrows_manager.hpp>
-#include <sge/shader/object.hpp>
-#include <sge/shader/scoped.hpp>
-#include <sge/opencl/memory_object/dim3.hpp>
-#include <sge/opencl/clinclude.hpp>
-#include <sge/parse/json/string_to_path.hpp>
-#include <sge/parse/json/find_and_convert_member.hpp>
+#include <flakelib/volume/density/advector.hpp>
+#include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/utility/object.hpp>
-#include <sge/opencl/command_queue/object.hpp>
-#include <fcppt/ref.hpp>
 #include <flakelib/volume/framework.hpp>
+#include <flakelib/volume/boundary/object.hpp>
+#include <flakelib/volume/conversion/object.hpp>
+#include <flakelib/volume/density/visual.hpp>
 #include <flakelib/volume/laplace_solver/jacobi.hpp>
 #include <flakelib/volume/simulation/stam/object.hpp>
-#include <flakelib/volume/boundary/object.hpp>
-#include <flakelib/volume/visualization/shape_manager.hpp>
-#include <flakelib/volume/conversion/object.hpp>
 #include <flakelib/volume/visualization/arrows.hpp>
-#include <flakelib/buffer_pool/object.hpp>
+#include <flakelib/volume/visualization/arrows_manager.hpp>
+#include <flakelib/volume/visualization/shape_manager.hpp>
+#include <sge/opencl/clinclude.hpp>
+#include <sge/opencl/command_queue/object.hpp>
+#include <sge/opencl/memory_object/dim3.hpp>
+#include <sge/parse/json/find_and_convert_member.hpp>
+#include <sge/parse/json/string_to_path.hpp>
+#include <sge/shader/activate_everything.hpp>
+#include <sge/shader/object.hpp>
+#include <sge/shader/scoped.hpp>
 #include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/ref.hpp>
+#include <fcppt/io/cout.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
+
 
 flakelib::volume::framework::framework(
 	sge::opencl::command_queue::object &_command_queue,
@@ -125,7 +128,31 @@ flakelib::volume::framework::framework(
 				sge::parse::json::find_and_convert_member<cl_float>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/arrow-grid-scale"))))))
+						FCPPT_TEXT("volume-framework/arrow-grid-scale")))))),
+	density_advector_(
+		fcppt::make_unique_ptr<density::advector>(
+			fcppt::ref(
+				_command_queue),
+			boundary::view(
+				boundary_->get()),
+			_build_options,
+			fcppt::ref(
+				*buffer_pool_),
+			fcppt::ref(
+				*utility_),
+			density::grid_scale(
+				1.0f))),
+	density_visual_(
+		fcppt::make_unique_ptr<density::visual>(
+			fcppt::ref(
+				_renderer),
+			fcppt::ref(
+				_image_system),
+			fcppt::ref(
+				_command_queue),
+			_build_options,
+			density::grid_size(
+				boundary_->get().size())))
 {
 	sge::opencl::memory_object::size_type const grid_size =
 		boundary_->get().size()[0];
@@ -153,8 +180,17 @@ flakelib::volume::framework::update(
 	simulation_->update(
 		_duration);
 
+	/*
 	arrows_->convert(
 		simulation_->velocity());
+		*/
+
+	density_advector_->update(
+		simulation_->velocity(),
+		_duration);
+
+	density_visual_->update(
+		density_advector_->get());
 }
 
 void
@@ -165,20 +201,27 @@ flakelib::volume::framework::render(
 	shape_manager_->render(
 		_mvp);
 
-	sge::shader::scoped scoped_shader(
-		arrows_manager_->shader(),
-		sge::shader::activate_everything());
+	if(false)
+	{
+		sge::shader::scoped scoped_shader(
+			arrows_manager_->shader(),
+			sge::shader::activate_everything());
 
-	arrows_manager_->camera_position(
-		_camera_position);
+		arrows_manager_->camera_position(
+			_camera_position);
 
-	arrows_manager_->shader().update_uniform(
-		"mvp",
-		sge::shader::matrix(
-			_mvp,
-			sge::shader::matrix_flags::projection));
+		arrows_manager_->shader().update_uniform(
+			"mvp",
+			sge::shader::matrix(
+				_mvp,
+				sge::shader::matrix_flags::projection));
 
-	arrows_->render();
+		arrows_->render();
+	}
+
+	density_visual_->render(
+		_camera_position,
+		_mvp);
 }
 
 flakelib::volume::framework::~framework()

@@ -1,16 +1,17 @@
-#include <sge/opencl/memory_object/buffer.hpp>
-#include <fcppt/assign/make_array.hpp>
-#include <sge/opencl/command_queue/enqueue_kernel.hpp>
-#include <flakelib/volume/laplace_solver/jacobi.hpp>
-#include <fcppt/math/dim/comparison.hpp>
-#include <sge/opencl/kernel/name.hpp>
-#include <sge/opencl/program/build_parameters.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/buffer_pool/volume_lock.hpp>
-#include <sge/opencl/program/file_to_source_string_sequence.hpp>
+#include <flakelib/volume/laplace_solver/jacobi.hpp>
+#include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
+#include <sge/opencl/kernel/name.hpp>
+#include <sge/opencl/memory_object/buffer.hpp>
+#include <sge/opencl/program/build_parameters.hpp>
+#include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <fcppt/assert/pre.hpp>
+#include <fcppt/assign/make_array.hpp>
+#include <fcppt/math/dim/comparison.hpp>
+
 
 flakelib::volume::laplace_solver::jacobi::jacobi(
 	flakelib::buffer_pool::object &_buffer_pool,
