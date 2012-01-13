@@ -12,7 +12,7 @@ const float stepsize = 0.5;
 const int steps = int((sqrt(3.0) * 64)/stepsize);
 
 // höhere Werte ~= höhere Dichte
-const float opacity = 25.0;
+const float opacity = 0.5;
 
 float
 tex_value(

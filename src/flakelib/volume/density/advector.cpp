@@ -86,7 +86,6 @@ flakelib::volume::density::advector::update(
 		apply_sources_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(sources_.value().size().content()).container());
-	return;
 
 	unique_volume_float_lock target_density(
 		fcppt::make_unique_ptr<buffer_pool::volume_lock<cl_float> >(

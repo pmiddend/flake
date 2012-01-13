@@ -122,7 +122,16 @@ apply_sources(
 		get_global_id(
 			0);
 
+	int
+		x =
+			position % 64,
+		y =
+			position % (64*64) / 64,
+		z =
+			position / (64*64);
 	//if(sources[position] > 0.5f || position == 10 * 64 * 64/* + 32 * 64*/)
-	if(sources[position] > 0.5f || (position >= 32*64*64+32*64 && position < 32*64*64+32*64 + 10))
-		density[position] = 1.0f;
+	//if(sources[position] > 0.5f || (position >= 32*64*64+32*64 && position < 32*64*64+32*64 + 10))
+
+	if(sources[position] > 0.5f || (x == 0 && y >= 25 && y <= 39 && z >= 25 && z <= 39))
+		density[position] = 0.5f;
 }
