@@ -277,7 +277,8 @@ divergence(
 
 	output[current_index] =
 		// FIXME back.z - front.z might be an error, try if everything else fails
-		((right.x - left.x) + (bottom.y - top.y) + (back.z - front.z)) / (2.0f * grid_scale);
+		//((right.x - left.x) + (bottom.y - top.y) + (back.z - front.z)) / (2.0f * grid_scale);
+		((right.x - left.x) + (bottom.y - top.y) + (front.z - back.z)) / (2.0f * grid_scale);
 }
 
 // Calculate the gradient of p and calculate
@@ -391,7 +392,8 @@ gradient_and_subtract(
 			(float4)(
 				right-left,
 				bottom-top,
-				back-front,
+				// FIXME: see above
+				front-back,
 				0.0f);
 
 	float4 result =

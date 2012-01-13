@@ -132,7 +132,7 @@ flakelib::volume::framework::framework(
 
 	flakelib::volume::boundary::sphere::object single_sphere(
 		flakelib::volume::boundary::sphere::radius(
-			grid_size/3),
+			grid_size/4),
 		flakelib::volume::boundary::sphere::position(
 			sge::opencl::memory_object::dim3(
 				grid_size/2,
