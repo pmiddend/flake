@@ -18,6 +18,7 @@
 #include <flakelib/volume/flakes/particle_minimum_size.hpp>
 #include <flakelib/volume/flakes/particle_maximum_size.hpp>
 #include <flakelib/duration.hpp>
+#include <fcppt/scoped_ptr.hpp>
 
 namespace flakelib
 {
@@ -60,7 +61,7 @@ private:
 	sge::renderer::vertex_declaration_ptr vertex_declaration_;
 	sge::renderer::vertex_buffer_ptr vertex_buffer_;
 	sge::shader::object shader_;
-	sge::opencl::memory_object::buffer cl_buffer_;
+	fcppt::scoped_ptr<sge::opencl::memory_object::buffer> cl_buffer_;
 	sge::opencl::program::object program_;
 	sge::opencl::kernel::object advect_kernel_;
 };

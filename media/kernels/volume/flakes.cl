@@ -17,30 +17,23 @@ kernel void advect(
 	/*global struct vertex *current_particle =
 		particles + get_global_id(0);*/
 	global struct vertex *current_particle =
-		particles;
+		&particles[get_global_id(0)];
 
-	(particles+0)->position = (float4)(0.0f);
-	(particles+0)->point_size = 100.0f;
-
-	(particles+1)->position = (float4)(0.0f);
-	(particles+1)->point_size = 100.0f;
-
-	(particles+2)->position = (float4)(0.0f);
-	(particles+2)->point_size = 100.0f;
-
-	(particles+3)->position = (float4)(0.0f);
-	(particles+3)->point_size = 100.0f;
-	return;
+	float4
+		current_position =
+			current_particle->position,
+		starting_position =
+			current_particle->starting_position;
 
 	int3 const lefttopback_position =
 		(int3)(
-			(int)floor(current_particle->position.x),
-			(int)floor(current_particle->position.y),
-			(int)floor(current_particle->position.z));
+			(int)floor(current_position.x),
+			(int)floor(current_position.y),
+			(int)floor(current_position.z));
 
 	if(any(lefttopback_position < (int3)(0)) || any(lefttopback_position >= (int3)(cube_size-2)))
 	{
-		current_particle->position = current_particle->starting_position;
+		current_particle->position = starting_position;
 		return;
 	}
 
@@ -76,6 +69,8 @@ kernel void advect(
 			velocity[FLAKE_VOLUME_RIGHT_BOTTOM_OF(cube_size,lefttopfront_position)];
 
 	current_particle->position =
+		current_position +
+		dt *
 		mix(
 			mix(
 				mix(

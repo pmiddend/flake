@@ -1,3 +1,6 @@
+#include <fcppt/ref.hpp>
+#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/unique_ptr.hpp>
 #include <fcppt/assign/make_array.hpp>
 #include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/volume/flakes/vf/format_part_view.hpp>
@@ -12,6 +15,7 @@
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
+#include <sge/renderer/state/depth_func.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/shader/activate_everything.hpp>
 #include <sge/shader/scoped.hpp>
@@ -96,10 +100,7 @@ flakelib::volume::flakes::object::object(
 					FCPPT_TEXT("shaders/flakes/fragment.glsl")))
 			.name(
 				FCPPT_TEXT("flakes shader"))),
-	cl_buffer_(
-		command_queue_.context(),
-		*vertex_buffer_,
-		sge::opencl::memory_object::renderer_buffer_lock_mode::read_write),
+	cl_buffer_(),
 	program_(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
@@ -120,6 +121,7 @@ flakelib::volume::flakes::object::object(
 		static_cast<cl_int>(
 			_grid_size.get()));
 
+	{
 	sge::renderer::scoped_vertex_lock const vblock(
 		*vertex_buffer_,
 		sge::renderer::lock_mode::writeonly);
@@ -178,6 +180,15 @@ flakelib::volume::flakes::object::object(
 
 		++vertex_buffer_it;
 	}
+	}
+
+	cl_buffer_.take(
+		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
+			fcppt::ref(
+				command_queue_.context()),
+			fcppt::ref(
+				*vertex_buffer_),
+			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
 }
 
 void
@@ -187,7 +198,7 @@ flakelib::volume::flakes::object::update(
 {
 	sge::opencl::memory_object::base_ref_sequence mem_objects;
 	mem_objects.push_back(
-		&cl_buffer_);
+		cl_buffer_.get());
 
 	sge::opencl::memory_object::scoped_objects scoped_vb(
 		command_queue_,
@@ -201,7 +212,7 @@ flakelib::volume::flakes::object::update(
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		cl_buffer_);
+		*cl_buffer_);
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -237,7 +248,11 @@ flakelib::volume::flakes::object::render(
 	sge::renderer::state::scoped scoped_state(
 		renderer_,
 		sge::renderer::state::list
-			(sge::renderer::state::bool_::enable_point_sprites = true));
+			(sge::renderer::state::bool_::enable_point_sprites = true)
+			(sge::renderer::state::source_blend_func::src_alpha)
+			(sge::renderer::state::dest_blend_func::inv_src_alpha)
+			//(sge::renderer::state::depth_func::off)
+			(sge::renderer::state::bool_::enable_alpha_blending = true));
 
 	renderer_.render_nonindexed(
 		sge::renderer::first_vertex(

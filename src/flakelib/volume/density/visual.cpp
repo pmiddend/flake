@@ -175,12 +175,14 @@ flakelib::volume::density::visual::visual(
 				.name(
 					FCPPT_TEXT("cube shader")))
 {
+	/*
 	fcppt::io::cout()
 		<< FCPPT_TEXT("Grid size: ")
 		<< _grid_size.get()
 		<< FCPPT_TEXT(", resulting texture size: ")
 		<< texture_->size()
 		<< FCPPT_TEXT(".");
+		*/
 
 	volume_image_to_planar_texture_kernel_.argument(
 		sge::opencl::kernel::argument_index(
