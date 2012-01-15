@@ -116,7 +116,8 @@ advect(
 kernel void
 apply_sources(
 	global float const *sources,
-	global float *density)
+	global float *density,
+	float const density_strength)
 {
 	int const position =
 		get_global_id(
@@ -133,5 +134,5 @@ apply_sources(
 	//if(sources[position] > 0.5f || (position >= 32*64*64+32*64 && position < 32*64*64+32*64 + 10))
 
 	if(sources[position] > 0.5f || (x == 0 && y >= 25 && y <= 39 && z >= 25 && z <= 39))
-		density[position] = 0.5f;
+		density[position] = density_strength;
 }

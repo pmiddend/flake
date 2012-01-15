@@ -1,3 +1,7 @@
+#include <sge/timer/reset_when_expired.hpp>
+#include <sge/timer/elapsed_fractional.hpp>
+#include <sge/timer/parameters.hpp>
+#include <fcppt/chrono/milliseconds.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/linear_view.hpp>
 #include <flakelib/buffer_pool/planar_lock.hpp>
@@ -26,6 +30,10 @@ flakelib::volume::density::advector::advector(
 		_buffer_pool),
 	grid_scale_(
 		_grid_scale.get()),
+	density_strength_timer_(
+		sge::timer::parameters<sge::timer::clocks::standard>(
+			fcppt::chrono::milliseconds(
+				500))),
 	program_(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
@@ -80,6 +88,15 @@ flakelib::volume::density::advector::update(
 		sge::opencl::kernel::argument_index(
 			1),
 		current_density_->value().buffer());
+
+	sge::timer::reset_when_expired(
+		density_strength_timer_);
+
+	apply_sources_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		sge::timer::elapsed_fractional<cl_float>(
+			density_strength_timer_));
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,

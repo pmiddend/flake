@@ -53,6 +53,9 @@
 		"external-force-magnitude" : 5.0,
 		"profiling-enabled" : true,
 		"arrow-scale" : 0.5,
-		"arrow-grid-scale" : 1.0
+		"arrow-grid-scale" : 1.0,
+		"particle-minimum-size" : 5.0,
+		"particle-maximum-size" : 10.0,
+		"particle-count" : 512
 	}
 }

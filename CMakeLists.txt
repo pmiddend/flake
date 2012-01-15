@@ -132,6 +132,7 @@ SET(
 	src/flakelib/volume/conversion/object.cpp
 	src/flakelib/volume/density/advector.cpp
 	src/flakelib/volume/density/visual.cpp
+	src/flakelib/volume/flakes/object.cpp
 	src/flakelib/volume/framework.cpp
 	src/flakelib/volume/laplace_solver/base.cpp
 	src/flakelib/volume/laplace_solver/jacobi.cpp

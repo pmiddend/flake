@@ -13,6 +13,8 @@
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/program/object.hpp>
+#include <sge/timer/clocks/standard.hpp>
+#include <sge/timer/basic.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/unique_ptr.hpp>
 
@@ -58,6 +60,7 @@ private:
 	sge::opencl::command_queue::object &command_queue_;
 	buffer_pool::object &buffer_pool_;
 	cl_float const grid_scale_;
+	sge::timer::basic<sge::timer::clocks::standard> density_strength_timer_;
 	sge::opencl::program::object program_;
 	sge::opencl::kernel::object apply_sources_kernel_;
 	sge::opencl::kernel::object advect_kernel_;

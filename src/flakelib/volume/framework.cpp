@@ -1,3 +1,4 @@
+#include <flakelib/volume/flakes/object.hpp>
 #include <flakelib/volume/density/advector.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/utility/object.hpp>
@@ -152,7 +153,33 @@ flakelib::volume::framework::framework(
 				_command_queue),
 			_build_options,
 			density::grid_size(
-				boundary_->get().size())))
+				boundary_->get().size()))),
+	flakes_(
+		fcppt::make_unique_ptr<flakes::object>(
+			fcppt::ref(
+				_renderer),
+			fcppt::ref(
+				_image_system),
+			fcppt::ref(
+				_command_queue),
+			_build_options,
+			flakes::particle_count(
+				sge::parse::json::find_and_convert_member<flakes::particle_count::value_type>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("volume-framework/particle-count")))),
+			flakes::grid_size(
+				boundary_->get().size()[0]),
+			flakes::particle_minimum_size(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("volume-framework/particle-minimum-size")))),
+			flakes::particle_maximum_size(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("volume-framework/particle-maximum-size"))))))
 {
 	sge::opencl::memory_object::size_type const grid_size =
 		boundary_->get().size()[0];
@@ -180,10 +207,12 @@ flakelib::volume::framework::update(
 	simulation_->update(
 		_duration);
 
+	flakes_->update(
+		_duration,
+		simulation_->velocity());
 	/*
 	arrows_->convert(
 		simulation_->velocity());
-		*/
 
 	density_advector_->update(
 		simulation_->velocity(),
@@ -191,6 +220,7 @@ flakelib::volume::framework::update(
 
 	density_visual_->update(
 		density_advector_->get());
+		*/
 }
 
 void
@@ -199,6 +229,9 @@ flakelib::volume::framework::render(
 	sge::renderer::matrix4 const &_mvp)
 {
 	shape_manager_->render(
+		_mvp);
+
+	flakes_->render(
 		_mvp);
 
 	if(false)
@@ -219,9 +252,10 @@ flakelib::volume::framework::render(
 		arrows_->render();
 	}
 
-	density_visual_->render(
-		_camera_position,
-		_mvp);
+	if(false)
+		density_visual_->render(
+			_camera_position,
+			_mvp);
 }
 
 flakelib::volume::framework::~framework()

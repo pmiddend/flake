@@ -250,7 +250,7 @@ try
 		sys.window_system().poll();
 
 		volume_framework.update(
-			1.0f * sge::timer::elapsed_and_reset<flakelib::duration>(
+			5.0f * sge::timer::elapsed_and_reset<flakelib::duration>(
 				delta_timer));
 
 		camera.update(
