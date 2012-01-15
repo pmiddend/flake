@@ -31,7 +31,7 @@ kernel void advect(
 			(int)floor(current_position.y),
 			(int)floor(current_position.z));
 
-	if(any(lefttopback_position < (int3)(0)) || any(lefttopback_position >= (int3)(cube_size-2)))
+	if(any(lefttopback_position < (int3)(0)) || any(lefttopback_position >= (int3)(cube_size-1)))
 	{
 		current_particle->position = starting_position;
 		return;

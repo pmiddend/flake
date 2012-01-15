@@ -210,10 +210,10 @@ flakelib::volume::framework::update(
 	flakes_->update(
 		_duration,
 		simulation_->velocity());
-	/*
 	arrows_->convert(
 		simulation_->velocity());
 
+	/*
 	density_advector_->update(
 		simulation_->velocity(),
 		_duration);
@@ -234,7 +234,7 @@ flakelib::volume::framework::render(
 	flakes_->render(
 		_mvp);
 
-	if(false)
+	if(true)
 	{
 		sge::shader::scoped scoped_shader(
 			arrows_manager_->shader(),

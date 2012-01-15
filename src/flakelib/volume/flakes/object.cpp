@@ -143,6 +143,12 @@ flakelib::volume::flakes::object::object(
 		number_generator);
 
 	fcppt::random::uniform<sge::renderer::scalar,fcppt::random::default_generator &>
+		x_rng_(
+			fcppt::random::make_inclusive_range<sge::renderer::scalar>(
+				0.0f,
+				static_cast<sge::renderer::scalar>(
+					_grid_size.get())),
+			number_generator),
 		y_rng_(
 			fcppt::random::make_inclusive_range<sge::renderer::scalar>(
 				0.0f,
@@ -164,7 +170,7 @@ flakelib::volume::flakes::object::object(
 	{
 		sge::renderer::vector4 const starting_position =
 			sge::renderer::vector4(
-				0.0f,
+				x_rng_(),
 				y_rng_(),
 				z_rng_(),
 				1.0f);
