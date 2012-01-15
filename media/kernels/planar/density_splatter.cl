@@ -1,9 +1,8 @@
-#include "positions.cl"
-#include "float_handling.cl"
+#include "planar/positions.cl"
 
 kernel void
 splat(
-	global flake_real *output,
+	global float *output,
 	int const buffer_width,
 	int const start_x,
 	int const start_y)
@@ -22,5 +21,5 @@ splat(
 			start_y);
 
 	output[FLAKE_PLANAR_AT(buffer_width,target_position)] =
-		FLAKE_REAL_LIT(1.0);
+		1.0f;
 }

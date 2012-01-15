@@ -1,22 +1,21 @@
-#include "float_handling.cl"
-#include "positions.cl"
+#include "planar/positions.cl"
 
 bool
 is_solid(
-	global flake_real const *boundary,
+	global float const *boundary,
 	size_t const index)
 {
-	return boundary[index] > FLAKE_REAL_LIT(0.5);
+	return boundary[index] > 0.5f;
 }
 
 kernel void
 advect(
-	global flake_real2 const *input,
-	global flake_real2 *output,
-	global flake_real const *boundary,
+	global float2 const *input,
+	global float2 *output,
+	global float const *boundary,
 	int const buffer_width,
-	flake_real const dt,
-	flake_real const grid_scale)
+	float const dt,
+	float const grid_scale)
 {
 	int2 const position =
 		(int2)(
@@ -31,18 +30,18 @@ advect(
 	if(is_solid(boundary,current_index))
 	{
 		output[current_index] =
-			(flake_real2)(
-				FLAKE_REAL_LIT(0.0));
+			(float2)(
+				0.0f);
 		return;
 	}
 
-	flake_real2 const current_velocity =
+	float2 const current_velocity =
 		input[current_index];
 
-	flake_real2 const advected_vector =
-		FLAKE_CONVERT_REAL2(position) -
+	float2 const advected_vector =
+		convert_float2(position) -
 		dt *
-		(FLAKE_REAL_LIT(1.0) / grid_scale) *
+		(1.0f / grid_scale) *
 		current_velocity;
 
 	int2 advected_lefttop =
@@ -56,7 +55,7 @@ advect(
 			(int2)(0,0),
 			(int2)(buffer_width-1,buffer_width-1));
 
-	flake_real2
+	float2
 		floors,
 		fractions =
 			fract(
@@ -67,7 +66,7 @@ advect(
 	size_t const index_lefttop =
 		FLAKE_PLANAR_AT(buffer_width,clamped_advected_vector);
 
-	flake_real2 const
+	float2 const
 		left =
 			input[index_lefttop],
 		right =
@@ -103,8 +102,8 @@ magnitude.
 */
 kernel void
 apply_external_forces(
-	/* 0 */global flake_real2 *input,
-	/* 1 */flake_real const force_magnitude,
+	/* 0 */global float2 *input,
+	/* 1 */float const force_magnitude,
 	/* 2 */int const buffer_width)
 {
 	size_t const i =
@@ -113,9 +112,9 @@ apply_external_forces(
 
 	// Left border (fill with force magnitude)
 	input[buffer_width * i] =
-		(flake_real2)(
+		(float2)(
 			force_magnitude,
-			FLAKE_REAL_LIT(0.0));
+			0.0f);
 
 	// Top border (fill with top+1 border)
 	input[i] =
@@ -132,11 +131,11 @@ apply_external_forces(
 
 kernel void
 divergence(
-	global flake_real2 const *input,
-	global flake_real *output,
-	global flake_real const *boundary,
+	global float2 const *input,
+	global float *output,
+	global float const *boundary,
 	int const buffer_width,
-	flake_real const grid_scale)
+	float const grid_scale)
 {
 	int2 const currentpos =
 		(int2)(
@@ -157,18 +156,18 @@ divergence(
 		bottom_index =
 			FLAKE_PLANAR_BOTTOM_OF(buffer_width,currentpos);
 
-	flake_real2
+	float2
 		left =
-//			(FLAKE_REAL_LIT(1.0) - boundary[left_index]) * input[left_index],
+//			(1.0f - boundary[left_index]) * input[left_index],
 			input[left_index],
 		right =
-//			(FLAKE_REAL_LIT(1.0) - boundary[right_index]) * input[right_index],
+//			(1.0f - boundary[right_index]) * input[right_index],
 			input[right_index],
 		top =
-//			(FLAKE_REAL_LIT(1.0) - boundary[top_index]) * input[top_index],
+//			(1.0f - boundary[top_index]) * input[top_index],
 			input[top_index],
 		bottom =
-//			(FLAKE_REAL_LIT(1.0) - boundary[bottom_index]) * input[bottom_index];
+//			(1.0f - boundary[bottom_index]) * input[bottom_index];
 			input[bottom_index];
 
 	if(is_solid(boundary,left_index))
@@ -181,19 +180,19 @@ divergence(
 		bottom = (float2)(0.0f);
 
 	output[current_index] =
-//		((right.x - left.x) + (top.y - bottom.y)) / (FLAKE_REAL_LIT(2.0) * grid_scale);
-		((right.x - left.x) + (bottom.y - top.y)) / (FLAKE_REAL_LIT(2.0) * grid_scale);
+//		((right.x - left.x) + (top.y - bottom.y)) / (2.0f * grid_scale);
+		((right.x - left.x) + (bottom.y - top.y)) / (2.0f * grid_scale);
 }
 
 // Calculate the gradient of p and calculate
 // w - gradient(p)
 kernel void
 gradient(
-	/* 0 */global flake_real const *p,
-	/* 1 */global flake_real const *boundary,
-	/* 2 */global flake_real2 *output,
+	/* 0 */global float const *p,
+	/* 1 */global float const *boundary,
+	/* 2 */global float2 *output,
 	/* 3 */int const buffer_width,
-	/* 4 */flake_real const grid_scale)
+	/* 4 */float const grid_scale)
 {
 	int2 const currentpos =
 		(int2)(
@@ -219,12 +218,12 @@ gradient(
 	if(is_solid(boundary,current_index))
 	{
 		output[current_index] =
-			(flake_real2)(
-				FLAKE_REAL_LIT(0.0));
+			(float2)(
+				0.0f);
 		return;
 	}
 
-	flake_real
+	float
 		center =
 			p[current_index],
 		left =
@@ -249,9 +248,9 @@ gradient(
 	if(is_solid(boundary,bottom_index))
 		bottom = center;
 
-	flake_real2 const pressure_gradient =
-		10.0f * (FLAKE_REAL_LIT(0.5) / grid_scale) *
-			(flake_real2)(
+	float2 const pressure_gradient =
+		10.0f * (0.5f / grid_scale) *
+			(float2)(
 				right-left,
 				bottom-top);
 
@@ -262,11 +261,11 @@ gradient(
 // w - gradient(p)
 kernel void
 gradient_and_subtract(
-	/* 0 */global flake_real const *p,
-	/* 1 */flake_real const grid_scale,
-	/* 2 */global flake_real2 const *w,
-	/* 3 */global flake_real const *boundary,
-	/* 4 */global flake_real2 *output,
+	/* 0 */global float const *p,
+	/* 1 */float const grid_scale,
+	/* 2 */global float2 const *w,
+	/* 3 */global float const *boundary,
+	/* 4 */global float2 *output,
 	/* 5 */int const buffer_width)
 {
 	int2 const currentpos =
@@ -293,12 +292,12 @@ gradient_and_subtract(
 	if(is_solid(boundary,current_index))
 	{
 		output[current_index] =
-			(flake_real2)(
-				FLAKE_REAL_LIT(0.0));
+			(float2)(
+				0.0f);
 		return;
 	}
 
-	flake_real
+	float
 		center =
 			p[current_index],
 		left =
@@ -310,45 +309,45 @@ gradient_and_subtract(
 		bottom =
 			p[bottom_index];
 
-	flake_real2 vmask =
-		(flake_real2)(
-			FLAKE_REAL_LIT(1.0));
+	float2 vmask =
+		(float2)(
+			1.0f);
 
 	// Use mix here? What about the vmask?
 	if(is_solid(boundary,left_index))
 	{
 		left = center;
-		vmask.x = FLAKE_REAL_LIT(0.0);
+		vmask.x = 0.0f;
 	}
 
 	if(is_solid(boundary,right_index))
 	{
 		right = center;
-		vmask.x = FLAKE_REAL_LIT(0.0);
+		vmask.x = 0.0f;
 	}
 
 	if(is_solid(boundary,top_index))
 	{
 		top = center;
-		vmask.y = FLAKE_REAL_LIT(0.0);
+		vmask.y = 0.0f;
 	}
 
 	if(is_solid(boundary,bottom_index))
 	{
 		bottom = center;
-		vmask.y = FLAKE_REAL_LIT(0.0);
+		vmask.y = 0.0f;
 	}
 
-	flake_real2 const velocity =
+	float2 const velocity =
 		w[current_index];
 
-	flake_real2 const pressure_gradient =
-		(FLAKE_REAL_LIT(0.5) / grid_scale) *
-			(flake_real2)(
+	float2 const pressure_gradient =
+		(0.5f / grid_scale) *
+			(float2)(
 				right-left,
 				bottom-top);
 
-	flake_real2 result =
+	float2 result =
 		vmask * (velocity - pressure_gradient);
 
 	output[current_index] = result;
@@ -356,11 +355,11 @@ gradient_and_subtract(
 
 kernel void
 laplacian_residual_absolute_value(
-	/* 0 */global flake_real const *rhs,
-	/* 1 */global flake_real const *boundary,
-	/* 2 */global flake_real const *from,
-	/* 3 */global flake_real *to,
-	/* 4 */flake_real const grid_scale,
+	/* 0 */global float const *rhs,
+	/* 1 */global float const *boundary,
+	/* 2 */global float const *from,
+	/* 3 */global float *to,
+	/* 4 */float const grid_scale,
 	/* 5 */int const buffer_width)
 {
 	int2 const currentpos =
@@ -382,7 +381,7 @@ laplacian_residual_absolute_value(
 		bottom_index =
 			FLAKE_PLANAR_BOTTOM_OF(buffer_width,currentpos);
 
-	flake_real const
+	float const
 		center =
 			from[current_index],
 		left =
@@ -406,9 +405,9 @@ laplacian_residual_absolute_value(
 				from[bottom_index],
 				boundary[bottom_index]);
 
-	flake_real const
+	float const
 		laplace =
-			(left + right + top + bottom - FLAKE_REAL_LIT(4.0) * center) / (grid_scale * grid_scale),
+			(left + right + top + bottom - 4.0f * center) / (grid_scale * grid_scale),
 		rhs_value =
 			rhs[current_index];
 

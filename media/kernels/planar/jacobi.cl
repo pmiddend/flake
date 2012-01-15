@@ -1,6 +1,6 @@
 #define WEIGHTED_JACOBI
 
-#include "positions.cl"
+#include "planar/positions.cl"
 
 kernel void
 jacobi(
@@ -12,27 +12,22 @@ jacobi(
 	/* 5 */global float const *x,
 	/* 6 */global float *output)
 {
-	int3 const currentpos =
-		(int3)(
+	int2 const currentpos =
+		(int2)(
 			get_global_id(0),
-			get_global_id(1),
-			get_global_id(2));
+			get_global_id(1));
 
 	int const
 		current_index =
-			FLAKE_VOLUME_AT(buffer_width,currentpos),
+			FLAKE_PLANAR_AT(buffer_width,currentpos),
 		left_index =
-			FLAKE_VOLUME_LEFT_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_LEFT_OF(buffer_width,currentpos),
 		right_index =
-			FLAKE_VOLUME_RIGHT_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_RIGHT_OF(buffer_width,currentpos),
 		top_index =
-			FLAKE_VOLUME_TOP_OF(buffer_width,currentpos),
+			FLAKE_PLANAR_TOP_OF(buffer_width,currentpos),
 		bottom_index =
-			FLAKE_VOLUME_BOTTOM_OF(buffer_width,currentpos),
-		back_index =
-			FLAKE_VOLUME_BACK_OF(buffer_width,currentpos),
-		front_index =
-			FLAKE_VOLUME_FRONT_OF(buffer_width,currentpos);
+			FLAKE_PLANAR_BOTTOM_OF(buffer_width,currentpos);
 
 	float const
 		center =
@@ -56,23 +51,13 @@ jacobi(
 			mix(
 				x[bottom_index],
 				center,
-				boundary[bottom_index] > 0.2f ? 1.0f : 0.0f),
-		back =
-			mix(
-				x[back_index],
-				center,
-				boundary[back_index] > 0.2f ? 1.0f : 0.0f),
-		front =
-			mix(
-				x[front_index],
-				center,
-				boundary[front_index] > 0.2f ? 1.0f : 0.0f);
+				boundary[bottom_index] > 0.2f ? 1.0f : 0.0f);
 
 	float const rhs_value =
 		rhs[current_index];
 
 	float const result =
-		(left + right + top + bottom + back + front + alpha * rhs_value) * beta;
+		(left + right + top + bottom + alpha * rhs_value) * beta;
 
 	output[current_index] =
 #ifndef WEIGHTED_JACOBI

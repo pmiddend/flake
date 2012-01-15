@@ -1,5 +1,4 @@
-#include "float_handling.cl"
-#include "positions.cl"
+#include "planar/positions.cl"
 
 kernel void
 add(
@@ -47,7 +46,7 @@ downsample(
 		rightbottom_index =
 			FLAKE_PLANAR_RIGHT_BOTTOM_OF(large_buffer_width,currentpos);
 
-	flake_real
+	float
 		center =
 			from[current_index],
 		left =
@@ -67,14 +66,14 @@ downsample(
 		righttop =
 			from[righttop_index];
 
-	flake_real const
+	float const
 		diagonals =
 			leftbottom + lefttop + righttop + rightbottom,
 		von_neumann =
 			left + right + top + bottom,
 		output =
-			FLAKE_REAL_LIT(1.0)/FLAKE_REAL_LIT(16.0) *
-			(diagonals + FLAKE_REAL_LIT(2.0) * von_neumann + FLAKE_REAL_LIT(4.0) * center);
+			1.0f/16.0f *
+			(diagonals + 2.0f * von_neumann + 4.0f * center);
 
 	int2 const small_position =
 		currentpos/2;
@@ -101,7 +100,7 @@ upsample_(
 	int2 const position_small =
 		position_big/2;
 
-	flake_real const
+	float const
 		left =
 			from[FLAKE_PLANAR_AT(small_buffer_width,position_small)],
 		right =
@@ -111,11 +110,11 @@ upsample_(
 		rightbottom =
 			from[FLAKE_PLANAR_RIGHT_BOTTOM_OF(small_buffer_width,position_small)];
 
-	flake_real const
+	float const
 		fraction_x =
-			(position_big.x % 2)/FLAKE_REAL_LIT(2.0),
+			(position_big.x % 2)/2.0f,
 		fraction_y =
-			(position_big.y % 2)/FLAKE_REAL_LIT(2.0);
+			(position_big.y % 2)/2.0f;
 
 	to[position_big.y * small_buffer_width * 2 + position_big.x] =
 		mix(
@@ -159,7 +158,7 @@ laplacian_residual(
 		bottom_index =
 			FLAKE_PLANAR_BOTTOM_OF(buffer_width,currentpos);
 
-	flake_real const
+	float const
 		center =
 			from[current_index],
 		left =
@@ -183,10 +182,10 @@ laplacian_residual(
 				center,
 				boundary[bottom_index]);
 
-	flake_real const
+	float const
 		laplace =
 			native_divide(
-				left + right + top + bottom - FLAKE_REAL_LIT(4.0) * center,
+				left + right + top + bottom - 4.0f * center,
 				grid_scale * grid_scale),
 		rhs_value =
 			rhs[current_index];

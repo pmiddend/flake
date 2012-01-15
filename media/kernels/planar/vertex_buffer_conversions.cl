@@ -1,5 +1,3 @@
-#include "float_handling.cl"
-
 struct __attribute__((packed)) vertex
 {
 	float2 start_position;
@@ -13,8 +11,8 @@ to_arrow_vb(
 	global struct vertex *vb,
 	global float2 const *buffer,
 	uint buffer_width,
-	flake_argument_real const grid_scale,
-	flake_argument_real const arrow_scale)
+	float const grid_scale,
+	float const arrow_scale)
 {
 	int2 const this_pos = (int2)(
 		get_global_id(0),

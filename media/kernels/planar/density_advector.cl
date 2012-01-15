@@ -1,14 +1,13 @@
-#include "float_handling.cl"
-#include "positions.cl"
+#include "planar/positions.cl"
 
 kernel void
 advect(
-	/* 0 */global flake_real const *input,
-	/* 1 */global flake_real *output,
-	/* 2 */global flake_real2 const *velocity,
+	/* 0 */global float const *input,
+	/* 1 */global float *output,
+	/* 2 */global float2 const *velocity,
 	/* 3 */int const buffer_width,
-	/* 4 */flake_real const dt,
-	/* 5 */flake_real const grid_scale)
+	/* 4 */float const dt,
+	/* 5 */float const grid_scale)
 {
 	int2 const position =
 		(int2)(
@@ -20,13 +19,13 @@ advect(
 	size_t const current_index =
 		FLAKE_PLANAR_AT(buffer_width,position);
 
-	flake_real2 const current_velocity =
+	float2 const current_velocity =
 		velocity[current_index];
 
-	flake_real2 const advected_vector =
-		FLAKE_CONVERT_REAL2(position) -
+	float2 const advected_vector =
+		convert_float2(position) -
 		dt *
-		(FLAKE_REAL_LIT(1.0) / grid_scale) *
+		(1.0f / grid_scale) *
 		current_velocity;
 
 	int2 advected_lefttop =
@@ -40,7 +39,7 @@ advect(
 			(int2)(0,0),
 			(int2)(buffer_width-1,buffer_width-1));
 
-	flake_real2
+	float2
 		floors,
 		fractions =
 			fract(
@@ -51,7 +50,7 @@ advect(
 	size_t const index_lefttop =
 		FLAKE_PLANAR_AT(buffer_width,clamped_advected_vector);
 
-	flake_real const
+	float const
 		left =
 			input[index_lefttop],
 		right =
@@ -76,13 +75,13 @@ advect(
 
 kernel void
 apply_sources(
-	global flake_real const *sources,
-	global flake_real *density)
+	global float const *sources,
+	global float *density)
 {
 	int const position =
 		get_global_id(
 			0);
 
-	if(sources[position] > FLAKE_REAL_LIT(0.5))
-		density[position] = FLAKE_REAL_LIT(1.0);
+	if(sources[position] > 0.5f)
+		density[position] = 1.0f;
 }

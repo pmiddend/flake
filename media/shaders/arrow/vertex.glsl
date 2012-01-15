@@ -13,5 +13,6 @@ main()
 		projection *
 		vec4(
 			initial_position + position,
+			0.0,
 			1.0);
 }
