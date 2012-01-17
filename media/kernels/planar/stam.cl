@@ -95,6 +95,91 @@ advect(
 			fractions.y);
 }
 
+kernel void
+maccormack(
+	global float2 const *forward,
+	global float2 const *backward,
+	global float2 const *velocity,
+	global float2 *output,
+	global float const *boundary,
+	float const dt)
+{
+	int2 const position =
+		(int2)(
+			get_global_id(
+				0),
+			get_global_id(
+				1));
+
+	int const buffer_width =
+		get_global_size(0);
+
+	size_t const current_index =
+		FLAKE_PLANAR_AT(buffer_width,position);
+
+	if(is_solid(boundary,current_index))
+	{
+		output[current_index] =
+			(float2)(
+				0.0f);
+		return;
+	}
+
+	float2 const advected_vector =
+		convert_float2(position) -
+		dt *
+		velocity[current_index];
+
+	int2 advected_lefttop =
+		(int2)(
+			(int)floor(advected_vector.x),
+			(int)floor(advected_vector.y));
+
+	int2 clamped_advected_vector =
+		clamp(
+			advected_lefttop,
+			(int2)(0,0),
+			(int2)(buffer_width-1,buffer_width-1));
+
+	size_t const index_lefttop =
+		FLAKE_PLANAR_AT(buffer_width,clamped_advected_vector);
+
+	float2 const
+		left =
+			velocity[index_lefttop],
+		right =
+			velocity[FLAKE_PLANAR_RIGHT_OF(buffer_width,clamped_advected_vector)],
+		leftbottom =
+			velocity[FLAKE_PLANAR_BOTTOM_OF(buffer_width,clamped_advected_vector)],
+		rightbottom =
+			velocity[FLAKE_PLANAR_RIGHT_BOTTOM_OF(buffer_width,clamped_advected_vector)];
+
+	float2 const
+		phi_min =
+			min(
+				left,
+				min(
+					right,
+					min(
+						leftbottom,
+						rightbottom))),
+		phi_max =
+			max(
+				left,
+				max(
+					right,
+					max(
+						leftbottom,
+						rightbottom)));
+
+	output[current_index] =
+		clamp(
+			forward[current_index] +
+			0.5f * (velocity[current_index] - backward[current_index]),
+			phi_min,
+			phi_max);
+}
+
 /*
 This function iterates over all the left border pixels of the image and assigns
 a fixed force vector to them. This vector points to the right and has a given

@@ -9,6 +9,9 @@
 #include <flakelib/planar/laplace_solver/base_fwd.hpp>
 #include <flakelib/planar/simulation/base.hpp>
 #include <flakelib/planar/simulation/stam/pressure.hpp>
+#include <flakelib/planar/simulation/stam/forward_advected.hpp>
+#include <flakelib/planar/simulation/stam/backward_advected.hpp>
+#include <flakelib/planar/simulation/stam/velocity.hpp>
 #include <flakelib/planar/simulation/stam/rhs.hpp>
 #include <flakelib/planar/simulation/stam/solution.hpp>
 #include <flakelib/planar/simulation/stam/vector_field.hpp>
@@ -110,6 +113,7 @@ private:
 	sge::opencl::kernel::object laplacian_residual_absolute_value_kernel_;
 	sge::opencl::kernel::object gradient_and_subtract_kernel_;
 	sge::opencl::kernel::object gradient_kernel_;
+	sge::opencl::kernel::object maccormack_kernel_;
 	flakelib::profiler::object parent_profiler_;
 	flakelib::profiler::object advection_profiler_;
 	flakelib::profiler::object external_forces_profiler_;
@@ -158,6 +162,13 @@ private:
 	unique_planar_float2_lock
 	gradient(
 		planar_float_view const &);
+
+	unique_planar_float2_lock
+	maccormack(
+		stam::forward_advected const &,
+		stam::backward_advected const &,
+		stam::velocity const &,
+		flakelib::duration const &);
 };
 }
 }

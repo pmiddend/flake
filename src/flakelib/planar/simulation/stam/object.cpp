@@ -102,6 +102,10 @@ flakelib::planar::simulation::stam::object::object(
 		main_program_,
 		sge::opencl::kernel::name(
 			"gradient")),
+	maccormack_kernel_(
+		main_program_,
+		sge::opencl::kernel::name(
+			"maccormack")),
 	parent_profiler_(
 		FCPPT_TEXT("stam simulation"),
 		profiler::optional_parent(),
@@ -188,12 +192,10 @@ flakelib::planar::simulation::stam::object::object(
 flakelib::buffer::planar_view<cl_float2> const
 flakelib::planar::simulation::stam::object::velocity()
 {
-	//FCPPT_ASSERT_PRE(
-	//	velocity_image_);
+	FCPPT_ASSERT_PRE(
+		velocity_image_);
 
 	return
-	//	old_velocity_image_->value();
-//		gradient_image_->value();
 		velocity_image_->value();
 }
 
@@ -237,20 +239,37 @@ flakelib::planar::simulation::stam::object::update(
 	this->apply_forces(
 		velocity_image_->value());
 
-	old_velocity_image_ =
-		this->advect(
-			velocity_image_->value(),
+	unique_planar_float2_lock
+		forward_advected =
+			this->advect(
+				velocity_image_->value(),
+				dt),
+		backward_advected =
+			this->advect(
+				forward_advected->value(),
+				-dt);
+
+	unique_planar_float2_lock advected =
+		this->maccormack(
+			stam::forward_advected(
+				forward_advected->value()),
+			stam::backward_advected(
+				backward_advected->value()),
+			stam::velocity(
+				velocity_image_->value()),
 			dt);
 
 	// The old version of the velocity is already advected (into the
 	// "advected" variable), we don't need it anymore.
 	velocity_image_.reset();
+	forward_advected.reset();
+	backward_advected.reset();
 
 	// We need the divergence only in solve, so we could discard it here,
 	// but we want to visualize it.
 	divergence_image_ =
 		this->divergence(
-			old_velocity_image_->value());
+			advected->value());
 
 	// Now, the pressure, we don't need later. We could discard it after
 	// gradient_and_subtract, but we want to visualize it.
@@ -265,7 +284,7 @@ flakelib::planar::simulation::stam::object::update(
 	velocity_image_ =
 		this->gradient_and_subtract(
 			stam::vector_field(
-				old_velocity_image_->value()),
+				advected->value()),
 			stam::pressure(
 				pressure_image_->value()));
 
@@ -658,6 +677,61 @@ flakelib::planar::simulation::stam::object::gradient(
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(_pressure.size()[0])
 			(_pressure.size()[1]).container());
+
+	return
+		fcppt::move(
+			result);
+}
+
+flakelib::planar::simulation::stam::object::unique_planar_float2_lock
+flakelib::planar::simulation::stam::object::maccormack(
+	stam::forward_advected const &_forward_advected,
+	stam::backward_advected const &_backward_advected,
+	stam::velocity const &_velocity,
+	flakelib::duration const &_dt)
+{
+	unique_planar_float2_lock result(
+		fcppt::make_unique_ptr<planar_float2_lock>(
+			fcppt::ref(
+				buffer_cache_),
+			_forward_advected.get().size()));
+
+	maccormack_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		_forward_advected.get().buffer());
+
+	maccormack_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		_backward_advected.get().buffer());
+
+	maccormack_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		_velocity.get().buffer());
+
+	maccormack_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			3),
+		result->value().buffer());
+
+	maccormack_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			4),
+		boundary_image_.value().buffer());
+
+	maccormack_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			5),
+		_dt.count());
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		maccormack_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_forward_advected.get().size()[0])
+			(_forward_advected.get().size()[1]).container());
 
 	return
 		fcppt::move(

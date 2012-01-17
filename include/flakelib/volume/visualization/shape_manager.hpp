@@ -10,6 +10,7 @@
 #include <sge/renderer/matrix4.hpp>
 #include <sge/renderer/vertex_buffer_ptr.hpp>
 #include <sge/shader/object.hpp>
+#include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <vector>
 #include <fcppt/config/external_end.hpp>
@@ -23,6 +24,8 @@ namespace visualization
 {
 class shape_manager
 {
+FCPPT_NONCOPYABLE(
+	shape_manager);
 public:
 	explicit
 	shape_manager(
