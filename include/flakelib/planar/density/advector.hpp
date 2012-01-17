@@ -69,6 +69,12 @@ private:
 	// moved to a different container). The source is modified, but
 	// in-place, and is thus fixed.
 	unique_planar_float_lock current_density_;
+
+	unique_planar_float_lock
+	advect(
+		buffer::planar_view<cl_float> const &,
+		density::velocity_image const &,
+		flakelib::duration const &);
 };
 }
 }

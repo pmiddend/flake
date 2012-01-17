@@ -86,6 +86,35 @@ flakelib::planar::density::advector::update(
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(sources_.value().size().content()).container());
 
+	current_density_ =
+		this->advect(
+			current_density_->value(),
+			_velocity,
+			_dt);
+}
+
+flakelib::buffer::planar_view<cl_float> const
+flakelib::planar::density::advector::density_image()
+{
+	return current_density_->value();
+}
+
+flakelib::buffer::planar_view<cl_float> const
+flakelib::planar::density::advector::source_image()
+{
+	return sources_.value();
+}
+
+flakelib::planar::density::advector::~advector()
+{
+}
+
+flakelib::planar::density::advector::unique_planar_float_lock
+flakelib::planar::density::advector::advect(
+	buffer::planar_view<cl_float> const &v,
+	density::velocity_image const &_velocity,
+	flakelib::duration const &_dt)
+{
 	unique_planar_float_lock target_density(
 		fcppt::make_unique_ptr<buffer_pool::planar_lock<cl_float> >(
 			fcppt::ref(
@@ -95,7 +124,7 @@ flakelib::planar::density::advector::update(
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
-		current_density_->value().buffer());
+		v.buffer());
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -131,22 +160,7 @@ flakelib::planar::density::advector::update(
 			(sources_.value().size()[0])
 			(sources_.value().size()[1]).container());
 
-	current_density_.swap(
-		target_density);
-}
-
-flakelib::buffer::planar_view<cl_float> const
-flakelib::planar::density::advector::density_image()
-{
-	return current_density_->value();
-}
-
-flakelib::buffer::planar_view<cl_float> const
-flakelib::planar::density::advector::source_image()
-{
-	return sources_.value();
-}
-
-flakelib::planar::density::advector::~advector()
-{
+	return
+		fcppt::move(
+			target_density);
 }
