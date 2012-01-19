@@ -5,7 +5,7 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/buffer_pool/object.hpp>
-#include <flakelib/planar/framework.hpp>
+#include <flakelib/planar/arrows_only.hpp>
 #include <flakelib/planar/laplace_solver/dynamic_factory.hpp>
 #include <flakelib/planar/simulation/stam/object.hpp>
 #include <flakelib/utility/object.hpp>
@@ -18,6 +18,8 @@
 #include <sge/console/sprite_object.hpp>
 #include <sge/console/sprite_parameters.hpp>
 #include <sge/console/callback/from_functor.hpp>
+#include <sge/camera/ortho_freelook/object.hpp>
+#include <sge/camera/ortho_freelook/parameters.hpp>
 #include <sge/font/system.hpp>
 #include <sge/font/text/lit.hpp>
 #include <sge/image/capabilities_field.hpp>
@@ -98,13 +100,16 @@
 // Separator
 #include <flakelib/main_head.hpp>
 
+// DEBUG
+#include <fcppt/math/dim/output.hpp>
+
 
 namespace
 {
 void
 update_simulation_and_visualization(
 	flakelib::planar::simulation::stam::object &_simulation,
-	flakelib::planar::framework &_visual,
+	flakelib::planar::arrows_only &_visual,
 	flakelib::duration const &_delta)
 {
 			_simulation.update(
@@ -177,7 +182,8 @@ try
 					sge::systems::input_helper::keyboard_collector)
 					| sge::systems::input_helper::cursor_demuxer
 					| sge::systems::input_helper::mouse_collector,
-				sge::systems::cursor_option_field::null())));
+				sge::systems::cursor_option_field(
+					sge::systems::cursor_option::exclusive))));
 
 	sge::font::metrics_ptr const font_metrics(
 		sys.font_system().create_font(
@@ -233,6 +239,24 @@ try
 						console_gfx)))));
 
 	sys.window_system().poll();
+
+	sge::camera::ortho_freelook::object camera(
+		sge::camera::ortho_freelook::parameters(
+			sys.mouse_collector(),
+			sys.keyboard_collector(),
+			sge::renderer::projection::rect(
+				sge::renderer::projection::rect::vector::null(),
+				sge::renderer::projection::rect::dim(
+					static_cast<sge::renderer::scalar>(
+						sys.window().size()[0]),
+					static_cast<sge::renderer::scalar>(
+						sys.window().size()[1]))))
+			.zoom_to_zooming_speed_factor(
+				sge::renderer::vector2(
+					static_cast<sge::renderer::scalar>(
+						0.1),
+					static_cast<sge::renderer::scalar>(
+						0.1))));
 
 	sge::opencl::single_device_system::object opencl_system(
 		sge::opencl::single_device_system::parameters()
@@ -301,7 +325,7 @@ try
 				.long_description(
 					SGE_FONT_TEXT_LIT("Outputs simulation profiling statistics"))));
 
-	flakelib::planar::framework visualization(
+	flakelib::planar::arrows_only visualization(
 		sys.viewport_manager(),
 		sys.renderer(),
 		opencl_system.command_queue(),
@@ -313,10 +337,7 @@ try
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
 			config_file,
 			sge::parse::json::string_to_path(
-				FCPPT_TEXT("arrow-visualization"))),
-		sys.cursor_demuxer(),
-		scalar_pool,
-		utility_object);
+				FCPPT_TEXT("arrow-visualization"))));
 
 	bool running =
 		true;
@@ -347,9 +368,25 @@ try
 
 	flakelib::duration delta(0.0f);
 
+	sge::timer::basic<sge::timer::clocks::standard> camera_timer(
+		sge::timer::parameters<sge::timer::clocks::standard>(
+			sge::camera::duration(
+				1.0f)));
+
+	sys.window_system().poll();
+	simulation.update(
+		flakelib::duration(0.0f));
+
+	visualization.update(
+		flakelib::duration(0.0f));
+
 	while(running)
 	{
 		sys.window_system().poll();
+
+		camera.update(
+			sge::timer::elapsed<sge::camera::duration>(
+				camera_timer));
 
 		/*
 		delta +=
@@ -380,7 +417,8 @@ try
 		sge::renderer::scoped_block const block_(
 			sys.renderer());
 
-		visualization.render();
+		visualization.render(
+			camera.projection());
 
 		if(console_gfx.active())
 			console_gfx.render();

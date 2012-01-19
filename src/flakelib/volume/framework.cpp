@@ -193,11 +193,27 @@ flakelib::volume::framework::framework(
 				grid_size/2,
 				grid_size/2)));
 
+	flakelib::volume::boundary::cube::object companion_cube(
+		flakelib::volume::boundary::cube::width(
+			20),
+		flakelib::volume::boundary::cube::position(
+			sge::opencl::memory_object::dim3(
+				20,
+				0,
+				20)));
+
+	boundary_->add(
+		companion_cube);
+
+	shape_manager_->add(
+		companion_cube);
+	/*
 	boundary_->add(
 		single_sphere);
 
 	shape_manager_->add(
 		single_sphere);
+		*/
 }
 
 void
@@ -234,7 +250,7 @@ flakelib::volume::framework::render(
 	flakes_->render(
 		_mvp);
 
-	if(true)
+	if(false)
 	{
 		sge::shader::scoped scoped_shader(
 			arrows_manager_->shader(),

@@ -56,6 +56,6 @@
 		"arrow-grid-scale" : 1.0,
 		"particle-minimum-size" : 5.0,
 		"particle-maximum-size" : 7.0,
-		"particle-count" : 4096
+		"particle-count" : 16384
 	}
 }

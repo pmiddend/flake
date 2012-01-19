@@ -42,6 +42,10 @@
 #include <fcppt/config/external_end.hpp>
 
 
+// DEBUG
+#include <fcppt/math/vector/output.hpp>
+#include <iostream>
+
 namespace
 {
 rucksack::axis_policy2 const

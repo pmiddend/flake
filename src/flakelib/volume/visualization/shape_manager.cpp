@@ -147,14 +147,15 @@ flakelib::volume::visualization::shape_manager::render(
 			"mvp",
 			sge::shader::matrix(
 				_mvp *
-				fcppt::math::matrix::scaling(
-					scaling_vector) *
 				fcppt::math::matrix::translation(
 					fcppt::math::dim::structure_cast<sge::renderer::vector3>(
 						it->position().get()) +
-					scaling_vector/
-					static_cast<sge::renderer::scalar>(
-						2)),
+					sge::renderer::vector3(
+						it->width().get()/2.0f,
+						it->width().get()/2.0f,
+						it->width().get()/2.0f)) *
+				fcppt::math::matrix::scaling(
+					scaling_vector),
 				sge::shader::matrix_flags::projection));
 
 		cube_model_.render();
