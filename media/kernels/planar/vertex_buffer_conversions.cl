@@ -1,9 +1,11 @@
 struct __attribute__((packed)) vertex
 {
 	float2 start_position;
-	float4 start_color;
 	float2 end_position;
-	float4 end_color;
+	float2 arrow_tip_1_start;
+	float2 arrow_tip_1_end;
+	float2 arrow_tip_2_start;
+	float2 arrow_tip_2_end;
 };
 
 kernel void
@@ -18,8 +20,6 @@ to_arrow_vb(
 		get_global_id(0),
 		get_global_id(1));
 
-	// Each kernel processes two points. Each point has 6 floats stored.
-	// Thus, 2 * 5 floats per kernel.
 	size_t const base_index =
 		this_pos.y * buffer_width + this_pos.x;
 
@@ -29,16 +29,34 @@ to_arrow_vb(
 			(float)this_pos.y);
 
 	float2 const this_arrow = buffer[base_index];
+	float2 const start_position = grid_scale * (this_pos_float + 0.5f);
+	float2 const end_position = start_position + arrow_scale * (float2)(this_arrow.x,this_arrow.y);
+	float2 const first_normal =
+		fast_normalize(
+			(float2)(
+				this_arrow.y,-this_arrow.x));
+	float2 const second_normal =
+		fast_normalize(
+			(float2)(
+				-this_arrow.y,this_arrow.x));
 
-	vb[base_index].start_position =
-		grid_scale * (this_pos_float + 0.5f);
-	vb[base_index].end_position =
-		vb[base_index].start_position + arrow_scale * (float2)(this_arrow.x,this_arrow.y);
+	float2 arrow_tip_1_start;
+	float2 arrow_tip_1_end;
+	float2 arrow_tip_2_start;
+	float2 arrow_tip_2_end;
 
-	vb[base_index].start_color =
-		(float4)(1.0f,0.0f,0.0f,1.0f);
-	vb[base_index].end_color =
-		(float4)(0.0f,1.0f,0.0f,1.0f);
+	vb[base_index].start_position = start_position;
+	vb[base_index].end_position = end_position;
+	vb[base_index].arrow_tip_1_start = end_position;
+	vb[base_index].arrow_tip_2_start = end_position;
+	vb[base_index].arrow_tip_1_end =
+		start_position +
+		arrow_scale * this_arrow * 0.8 +
+		fast_length(this_arrow) * 0.1 * first_normal;
+	vb[base_index].arrow_tip_2_end =
+		start_position +
+		arrow_scale * this_arrow * 0.8 +
+		fast_length(this_arrow) * 0.1 * second_normal;
 }
 
 kernel void

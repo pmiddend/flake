@@ -305,12 +305,14 @@ flakelib::volume::density::visual::render(
 	sge::renderer::vector3 const &_camera,
 	sge::renderer::matrix4 const &_mvp)
 {
+	/*
 	sge::renderer::texture::set_address_mode2(
 		renderer_,
 		sge::renderer::texture::stage(
 			0),
 		sge::renderer::texture::address_mode2(
 			sge::renderer::texture::address_mode::clamp));
+			*/
 
 	sge::shader::scoped scoped_shader(
 		shader_,

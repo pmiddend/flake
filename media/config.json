@@ -1,16 +1,16 @@
 {
 	"benchmark-iterations" : 2000,
-	"window-size" : [1280,1024],
+	"window-size" : [1024,768],
 	"arrow-visualization" :
 	{
-		"arrow-scale" : 2.0,
+		"arrow-scale" : 1.0,
 		"density-splat-radius" : 4,
 		"pressure-scale" : 1.00,
 		"velocity-magnitude-scale" : 0.2,
 		"divergence-scale" : 100.00,
 		"residual-scale" : 1.0,
 		"grid-position" : [10.0,10.0],
-		"grid-scale" : 2.0,
+		"grid-scale" : 1.8,
 		"border-size" : 2,
 		"font-size" : 20
 	},
@@ -50,7 +50,7 @@
 	{
 		"grid-size" : [64,64,64],
 		"jacobi-iterations" : 51,
-		"external-force-magnitude" : 5.0,
+		"external-force-magnitude" : 1.0,
 		"profiling-enabled" : true,
 		"arrow-scale" : 0.5,
 		"arrow-grid-scale" : 1.0,

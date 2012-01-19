@@ -17,6 +17,7 @@
 #include <flakelib/volume/flakes/grid_size.hpp>
 #include <flakelib/volume/flakes/particle_minimum_size.hpp>
 #include <flakelib/volume/flakes/particle_maximum_size.hpp>
+#include <flakelib/volume/boundary/view.hpp>
 #include <flakelib/duration.hpp>
 #include <fcppt/scoped_ptr.hpp>
 
@@ -39,6 +40,7 @@ public:
 		sge::renderer::device &,
 		sge::image2d::system &,
 		sge::opencl::command_queue::object &,
+		boundary::view const &,
 		flakelib::build_options const &,
 		flakes::particle_count const &,
 		flakes::grid_size const &,

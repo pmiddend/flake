@@ -2,13 +2,13 @@
 
 $$$HEADER$$$
 
-out vec4 color_interp;
+//out vec4 color_interp;
 
 void
 main()
 {
-	color_interp =
-		color;
+//	color_interp =
+//		color;
 	gl_Position =
 		projection *
 		vec4(

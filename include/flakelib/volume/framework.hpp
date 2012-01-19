@@ -18,6 +18,7 @@
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
+#include <sge/opencl/clinclude.hpp>
 #include <sge/parse/json/object_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/matrix4.hpp>
@@ -51,6 +52,10 @@ public:
 	render(
 		sge::renderer::vector3 const &,
 		sge::renderer::matrix4 const &);
+
+	void
+	external_force_magnitude(
+		cl_float);
 
 	~framework();
 private:

@@ -146,6 +146,11 @@ flakelib::planar::monitor::parent::render(
 			renderer_,
 			sge::sprite::render_states<dummy_sprite::choices>());
 
+		sge::renderer::state::scoped scoped_state2(
+			renderer_,
+			sge::renderer::state::list
+				(sge::renderer::state::bool_::enable_alpha_blending = true));
+
 		sprite_system_.render_all_advanced(
 			sge::sprite::default_equal());
 	}

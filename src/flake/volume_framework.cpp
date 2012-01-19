@@ -1,5 +1,18 @@
 #include <sge/renderer/state/scoped.hpp>
+#include <sge/console/arg_list.hpp>
+#include <sge/console/gfx.hpp>
+#include <sge/console/muxing_fcppt_streambuf.hpp>
+#include <sge/console/muxing_narrow_streambuf.hpp>
+#include <sge/console/object.hpp>
+#include <sge/console/sprite_object.hpp>
+#include <sge/console/sprite_parameters.hpp>
+#include <sge/console/callback/from_functor.hpp>
 #include <sge/systems/image2d.hpp>
+#include <sge/systems/font.hpp>
+#include <sge/sprite/parameters.hpp>
+#include <sge/sprite/object_impl.hpp>
+#include <sge/font/system.hpp>
+#include <sge/font/text/lit.hpp>
 #include <sge/media/extension.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/chrono/seconds.hpp>
@@ -116,6 +129,19 @@
 // Separator
 #include <flakelib/main_head.hpp>
 
+namespace
+{
+void
+toggle_console_active(
+	sge::console::gfx &_console_gfx,
+	sge::camera::base &_camera)
+{
+	_console_gfx.active(
+		!_console_gfx.active());
+	_camera.active(
+		!_console_gfx.active());
+}
+}
 
 FLAKELIB_MAIN_HEAD
 try
@@ -146,6 +172,7 @@ try
 					sge::renderer::vsync::on,
 					sge::renderer::no_multi_sampling),
 				sge::viewport::fill_on_resize()))
+			(sge::systems::font())
 			(sge::systems::image2d(
 				sge::image::capabilities_field::null(),
 				sge::media::optional_extension_set(
@@ -157,6 +184,35 @@ try
 					sge::systems::input_helper::keyboard_collector) | sge::systems::input_helper::mouse_collector,
 				sge::systems::cursor_option_field(
 					sge::systems::cursor_option::exclusive))));
+
+	sge::font::metrics_ptr const font_metrics(
+		sys.font_system().create_font(
+			sge::config::media_path()
+				/ FCPPT_TEXT("fonts")
+				/ FCPPT_TEXT("default.ttf"),
+			15));
+
+	sge::console::object console_object(
+		SGE_FONT_TEXT_LIT('/'));
+
+	sge::console::gfx console_gfx(
+		console_object,
+		sys.renderer(),
+		sge::image::colors::black(),
+		*font_metrics,
+		sys.keyboard_collector(),
+		sge::console::sprite_object(
+			sge::console::sprite_parameters()
+			.pos(
+				sge::console::sprite_object::vector::null())
+			.size(
+				sge::console::sprite_object::dim(
+					static_cast<sge::console::sprite_object::unit>(
+						window_size.w()),
+					static_cast<sge::console::sprite_object::unit>(
+						window_size.h()/2)))),
+		static_cast<sge::console::output_line_limit>(
+			100));
 
 	flakelib::build_options global_build_options(
 		std::string(
@@ -191,6 +247,17 @@ try
 			sys.keyboard_collector(),
 			sys.mouse_collector()));
 
+	fcppt::signal::scoped_connection const console_cb(
+		sys.keyboard_collector().key_callback(
+			sge::input::keyboard::action(
+				sge::input::keyboard::key_code::f1,
+				std::tr1::bind(
+					&toggle_console_active,
+					fcppt::ref(
+						console_gfx),
+					fcppt::ref(
+						camera)))));
+
 	// Adapt the camera to the viewport
 	fcppt::signal::scoped_connection const viewport_connection(
 		sys.viewport_manager().manage_callback(
@@ -216,20 +283,19 @@ try
 		global_build_options,
 		config_file);
 
-	sge::renderer::state::scoped scoped_global_state(
-		sys.renderer(),
-		sge::renderer::state::list
-			(sge::renderer::state::bool_::clear_back_buffer = true)
-			(sge::renderer::state::bool_::clear_depth_buffer = true)
-			(sge::renderer::state::bool_::enable_alpha_blending = true)
-			(sge::renderer::state::cull_mode::off)
-			(sge::renderer::state::depth_func::less)
-			(sge::renderer::state::draw_mode::fill)
-			(sge::renderer::state::float_::depth_buffer_clear_val = 1.f)
-			(sge::renderer::state::stencil_func::off)
-			(sge::renderer::state::source_blend_func::src_alpha)
-			(sge::renderer::state::dest_blend_func::inv_src_alpha)
-			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::black()));
+	fcppt::signal::scoped_connection const stats_cb(
+		console_object.insert(
+			sge::console::callback::from_functor<void(cl_float)>(
+				std::tr1::bind(
+					&flakelib::volume::framework::external_force_magnitude,
+					&volume_framework,
+					std::tr1::placeholders::_1),
+				sge::console::callback::name(
+					SGE_FONT_TEXT_LIT("wind_speed")),
+				sge::console::callback::short_description(
+					SGE_FONT_TEXT_LIT("Usage: /wind_speed <speed>")))
+				.long_description(
+					SGE_FONT_TEXT_LIT("Changes wind speed"))));
 
 	sge::timer::basic<sge::timer::clocks::standard> camera_timer(
 		sge::timer::parameters<sge::timer::clocks::standard>(
@@ -259,12 +325,36 @@ try
 
 		camera_timer.reset();
 
+		sge::renderer::state::scoped scoped_global_state(
+			sys.renderer(),
+			sge::renderer::state::list
+				(sge::renderer::state::bool_::clear_back_buffer = true)
+				(sge::renderer::state::float_::depth_buffer_clear_val = 1.f)
+				(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::black())
+				(sge::renderer::state::bool_::clear_depth_buffer = true));
+
 		sge::renderer::scoped_block const block_(
 			sys.renderer());
 
-		volume_framework.render(
-			camera.gizmo().position(),
-			camera.mvp());
+		{
+			sge::renderer::state::scoped scoped_local_state(
+				sys.renderer(),
+				sge::renderer::state::list
+					(sge::renderer::state::bool_::enable_alpha_blending = true)
+					(sge::renderer::state::cull_mode::off)
+					(sge::renderer::state::depth_func::less)
+					(sge::renderer::state::draw_mode::fill)
+					(sge::renderer::state::stencil_func::off)
+					(sge::renderer::state::source_blend_func::src_alpha)
+					(sge::renderer::state::dest_blend_func::inv_src_alpha));
+
+			volume_framework.render(
+				camera.gizmo().position(),
+				camera.mvp());
+		}
+
+		if(console_gfx.active())
+			console_gfx.render();
 	}
 }
 catch(

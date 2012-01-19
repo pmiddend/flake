@@ -67,6 +67,10 @@ public:
 	update(
 		flakelib::duration const &);
 
+	void
+	external_force_magnitude(
+		cl_float);
+
 	~object();
 private:
 	typedef
@@ -97,7 +101,7 @@ private:
 	utility::object &utility_;
 	buffer_pool::object &buffer_pool_;
 	volume::laplace_solver::base &laplace_solver_;
-	cl_float const external_force_magnitude_;
+	cl_float external_force_magnitude_;
 	cl_float const grid_scale_;
 	bool const profiling_enabled_;
 	sge::opencl::program::object main_program_;

@@ -111,7 +111,7 @@ flakelib::planar::monitor::planar_arrows::planar_arrows(
 				0u),
 			sge::renderer::vertex_count(
 				static_cast<sge::renderer::size_type>(
-					dimensions_.content() * 2)),
+					dimensions_.content() * 6)),
 			sge::renderer::resource_flags_field(
 				sge::renderer::resource_flags::readable))),
 	cl_vb_(

@@ -63,14 +63,14 @@ flakelib::planar::framework::framework(
 	viewport_widget_(
 		_viewport_manager,
 		_renderer),
-	master_and_slaves_(
+	/*master_and_slaves_(
 		rucksack::padding(
 			sge::parse::json::find_and_convert_member<rucksack::scalar>(
 				_config_file,
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("border-size"))))),
+					FCPPT_TEXT("border-size"))))),*/
 	master_box_(
-		rucksack::axis::y,
+		rucksack::axis::x,
 		rucksack::aspect(
 			1,
 			1)),
@@ -140,9 +140,6 @@ flakelib::planar::framework::framework(
 	additional_data_()
 {
 	viewport_widget_.child(
-		master_and_slaves_);
-
-	master_and_slaves_.master_pane(
 		master_box_);
 
 	master_box_.push_back_child(
@@ -153,6 +150,7 @@ flakelib::planar::framework::framework(
 		density_monitor_.monitor().widget(),
 		rucksack::alignment::left_or_top);
 
+	/*
 	for(
 		flakelib::planar::additional_scalar_data::const_iterator it =
 			simulation_.additional_scalar_data().begin();
@@ -185,6 +183,7 @@ flakelib::planar::framework::framework(
 		master_and_slaves_.push_back_child(
 			additional_data_.find(it->key())->second->widget());
 	}
+	*/
 }
 
 void
@@ -210,6 +209,7 @@ flakelib::planar::framework::update(
 		monitor::arrow_scale(
 			velocity_arrows_.arrow_scale()));
 
+	/*
 	for(
 		flakelib::planar::additional_scalar_data::const_iterator it =
 			simulation_.additional_scalar_data().begin();
@@ -231,6 +231,7 @@ flakelib::planar::framework::update(
 					it2->second->scaling_factor()));
 		}
 	}
+	*/
 
 	monitor_parent_.update();
 }

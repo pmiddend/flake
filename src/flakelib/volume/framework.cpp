@@ -162,6 +162,8 @@ flakelib::volume::framework::framework(
 				_image_system),
 			fcppt::ref(
 				_command_queue),
+			boundary::view(
+				boundary_->get()),
 			_build_options,
 			flakes::particle_count(
 				sge::parse::json::find_and_convert_member<flakes::particle_count::value_type>(
@@ -272,6 +274,14 @@ flakelib::volume::framework::render(
 		density_visual_->render(
 			_camera_position,
 			_mvp);
+}
+
+void
+flakelib::volume::framework::external_force_magnitude(
+	cl_float const _external_force)
+{
+	simulation_->external_force_magnitude(
+		_external_force);
 }
 
 flakelib::volume::framework::~framework()

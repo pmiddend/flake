@@ -20,7 +20,7 @@ namespace arrow_vf
 typedef
 sge::renderer::vf::part
 <
-	boost::mpl::vector2<arrow_vf::position,arrow_vf::color>
+	boost::mpl::vector1<arrow_vf::position>
 >
 part;
 }

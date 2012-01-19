@@ -48,6 +48,7 @@ flakelib::volume::flakes::object::object(
 	sge::renderer::device &_renderer,
 	sge::image2d::system &_image_system,
 	sge::opencl::command_queue::object &_command_queue,
+	boundary::view const &_boundary,
 	flakelib::build_options const &_build_options,
 	flakes::particle_count const &_particle_count,
 	flakes::grid_size const &_grid_size,
@@ -117,9 +118,14 @@ flakelib::volume::flakes::object::object(
 {
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			3),
+			4),
 		static_cast<cl_int>(
 			_grid_size.get()));
+
+	advect_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		_boundary.get().buffer());
 
 	{
 	sge::renderer::scoped_vertex_lock const vblock(
@@ -145,21 +151,22 @@ flakelib::volume::flakes::object::object(
 	fcppt::random::uniform<sge::renderer::scalar,fcppt::random::default_generator &>
 		x_rng_(
 			fcppt::random::make_inclusive_range<sge::renderer::scalar>(
-				0.0f,
+				1.0f,
 				static_cast<sge::renderer::scalar>(
-					_grid_size.get())),
+					_grid_size.get()-1)),
 			number_generator),
 		y_rng_(
 			fcppt::random::make_inclusive_range<sge::renderer::scalar>(
-				0.0f,
 				static_cast<sge::renderer::scalar>(
-					_grid_size.get())),
+					_grid_size.get()/5),
+				static_cast<sge::renderer::scalar>(
+					_grid_size.get()/2+10)),
 			number_generator),
 		z_rng_(
 			fcppt::random::make_inclusive_range<cl_float>(
-				0.0f,
+				1.0f,
 				static_cast<sge::renderer::scalar>(
-					_grid_size.get())),
+					_grid_size.get())-1),
 			number_generator);
 
 	for(
@@ -217,12 +224,12 @@ flakelib::volume::flakes::object::update(
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			1),
+			2),
 		*cl_buffer_);
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			2),
+			3),
 		static_cast<cl_float>(
 			_dt.count()));
 

@@ -10,6 +10,7 @@ struct __attribute__((packed)) vertex
 
 kernel void advect(
 	global float4 const *velocity,
+	global float const *boundary,
 	global struct vertex *particles,
 	float const dt,
 	int const cube_size)
@@ -31,7 +32,7 @@ kernel void advect(
 			(int)floor(current_position.y),
 			(int)floor(current_position.z));
 
-	if(any(lefttopback_position < (int3)(0)) || any(lefttopback_position >= (int3)(cube_size-1)))
+	if(any(lefttopback_position < (int3)(0)) || any(lefttopback_position >= (int3)(cube_size-1)) || boundary[FLAKE_VOLUME_AT(cube_size,lefttopback_position)] > 0.2f)
 	{
 		current_particle->position = starting_position;
 		return;
@@ -70,6 +71,7 @@ kernel void advect(
 
 	current_particle->position =
 		current_position +
+		dt * (float4)(0.0,-1.0,0.0,0.0) +
 		dt *
 		mix(
 			mix(

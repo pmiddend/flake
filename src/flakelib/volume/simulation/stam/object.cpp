@@ -177,6 +177,14 @@ flakelib::volume::simulation::stam::object::update(
 				pressure_result->value()));
 }
 
+void
+flakelib::volume::simulation::stam::object::external_force_magnitude(
+	cl_float const _external_force_magnitude)
+{
+	external_force_magnitude_ =
+		_external_force_magnitude;
+}
+
 flakelib::volume::simulation::stam::object::~object()
 {
 }
