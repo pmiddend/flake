@@ -10,7 +10,7 @@
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/shader/object_parameters.hpp>
 #include <sge/shader/vf_to_string.hpp>
-#include <sge/sprite/dont_compare.hpp>
+#include <sge/sprite/compare/nothing.hpp>
 #include <sge/sprite/render/all.hpp>
 #include <sge/sprite/render/geometry_options.hpp>
 #include <sge/sprite/render/matrix_options.hpp>
@@ -162,14 +162,14 @@ flakelib::planar::monitor::parent::render(
 		>(
 			sprite_collection_.range(),
 			sprite_system_.buffers(),
-			sge::sprite::dont_compare());
+			sge::sprite::compare::nothing());
 	}
 	else
 	{
 		sge::sprite::render::all(
 			sprite_collection_.range(),
 			sprite_system_.buffers(),
-			sge::sprite::dont_compare());
+			sge::sprite::compare::nothing());
 	}
 
 	for(child_list::iterator it = children_.begin(); it != children_.end(); ++it)

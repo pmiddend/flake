@@ -1,3 +1,5 @@
+#include <fcppt/cref.hpp>
+#include <flakelib/volume/visualization/ground.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <flakelib/volume/framework.hpp>
@@ -181,7 +183,22 @@ flakelib::volume::framework::framework(
 				sge::parse::json::find_and_convert_member<cl_float>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/particle-maximum-size"))))))
+						FCPPT_TEXT("volume-framework/particle-maximum-size")))),
+			flakes::snow_texture_size(
+				sge::parse::json::find_and_convert_member<sge::renderer::dim2>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("volume-framework/snow-texture-size")))))),
+	ground_(
+		fcppt::make_unique_ptr<visualization::ground>(
+			fcppt::ref(
+				_renderer),
+			fcppt::cref(
+				shape_manager_->vertex_declaration()),
+			fcppt::ref(
+				_image_system),
+			visualization::grid_size(
+				boundary_->get().size())))
 {
 	sge::opencl::memory_object::size_type const grid_size =
 		boundary_->get().size()[0];
@@ -248,6 +265,10 @@ flakelib::volume::framework::render(
 {
 	shape_manager_->render(
 		_mvp);
+
+	ground_->render(
+		_mvp,
+		flakes_->current_snow_texture());
 
 	flakes_->render(
 		_mvp);

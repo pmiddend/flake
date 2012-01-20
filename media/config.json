@@ -56,6 +56,7 @@
 		"arrow-grid-scale" : 1.0,
 		"particle-minimum-size" : 5.0,
 		"particle-maximum-size" : 7.0,
-		"particle-count" : 16384
+		"particle-count" : 32768,
+		"snow-texture-size" : [512,512]
 	}
 }

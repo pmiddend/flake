@@ -15,6 +15,7 @@
 #include <flakelib/volume/visualization/arrows_fwd.hpp>
 #include <flakelib/volume/visualization/arrows_manager_fwd.hpp>
 #include <flakelib/volume/visualization/shape_manager_fwd.hpp>
+#include <flakelib/volume/visualization/ground_fwd.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
@@ -71,6 +72,7 @@ private:
 	fcppt::scoped_ptr<density::advector> density_advector_;
 	fcppt::scoped_ptr<density::visual> density_visual_;
 	fcppt::scoped_ptr<flakes::object> flakes_;
+	fcppt::scoped_ptr<visualization::ground> ground_;
 };
 }
 }

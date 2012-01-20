@@ -65,7 +65,8 @@ planar_size_from_volume_size(
 		static_cast<sge::renderer::dim2::value_type>(
 			std::ceil(
 				std::sqrt(
-					_volume_size.content())));
+					static_cast<double>(
+						_volume_size.content()))));
 	return
 		sge::renderer::dim2(
 			edge_length,

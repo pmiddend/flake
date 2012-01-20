@@ -1,5 +1,22 @@
-#include <flakelib/media_path_from_string.hpp>
+#include <sge/renderer/texture/planar_parameters.hpp>
+#include <sge/image/colors.hpp>
+#include <sge/renderer/texture/capabilities_field.hpp>
+#include <sge/renderer/texture/scoped_planar_lock.hpp>
+#include <sge/image2d/algorithm/fill.hpp>
+#include <fcppt/container/bitfield/basic_impl.hpp>
+#include <cstddef>
+#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/unique_ptr.hpp>
+#include <fcppt/container/ptr/replace_unique_ptr.hpp>
+#include <sge/renderer/texture/create_planar_from_view.hpp>
+#include <sge/renderer/texture/mipmap/off.hpp>
+#include <sge/renderer/resource_flags_none.hpp>
+#include <fcppt/ref.hpp>
+#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/unique_ptr.hpp>
+#include <fcppt/assign/make_array.hpp>
 #include <flakelib/buffer/volume_view.hpp>
+#include <flakelib/media_path_from_string.hpp>
 #include <flakelib/volume/flakes/object.hpp>
 #include <flakelib/volume/flakes/vf/format.hpp>
 #include <flakelib/volume/flakes/vf/format_part_view.hpp>
@@ -53,7 +70,8 @@ flakelib::volume::flakes::object::object(
 	flakes::particle_count const &_particle_count,
 	flakes::grid_size const &_grid_size,
 	flakes::particle_minimum_size const &_particle_minimum_size,
-	flakes::particle_maximum_size const &_particle_maximum_size)
+	flakes::particle_maximum_size const &_particle_maximum_size,
+	flakes::snow_texture_size const &_snow_texture_size)
 :
 	renderer_(
 		_renderer),
@@ -114,11 +132,51 @@ flakelib::volume::flakes::object::object(
 	advect_kernel_(
 		program_,
 		sge::opencl::kernel::name(
-			"advect"))
+			"advect")),
+	planar_ptrs_(),
+	cl_images_(),
+	current_texture_(
+		0)
 {
+	for(std::size_t i = 0; i < 2; ++i)
+	{
+		planar_ptrs_[i] =
+			_renderer.create_planar_texture(
+				sge::renderer::texture::planar_parameters(
+					_snow_texture_size.get(),
+					sge::image::color::format::r32f,
+					sge::renderer::texture::mipmap::off(),
+					sge::renderer::resource_flags_field(
+						sge::renderer::resource_flags::none),
+					sge::renderer::texture::capabilities_field::null()));
+
+		{
+			sge::renderer::texture::scoped_planar_lock slock(
+				*planar_ptrs_[i],
+				sge::renderer::lock_mode::writeonly);
+
+			sge::image2d::algorithm::fill(
+				slock.value(),
+				sge::image::colors::black());
+		}
+
+		fcppt::container::ptr::replace_unique_ptr(
+			cl_images_,
+			i,
+			fcppt::make_unique_ptr<sge::opencl::memory_object::image::planar>(
+				fcppt::ref(
+					_command_queue.context()),
+				sge::opencl::memory_object::flags_field(
+					sge::opencl::memory_object::flags::read) |
+					sge::opencl::memory_object::flags::write,
+				fcppt::ref(
+					*planar_ptrs_[i])));
+	}
+
+
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			4),
+			0),
 		static_cast<cl_int>(
 			_grid_size.get()));
 
@@ -128,71 +186,71 @@ flakelib::volume::flakes::object::object(
 		_boundary.get().buffer());
 
 	{
-	sge::renderer::scoped_vertex_lock const vblock(
-		*vertex_buffer_,
-		sge::renderer::lock_mode::writeonly);
+		sge::renderer::scoped_vertex_lock const vblock(
+			*vertex_buffer_,
+			sge::renderer::lock_mode::writeonly);
 
-	vf::format_part_view const vertices(
-		vblock.value());
+		vf::format_part_view const vertices(
+			vblock.value());
 
-	vf::format_part_view::iterator vertex_buffer_it(
-		vertices.begin());
+		vf::format_part_view::iterator vertex_buffer_it(
+			vertices.begin());
 
-	fcppt::random::default_generator number_generator(
-		static_cast<fcppt::random::default_generator::result_type>(
-			fcppt::chrono::high_resolution_clock::now().time_since_epoch().count()));
+		fcppt::random::default_generator number_generator(
+			static_cast<fcppt::random::default_generator::result_type>(
+				fcppt::chrono::high_resolution_clock::now().time_since_epoch().count()));
 
-	fcppt::random::uniform<sge::renderer::scalar,fcppt::random::default_generator &> size_rng_(
-		fcppt::random::make_inclusive_range<cl_float>(
-			_particle_minimum_size.get(),
-			_particle_maximum_size.get()),
-		number_generator);
-
-	fcppt::random::uniform<sge::renderer::scalar,fcppt::random::default_generator &>
-		x_rng_(
-			fcppt::random::make_inclusive_range<sge::renderer::scalar>(
-				1.0f,
-				static_cast<sge::renderer::scalar>(
-					_grid_size.get()-1)),
-			number_generator),
-		y_rng_(
-			fcppt::random::make_inclusive_range<sge::renderer::scalar>(
-				static_cast<sge::renderer::scalar>(
-					_grid_size.get()/5),
-				static_cast<sge::renderer::scalar>(
-					_grid_size.get()/2+10)),
-			number_generator),
-		z_rng_(
+		fcppt::random::uniform<sge::renderer::scalar,fcppt::random::default_generator &> size_rng_(
 			fcppt::random::make_inclusive_range<cl_float>(
-				1.0f,
-				static_cast<sge::renderer::scalar>(
-					_grid_size.get())-1),
+				_particle_minimum_size.get(),
+				_particle_maximum_size.get()),
 			number_generator);
 
-	for(
-		flakes::particle_count i(
-			0);
-		i != _particle_count;
-		++i)
-	{
-		sge::renderer::vector4 const starting_position =
-			sge::renderer::vector4(
-				x_rng_(),
-				y_rng_(),
-				z_rng_(),
-				1.0f);
+		fcppt::random::uniform<sge::renderer::scalar,fcppt::random::default_generator &>
+			x_rng_(
+				fcppt::random::make_inclusive_range<sge::renderer::scalar>(
+					1.0f,
+					static_cast<sge::renderer::scalar>(
+						_grid_size.get()-1)),
+				number_generator),
+			y_rng_(
+				fcppt::random::make_inclusive_range<sge::renderer::scalar>(
+					static_cast<sge::renderer::scalar>(
+						_grid_size.get()/5),
+					static_cast<sge::renderer::scalar>(
+						_grid_size.get()/2+10)),
+				number_generator),
+			z_rng_(
+				fcppt::random::make_inclusive_range<cl_float>(
+					1.0f,
+					static_cast<sge::renderer::scalar>(
+						_grid_size.get())-1),
+				number_generator);
 
-		vertex_buffer_it->set<vf::point_size>(
-			vf::point_size::packed_type(
-				size_rng_()));
+		for(
+			flakes::particle_count i(
+				0);
+			i != _particle_count;
+			++i)
+		{
+			sge::renderer::vector4 const starting_position =
+				sge::renderer::vector4(
+					x_rng_(),
+					y_rng_(),
+					z_rng_(),
+					1.0f);
 
-		vertex_buffer_it->set<vf::position>(
-			starting_position);
-		vertex_buffer_it->set<vf::starting_position>(
-			starting_position);
+			vertex_buffer_it->set<vf::point_size>(
+				vf::point_size::packed_type(
+					size_rng_()));
 
-		++vertex_buffer_it;
-	}
+			vertex_buffer_it->set<vf::position>(
+				starting_position);
+			vertex_buffer_it->set<vf::starting_position>(
+				starting_position);
+
+			++vertex_buffer_it;
+		}
 	}
 
 	cl_buffer_.take(
@@ -212,6 +270,10 @@ flakelib::volume::flakes::object::update(
 	sge::opencl::memory_object::base_ref_sequence mem_objects;
 	mem_objects.push_back(
 		cl_buffer_.get());
+	mem_objects.push_back(
+		&cl_images_[0]);
+	mem_objects.push_back(
+		&cl_images_[1]);
 
 	sge::opencl::memory_object::scoped_objects scoped_vb(
 		command_queue_,
@@ -219,19 +281,32 @@ flakelib::volume::flakes::object::update(
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			0),
+			2),
 		_velocity.buffer());
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			2),
+			3),
 		*cl_buffer_);
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			3),
+			4),
 		static_cast<cl_float>(
 			_dt.count()));
+
+	advect_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			5),
+		cl_images_[current_texture_]);
+
+	advect_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			6),
+		cl_images_[(current_texture_+1u) % 2u]);
+
+	current_texture_ =
+		(current_texture_ + 1u) % 2u;
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
@@ -273,6 +348,14 @@ flakelib::volume::flakes::object::render(
 		sge::renderer::vertex_count(
 			vertex_buffer_->size()),
 		sge::renderer::nonindexed_primitive_type::point);
+}
+
+sge::renderer::texture::planar_ptr const
+flakelib::volume::flakes::object::current_snow_texture()
+{
+	return
+//		planar_ptrs_[current_texture_];
+		planar_ptrs_[0];
 }
 
 flakelib::volume::flakes::object::~object()

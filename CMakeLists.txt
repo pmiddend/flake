@@ -141,6 +141,7 @@ SET(
 	src/flakelib/volume/visualization/arrows.cpp
 	src/flakelib/volume/visualization/arrows_manager.cpp
 	src/flakelib/volume/visualization/compiled_model.cpp
+	src/flakelib/volume/visualization/ground.cpp
 	src/flakelib/volume/visualization/shape_manager.cpp
 )
 

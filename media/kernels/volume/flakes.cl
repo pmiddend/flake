@@ -1,5 +1,10 @@
 #include "volume/positions.cl"
 
+sampler_t const clamped_nonnormalized_nearest =
+	CLK_NORMALIZED_COORDS_FALSE |
+	CLK_ADDRESS_CLAMP_TO_EDGE |
+	CLK_FILTER_NEAREST;
+
 struct __attribute__((packed)) vertex
 //struct vertex
 {
@@ -8,15 +13,16 @@ struct __attribute__((packed)) vertex
 	float point_size;
 };
 
-kernel void advect(
-	global float4 const *velocity,
-	global float const *boundary,
-	global struct vertex *particles,
-	float const dt,
-	int const cube_size)
+kernel void
+advect(
+	/* 0 */int const cube_size,
+	/* 1 */global float const *boundary,
+	/* 2 */global float4 const *velocity,
+	/* 3 */global struct vertex *particles,
+	/* 4 */float const dt,
+	/* 5 */global read_only image2d_t distribution_input,
+	/* 6 */global write_only image2d_t distribution_output)
 {
-	/*global struct vertex *current_particle =
-		particles + get_global_id(0);*/
 	global struct vertex *current_particle =
 		&particles[get_global_id(0)];
 
@@ -32,7 +38,51 @@ kernel void advect(
 			(int)floor(current_position.y),
 			(int)floor(current_position.z));
 
-	if(any(lefttopback_position < (int3)(0)) || any(lefttopback_position >= (int3)(cube_size-1)) || boundary[FLAKE_VOLUME_AT(cube_size,lefttopback_position)] > 0.2f)
+	if(any(lefttopback_position < (int3)(0)) || any(lefttopback_position >= (int3)(cube_size-1)))
+	{
+		if(lefttopback_position.y < 0)
+		{
+			float2 const
+				float_image_size =
+					(float2)(
+							get_image_width(distribution_output),
+							get_image_height(distribution_output)),
+				float_cube_size =
+					(float2)(
+						cube_size,
+						cube_size),
+				float_texture_coordinates =
+					(float2)(
+						current_position.x,
+						current_position.z) / float_cube_size * float_image_size;
+
+			int2 const
+				texture_coordinates =
+					clamp(
+						(int2)(
+							(int)float_texture_coordinates.x,
+							(int)float_texture_coordinates.y),
+						(int2)(
+							0,
+							0),
+						(int2)(
+							get_image_width(distribution_output)-1,
+							get_image_height(distribution_output)-1));
+
+			write_imagef(
+				distribution_output,
+				texture_coordinates,
+				read_imagef(
+					distribution_input,
+					clamped_nonnormalized_nearest,
+					texture_coordinates) + 0.20f);
+		}
+
+		current_particle->position = starting_position;
+		return;
+	}
+
+	if(boundary[FLAKE_VOLUME_AT(cube_size,lefttopback_position)] > 0.2f)
 	{
 		current_particle->position = starting_position;
 		return;

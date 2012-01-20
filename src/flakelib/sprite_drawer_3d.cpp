@@ -7,7 +7,7 @@
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/sprite/buffers_option.hpp>
-#include <sge/sprite/default_compare.hpp>
+#include <sge/sprite/compare/default.hpp>
 #include <sge/sprite/object_impl.hpp>
 #include <sge/sprite/parameters_impl.hpp>
 #include <sge/sprite/system_impl.hpp>
@@ -151,7 +151,7 @@ flakelib::sprite_drawer_3d::end_rendering()
 			sprites_.end()
 		),
 		sprite_system_.buffers(),
-		sge::sprite::default_compare()
+		sge::sprite::compare::default_()
 	);
 }
 

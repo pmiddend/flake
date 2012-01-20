@@ -151,9 +151,15 @@ flakelib::volume::visualization::shape_manager::render(
 					fcppt::math::dim::structure_cast<sge::renderer::vector3>(
 						it->position().get()) +
 					sge::renderer::vector3(
-						it->width().get()/2.0f,
-						it->width().get()/2.0f,
-						it->width().get()/2.0f)) *
+						static_cast<sge::renderer::scalar>(
+							it->width().get())/
+						2.0f,
+						static_cast<sge::renderer::scalar>(
+							it->width().get())/
+						2.0f,
+						static_cast<sge::renderer::scalar>(
+							it->width().get())/
+						2.0f)) *
 				fcppt::math::matrix::scaling(
 					scaling_vector),
 				sge::shader::matrix_flags::projection));
@@ -176,6 +182,18 @@ flakelib::volume::visualization::shape_manager::add(
 {
 	cubes_.push_back(
 		_cube);
+}
+
+sge::renderer::vertex_declaration const &
+flakelib::volume::visualization::shape_manager::vertex_declaration() const
+{
+	return *vd_;
+}
+
+sge::shader::object &
+flakelib::volume::visualization::shape_manager::shader()
+{
+	return shader_;
 }
 
 flakelib::volume::visualization::shape_manager::~shape_manager()

@@ -44,6 +44,12 @@ public:
 	add(
 		boundary::cube::object const &);
 
+	sge::renderer::vertex_declaration const &
+	vertex_declaration() const;
+
+	sge::shader::object &
+	shader();
+
 	~shape_manager();
 private:
 	typedef
