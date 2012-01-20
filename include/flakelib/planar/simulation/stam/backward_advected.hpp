@@ -1,8 +1,9 @@
 #ifndef FLAKELIB_PLANAR_SIMULATION_STAM_BACKWARD_ADVECTED_HPP_INCLUDED
 #define FLAKELIB_PLANAR_SIMULATION_STAM_BACKWARD_ADVECTED_HPP_INCLUDED
 
-#include <fcppt/strong_typedef.hpp>
 #include <flakelib/buffer/planar_view.hpp>
+#include <fcppt/strong_typedef.hpp>
+
 
 namespace flakelib
 {

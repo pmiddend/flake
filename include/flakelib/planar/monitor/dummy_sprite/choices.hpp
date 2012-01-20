@@ -2,13 +2,15 @@
 #define FLAKELIB_PLANAR_MONITOR_DUMMY_SPRITE_CHOICES_HPP_INCLUDED
 
 #include <flakelib/planar/monitor/scalar.hpp>
-#include <sge/image/color/rgba8.hpp>
-#include <sge/sprite/choices.hpp>
-#include <sge/sprite/no_color.hpp>
-#include <sge/sprite/type_choices.hpp>
-#include <sge/sprite/with_dim.hpp>
-#include <sge/sprite/with_texture.hpp>
-#include <sge/sprite/intrusive/tag.hpp>
+#include <sge/sprite/config/choices.hpp>
+#include <sge/sprite/config/float_type.hpp>
+#include <sge/sprite/config/intrusive.hpp>
+#include <sge/sprite/config/normal_size.hpp>
+#include <sge/sprite/config/texture_coordinates.hpp>
+#include <sge/sprite/config/texture_level_count.hpp>
+#include <sge/sprite/config/type_choices.hpp>
+#include <sge/sprite/config/unit_type.hpp>
+#include <sge/sprite/config/with_texture.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/mpl/vector/vector10.hpp>
 #include <fcppt/config/external_end.hpp>
@@ -23,19 +25,22 @@ namespace monitor
 namespace dummy_sprite
 {
 typedef
-sge::sprite::choices
+sge::sprite::config::choices
 <
-	sge::sprite::type_choices
+	sge::sprite::config::type_choices
 	<
-		monitor::scalar,
-		monitor::scalar,
-		sge::sprite::no_color
+		sge::sprite::config::unit_type<monitor::scalar>,
+		sge::sprite::config::float_type<monitor::scalar>
 	>,
-	boost::mpl::vector3
+	sge::sprite::config::normal_size,
+	boost::mpl::vector2
 	<
-		sge::sprite::with_dim,
-		sge::sprite::with_texture,
-		sge::sprite::intrusive::tag
+		sge::sprite::config::with_texture
+		<
+			sge::sprite::config::texture_level_count<1u>,
+			sge::sprite::config::texture_coordinates::normal
+		>,
+		sge::sprite::config::intrusive
 	>
 >
 choices;

@@ -4,15 +4,20 @@
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/scoped_transform.hpp>
-#include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/texture/stage.hpp>
 #include <sge/renderer/texture/filter/point.hpp>
 #include <sge/renderer/texture/filter/scoped.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/shader/object_parameters.hpp>
 #include <sge/shader/vf_to_string.hpp>
-#include <sge/sprite/default_equal.hpp>
-#include <sge/sprite/render_states.hpp>
+#include <sge/sprite/dont_compare.hpp>
+#include <sge/sprite/render/all.hpp>
+#include <sge/sprite/render/geometry_options.hpp>
+#include <sge/sprite/render/matrix_options.hpp>
+#include <sge/sprite/render/options.hpp>
+#include <sge/sprite/render/state_options.hpp>
+#include <sge/sprite/render/vertex_options.hpp>
+#include <sge/sprite/render/with_options.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/scoped_ptr.hpp>
@@ -66,7 +71,9 @@ flakelib::planar::monitor::parent::parent(
 				flakelib::media_path_from_string(
 					FCPPT_TEXT("shaders/arrow/fragment.glsl")))),
 	sprite_system_(
-		renderer_),
+		renderer_,
+		sge::sprite::buffers_option::dynamic),
+	sprite_collection_(),
 	children_()
 {
 }
@@ -95,10 +102,10 @@ flakelib::planar::monitor::parent::renderer() const
 	return renderer_;
 }
 
-flakelib::planar::monitor::dummy_sprite::system &
-flakelib::planar::monitor::parent::sprite_system()
+flakelib::planar::monitor::dummy_sprite::collection &
+flakelib::planar::monitor::parent::sprite_collection()
 {
-	return sprite_system_;
+	return sprite_collection_;
 }
 
 sge::font::metrics &
@@ -142,22 +149,27 @@ flakelib::planar::monitor::parent::render(
 				sge::renderer::matrix_mode::world,
 				sge::renderer::matrix4::identity()));
 
-		sge::renderer::state::scoped scoped_state(
-			renderer_,
-			sge::sprite::render_states<dummy_sprite::choices>());
 
-		sge::renderer::state::scoped scoped_state2(
-			renderer_,
-			sge::renderer::state::list
-				(sge::renderer::state::bool_::enable_alpha_blending = true));
-
-		sprite_system_.render_all_advanced(
-			sge::sprite::default_equal());
+		sge::sprite::render::with_options
+		<
+			sge::sprite::render::options
+			<
+				sge::sprite::render::geometry_options::fill,
+				sge::sprite::render::matrix_options::nothing,
+				sge::sprite::render::state_options::set,
+				sge::sprite::render::vertex_options::declaration_and_buffer
+			>
+		>(
+			sprite_collection_.range(),
+			sprite_system_.buffers(),
+			sge::sprite::dont_compare());
 	}
 	else
 	{
-		sprite_system_.render_all(
-			sge::sprite::default_equal());
+		sge::sprite::render::all(
+			sprite_collection_.range(),
+			sprite_system_.buffers(),
+			sge::sprite::dont_compare());
 	}
 
 	for(child_list::iterator it = children_.begin(); it != children_.end(); ++it)

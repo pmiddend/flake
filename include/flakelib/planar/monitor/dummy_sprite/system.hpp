@@ -13,7 +13,7 @@ namespace monitor
 namespace dummy_sprite
 {
 typedef
-sge::sprite::system<dummy_sprite::choices>::type
+sge::sprite::system<dummy_sprite::choices>
 system;
 }
 }

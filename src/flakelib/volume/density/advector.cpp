@@ -1,7 +1,3 @@
-#include <sge/timer/reset_when_expired.hpp>
-#include <sge/timer/elapsed_fractional.hpp>
-#include <sge/timer/parameters.hpp>
-#include <fcppt/chrono/milliseconds.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/linear_view.hpp>
 #include <flakelib/buffer_pool/planar_lock.hpp>
@@ -11,9 +7,13 @@
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
+#include <sge/timer/elapsed_fractional.hpp>
+#include <sge/timer/parameters.hpp>
+#include <sge/timer/reset_when_expired.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/assign/make_array.hpp>
 #include <fcppt/chrono/duration.hpp>
+#include <fcppt/chrono/milliseconds.hpp>
 
 
 flakelib::volume::density::advector::advector(

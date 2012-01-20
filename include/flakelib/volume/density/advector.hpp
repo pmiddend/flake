@@ -13,8 +13,8 @@
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/program/object.hpp>
-#include <sge/timer/clocks/standard.hpp>
 #include <sge/timer/basic.hpp>
+#include <sge/timer/clocks/standard.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/unique_ptr.hpp>
 

@@ -108,8 +108,8 @@ flakelib::planar::monitor::texture::texture(
 			.texture(
 				fcppt::make_shared_ptr<sge::texture::part_raw>(
 					renderer_texture_))
-			.system(
-				child::parent().sprite_system())),
+			.connection(
+				child::parent().sprite_collection().connection())),
 	box_parent_(
 		rucksack::axis::y,
 		rucksack::aspect(
@@ -171,31 +171,19 @@ flakelib::planar::monitor::texture::render(
 		sge::renderer::matrix_mode::world,
 		sge::renderer::matrix4::identity());
 
-	sge::renderer::state::scoped scoped_state(
-		child::parent().renderer(),
-		sge::sprite::render_states<flakelib::sprite_drawer_3d::sprite_choices>());
-
 	fcppt::scoped_ptr<sge::renderer::scoped_transform> projection_transform;
 
-	if(_projection)
-	{
-		projection_transform.take(
-			fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
-				fcppt::ref(
-					child::parent().renderer()),
-				sge::renderer::matrix_mode::projection,
-				*_projection));
-	}
-	else
-	{
-		projection_transform.take(
-			fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
-				fcppt::ref(
-					child::parent().renderer()),
-				sge::renderer::matrix_mode::projection,
+	projection_transform.take(
+		fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
+			fcppt::ref(
+				child::parent().renderer()),
+			sge::renderer::matrix_mode::projection,
+			_projection
+			?
+				*_projection
+			:
 				sge::sprite::projection_matrix(
 					child::parent().renderer().onscreen_target().viewport())));
-	}
 
 	sge::font::text::draw(
 		child::parent().font_metrics(),

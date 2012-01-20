@@ -2,18 +2,22 @@
 #include <sge/image/color/any/convert.hpp>
 #include <sge/image2d/dim.hpp>
 #include <sge/image2d/view/size.hpp>
+#include <sge/renderer/device.hpp>
 #include <sge/renderer/caps/object.hpp>
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
-#include <sge/sprite/default_equal.hpp>
-#include <sge/sprite/default_sort.hpp>
-#include <sge/sprite/external_system_impl.hpp>
+#include <sge/sprite/buffers_option.hpp>
+#include <sge/sprite/default_compare.hpp>
 #include <sge/sprite/object_impl.hpp>
 #include <sge/sprite/parameters_impl.hpp>
-#include <sge/sprite/render_states.hpp>
+#include <sge/sprite/system_impl.hpp>
+#include <sge/sprite/geometry/make_random_access_range.hpp>
+#include <sge/sprite/render/options.hpp>
+#include <sge/sprite/render/with_options.hpp>
 #include <sge/texture/rect_fragmented.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
+#include <fcppt/math/dim/fill.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/spirit/home/phoenix/object/construct.hpp>
@@ -23,7 +27,7 @@
 
 
 flakelib::sprite_drawer_3d::sprite_drawer_3d(
-	sge::renderer::device &_rend,
+	sge::renderer::device &_renderer,
 	sge::image::color::any::object const &_col
 )
 :
@@ -42,18 +46,23 @@ flakelib::sprite_drawer_3d::sprite_drawer_3d(
 				sge::texture::rect_fragmented
 			>(
 				fcppt::ref(
-					_rend
+					_renderer
 				),
-				_rend.caps().preferred_texture_format().get(),
+				_renderer.caps().preferred_texture_format().get(),
 				sge::renderer::texture::mipmap::off(),
-				sge::renderer::dim2(
-					256,
-					256)
+				fcppt::math::dim::fill<
+					2,
+					sge::renderer::dim2::value_type
+				>(
+					256
+				)
 			)
 		)
 	),
-	sys_(
-		_rend
+	textures_(),
+	sprite_system_(
+		_renderer,
+		sge::sprite::buffers_option::dynamic
 	),
 	sprites_()
 {
@@ -127,11 +136,22 @@ flakelib::sprite_drawer_3d::draw_char(
 void
 flakelib::sprite_drawer_3d::end_rendering()
 {
-	sys_.render_advanced(
-		sprites_.begin(),
-		sprites_.end(),
-		sge::sprite::default_sort(),
-		sge::sprite::default_equal()
+	sge::sprite::render::with_options
+	<
+		sge::sprite::render::options
+		<
+			sge::sprite::render::geometry_options::fill,
+		        sge::sprite::render::matrix_options::nothing,
+			sge::sprite::render::state_options::set,
+			sge::sprite::render::vertex_options::declaration_and_buffer
+		>
+	>(
+		sge::sprite::geometry::make_random_access_range(
+			sprites_.begin(),
+			sprites_.end()
+		),
+		sprite_system_.buffers(),
+		sge::sprite::default_compare()
 	);
 }
 
@@ -174,4 +194,3 @@ flakelib::sprite_drawer_3d::cached_texture(
 				)
 			).first->second;
 }
-

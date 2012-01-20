@@ -1,3 +1,4 @@
+#include <sge/renderer/state/list.hpp>
 #include <sge/window/object.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/exception.hpp>
@@ -238,19 +239,14 @@ try
 					fcppt::ref(
 						console_gfx)))));
 
-	sys.window_system().poll();
-
 	sge::camera::ortho_freelook::object camera(
 		sge::camera::ortho_freelook::parameters(
 			sys.mouse_collector(),
 			sys.keyboard_collector(),
 			sge::renderer::projection::rect(
 				sge::renderer::projection::rect::vector::null(),
-				sge::renderer::projection::rect::dim(
-					static_cast<sge::renderer::scalar>(
-						sys.window().size()[0]),
-					static_cast<sge::renderer::scalar>(
-						sys.window().size()[1]))))
+				fcppt::math::dim::structure_cast<sge::renderer::projection::rect::dim>(
+					window_size)))
 			.zoom_to_zooming_speed_factor(
 				sge::renderer::vector2(
 					static_cast<sge::renderer::scalar>(
@@ -374,6 +370,7 @@ try
 				1.0f)));
 
 	sys.window_system().poll();
+
 	simulation.update(
 		flakelib::duration(0.0f));
 

@@ -101,7 +101,7 @@ flakelib::planar::arrows_only::arrows_only(
 
 void
 flakelib::planar::arrows_only::update(
-	flakelib::duration const &_dt)
+	flakelib::duration const &)
 {
 	planar_converter_.to_arrow_vb(
 		simulation_.velocity(),

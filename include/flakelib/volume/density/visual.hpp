@@ -4,6 +4,7 @@
 #include <flakelib/build_options.hpp>
 #include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/volume/density/grid_size.hpp>
+#include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
@@ -15,7 +16,6 @@
 #include <sge/renderer/vertex_buffer_ptr.hpp>
 #include <sge/renderer/vertex_declaration_ptr.hpp>
 #include <sge/renderer/texture/planar_ptr.hpp>
-#include <sge/image2d/system_fwd.hpp>
 #include <sge/shader/object.hpp>
 #include <fcppt/noncopyable.hpp>
 

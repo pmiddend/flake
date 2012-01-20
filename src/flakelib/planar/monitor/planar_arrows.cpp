@@ -41,11 +41,6 @@
 #include <limits>
 #include <fcppt/config/external_end.hpp>
 
-
-// DEBUG
-#include <fcppt/math/vector/output.hpp>
-#include <iostream>
-
 namespace
 {
 rucksack::axis_policy2 const
@@ -169,8 +164,8 @@ flakelib::planar::monitor::planar_arrows::planar_arrows(
 					.texture(
 						fcppt::make_shared_ptr<sge::texture::part_raw>(
 							_optional_texture))
-					.system(
-						child::parent().sprite_system())));
+					.connection(
+						child::parent().sprite_collection().connection())));
 	}
 }
 FCPPT_PP_POP_WARNING

@@ -1,25 +1,26 @@
 #ifndef FLAKELIB_VOLUME_FLAKES_OBJECT_HPP_INCLUDED
 #define FLAKELIB_VOLUME_FLAKES_OBJECT_HPP_INCLUDED
 
-#include <sge/renderer/device_fwd.hpp>
-#include <sge/renderer/vertex_declaration_ptr.hpp>
-#include <sge/image2d/system_fwd.hpp>
-#include <sge/renderer/vertex_buffer_ptr.hpp>
-#include <sge/renderer/matrix4.hpp>
-#include <sge/shader/object.hpp>
-#include <sge/opencl/command_queue/object_fwd.hpp>
-#include <sge/opencl/program/object.hpp>
-#include <sge/opencl/memory_object/buffer.hpp>
-#include <sge/opencl/kernel/object.hpp>
-#include <flakelib/buffer/volume_view_fwd.hpp>
 #include <flakelib/build_options.hpp>
-#include <flakelib/volume/flakes/particle_count.hpp>
-#include <flakelib/volume/flakes/grid_size.hpp>
-#include <flakelib/volume/flakes/particle_minimum_size.hpp>
-#include <flakelib/volume/flakes/particle_maximum_size.hpp>
-#include <flakelib/volume/boundary/view.hpp>
 #include <flakelib/duration.hpp>
+#include <flakelib/buffer/volume_view_fwd.hpp>
+#include <flakelib/volume/boundary/view.hpp>
+#include <flakelib/volume/flakes/grid_size.hpp>
+#include <flakelib/volume/flakes/particle_count.hpp>
+#include <flakelib/volume/flakes/particle_maximum_size.hpp>
+#include <flakelib/volume/flakes/particle_minimum_size.hpp>
+#include <sge/image2d/system_fwd.hpp>
+#include <sge/opencl/command_queue/object_fwd.hpp>
+#include <sge/opencl/kernel/object.hpp>
+#include <sge/opencl/memory_object/buffer.hpp>
+#include <sge/opencl/program/object.hpp>
+#include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/matrix4.hpp>
+#include <sge/renderer/vertex_buffer_ptr.hpp>
+#include <sge/renderer/vertex_declaration_ptr.hpp>
+#include <sge/shader/object.hpp>
 #include <fcppt/scoped_ptr.hpp>
+
 
 namespace flakelib
 {

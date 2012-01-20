@@ -10,6 +10,7 @@
 #include <flakelib/planar/monitor/grid_scale.hpp>
 #include <flakelib/planar/monitor/optional_projection.hpp>
 #include <flakelib/planar/monitor/scaling_factor.hpp>
+#include <flakelib/planar/monitor/dummy_sprite/collection.hpp>
 #include <flakelib/planar/monitor/dummy_sprite/system.hpp>
 #include <sge/font/metrics_ptr.hpp>
 #include <sge/image/color/any/object_fwd.hpp>
@@ -22,7 +23,6 @@
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/vertex_declaration_ptr.hpp>
 #include <sge/shader/object.hpp>
-#include <sge/sprite/intrusive/system_impl.hpp>
 #include <fcppt/noncopyable.hpp>
 
 
@@ -71,8 +71,8 @@ public:
 	sge::renderer::device &
 	renderer() const;
 
-	monitor::dummy_sprite::system &
-	sprite_system();
+	monitor::dummy_sprite::collection &
+	sprite_collection();
 
 	sge::font::metrics &
 	font_metrics();
@@ -98,6 +98,7 @@ private:
 	sge::renderer::vertex_declaration_ptr vd_;
 	sge::shader::object arrow_shader_;
 	monitor::dummy_sprite::system sprite_system_;
+	monitor::dummy_sprite::collection sprite_collection_;
 	monitor::child_list children_;
 
 	void

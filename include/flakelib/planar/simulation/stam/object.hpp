@@ -8,13 +8,13 @@
 #include <flakelib/planar/boundary_view.hpp>
 #include <flakelib/planar/laplace_solver/base_fwd.hpp>
 #include <flakelib/planar/simulation/base.hpp>
-#include <flakelib/planar/simulation/stam/pressure.hpp>
-#include <flakelib/planar/simulation/stam/forward_advected.hpp>
 #include <flakelib/planar/simulation/stam/backward_advected.hpp>
-#include <flakelib/planar/simulation/stam/velocity.hpp>
+#include <flakelib/planar/simulation/stam/forward_advected.hpp>
+#include <flakelib/planar/simulation/stam/pressure.hpp>
 #include <flakelib/planar/simulation/stam/rhs.hpp>
 #include <flakelib/planar/simulation/stam/solution.hpp>
 #include <flakelib/planar/simulation/stam/vector_field.hpp>
+#include <flakelib/planar/simulation/stam/velocity.hpp>
 #include <flakelib/profiler/object.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
