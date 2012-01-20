@@ -17,11 +17,12 @@ kernel void
 advect(
 	/* 0 */int const cube_size,
 	/* 1 */global float const *boundary,
-	/* 2 */global float4 const *velocity,
-	/* 3 */global struct vertex *particles,
-	/* 4 */float const dt,
-	/* 5 */global read_only image2d_t distribution_input,
-	/* 6 */global write_only image2d_t distribution_output)
+	/* 2 */int const particle_count,
+	/* 3 */global float4 const *velocity,
+	/* 4 */global struct vertex *particles,
+	/* 5 */float const dt,
+	/* 6 */global read_only image2d_t distribution_input,
+	/* 7 */global write_only image2d_t distribution_output)
 {
 	global struct vertex *current_particle =
 		&particles[get_global_id(0)];
@@ -78,13 +79,16 @@ advect(
 					texture_coordinates) + 0.20f);
 		}
 
-		current_particle->position = starting_position;
+		current_particle->position =
+			starting_position;
+			//particles[max(0,(int)(current_position.x + current_position.y + current_position.z) % particle_count)].starting_position;
 		return;
 	}
 
 	if(boundary[FLAKE_VOLUME_AT(cube_size,lefttopback_position)] > 0.2f)
 	{
-		current_particle->position = starting_position;
+		current_particle->position =
+			starting_position;
 		return;
 	}
 

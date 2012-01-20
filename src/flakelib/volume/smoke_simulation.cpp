@@ -2,7 +2,7 @@
 #include <flakelib/volume/visualization/ground.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/utility/object.hpp>
-#include <flakelib/volume/framework.hpp>
+#include <flakelib/volume/smoke_simulation.hpp>
 #include <flakelib/volume/boundary/object.hpp>
 #include <flakelib/volume/conversion/object.hpp>
 #include <flakelib/volume/density/advector.hpp>
@@ -27,7 +27,7 @@
 #include <fcppt/math/dim/basic_impl.hpp>
 
 
-flakelib::volume::framework::framework(
+flakelib::volume::smoke_simulation::smoke_simulation(
 	sge::opencl::command_queue::object &_command_queue,
 	sge::renderer::device &_renderer,
 	sge::image2d::system &_image_system,
@@ -155,49 +155,6 @@ flakelib::volume::framework::framework(
 				_command_queue),
 			_build_options,
 			density::grid_size(
-				boundary_->get().size()))),
-	flakes_(
-		fcppt::make_unique_ptr<flakes::object>(
-			fcppt::ref(
-				_renderer),
-			fcppt::ref(
-				_image_system),
-			fcppt::ref(
-				_command_queue),
-			boundary::view(
-				boundary_->get()),
-			_build_options,
-			flakes::particle_count(
-				sge::parse::json::find_and_convert_member<flakes::particle_count::value_type>(
-					_json_config,
-					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/particle-count")))),
-			flakes::grid_size(
-				boundary_->get().size()[0]),
-			flakes::particle_minimum_size(
-				sge::parse::json::find_and_convert_member<cl_float>(
-					_json_config,
-					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/particle-minimum-size")))),
-			flakes::particle_maximum_size(
-				sge::parse::json::find_and_convert_member<cl_float>(
-					_json_config,
-					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/particle-maximum-size")))),
-			flakes::snow_texture_size(
-				sge::parse::json::find_and_convert_member<sge::renderer::dim2>(
-					_json_config,
-					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/snow-texture-size")))))),
-	ground_(
-		fcppt::make_unique_ptr<visualization::ground>(
-			fcppt::ref(
-				_renderer),
-			fcppt::cref(
-				shape_manager_->vertex_declaration()),
-			fcppt::ref(
-				_image_system),
-			visualization::grid_size(
 				boundary_->get().size())))
 {
 	sge::opencl::memory_object::size_type const grid_size =
@@ -236,41 +193,29 @@ flakelib::volume::framework::framework(
 }
 
 void
-flakelib::volume::framework::update(
+flakelib::volume::smoke_simulation::update(
 	flakelib::duration const &_duration)
 {
 	simulation_->update(
 		_duration);
 
-	flakes_->update(
-		_duration,
-		simulation_->velocity());
 	arrows_->convert(
 		simulation_->velocity());
 
-	/*
 	density_advector_->update(
 		simulation_->velocity(),
 		_duration);
 
 	density_visual_->update(
 		density_advector_->get());
-		*/
 }
 
 void
-flakelib::volume::framework::render(
+flakelib::volume::smoke_simulation::render(
 	sge::renderer::vector3 const &_camera_position,
 	sge::renderer::matrix4 const &_mvp)
 {
 	shape_manager_->render(
-		_mvp);
-
-	ground_->render(
-		_mvp,
-		flakes_->current_snow_texture());
-
-	flakes_->render(
 		_mvp);
 
 	if(false)
@@ -291,21 +236,20 @@ flakelib::volume::framework::render(
 		arrows_->render();
 	}
 
-	if(false)
-		density_visual_->render(
-			_camera_position,
-			_mvp);
+	density_visual_->render(
+		_camera_position,
+		_mvp);
 }
 
 void
-flakelib::volume::framework::external_force_magnitude(
+flakelib::volume::smoke_simulation::external_force_magnitude(
 	cl_float const _external_force)
 {
 	simulation_->external_force_magnitude(
 		_external_force);
 }
 
-flakelib::volume::framework::~framework()
+flakelib::volume::smoke_simulation::~smoke_simulation()
 {
 	fcppt::io::cout() << simulation_->parent_profiler() << FCPPT_TEXT("\n");
 }

@@ -38,7 +38,7 @@
 #include <flakelib/build_options.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
-#include <flakelib/volume/framework.hpp>
+#include <flakelib/volume/flake_simulation.hpp>
 #include <sge/camera/first_person/object.hpp>
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/camera/projection/object.hpp>
@@ -276,7 +276,7 @@ try
 				sge::renderer::projection::far(
 					1000.f))));
 
-	flakelib::volume::framework volume_framework(
+	flakelib::volume::flake_simulation flake_simulation(
 		opencl_system.command_queue(),
 		sys.renderer(),
 		sys.image_system(),
@@ -287,8 +287,8 @@ try
 		console_object.insert(
 			sge::console::callback::from_functor<void(cl_float)>(
 				std::tr1::bind(
-					&flakelib::volume::framework::external_force_magnitude,
-					&volume_framework,
+					&flakelib::volume::flake_simulation::external_force_magnitude,
+					&flake_simulation,
 					std::tr1::placeholders::_1),
 				sge::console::callback::name(
 					SGE_FONT_TEXT_LIT("wind_speed")),
@@ -315,7 +315,7 @@ try
 	{
 		sys.window_system().poll();
 
-		volume_framework.update(
+		flake_simulation.update(
 			5.0f * sge::timer::elapsed_and_reset<flakelib::duration>(
 				delta_timer));
 
@@ -348,7 +348,7 @@ try
 					(sge::renderer::state::source_blend_func::src_alpha)
 					(sge::renderer::state::dest_blend_func::inv_src_alpha));
 
-			volume_framework.render(
+			flake_simulation.render(
 				camera.gizmo().position(),
 				camera.mvp());
 		}

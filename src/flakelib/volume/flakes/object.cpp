@@ -185,6 +185,12 @@ flakelib::volume::flakes::object::object(
 			1),
 		_boundary.get().buffer());
 
+	advect_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		static_cast<cl_int>(
+			_particle_count.get()));
+
 	{
 		sge::renderer::scoped_vertex_lock const vblock(
 			*vertex_buffer_,
@@ -281,28 +287,28 @@ flakelib::volume::flakes::object::update(
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			2),
+			3),
 		_velocity.buffer());
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			3),
+			4),
 		*cl_buffer_);
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			4),
+			5),
 		static_cast<cl_float>(
 			_dt.count()));
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			5),
+			6),
 		cl_images_[current_texture_]);
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			6),
+			7),
 		cl_images_[(current_texture_+1u) % 2u]);
 
 	current_texture_ =

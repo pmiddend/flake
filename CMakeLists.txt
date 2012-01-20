@@ -133,11 +133,12 @@ SET(
 	src/flakelib/volume/conversion/object.cpp
 	src/flakelib/volume/density/advector.cpp
 	src/flakelib/volume/density/visual.cpp
+	src/flakelib/volume/flake_simulation.cpp
 	src/flakelib/volume/flakes/object.cpp
-	src/flakelib/volume/framework.cpp
 	src/flakelib/volume/laplace_solver/base.cpp
 	src/flakelib/volume/laplace_solver/jacobi.cpp
 	src/flakelib/volume/simulation/stam/object.cpp
+	src/flakelib/volume/smoke_simulation.cpp
 	src/flakelib/volume/visualization/arrows.cpp
 	src/flakelib/volume/visualization/arrows_manager.cpp
 	src/flakelib/volume/visualization/compiled_model.cpp
@@ -218,12 +219,12 @@ INSTALL(
 
 # volume_framework begin
 ADD_EXECUTABLE(
-	volume_framework
+	volume_flake_simulation
 	WIN32
-	src/flake/volume_framework.cpp)
+	src/flake/volume_flake_simulation.cpp)
 
 TARGET_LINK_LIBRARIES(
-	volume_framework
+	volume_flake_simulation
 	flakelib
 	${Fcppt_core_LIBRARIES}
 	${Fcppt_filesystem_LIBRARIES}
@@ -232,7 +233,28 @@ TARGET_LINK_LIBRARIES(
 
 INSTALL(
 	TARGETS
-	volume_framework
+	volume_flake_simulation
+	DESTINATION
+	${INSTALL_BINARY_DIR})
+# volume_test end
+
+# volume_framework begin
+ADD_EXECUTABLE(
+	volume_smoke_simulation
+	WIN32
+	src/flake/volume_smoke_simulation.cpp)
+
+TARGET_LINK_LIBRARIES(
+	volume_smoke_simulation
+	flakelib
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Boost_LIBRARIES})
+
+INSTALL(
+	TARGETS
+	volume_smoke_simulation
 	DESTINATION
 	${INSTALL_BINARY_DIR})
 # volume_test end

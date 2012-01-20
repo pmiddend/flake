@@ -1,5 +1,5 @@
-#ifndef FLAKELIB_VOLUME_FRAMEWORK_HPP_INCLUDED
-#define FLAKELIB_VOLUME_FRAMEWORK_HPP_INCLUDED
+#ifndef FLAKELIB_VOLUME_SMOKE_SIMULATION_HPP_INCLUDED
+#define FLAKELIB_VOLUME_SMOKE_SIMULATION_HPP_INCLUDED
 
 #include <flakelib/build_options.hpp>
 #include <flakelib/duration.hpp>
@@ -9,13 +9,11 @@
 #include <flakelib/volume/conversion/object_fwd.hpp>
 #include <flakelib/volume/density/advector_fwd.hpp>
 #include <flakelib/volume/density/visual_fwd.hpp>
-#include <flakelib/volume/flakes/object_fwd.hpp>
 #include <flakelib/volume/laplace_solver/unique_base_ptr.hpp>
 #include <flakelib/volume/simulation/stam/object_fwd.hpp>
 #include <flakelib/volume/visualization/arrows_fwd.hpp>
 #include <flakelib/volume/visualization/arrows_manager_fwd.hpp>
 #include <flakelib/volume/visualization/shape_manager_fwd.hpp>
-#include <flakelib/volume/visualization/ground_fwd.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
@@ -27,18 +25,17 @@
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
 
-
 namespace flakelib
 {
 namespace volume
 {
-class framework
+class smoke_simulation
 {
 FCPPT_NONCOPYABLE(
-	framework);
+	smoke_simulation);
 public:
 	explicit
-	framework(
+	smoke_simulation(
 		sge::opencl::command_queue::object &,
 		sge::renderer::device &,
 		sge::image2d::system &,
@@ -58,7 +55,7 @@ public:
 	external_force_magnitude(
 		cl_float);
 
-	~framework();
+	~smoke_simulation();
 private:
 	fcppt::scoped_ptr<flakelib::utility::object> utility_;
 	fcppt::scoped_ptr<buffer_pool::object> buffer_pool_;
@@ -71,8 +68,6 @@ private:
 	fcppt::scoped_ptr<visualization::arrows> arrows_;
 	fcppt::scoped_ptr<density::advector> density_advector_;
 	fcppt::scoped_ptr<density::visual> density_visual_;
-	fcppt::scoped_ptr<flakes::object> flakes_;
-	fcppt::scoped_ptr<visualization::ground> ground_;
 };
 }
 }
