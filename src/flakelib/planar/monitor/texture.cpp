@@ -32,7 +32,6 @@
 #include <limits>
 #include <fcppt/config/external_end.hpp>
 
-
 namespace
 {
 rucksack::axis_policy2 const
@@ -166,6 +165,7 @@ void
 flakelib::planar::monitor::texture::render(
 	monitor::optional_projection const &_projection)
 {
+
 	sge::renderer::scoped_transform world_transform(
 		child::parent().renderer(),
 		sge::renderer::matrix_mode::world,

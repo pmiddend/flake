@@ -166,30 +166,36 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 
 	flakelib::volume::boundary::sphere::object single_sphere(
 		flakelib::volume::boundary::sphere::radius(
-			grid_size/4),
+			8),
 		flakelib::volume::boundary::sphere::position(
 			sge::opencl::memory_object::dim3(
-				grid_size/2,
-				grid_size/2,
-				grid_size/2)));
+				50,
+				40,
+				40)));
 
 	flakelib::volume::boundary::cube::object companion_cube(
 		flakelib::volume::boundary::cube::size(
 			sge::opencl::memory_object::dim3(
-				20,
-				40,
-				20)),
+				12,
+				12,
+				12)),
 		flakelib::volume::boundary::cube::position(
 			sge::opencl::memory_object::dim3(
 				20,
-				0,
-				20)));
+				25,
+				25)));
 
 	boundary_->add(
 		companion_cube);
 
 	shape_manager_->add(
 		companion_cube);
+
+	boundary_->add(
+		single_sphere);
+
+	shape_manager_->add(
+		single_sphere);
 }
 
 void

@@ -78,6 +78,10 @@ flakelib::volume::simulation::stam::object::object(
 		main_program_,
 		sge::opencl::kernel::name(
 			"gradient_and_subtract")),
+	maccormack_kernel_(
+		main_program_,
+		sge::opencl::kernel::name(
+			"maccormack")),
 	parent_profiler_(
 		FCPPT_TEXT("stam simulation"),
 		profiler::optional_parent(),
@@ -122,6 +126,9 @@ flakelib::volume::simulation::stam::object::object(
 	residual_image_(),
 	pressure_image_()
 {
+	FCPPT_ASSERT_PRE(
+		grid_scale_ > 0.95f && grid_scale_ < 1.05f);
+
 	// Initialize velocity
 	utility_.null_buffer(
 		buffer::linear_view<cl_float>(
@@ -152,6 +159,27 @@ flakelib::volume::simulation::stam::object::update(
 	this->apply_forces(
 		velocity_image_->value());
 
+	/*
+	unique_volume_float4_lock
+		forward_advected =
+			this->advect(
+				velocity_image_->value(),
+				dt),
+		backward_advected =
+			this->advect(
+				forward_advected->value(),
+				-dt);
+
+	unique_volume_float4_lock advected =
+		this->maccormack(
+			stam::forward_advected(
+				forward_advected->value()),
+			stam::backward_advected(
+				backward_advected->value()),
+			stam::velocity(
+				velocity_image_->value()),
+			dt);
+			*/
 	unique_volume_float4_lock advected =
 		this->advect(
 			velocity_image_->value(),
@@ -160,6 +188,10 @@ flakelib::volume::simulation::stam::object::update(
 	// The old version of the velocity is already advected (into the
 	// "advected" variable), we don't need it anymore.
 	velocity_image_.reset();
+	/*
+	forward_advected.reset();
+	backward_advected.reset();
+	*/
 
 	unique_volume_float_lock divergence_result =
 		this->divergence(
@@ -431,6 +463,62 @@ flakelib::volume::simulation::stam::object::gradient_and_subtract(
 			(_pressure.get().size()[0])
 			(_pressure.get().size()[1])
 			(_pressure.get().size()[2]).container());
+
+	return
+		fcppt::move(
+			result);
+}
+
+flakelib::volume::simulation::stam::object::unique_volume_float4_lock
+flakelib::volume::simulation::stam::object::maccormack(
+	stam::forward_advected const &_forward_advected,
+	stam::backward_advected const &_backward_advected,
+	stam::velocity const &_velocity,
+	flakelib::duration const &_dt)
+{
+	unique_volume_float4_lock result(
+		fcppt::make_unique_ptr<volume_float4_lock>(
+			fcppt::ref(
+				buffer_pool_),
+			_forward_advected.get().size()));
+
+	maccormack_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		_forward_advected.get().buffer());
+
+	maccormack_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		_backward_advected.get().buffer());
+
+	maccormack_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		_velocity.get().buffer());
+
+	maccormack_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			3),
+		result->value().buffer());
+
+	maccormack_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			4),
+		boundary_.get().buffer());
+
+	maccormack_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			5),
+		_dt.count());
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		maccormack_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_forward_advected.get().size()[0])
+			(_forward_advected.get().size()[1])
+			(_forward_advected.get().size()[2]).container());
 
 	return
 		fcppt::move(

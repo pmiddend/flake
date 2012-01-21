@@ -328,9 +328,15 @@ try
 	{
 		sys.window_system().poll();
 
+		flakelib::duration const current_delta =
+			10.0f *
+			sge::timer::elapsed_and_reset<flakelib::duration>(
+				delta_timer);
+
+		std::cout << "current delta: " << current_delta.count() << "\n";
+
 		flake_simulation.update(
-			5.0f * sge::timer::elapsed_and_reset<flakelib::duration>(
-				delta_timer));
+			current_delta);
 
 		camera.update(
 			sge::timer::elapsed<sge::camera::duration>(

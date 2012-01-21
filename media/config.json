@@ -19,7 +19,7 @@
 		"profiling" : true,
 		"external-force-magnitude" : 7.0,
 		"grid-scale" : 1.0,
-		"boundary-file" : "boundary_jagged_256.png"
+		"boundary-file" : "boundary_circle_256.png"
 	},
 	"stam-volume-test" :
 	{

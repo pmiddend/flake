@@ -63,12 +63,6 @@ flakelib::planar::framework::framework(
 	viewport_widget_(
 		_viewport_manager,
 		_renderer),
-	/*master_and_slaves_(
-		rucksack::padding(
-			sge::parse::json::find_and_convert_member<rucksack::scalar>(
-				_config_file,
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("border-size"))))),*/
 	master_box_(
 		rucksack::axis::x,
 		rucksack::aspect(

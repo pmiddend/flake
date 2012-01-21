@@ -113,6 +113,127 @@ advect(
 			fractions.z);
 }
 
+kernel void
+maccormack(
+	global float4 const *forward,
+	global float4 const *backward,
+	global float4 const *velocity,
+	global float4 *output,
+	global float const *boundary,
+	float const dt)
+{
+	int3 const position =
+		(int3)(
+			get_global_id(
+				0),
+			get_global_id(
+				1),
+			get_global_id(
+				2));
+
+	int const buffer_width =
+		get_global_size(0);
+
+	size_t const current_index =
+		FLAKE_VOLUME_AT(buffer_width,position);
+
+	if(is_solid(boundary,current_index))
+	{
+		output[current_index] =
+			(float4)(
+				0.0f);
+		return;
+	}
+
+	float4 const advected_vector =
+		(float4)(
+			position.x,
+			position.y,
+			position.z,
+			0.0f) -
+		dt *
+		velocity[current_index];
+
+	int3 advected_lefttopback =
+		(int3)(
+			(int)floor(advected_vector.x),
+			(int)floor(advected_vector.y),
+			(int)floor(advected_vector.z));
+
+	int3
+		clamped_advected_back_vector =
+			clamp(
+				advected_lefttopback,
+				(int3)(0,0,0),
+				(int3)(buffer_width-1,buffer_width-1,buffer_width-1)),
+		clamped_advected_front_vector =
+			(int3)(
+				clamped_advected_back_vector.x,
+				clamped_advected_back_vector.y,
+				min(
+					buffer_width-1,
+					clamped_advected_back_vector.z+1));
+
+	float4 const
+		lefttopback =
+			velocity[FLAKE_VOLUME_AT(buffer_width,clamped_advected_back_vector)],
+		righttopback =
+			velocity[FLAKE_VOLUME_RIGHT_OF(buffer_width,clamped_advected_back_vector)],
+		leftbottomback =
+			velocity[FLAKE_VOLUME_BOTTOM_OF(buffer_width,clamped_advected_back_vector)],
+		rightbottomback =
+			velocity[FLAKE_VOLUME_RIGHT_BOTTOM_OF(buffer_width,clamped_advected_back_vector)],
+		lefttopfront =
+			velocity[FLAKE_VOLUME_AT(buffer_width,clamped_advected_front_vector)],
+		righttopfront =
+			velocity[FLAKE_VOLUME_RIGHT_OF(buffer_width,clamped_advected_front_vector)],
+		leftbottomfront =
+			velocity[FLAKE_VOLUME_BOTTOM_OF(buffer_width,clamped_advected_front_vector)],
+		rightbottomfront =
+			velocity[FLAKE_VOLUME_RIGHT_BOTTOM_OF(buffer_width,clamped_advected_front_vector)];
+
+	float4 const
+		phi_min =
+			min(
+				lefttopback,
+				min(
+					righttopback,
+					min(
+						leftbottomback,
+						min(
+							rightbottomback,
+							min(
+								lefttopfront,
+								min(
+									righttopfront,
+									min(
+										leftbottomfront,
+										rightbottomfront))))))),
+		phi_max =
+			max(
+				lefttopback,
+				max(
+					righttopback,
+					max(
+						leftbottomback,
+						max(
+							rightbottomback,
+							max(
+								lefttopfront,
+								max(
+									righttopfront,
+									max(
+										leftbottomfront,
+										rightbottomfront)))))));
+
+	output[current_index] =
+		clamp(
+			forward[current_index] +
+			0.5f * (velocity[current_index] - backward[current_index]),
+			phi_min,
+			phi_max);
+}
+
 /*
 This function iterates over all the left border pixels of the image and assigns
 a fixed force vector to them. This vector points to the right and has a given
@@ -394,6 +515,7 @@ gradient_and_subtract(
 				bottom-top,
 				// FIXME: see above
 				front-back,
+				//back-front,
 				0.0f);
 
 	float4 result =

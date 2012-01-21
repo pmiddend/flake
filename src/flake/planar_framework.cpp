@@ -362,6 +362,8 @@ try
 			10.0f * sge::timer::elapsed_and_reset<flakelib::duration>(
 				delta_timer);
 
+		std::cout << "current delta: " << delta.count() << "\n";
+
 		{
 			simulation.update(
 				delta);

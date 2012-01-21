@@ -13,6 +13,9 @@
 #include <flakelib/volume/simulation/stam/grid_scale.hpp>
 #include <flakelib/volume/simulation/stam/pressure.hpp>
 #include <flakelib/volume/simulation/stam/profiling_enabled.hpp>
+#include <flakelib/volume/simulation/stam/forward_advected.hpp>
+#include <flakelib/volume/simulation/stam/backward_advected.hpp>
+#include <flakelib/volume/simulation/stam/velocity.hpp>
 #include <flakelib/volume/simulation/stam/rhs.hpp>
 #include <flakelib/volume/simulation/stam/solution.hpp>
 #include <flakelib/volume/simulation/stam/vector_field.hpp>
@@ -109,6 +112,7 @@ private:
 	sge::opencl::kernel::object apply_external_forces_kernel_;
 	sge::opencl::kernel::object divergence_kernel_;
 	sge::opencl::kernel::object gradient_and_subtract_kernel_;
+	sge::opencl::kernel::object maccormack_kernel_;
 	flakelib::profiler::object parent_profiler_;
 	flakelib::profiler::object advection_profiler_;
 	flakelib::profiler::object external_forces_profiler_;
@@ -143,6 +147,13 @@ private:
 	gradient_and_subtract(
 		stam::vector_field const &,
 		stam::pressure const &);
+
+	unique_volume_float4_lock
+	maccormack(
+		stam::forward_advected const &,
+		stam::backward_advected const &,
+		stam::velocity const &,
+		flakelib::duration const &);
 };
 }
 }

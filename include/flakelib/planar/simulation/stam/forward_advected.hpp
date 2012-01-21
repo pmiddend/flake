@@ -2,6 +2,7 @@
 #define FLAKELIB_PLANAR_SIMULATION_STAM_FORWARD_ADVECTED_HPP_INCLUDED
 
 #include <flakelib/buffer/planar_view.hpp>
+#include <sge/opencl/clinclude.hpp>
 #include <fcppt/strong_typedef.hpp>
 
 
