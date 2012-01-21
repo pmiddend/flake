@@ -142,6 +142,7 @@ SET(
 	src/flakelib/volume/laplace_solver/base.cpp
 	src/flakelib/volume/laplace_solver/jacobi.cpp
 	src/flakelib/volume/simulation/stam/object.cpp
+	src/flakelib/volume/simulation/stam/wind_blower.cpp
 	src/flakelib/volume/smoke_simulation.cpp
 	src/flakelib/volume/visualization/arrows.cpp
 	src/flakelib/volume/visualization/arrows_manager.cpp

@@ -75,6 +75,9 @@
 		"particle-maximum-size" : 7.0,
 		"particle-count" : 32768,
 		"snow-texture-size" : [512,512],
+		"wind-speed-minimum" : 0.0,
+		"wind-speed-maximum" : 5.0,
+		"wind-change-frequency" : 10.0,
 		"obstacles" :
 		[
 			{

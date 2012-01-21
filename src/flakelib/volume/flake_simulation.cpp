@@ -1,8 +1,9 @@
-#include <flakelib/volume/boundary/json/to_obstacle_sequence.hpp>
+#include <flakelib/volume/simulation/stam/wind_blower.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <flakelib/volume/flake_simulation.hpp>
 #include <flakelib/volume/boundary/object.hpp>
+#include <flakelib/volume/boundary/json/to_obstacle_sequence.hpp>
 #include <flakelib/volume/conversion/object.hpp>
 #include <flakelib/volume/density/advector.hpp>
 #include <flakelib/volume/density/visual.hpp>
@@ -64,7 +65,7 @@ flakelib::volume::flake_simulation::flake_simulation(
 					sge::parse::json::string_to_path(
 						FCPPT_TEXT("obstacles")))),
 			boundary::pave_ground(
-				false))),
+				true))),
 	laplace_solver_(
 		fcppt::make_unique_ptr<laplace_solver::jacobi>(
 			fcppt::ref(
@@ -178,6 +179,25 @@ flakelib::volume::flake_simulation::flake_simulation(
 				_image_system),
 			volume::grid_size(
 				boundary_->get().size()))),
+	wind_blower_(
+		fcppt::make_unique_ptr<simulation::stam::wind_blower>(
+			fcppt::ref(
+				*simulation_),
+			simulation::stam::wind_speed_minimum(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("wind-speed-minimum")))),
+			simulation::stam::wind_speed_maximum(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("wind-speed-maximum")))),
+			simulation::stam::wind_change_frequency(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("wind-change-frequency")))))),
 	draw_arrows_(
 		false)
 {
@@ -193,6 +213,9 @@ flakelib::volume::flake_simulation::update(
 	flakes_->update(
 		_duration,
 		simulation_->velocity());
+
+	wind_blower_->update(
+		_duration);
 
 	if(draw_arrows_)
 		arrows_->convert(

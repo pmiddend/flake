@@ -4,8 +4,8 @@
 #include <flakelib/build_options.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/buffer/volume_view_fwd.hpp>
-#include <flakelib/volume/boundary/view.hpp>
 #include <flakelib/volume/grid_size.hpp>
+#include <flakelib/volume/boundary/view.hpp>
 #include <flakelib/volume/flakes/particle_count.hpp>
 #include <flakelib/volume/flakes/particle_maximum_size.hpp>
 #include <flakelib/volume/flakes/particle_minimum_size.hpp>

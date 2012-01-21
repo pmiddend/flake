@@ -1,4 +1,3 @@
-#include <fcppt/assert/pre.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/volume/flakes/object.hpp>
@@ -41,6 +40,7 @@
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/unique_ptr.hpp>
+#include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_array.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/chrono/duration.hpp>

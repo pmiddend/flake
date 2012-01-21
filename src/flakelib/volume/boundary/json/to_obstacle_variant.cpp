@@ -1,10 +1,10 @@
 #include <flakelib/volume/boundary/json/to_cube.hpp>
 #include <flakelib/volume/boundary/json/to_obstacle_variant.hpp>
 #include <flakelib/volume/boundary/json/to_sphere.hpp>
+#include <sge/parse/json/array.hpp>
 #include <sge/parse/json/find_member_exn.hpp>
 #include <sge/parse/json/object.hpp>
 #include <sge/parse/json/value.hpp>
-#include <sge/parse/json/array.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/unreachable.hpp>

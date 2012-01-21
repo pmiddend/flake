@@ -10,6 +10,7 @@
 #include <flakelib/volume/flakes/object_fwd.hpp>
 #include <flakelib/volume/laplace_solver/unique_base_ptr.hpp>
 #include <flakelib/volume/simulation/stam/object_fwd.hpp>
+#include <flakelib/volume/simulation/stam/wind_blower_fwd.hpp>
 #include <flakelib/volume/visualization/arrows_fwd.hpp>
 #include <flakelib/volume/visualization/arrows_manager_fwd.hpp>
 #include <flakelib/volume/visualization/ground_fwd.hpp>
@@ -72,6 +73,7 @@ private:
 	fcppt::scoped_ptr<visualization::arrows> arrows_;
 	fcppt::scoped_ptr<flakes::object> flakes_;
 	fcppt::scoped_ptr<visualization::ground> ground_;
+	fcppt::scoped_ptr<simulation::stam::wind_blower> wind_blower_;
 	bool draw_arrows_;
 };
 }
