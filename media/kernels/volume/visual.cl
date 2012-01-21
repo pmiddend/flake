@@ -2,10 +2,10 @@
 
 kernel void
 volume_image_to_planar_texture(
-	global float const *volume_image,
-	global write_only image2d_t planar_texture,
-	int const slice_edge_size,
-	int const elements_per_row)
+	/* 0 */global float const *volume_image,
+	/* 1 */global write_only image2d_t planar_texture,
+	/* 2 */int const slice_edge_size,
+	/* 3 */int const elements_per_row)
 {
 	int3 const volume_pos =
 		(int3)(

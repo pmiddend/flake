@@ -127,7 +127,19 @@ flakelib::volume::boundary::object::add(
 		sge::opencl::kernel::argument_index(
 			4),
 		static_cast<cl_int>(
-			_cube.width().get()));
+			_cube.size().get()[0]));
+
+	add_cube_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			5),
+		static_cast<cl_int>(
+			_cube.size().get()[1]));
+
+	add_cube_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			6),
+		static_cast<cl_int>(
+			_cube.size().get()[2]));
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,

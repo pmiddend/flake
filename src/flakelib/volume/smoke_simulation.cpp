@@ -155,7 +155,9 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 				_command_queue),
 			_build_options,
 			density::grid_size(
-				boundary_->get().size())))
+				boundary_->get().size()),
+			boundary::view(
+				boundary_->get())))
 {
 	sge::opencl::memory_object::size_type const grid_size =
 		boundary_->get().size()[0];
@@ -170,8 +172,11 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 				grid_size/2)));
 
 	flakelib::volume::boundary::cube::object companion_cube(
-		flakelib::volume::boundary::cube::width(
-			20),
+		flakelib::volume::boundary::cube::size(
+			sge::opencl::memory_object::dim3(
+				20,
+				40,
+				20)),
 		flakelib::volume::boundary::cube::position(
 			sge::opencl::memory_object::dim3(
 				20,
@@ -183,13 +188,6 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 
 	shape_manager_->add(
 		companion_cube);
-	/*
-	boundary_->add(
-		single_sphere);
-
-	shape_manager_->add(
-		single_sphere);
-		*/
 }
 
 void

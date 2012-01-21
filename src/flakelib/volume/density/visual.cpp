@@ -1,3 +1,4 @@
+#include <fcppt/math/dim/comparison.hpp>
 #include <sge/renderer/texture/address_mode2.hpp>
 #include <sge/renderer/texture/set_address_mode2.hpp>
 #include <flakelib/media_path_from_string.hpp>
@@ -79,7 +80,8 @@ flakelib::volume::density::visual::visual(
 	sge::image2d::system &_image_system,
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::build_options const &_build_options,
-	density::grid_size const &_grid_size)
+	density::grid_size const &_grid_size,
+	boundary::view const &_boundary)
 :
 	renderer_(
 		_renderer),
@@ -87,6 +89,18 @@ flakelib::volume::density::visual::visual(
 		_command_queue),
 	image_system_(
 		_image_system),
+	boundary_(
+		_boundary),
+	boundary_texture_(
+		_renderer.create_planar_texture(
+			sge::renderer::texture::planar_parameters(
+				planar_size_from_volume_size(
+					_grid_size.get()),
+				sge::image::color::format::r32f,
+				sge::renderer::texture::mipmap::off(),
+				sge::renderer::resource_flags_field(
+					sge::renderer::resource_flags::readable),
+				sge::renderer::texture::capabilities_field::null()))),
 	texture_(
 		_renderer.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
@@ -95,9 +109,13 @@ flakelib::volume::density::visual::visual(
 				sge::image::color::format::r32f,
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags_field(
-					// DEBUG
 					sge::renderer::resource_flags::readable),
-				 sge::renderer::texture::capabilities_field::null()))),
+				sge::renderer::texture::capabilities_field::null()))),
+	boundary_cl_texture_(
+		_command_queue.context(),
+		sge::opencl::memory_object::flags_field(
+			sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
+		*boundary_texture_),
 	cl_texture_(
 		_command_queue.context(),
 		sge::opencl::memory_object::flags_field(
@@ -146,7 +164,7 @@ flakelib::volume::density::visual::visual(
 				// FIXME: The edge length might be bigger due to grid scaling
 				(sge::shader::variable(
 					"cube_edge_length",
-					sge::shader::variable_type::uniform,
+					sge::shader::variable_type::constant,
 					static_cast<sge::renderer::scalar>(
 						_grid_size.get()[0])))
 				(sge::shader::variable(
@@ -165,8 +183,11 @@ flakelib::volume::density::visual::visual(
 					sge::renderer::vector3())),
 			fcppt::assign::make_container<sge::shader::sampler_sequence>
 				(sge::shader::sampler(
-					"tex",
-					texture_)))
+					"smoke_texture",
+					texture_))
+				(sge::shader::sampler(
+					"boundary_texture",
+					boundary_texture_)))
 				.vertex_shader(
 					flakelib::media_path_from_string(
 						FCPPT_TEXT("shaders/cube/vertex.glsl")))
@@ -177,30 +198,14 @@ flakelib::volume::density::visual::visual(
 					FCPPT_TEXT("cube shader")))
 {
 	/*
-	fcppt::io::cout()
-		<< FCPPT_TEXT("Grid size: ")
-		<< _grid_size.get()
-		<< FCPPT_TEXT(", resulting texture size: ")
-		<< texture_->size()
-		<< FCPPT_TEXT(".");
+	this->volume_image_to_planar_texture(
+		_boundary.get(),
+		boundary_cl_texture_);
+
+	this->save_texture_to_file(
+		*boundary_texture_,
+		fcppt::filesystem::path(FCPPT_TEXT("/tmp/boundary.png")));
 		*/
-
-	volume_image_to_planar_texture_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			1),
-		cl_texture_);
-
-	volume_image_to_planar_texture_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			2),
-		static_cast<cl_int>(
-			_grid_size.get()[0]));
-
-	volume_image_to_planar_texture_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			3),
-		static_cast<cl_int>(
-			texture_->size()[0] / _grid_size.get()[0]));
 
 	sge::renderer::scoped_vertex_lock const vblock(
 		*vb_,
@@ -212,7 +217,6 @@ flakelib::volume::density::visual::visual(
 	cube_vf::vertex_view::iterator vb_it(
 		vertices.begin());
 
-	// copypaste (macht aus vf::vector einen fcppt::math::vector)
 	typedef
 	cube_vf::position::packed_type
 	position_vector;
@@ -222,7 +226,9 @@ flakelib::volume::density::visual::visual(
 	int b = 1;
 
 	for (unsigned side = 0; side < 6; ++side)
+	{
 		for (unsigned tri = 0; tri < 2; ++tri)
+		{
 			for (unsigned i = 0; i < 3; ++i)
 			{
 				unsigned vert = (tri == 0) ? i : 2 - i;
@@ -245,60 +251,34 @@ flakelib::volume::density::visual::visual(
 
 				(*vb_it++).set<cube_vf::position>(
 					// FIXME: grid scaling
-					static_cast<sge::renderer::scalar>(
-						_grid_size.get()[0])/2.0f *
+					position_vector(
+						static_cast<sge::renderer::scalar>(
+							_grid_size.get()[0]),
+						static_cast<sge::renderer::scalar>(
+							_grid_size.get()[1]),
+						static_cast<sge::renderer::scalar>(
+							_grid_size.get()[2]))/2.0f *
 					(position_vector(1,1,1) + res));
 			}
+		}
+	}
 }
 
 void
 flakelib::volume::density::visual::update(
 	flakelib::buffer::volume_view<cl_float> const &_view)
 {
-	{
-	sge::opencl::memory_object::base_ref_sequence mem_objects;
-	mem_objects.push_back(
-		&cl_texture_);
+	this->volume_image_to_planar_texture(
+		_view,
+		cl_texture_);
 
-	sge::opencl::memory_object::scoped_objects scoped_vb(
-		command_queue_,
-		mem_objects);
+	this->volume_image_to_planar_texture(
+		boundary_.get(),
+		boundary_cl_texture_);
 
-	volume_image_to_planar_texture_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
-		_view.buffer());
-
-	sge::opencl::command_queue::enqueue_kernel(
-		command_queue_,
-		volume_image_to_planar_texture_kernel_,
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(_view.size()[0])
-			(_view.size()[1])
-			(_view.size()[2]).container());
-	}
-
-	sge::renderer::texture::const_scoped_planar_lock slock(
-		*texture_);
-
-	typedef sge::image2d::l8 store_type;
-
-	store_type whole_store(
-		fcppt::math::dim::structure_cast<sge::image2d::dim>(
-			texture_->size()));
-
-	sge::image2d::algorithm::copy_and_convert(
-		slock.value(),
-		sge::image2d::view::object(
-			whole_store.wrapped_view()),
-		sge::image::algorithm::may_overlap::no);
-
-	sge::image2d::save_from_view(
-		image_system_,
-		sge::image2d::view::to_const(
-			sge::image2d::view::object(
-				whole_store.wrapped_view())),
-		fcppt::filesystem::path(FCPPT_TEXT("/tmp"))/FCPPT_TEXT("texture.png"));
+	this->save_texture_to_file(
+		*boundary_texture_,
+		fcppt::filesystem::path(FCPPT_TEXT("/tmp/boundary.png")));
 }
 
 void
@@ -348,4 +328,82 @@ flakelib::volume::density::visual::render(
 
 flakelib::volume::density::visual::~visual()
 {
+}
+
+void
+flakelib::volume::density::visual::volume_image_to_planar_texture(
+	flakelib::buffer::volume_view<cl_float> const &_volume_image,
+	sge::opencl::memory_object::image::planar &_planar_texture)
+{
+	FCPPT_ASSERT_PRE(
+		_volume_image.size()[0] == _volume_image.size()[1] &&
+		_volume_image.size()[1] == _volume_image.size()[2]);
+
+	sge::opencl::memory_object::base_ref_sequence mem_objects;
+
+	mem_objects.push_back(
+		&_planar_texture);
+
+	sge::opencl::memory_object::scoped_objects scoped_objects(
+		command_queue_,
+		mem_objects);
+
+	volume_image_to_planar_texture_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		_volume_image.buffer());
+
+	volume_image_to_planar_texture_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		_planar_texture);
+
+	volume_image_to_planar_texture_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		static_cast<cl_int>(
+			_volume_image.size()[0]));
+
+	volume_image_to_planar_texture_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			3),
+		static_cast<cl_int>(
+			_planar_texture.size()[0] / _volume_image.size()[0]));
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		volume_image_to_planar_texture_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_volume_image.size()[0])
+			(_volume_image.size()[1])
+			(_volume_image.size()[2]).container());
+}
+
+
+void
+flakelib::volume::density::visual::save_texture_to_file(
+	sge::renderer::texture::planar &_texture,
+	fcppt::filesystem::path const &_path)
+{
+	sge::renderer::texture::const_scoped_planar_lock slock(
+		_texture);
+
+	typedef sge::image2d::l8 store_type;
+
+	store_type whole_store(
+		fcppt::math::dim::structure_cast<sge::image2d::dim>(
+			texture_->size()));
+
+	sge::image2d::algorithm::copy_and_convert(
+		slock.value(),
+		sge::image2d::view::object(
+			whole_store.wrapped_view()),
+		sge::image::algorithm::may_overlap::no);
+
+	sge::image2d::save_from_view(
+		image_system_,
+		sge::image2d::view::to_const(
+			sge::image2d::view::object(
+				whole_store.wrapped_view())),
+		_path);
 }

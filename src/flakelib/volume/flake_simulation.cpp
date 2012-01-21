@@ -189,8 +189,11 @@ flakelib::volume::flake_simulation::flake_simulation(
 				grid_size/2)));
 
 	flakelib::volume::boundary::cube::object companion_cube(
-		flakelib::volume::boundary::cube::width(
-			20),
+		flakelib::volume::boundary::cube::size(
+			sge::opencl::memory_object::dim3(
+				20,
+				20,
+				20)),
 		flakelib::volume::boundary::cube::position(
 			sge::opencl::memory_object::dim3(
 				20,

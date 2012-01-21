@@ -9,13 +9,14 @@ out vec4 frag_color;
 // selbsterklärend...
 const float stepsize = 0.5;
 // Hauptdiagonale des Würfels ist die längste mögliche Strecke
-const int steps = int((sqrt(3.0) * 64)/stepsize);
+const int steps = int((sqrt(3.0) * cube_edge_length)/stepsize);
 
 // höhere Werte ~= höhere Dichte
 const float opacity = 0.5;
 
 float
 tex_value(
+	sampler2D t,
 	float x,
 	float y,
 	int z)
@@ -28,7 +29,7 @@ tex_value(
 
 	return
 		texture(
-			tex,
+			t,
 			vec2(
 				(float(left) + x)/512.0,
 				(float(top) + y)/512.0)).r;
@@ -49,12 +50,14 @@ main()
 		// FIXME: Interpolate z here!
 		float first_value =
 				tex_value(
+					smoke_texture,
 					position.x,
 					position.y,
 					int(
 						position.z)),
 			second_value =
 				tex_value(
+					smoke_texture,
 					position.x,
 					position.y,
 					min(
@@ -66,7 +69,32 @@ main()
 					first_value,
 					second_value,
 					fract(
+						position.z)),
+			boundary_first_value =
+				tex_value(
+					boundary_texture,
+					position.x,
+					position.y,
+					int(
+						position.z)),
+			boundary_second_value =
+				tex_value(
+					boundary_texture,
+					position.x,
+					position.y,
+					min(
+						int(
+							position.z)+1,
+						63)),
+			boundary_interpolated =
+				mix(
+					boundary_first_value,
+					boundary_second_value,
+					fract(
 						position.z));
+
+		if(boundary_interpolated > 0.5)
+			break;
 
 		dst +=
 			(1.0 - dst) *
@@ -83,11 +111,11 @@ main()
 			any(
 				lessThan(
 					position,
-					vec3(0.0,0.0,0.0))) ||
+					cube_position)) ||
 			any(
 				greaterThan(
 					position,
-					vec3(64.0,64.0,64.0))))
+					cube_position + vec3(cube_edge_length))))
 			break;
 		/*
 		// ray termination - cube borders

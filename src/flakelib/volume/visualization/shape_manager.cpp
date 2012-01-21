@@ -137,11 +137,11 @@ flakelib::volume::visualization::shape_manager::render(
 	{
 		sge::renderer::vector3 const scaling_vector(
 			static_cast<sge::renderer::scalar>(
-				it->width().get()),
+				it->size().get()[0]),
 			static_cast<sge::renderer::scalar>(
-				it->width().get()),
+				it->size().get()[1]),
 			static_cast<sge::renderer::scalar>(
-				it->width().get()));
+				it->size().get()[2]));
 
 		shader_.update_uniform(
 			"mvp",
@@ -150,16 +150,7 @@ flakelib::volume::visualization::shape_manager::render(
 				fcppt::math::matrix::translation(
 					fcppt::math::dim::structure_cast<sge::renderer::vector3>(
 						it->position().get()) +
-					sge::renderer::vector3(
-						static_cast<sge::renderer::scalar>(
-							it->width().get())/
-						2.0f,
-						static_cast<sge::renderer::scalar>(
-							it->width().get())/
-						2.0f,
-						static_cast<sge::renderer::scalar>(
-							it->width().get())/
-						2.0f)) *
+					scaling_vector / static_cast<sge::renderer::scalar>(2)) *
 				fcppt::math::matrix::scaling(
 					scaling_vector),
 				sge::shader::matrix_flags::projection));

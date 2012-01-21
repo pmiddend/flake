@@ -26,7 +26,9 @@ kernel void add_cube(
 	int const x,
 	int const y,
 	int const z,
-	int const w)
+	int const w,
+	int const h,
+	int const d)
 {
 	int3 const integral_pos =
 		(int3)(
@@ -35,9 +37,9 @@ kernel void add_cube(
 			get_global_id(2));
 
 	boundary[FLAKE_VOLUME_AT(get_global_size(0),integral_pos)] =
-		integral_pos.x >= x && integral_pos.x <= (x+w) &&
-		integral_pos.y >= y && integral_pos.y <= (y+w) &&
-		integral_pos.z >= z && integral_pos.z <= (z+w)
+		integral_pos.x >= x && integral_pos.x < (x+w) &&
+		integral_pos.y >= y && integral_pos.y < (y+h) &&
+		integral_pos.z >= z && integral_pos.z < (z+d)
 		?
 			1.0f
 		:

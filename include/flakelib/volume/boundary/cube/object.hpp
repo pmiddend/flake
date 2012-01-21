@@ -2,7 +2,7 @@
 #define FLAKELIB_VOLUME_BOUNDARY_CUBE_OBJECT_HPP_INCLUDED
 
 #include <flakelib/volume/boundary/cube/position.hpp>
-#include <flakelib/volume/boundary/cube/width.hpp>
+#include <flakelib/volume/boundary/cube/size.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
 
 
@@ -19,16 +19,16 @@ class object
 public:
 	explicit
 	object(
-		cube::width const &,
+		cube::size const &,
 		cube::position const &);
 
-	cube::width const &
-	width() const;
+	cube::size const &
+	size() const;
 
 	cube::position const &
 	position() const;
 private:
-	cube::width width_;
+	cube::size size_;
 	cube::position position_;
 };
 }
