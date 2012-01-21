@@ -174,7 +174,9 @@ flakelib::volume::flake_simulation::flake_simulation(
 			fcppt::ref(
 				_image_system),
 			visualization::grid_size(
-				boundary_->get().size())))
+				boundary_->get().size()))),
+	draw_arrows_(
+		false)
 {
 	sge::opencl::memory_object::size_type const grid_size =
 		boundary_->get().size()[0];
@@ -225,8 +227,9 @@ flakelib::volume::flake_simulation::update(
 		_duration,
 		simulation_->velocity());
 
-	arrows_->convert(
-		simulation_->velocity());
+	if(draw_arrows_)
+		arrows_->convert(
+			simulation_->velocity());
 }
 
 void
@@ -244,7 +247,7 @@ flakelib::volume::flake_simulation::render(
 	flakes_->render(
 		_mvp);
 
-	if(false)
+	if(draw_arrows_)
 	{
 		sge::shader::scoped scoped_shader(
 			arrows_manager_->shader(),
@@ -261,6 +264,12 @@ flakelib::volume::flake_simulation::render(
 
 		arrows_->render();
 	}
+}
+
+void
+flakelib::volume::flake_simulation::toggle_arrows()
+{
+	draw_arrows_ = !draw_arrows_;
 }
 
 void

@@ -157,7 +157,9 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 			density::grid_size(
 				boundary_->get().size()),
 			boundary::view(
-				boundary_->get())))
+				boundary_->get()))),
+	draw_arrows_(
+		false)
 {
 	sge::opencl::memory_object::size_type const grid_size =
 		boundary_->get().size()[0];
@@ -197,8 +199,9 @@ flakelib::volume::smoke_simulation::update(
 	simulation_->update(
 		_duration);
 
-	arrows_->convert(
-		simulation_->velocity());
+	if(draw_arrows_)
+		arrows_->convert(
+			simulation_->velocity());
 
 	density_advector_->update(
 		simulation_->velocity(),
@@ -216,7 +219,7 @@ flakelib::volume::smoke_simulation::render(
 	shape_manager_->render(
 		_mvp);
 
-	if(false)
+	if(draw_arrows_)
 	{
 		sge::shader::scoped scoped_shader(
 			arrows_manager_->shader(),
@@ -237,6 +240,12 @@ flakelib::volume::smoke_simulation::render(
 	density_visual_->render(
 		_camera_position,
 		_mvp);
+}
+
+void
+flakelib::volume::smoke_simulation::toggle_arrows()
+{
+	draw_arrows_ = !draw_arrows_;
 }
 
 void

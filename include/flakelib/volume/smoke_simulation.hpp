@@ -52,6 +52,9 @@ public:
 		sge::renderer::matrix4 const &);
 
 	void
+	toggle_arrows();
+
+	void
 	external_force_magnitude(
 		cl_float);
 
@@ -68,6 +71,7 @@ private:
 	fcppt::scoped_ptr<visualization::arrows> arrows_;
 	fcppt::scoped_ptr<density::advector> density_advector_;
 	fcppt::scoped_ptr<density::visual> density_visual_;
+	bool draw_arrows_;
 };
 }
 }

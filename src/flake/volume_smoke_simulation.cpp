@@ -283,7 +283,7 @@ try
 		global_build_options,
 		config_file);
 
-	fcppt::signal::scoped_connection const stats_cb(
+	fcppt::signal::scoped_connection const wind_speed_cb(
 		console_object.insert(
 			sge::console::callback::from_functor<void(cl_float)>(
 				std::tr1::bind(
@@ -296,6 +296,19 @@ try
 					SGE_FONT_TEXT_LIT("Usage: /wind_speed <speed>")))
 				.long_description(
 					SGE_FONT_TEXT_LIT("Changes wind speed"))));
+
+	fcppt::signal::scoped_connection const arrows_cb(
+		console_object.insert(
+			sge::console::callback::from_functor<void()>(
+				std::tr1::bind(
+					&flakelib::volume::smoke_simulation::toggle_arrows,
+					&smoke_simulation),
+				sge::console::callback::name(
+					SGE_FONT_TEXT_LIT("toggle_arrows")),
+				sge::console::callback::short_description(
+					SGE_FONT_TEXT_LIT("Usage: /toggle_arrows")))
+				.long_description(
+					SGE_FONT_TEXT_LIT("Toggle arrow drawing"))));
 
 	sge::timer::basic<sge::timer::clocks::standard> camera_timer(
 		sge::timer::parameters<sge::timer::clocks::standard>(
