@@ -12,8 +12,7 @@ kernel void
 to_arrow_vb(
 	global float4 const *cl_buffer,
 	global struct vertex *gl_buffer,
-	float const arrow_scale,
-	float const grid_scale)
+	float const arrow_scale)
 {
 	int3 const pos =
 		(int3)(
@@ -31,6 +30,8 @@ to_arrow_vb(
 			convert_float3(
 				pos),
 			1.0f);
+
+	float const grid_scale = 1.0f;
 
 	gl_buffer[pos_index].start_position =
 		grid_scale * (pos_float + 0.5f);

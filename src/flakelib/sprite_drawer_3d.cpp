@@ -7,10 +7,10 @@
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/sprite/buffers_option.hpp>
-#include <sge/sprite/compare/default.hpp>
 #include <sge/sprite/object_impl.hpp>
 #include <sge/sprite/parameters_impl.hpp>
 #include <sge/sprite/system_impl.hpp>
+#include <sge/sprite/compare/default.hpp>
 #include <sge/sprite/geometry/make_random_access_range.hpp>
 #include <sge/sprite/render/options.hpp>
 #include <sge/sprite/render/with_options.hpp>

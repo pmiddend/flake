@@ -9,16 +9,15 @@
 #include <flakelib/utility/object_fwd.hpp>
 #include <flakelib/volume/boundary/view.hpp>
 #include <flakelib/volume/laplace_solver/base_fwd.hpp>
+#include <flakelib/volume/simulation/stam/backward_advected.hpp>
 #include <flakelib/volume/simulation/stam/external_force_magnitude.hpp>
-#include <flakelib/volume/simulation/stam/grid_scale.hpp>
+#include <flakelib/volume/simulation/stam/forward_advected.hpp>
 #include <flakelib/volume/simulation/stam/pressure.hpp>
 #include <flakelib/volume/simulation/stam/profiling_enabled.hpp>
-#include <flakelib/volume/simulation/stam/forward_advected.hpp>
-#include <flakelib/volume/simulation/stam/backward_advected.hpp>
-#include <flakelib/volume/simulation/stam/velocity.hpp>
 #include <flakelib/volume/simulation/stam/rhs.hpp>
 #include <flakelib/volume/simulation/stam/solution.hpp>
 #include <flakelib/volume/simulation/stam/vector_field.hpp>
+#include <flakelib/volume/simulation/stam/velocity.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
@@ -52,7 +51,6 @@ public:
 		sge::opencl::command_queue::object &,
 		volume::boundary::view const &,
 		stam::external_force_magnitude const &,
-		stam::grid_scale const &,
 		stam::profiling_enabled const &,
 		flakelib::build_options const &,
 		buffer_pool::object &,
@@ -105,7 +103,6 @@ private:
 	buffer_pool::object &buffer_pool_;
 	volume::laplace_solver::base &laplace_solver_;
 	cl_float external_force_magnitude_;
-	cl_float const grid_scale_;
 	bool const profiling_enabled_;
 	sge::opencl::program::object main_program_;
 	sge::opencl::kernel::object advect_kernel_;

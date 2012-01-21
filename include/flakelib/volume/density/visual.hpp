@@ -3,7 +3,7 @@
 
 #include <flakelib/build_options.hpp>
 #include <flakelib/buffer/volume_view.hpp>
-#include <flakelib/volume/density/grid_size.hpp>
+#include <flakelib/volume/grid_size.hpp>
 #include <flakelib/volume/boundary/view.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
@@ -39,7 +39,7 @@ public:
 		sge::image2d::system &,
 		sge::opencl::command_queue::object &,
 		flakelib::build_options const &,
-		density::grid_size const &,
+		volume::grid_size const &,
 		boundary::view const &);
 
 	void
@@ -56,7 +56,6 @@ private:
 	sge::renderer::device &renderer_;
 	sge::opencl::command_queue::object &command_queue_;
 	sge::image2d::system &image_system_;
-	boundary::view boundary_;
 	// CL stuff
 	sge::renderer::texture::planar_ptr boundary_texture_;
 	sge::renderer::texture::planar_ptr texture_;

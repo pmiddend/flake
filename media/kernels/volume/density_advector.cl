@@ -10,13 +10,12 @@ is_solid(
 
 kernel void
 advect(
-	/* 0 */ global float4 const *velocity,
-	/* 1 */ global float const *input,
-	/* 2 */ global float *output,
-	/* 3 */ global float const *boundary,
+	/* 0 */ global float const *boundary,
+	/* 1 */ global float4 const *velocity,
+	/* 2 */ global float const *input,
+	/* 3 */ global float *output,
 	/* 4 */ int const buffer_width,
-	/* 5 */ float const dt,
-	/* 6 */ float const grid_scale)
+	/* 5 */ float const dt)
 {
 	int3 const position =
 		(int3)(
@@ -40,7 +39,6 @@ advect(
 	float4 const advected_vector =
 		(float4)(position.x,position.y,position.z,0.0f) -
 		dt *
-		(1.0f / grid_scale) *
 		current_velocity;
 
 	int3 advected_lefttopback =

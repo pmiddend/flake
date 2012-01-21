@@ -1,9 +1,8 @@
-#include <fcppt/cref.hpp>
-#include <flakelib/volume/visualization/ground.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <flakelib/volume/smoke_simulation.hpp>
 #include <flakelib/volume/boundary/object.hpp>
+#include <flakelib/volume/boundary/json/to_obstacle_sequence.hpp>
 #include <flakelib/volume/conversion/object.hpp>
 #include <flakelib/volume/density/advector.hpp>
 #include <flakelib/volume/density/visual.hpp>
@@ -12,6 +11,7 @@
 #include <flakelib/volume/simulation/stam/object.hpp>
 #include <flakelib/volume/visualization/arrows.hpp>
 #include <flakelib/volume/visualization/arrows_manager.hpp>
+#include <flakelib/volume/visualization/ground.hpp>
 #include <flakelib/volume/visualization/shape_manager.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object.hpp>
@@ -21,6 +21,7 @@
 #include <sge/shader/activate_everything.hpp>
 #include <sge/shader/object.hpp>
 #include <sge/shader/scoped.hpp>
+#include <fcppt/cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/io/cout.hpp>
@@ -52,10 +53,18 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 			fcppt::ref(
 				*buffer_pool_),
 			_build_options,
-			sge::parse::json::find_and_convert_member<sge::opencl::memory_object::dim3>(
-				_json_config,
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("volume-framework/grid-size"))))),
+			volume::grid_size(
+				sge::parse::json::find_and_convert_member<sge::opencl::memory_object::dim3>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("grid-size")))),
+			boundary::json::to_obstacle_sequence(
+				sge::parse::json::find_and_convert_member<sge::parse::json::array>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("obstacles")))),
+			boundary::pave_ground(
+				false))),
 	laplace_solver_(
 		fcppt::make_unique_ptr<laplace_solver::jacobi>(
 			fcppt::ref(
@@ -65,13 +74,11 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 			_build_options,
 			flakelib::volume::laplace_solver::boundary(
 				boundary_->get()),
-			flakelib::volume::laplace_solver::grid_scale(
-				1.0f),
 			flakelib::volume::laplace_solver::iterations(
 				sge::parse::json::find_and_convert_member<unsigned>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/jacobi-iterations")))))),
+						FCPPT_TEXT("jacobi-iterations")))))),
 	simulation_(
 		fcppt::make_unique_ptr<simulation::stam::object>(
 			fcppt::ref(
@@ -82,14 +89,12 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 				sge::parse::json::find_and_convert_member<cl_float>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/external-force-magnitude")))),
-			simulation::stam::grid_scale(
-				1.0f),
+						FCPPT_TEXT("external-force-magnitude")))),
 			simulation::stam::profiling_enabled(
 				sge::parse::json::find_and_convert_member<bool>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/profiling-enabled")))),
+						FCPPT_TEXT("profiling-enabled")))),
 			_build_options,
 			fcppt::ref(
 				*buffer_pool_),
@@ -102,7 +107,12 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 			fcppt::ref(
 				_renderer),
 			fcppt::ref(
-				_image_system))),
+				_image_system),
+			boundary::json::to_obstacle_sequence(
+				sge::parse::json::find_and_convert_member<sge::parse::json::array>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("obstacles")))))),
 	conversion_(
 		fcppt::make_unique_ptr<conversion::object>(
 			fcppt::ref(
@@ -126,12 +136,7 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 				sge::parse::json::find_and_convert_member<cl_float>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/arrow-scale")))),
-			conversion::grid_scale(
-				sge::parse::json::find_and_convert_member<cl_float>(
-					_json_config,
-					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/arrow-grid-scale")))))),
+						FCPPT_TEXT("arrow-scale")))))),
 	density_advector_(
 		fcppt::make_unique_ptr<density::advector>(
 			fcppt::ref(
@@ -142,9 +147,7 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 			fcppt::ref(
 				*buffer_pool_),
 			fcppt::ref(
-				*utility_),
-			density::grid_scale(
-				1.0f))),
+				*utility_))),
 	density_visual_(
 		fcppt::make_unique_ptr<density::visual>(
 			fcppt::ref(
@@ -154,48 +157,13 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 			fcppt::ref(
 				_command_queue),
 			_build_options,
-			density::grid_size(
+			volume::grid_size(
 				boundary_->get().size()),
 			boundary::view(
 				boundary_->get()))),
 	draw_arrows_(
 		false)
 {
-	sge::opencl::memory_object::size_type const grid_size =
-		boundary_->get().size()[0];
-
-	flakelib::volume::boundary::sphere::object single_sphere(
-		flakelib::volume::boundary::sphere::radius(
-			8),
-		flakelib::volume::boundary::sphere::position(
-			sge::opencl::memory_object::dim3(
-				50,
-				40,
-				40)));
-
-	flakelib::volume::boundary::cube::object companion_cube(
-		flakelib::volume::boundary::cube::size(
-			sge::opencl::memory_object::dim3(
-				12,
-				12,
-				12)),
-		flakelib::volume::boundary::cube::position(
-			sge::opencl::memory_object::dim3(
-				20,
-				25,
-				25)));
-
-	boundary_->add(
-		companion_cube);
-
-	shape_manager_->add(
-		companion_cube);
-
-	boundary_->add(
-		single_sphere);
-
-	shape_manager_->add(
-		single_sphere);
 }
 
 void

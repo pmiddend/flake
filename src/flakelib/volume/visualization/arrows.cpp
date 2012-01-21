@@ -17,8 +17,7 @@ flakelib::volume::visualization::arrows::arrows(
 	visualization::arrows_manager &_arrows_manager,
 	volume::conversion::object &_conversion,
 	visualization::grid_size const &_grid_size,
-	volume::conversion::arrow_scale const &_arrow_scale,
-	volume::conversion::grid_scale const &_grid_scale)
+	volume::conversion::arrow_scale const &_arrow_scale)
 :
 	renderer_(
 		_arrows_manager.renderer()),
@@ -26,8 +25,6 @@ flakelib::volume::visualization::arrows::arrows(
 		_conversion),
 	arrow_scale_(
 		_arrow_scale),
-	grid_scale_(
-		_grid_scale),
 	vb_(
 		renderer_.create_vertex_buffer(
 			_arrows_manager.vertex_declaration(),
@@ -55,8 +52,7 @@ flakelib::volume::visualization::arrows::convert(
 			_b),
 		flakelib::volume::conversion::gl_buffer(
 			gl_buffer_),
-		arrow_scale_,
-		grid_scale_);
+		arrow_scale_);
 }
 
 void

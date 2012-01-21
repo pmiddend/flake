@@ -85,7 +85,7 @@ advect(
 		return;
 	}
 
-	if(boundary[FLAKE_VOLUME_AT(cube_size,lefttopback_position)] > 0.2f)
+	if(lefttopback_position.y > 1 && boundary[FLAKE_VOLUME_AT(cube_size,lefttopback_position)] > 0.2f)
 	{
 		current_particle->position =
 			starting_position;
@@ -125,7 +125,7 @@ advect(
 
 	current_particle->position =
 		current_position +
-		dt * (float4)(0.0,-1.0,0.0,0.0) +
+		dt * (float4)(0.0,-2.0,0.0,0.0) +
 		dt *
 		mix(
 			mix(

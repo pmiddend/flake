@@ -128,6 +128,10 @@ SET(
 	src/flakelib/utility/object.cpp
 	src/flakelib/viewport_pager.cpp
 	src/flakelib/volume/boundary/cube/object.cpp
+	src/flakelib/volume/boundary/json/to_cube.cpp
+	src/flakelib/volume/boundary/json/to_obstacle_sequence.cpp
+	src/flakelib/volume/boundary/json/to_obstacle_variant.cpp
+	src/flakelib/volume/boundary/json/to_sphere.cpp
 	src/flakelib/volume/boundary/object.cpp
 	src/flakelib/volume/boundary/sphere/object.cpp
 	src/flakelib/volume/conversion/object.cpp

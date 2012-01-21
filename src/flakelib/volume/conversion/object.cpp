@@ -42,8 +42,7 @@ void
 flakelib::volume::conversion::object::to_arrow_vb(
 	conversion::cl_buffer const &_cl_buffer,
 	conversion::gl_buffer const &_gl_buffer,
-	conversion::arrow_scale const &_arrow_scale,
-	conversion::grid_scale const &_grid_scale)
+	conversion::arrow_scale const &_arrow_scale)
 {
 	to_arrow_vb_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -59,11 +58,6 @@ flakelib::volume::conversion::object::to_arrow_vb(
 		sge::opencl::kernel::argument_index(
 			2),
 		_arrow_scale.get());
-
-	to_arrow_vb_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			3),
-		_grid_scale.get());
 
 	sge::opencl::memory_object::base_ref_sequence mem_objects;
 	mem_objects.push_back(

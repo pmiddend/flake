@@ -1,13 +1,14 @@
 #ifndef FLAKELIB_VOLUME_VISUALIZATION_GROUND_HPP_INCLUDED
 #define FLAKELIB_VOLUME_VISUALIZATION_GROUND_HPP_INCLUDED
 
+#include <flakelib/volume/grid_size.hpp>
+#include <sge/image2d/system_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/matrix4.hpp>
-#include <sge/image2d/system_fwd.hpp>
-#include <sge/renderer/texture/planar_ptr.hpp>
 #include <sge/renderer/vertex_buffer_ptr.hpp>
-#include <flakelib/volume/visualization/grid_size.hpp>
+#include <sge/renderer/texture/planar_ptr.hpp>
 #include <sge/shader/object.hpp>
+
 
 namespace flakelib
 {
@@ -25,7 +26,7 @@ public:
 		sge::renderer::device &,
 		sge::renderer::vertex_declaration const &,
 		sge::image2d::system &,
-		visualization::grid_size const &);
+		volume::grid_size const &);
 
 	void
 	render(

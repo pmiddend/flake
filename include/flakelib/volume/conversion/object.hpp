@@ -6,7 +6,6 @@
 #include <flakelib/volume/conversion/arrow_scale.hpp>
 #include <flakelib/volume/conversion/cl_buffer.hpp>
 #include <flakelib/volume/conversion/gl_buffer.hpp>
-#include <flakelib/volume/conversion/grid_scale.hpp>
 #include <flakelib/volume/conversion/multiplier.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
@@ -35,8 +34,7 @@ public:
 	to_arrow_vb(
 		conversion::cl_buffer const &,
 		conversion::gl_buffer const &,
-		conversion::arrow_scale const &,
-		conversion::grid_scale const &);
+		conversion::arrow_scale const &);
 
 	void
 	to_scalar_volume_texture(

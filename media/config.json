@@ -1,5 +1,4 @@
 {
-	"benchmark-iterations" : 2000,
 	"window-size" : [1024,768],
 	"arrow-visualization" :
 	{
@@ -19,14 +18,7 @@
 		"profiling" : true,
 		"external-force-magnitude" : 7.0,
 		"grid-scale" : 1.0,
-		"boundary-file" : "boundary_circle_256.png"
-	},
-	"stam-volume-test" :
-	{
-		"profiling" : true,
-		"external-force-magnitude" : 7.0,
-		"grid-scale" : 1.0,
-		"arrow-scale" : 0.1
+		"boundary-file" : "boundary_box_ground_64.png"
 	},
 	"simulation-solver" :
 	{
@@ -46,17 +38,61 @@
 			"iterations" : 5
 		}
 	},
-	"volume-framework" :
+	"smoke-simulation" :
 	{
 		"grid-size" : [64,64,64],
 		"jacobi-iterations" : 51,
 		"external-force-magnitude" : 1.0,
 		"profiling-enabled" : true,
 		"arrow-scale" : 0.5,
-		"arrow-grid-scale" : 1.0,
 		"particle-minimum-size" : 5.0,
 		"particle-maximum-size" : 7.0,
 		"particle-count" : 32768,
-		"snow-texture-size" : [512,512]
+		"snow-texture-size" : [512,512],
+		"obstacles" :
+		[
+			{
+				"type" : "sphere",
+				"center" : [50,40,40],
+				"radius" : 8
+			},
+			{
+				"type" : "cube",
+				"position" : [20,25,25],
+				"size" : [12,12,12]
+			}
+
+		]
+	},
+	"flake-simulation" :
+	{
+		"grid-size" : [64,64,64],
+		"jacobi-iterations" : 51,
+		"external-force-magnitude" : 1.0,
+		"profiling-enabled" : true,
+		"arrow-scale" : 0.5,
+		"particle-minimum-size" : 5.0,
+		"particle-maximum-size" : 7.0,
+		"particle-count" : 32768,
+		"snow-texture-size" : [512,512],
+		"obstacles" :
+		[
+			{
+				"type" : "cube",
+				"position" : [23,0,28],
+				"size" : [3,8,15]
+			},
+			{
+				"type" : "cube",
+				"position" : [23,8,28],
+				"size" : [15,3,15]
+			},
+			{
+				"type" : "cube",
+				"position" : [33,0,12],
+				"size" : [5,20,5]
+			}
+
+		]
 	}
 }

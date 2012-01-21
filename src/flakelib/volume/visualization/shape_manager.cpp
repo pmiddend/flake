@@ -15,17 +15,21 @@
 #include <sge/shader/variable.hpp>
 #include <sge/shader/variable_sequence.hpp>
 #include <sge/shader/vf_to_string.hpp>
+#include <fcppt/assert/unreachable.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/matrix/arithmetic.hpp>
 #include <fcppt/math/matrix/scaling.hpp>
 #include <fcppt/math/matrix/translation.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
+#include <fcppt/variant/get.hpp>
+#include <fcppt/variant/holds_type.hpp>
 
 
 flakelib::volume::visualization::shape_manager::shape_manager(
 	sge::renderer::device &_renderer,
-	sge::image2d::system &_image_loader)
+	sge::image2d::system &_image_loader,
+	boundary::obstacle_sequence const &_obstacles)
 :
 	renderer_(
 		_renderer),
@@ -87,6 +91,31 @@ flakelib::volume::visualization::shape_manager::shape_manager(
 	spheres_(),
 	cubes_()
 {
+	for(
+		boundary::obstacle_sequence::const_iterator it =
+			_obstacles.begin();
+		it != _obstacles.end();
+		++it)
+	{
+		// This could be a visitor, but I'm too lazy
+		if(fcppt::variant::holds_type<boundary::sphere::object>(*it))
+		{
+			this->add(
+				fcppt::variant::get<boundary::sphere::object>(
+					*it));
+			continue;
+		}
+		else if(fcppt::variant::holds_type<boundary::cube::object>(*it))
+		{
+			this->add(
+				fcppt::variant::get<boundary::cube::object>(
+					*it));
+			continue;
+
+		}
+
+		FCPPT_ASSERT_UNREACHABLE;
+	}
 }
 
 void

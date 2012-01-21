@@ -8,7 +8,6 @@
 #include <flakelib/buffer_pool/volume_lock.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <flakelib/volume/boundary/view.hpp>
-#include <flakelib/volume/density/grid_scale.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
@@ -36,8 +35,7 @@ public:
 		volume::boundary::view const &,
 		flakelib::build_options const &,
 		buffer_pool::object &,
-		utility::object &,
-		density::grid_scale const &);
+		utility::object &);
 
 	void
 	update(
@@ -59,7 +57,6 @@ private:
 
 	sge::opencl::command_queue::object &command_queue_;
 	buffer_pool::object &buffer_pool_;
-	cl_float const grid_scale_;
 	sge::timer::basic<sge::timer::clocks::standard> density_strength_timer_;
 	sge::opencl::program::object program_;
 	sge::opencl::kernel::object apply_sources_kernel_;

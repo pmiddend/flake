@@ -21,15 +21,12 @@ flakelib::volume::density::advector::advector(
 	volume::boundary::view const &_boundary,
 	flakelib::build_options const &_build_options,
 	buffer_pool::object &_buffer_pool,
-	utility::object &_utility,
-	density::grid_scale const &_grid_scale)
+	utility::object &_utility)
 :
 	command_queue_(
 		_command_queue),
 	buffer_pool_(
 		_buffer_pool),
-	grid_scale_(
-		_grid_scale.get()),
 	density_strength_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			fcppt::chrono::milliseconds(
@@ -70,7 +67,7 @@ flakelib::volume::density::advector::advector(
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			3),
+			0),
 		_boundary.get().buffer());
 }
 
@@ -112,17 +109,17 @@ flakelib::volume::density::advector::update(
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			0),
+			1),
 		_velocity.buffer());
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			1),
+			2),
 		current_density_->value().buffer());
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			2),
+			3),
 		target_density->value().buffer());
 
 	advect_kernel_.argument(
@@ -136,11 +133,6 @@ flakelib::volume::density::advector::update(
 			5),
 		static_cast<cl_float>(
 			_dt.count()));
-
-	advect_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			6),
-		grid_scale_);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,

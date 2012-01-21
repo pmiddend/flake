@@ -32,7 +32,6 @@ flakelib::volume::simulation::stam::object::object(
 	sge::opencl::command_queue::object &_command_queue,
 	volume::boundary::view const &_boundary,
 	stam::external_force_magnitude const &_external_force_magnitude,
-	stam::grid_scale const &_grid_scale,
 	stam::profiling_enabled const &_profiling_enabled,
 	flakelib::build_options const &_build_options,
 	buffer_pool::object &_buffer_pool,
@@ -49,8 +48,6 @@ flakelib::volume::simulation::stam::object::object(
 		_laplace_solver),
 	external_force_magnitude_(
 		_external_force_magnitude.get()),
-	grid_scale_(
-		_grid_scale.get()),
 	profiling_enabled_(
 		_profiling_enabled.get()),
 	main_program_(
@@ -126,9 +123,6 @@ flakelib::volume::simulation::stam::object::object(
 	residual_image_(),
 	pressure_image_()
 {
-	FCPPT_ASSERT_PRE(
-		grid_scale_ > 0.95f && grid_scale_ < 1.05f);
-
 	// Initialize velocity
 	utility_.null_buffer(
 		buffer::linear_view<cl_float>(
@@ -188,6 +182,7 @@ flakelib::volume::simulation::stam::object::update(
 	// The old version of the velocity is already advected (into the
 	// "advected" variable), we don't need it anymore.
 	velocity_image_.reset();
+
 	/*
 	forward_advected.reset();
 	backward_advected.reset();
@@ -265,11 +260,6 @@ flakelib::volume::simulation::stam::object::advect(
 			4),
 		static_cast<cl_float>(
 			dt.count()));
-
-	advect_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			5),
-		grid_scale_);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
@@ -354,11 +344,6 @@ flakelib::volume::simulation::stam::object::divergence(
 		static_cast<cl_int>(
 			from.size()[0]));
 
-	divergence_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			4),
-		grid_scale_);
-
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		divergence_kernel_,
@@ -429,30 +414,25 @@ flakelib::volume::simulation::stam::object::gradient_and_subtract(
 			0),
 		_pressure.get().buffer());
 
-	gradient_and_subtract_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			1),
-		grid_scale_);
-
 	// Temporary vector field (from which the divergence was calculated)
 	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			2),
+			1),
 		_vector_field.get().buffer());
 
 	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			3),
+			2),
 		boundary_.get().buffer());
 
 	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			4),
+			3),
 		result->value().buffer());
 
 	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			5),
+			4),
 		static_cast<cl_int>(
 			_vector_field.get().size()[0]));
 

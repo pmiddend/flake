@@ -3,7 +3,6 @@
 
 #include <flakelib/buffer/volume_view_fwd.hpp>
 #include <flakelib/volume/conversion/arrow_scale.hpp>
-#include <flakelib/volume/conversion/grid_scale.hpp>
 #include <flakelib/volume/conversion/object_fwd.hpp>
 #include <flakelib/volume/visualization/arrows_manager_fwd.hpp>
 #include <flakelib/volume/visualization/grid_size.hpp>
@@ -33,8 +32,7 @@ public:
 		visualization::arrows_manager &,
 		volume::conversion::object &,
 		visualization::grid_size const &,
-		volume::conversion::arrow_scale const &,
-		volume::conversion::grid_scale const &);
+		volume::conversion::arrow_scale const &);
 
 	void
 	convert(
@@ -48,7 +46,6 @@ private:
 	sge::renderer::device &renderer_;
 	volume::conversion::object &conversion_;
 	volume::conversion::arrow_scale const arrow_scale_;
-	volume::conversion::grid_scale const grid_scale_;
 	sge::renderer::vertex_buffer_ptr const vb_;
 	sge::opencl::memory_object::buffer gl_buffer_;
 };

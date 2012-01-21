@@ -1,5 +1,4 @@
-#include <fcppt/cref.hpp>
-#include <flakelib/volume/visualization/ground.hpp>
+#include <flakelib/volume/boundary/json/to_obstacle_sequence.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <flakelib/volume/flake_simulation.hpp>
@@ -12,6 +11,7 @@
 #include <flakelib/volume/simulation/stam/object.hpp>
 #include <flakelib/volume/visualization/arrows.hpp>
 #include <flakelib/volume/visualization/arrows_manager.hpp>
+#include <flakelib/volume/visualization/ground.hpp>
 #include <flakelib/volume/visualization/shape_manager.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object.hpp>
@@ -21,6 +21,7 @@
 #include <sge/shader/activate_everything.hpp>
 #include <sge/shader/object.hpp>
 #include <sge/shader/scoped.hpp>
+#include <fcppt/cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/io/cout.hpp>
@@ -52,10 +53,18 @@ flakelib::volume::flake_simulation::flake_simulation(
 			fcppt::ref(
 				*buffer_pool_),
 			_build_options,
-			sge::parse::json::find_and_convert_member<sge::opencl::memory_object::dim3>(
-				_json_config,
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("volume-framework/grid-size"))))),
+			volume::grid_size(
+				sge::parse::json::find_and_convert_member<sge::opencl::memory_object::dim3>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("grid-size")))),
+			boundary::json::to_obstacle_sequence(
+				sge::parse::json::find_and_convert_member<sge::parse::json::array>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("obstacles")))),
+			boundary::pave_ground(
+				false))),
 	laplace_solver_(
 		fcppt::make_unique_ptr<laplace_solver::jacobi>(
 			fcppt::ref(
@@ -65,13 +74,11 @@ flakelib::volume::flake_simulation::flake_simulation(
 			_build_options,
 			flakelib::volume::laplace_solver::boundary(
 				boundary_->get()),
-			flakelib::volume::laplace_solver::grid_scale(
-				1.0f),
 			flakelib::volume::laplace_solver::iterations(
 				sge::parse::json::find_and_convert_member<unsigned>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/jacobi-iterations")))))),
+						FCPPT_TEXT("jacobi-iterations")))))),
 	simulation_(
 		fcppt::make_unique_ptr<simulation::stam::object>(
 			fcppt::ref(
@@ -82,14 +89,12 @@ flakelib::volume::flake_simulation::flake_simulation(
 				sge::parse::json::find_and_convert_member<cl_float>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/external-force-magnitude")))),
-			simulation::stam::grid_scale(
-				1.0f),
+						FCPPT_TEXT("external-force-magnitude")))),
 			simulation::stam::profiling_enabled(
 				sge::parse::json::find_and_convert_member<bool>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/profiling-enabled")))),
+						FCPPT_TEXT("profiling-enabled")))),
 			_build_options,
 			fcppt::ref(
 				*buffer_pool_),
@@ -102,7 +107,12 @@ flakelib::volume::flake_simulation::flake_simulation(
 			fcppt::ref(
 				_renderer),
 			fcppt::ref(
-				_image_system))),
+				_image_system),
+			boundary::json::to_obstacle_sequence(
+				sge::parse::json::find_and_convert_member<sge::parse::json::array>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("obstacles")))))),
 	conversion_(
 		fcppt::make_unique_ptr<conversion::object>(
 			fcppt::ref(
@@ -126,12 +136,7 @@ flakelib::volume::flake_simulation::flake_simulation(
 				sge::parse::json::find_and_convert_member<cl_float>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/arrow-scale")))),
-			conversion::grid_scale(
-				sge::parse::json::find_and_convert_member<cl_float>(
-					_json_config,
-					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/arrow-grid-scale")))))),
+						FCPPT_TEXT("arrow-scale")))))),
 	flakes_(
 		fcppt::make_unique_ptr<flakes::object>(
 			fcppt::ref(
@@ -147,24 +152,22 @@ flakelib::volume::flake_simulation::flake_simulation(
 				sge::parse::json::find_and_convert_member<flakes::particle_count::value_type>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/particle-count")))),
-			flakes::grid_size(
-				boundary_->get().size()[0]),
+						FCPPT_TEXT("particle-count")))),
 			flakes::particle_minimum_size(
 				sge::parse::json::find_and_convert_member<cl_float>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/particle-minimum-size")))),
+						FCPPT_TEXT("particle-minimum-size")))),
 			flakes::particle_maximum_size(
 				sge::parse::json::find_and_convert_member<cl_float>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/particle-maximum-size")))),
+						FCPPT_TEXT("particle-maximum-size")))),
 			flakes::snow_texture_size(
 				sge::parse::json::find_and_convert_member<sge::renderer::dim2>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("volume-framework/snow-texture-size")))))),
+						FCPPT_TEXT("snow-texture-size")))))),
 	ground_(
 		fcppt::make_unique_ptr<visualization::ground>(
 			fcppt::ref(
@@ -173,47 +176,11 @@ flakelib::volume::flake_simulation::flake_simulation(
 				shape_manager_->vertex_declaration()),
 			fcppt::ref(
 				_image_system),
-			visualization::grid_size(
+			volume::grid_size(
 				boundary_->get().size()))),
 	draw_arrows_(
 		false)
 {
-	sge::opencl::memory_object::size_type const grid_size =
-		boundary_->get().size()[0];
-
-	flakelib::volume::boundary::sphere::object single_sphere(
-		flakelib::volume::boundary::sphere::radius(
-			grid_size/4),
-		flakelib::volume::boundary::sphere::position(
-			sge::opencl::memory_object::dim3(
-				grid_size/2,
-				grid_size/2,
-				grid_size/2)));
-
-	flakelib::volume::boundary::cube::object companion_cube(
-		flakelib::volume::boundary::cube::size(
-			sge::opencl::memory_object::dim3(
-				20,
-				20,
-				20)),
-		flakelib::volume::boundary::cube::position(
-			sge::opencl::memory_object::dim3(
-				20,
-				0,
-				20)));
-
-	boundary_->add(
-		companion_cube);
-
-	shape_manager_->add(
-		companion_cube);
-	/*
-	boundary_->add(
-		single_sphere);
-
-	shape_manager_->add(
-		single_sphere);
-		*/
 }
 
 void

@@ -1,37 +1,38 @@
-#include <sge/renderer/texture/filter/linear.hpp>
-#include <sge/renderer/texture/filter/trilinear.hpp>
-#include <sge/renderer/texture/filter/scoped.hpp>
-#include <sge/renderer/scoped_vertex_buffer.hpp>
+#include <flakelib/media_path_from_string.hpp>
+#include <flakelib/volume/visualization/ground.hpp>
+#include <flakelib/volume/visualization/model_vf/format.hpp>
+#include <flakelib/volume/visualization/model_vf/format_part_view.hpp>
+#include <sge/image2d/file.hpp>
+#include <sge/image2d/system.hpp>
 #include <sge/image2d/view/const_elements_wrapper.hpp>
 #include <sge/image3d/view/const_object.hpp>
-#include <sge/renderer/texture/create_planar_from_view.hpp>
-#include <sge/renderer/vf/vertex.hpp>
-#include <sge/renderer/vf/iterator.hpp>
-#include <flakelib/volume/visualization/model_vf/format_part_view.hpp>
-#include <sge/renderer/scoped_vertex_lock.hpp>
-#include <sge/renderer/vertex_buffer.hpp>
-#include <sge/shader/activate_everything.hpp>
-#include <sge/shader/scoped.hpp>
-#include <flakelib/volume/visualization/model_vf/format.hpp>
-#include <sge/shader/vf_to_string.hpp>
-#include <fcppt/assign/make_container.hpp>
-#include <sge/shader/object_parameters.hpp>
-#include <sge/renderer/texture/mipmap/all_levels.hpp>
-#include <flakelib/media_path_from_string.hpp>
-#include <fcppt/text.hpp>
-#include <flakelib/volume/visualization/ground.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/image2d/system.hpp>
-#include <sge/image2d/file.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/scoped_vertex_buffer.hpp>
+#include <sge/renderer/scoped_vertex_lock.hpp>
+#include <sge/renderer/vertex_buffer.hpp>
+#include <sge/renderer/texture/create_planar_from_view.hpp>
+#include <sge/renderer/texture/filter/linear.hpp>
+#include <sge/renderer/texture/filter/scoped.hpp>
+#include <sge/renderer/texture/filter/trilinear.hpp>
+#include <sge/renderer/texture/mipmap/all_levels.hpp>
+#include <sge/renderer/vf/iterator.hpp>
+#include <sge/renderer/vf/vertex.hpp>
+#include <sge/shader/activate_everything.hpp>
+#include <sge/shader/object_parameters.hpp>
+#include <sge/shader/scoped.hpp>
+#include <sge/shader/vf_to_string.hpp>
+#include <fcppt/text.hpp>
+#include <fcppt/assign/make_container.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
+
 
 flakelib::volume::visualization::ground::ground(
 	sge::renderer::device &_renderer,
 	sge::renderer::vertex_declaration const &_vertex_declaration,
 	sge::image2d::system &_image_system,
-	visualization::grid_size const &_grid_size)
+	volume::grid_size const &_grid_size)
 :
 	renderer_(
 		_renderer),

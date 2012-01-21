@@ -1,3 +1,5 @@
+#include <sge/parse/json/find_member_exn.hpp>
+#include <sge/parse/json/find_member.hpp>
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/console/arg_list.hpp>
 #include <sge/console/gfx.hpp>
@@ -281,7 +283,9 @@ try
 		sys.renderer(),
 		sys.image_system(),
 		global_build_options,
-		config_file);
+		sge::parse::json::find_member_exn<sge::parse::json::object>(
+			config_file.members,
+			FCPPT_TEXT("smoke-simulation")));
 
 	fcppt::signal::scoped_connection const wind_speed_cb(
 		console_object.insert(
@@ -332,8 +336,6 @@ try
 			20.0f *
 			sge::timer::elapsed_and_reset<flakelib::duration>(
 				delta_timer);
-
-		std::cout << "current delta: " << current_delta.count() << "\n";
 
 		smoke_simulation.update(
 			current_delta);

@@ -4,13 +4,11 @@
 
 kernel void
 jacobi(
-	/* 0 */float const alpha,
-	/* 1 */float const beta,
-	/* 2 */int const buffer_width,
-	/* 3 */global float const *rhs,
-	/* 4 */global float const *boundary,
-	/* 5 */global float const *x,
-	/* 6 */global float *output)
+	/* 0 */global float const *boundary,
+	/* 1 */int const buffer_width,
+	/* 2 */global float const *rhs,
+	/* 3 */global float const *x,
+	/* 4 */global float *output)
 {
 	int3 const currentpos =
 		(int3)(
@@ -72,7 +70,7 @@ jacobi(
 		rhs[current_index];
 
 	float const result =
-		(left + right + top + bottom + back + front + alpha * rhs_value) * beta;
+		(left + right + top + bottom + back + front - rhs_value) / 6.0f;
 
 	output[current_index] =
 #ifndef WEIGHTED_JACOBI

@@ -1,14 +1,19 @@
-#include <fcppt/math/dim/comparison.hpp>
-#include <sge/renderer/texture/address_mode2.hpp>
-#include <sge/renderer/texture/set_address_mode2.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/volume/density/visual.hpp>
 #include <flakelib/volume/density/cube_vf/format.hpp>
 #include <flakelib/volume/density/cube_vf/position.hpp>
 #include <flakelib/volume/density/cube_vf/vertex_view.hpp>
+#include <sge/image/store.hpp>
+#include <sge/image2d/dim.hpp>
+#include <sge/image2d/l8.hpp>
+#include <sge/image2d/save_from_view.hpp>
+#include <sge/image2d/algorithm/copy_and_convert.hpp>
+#include <sge/image2d/view/object.hpp>
+#include <sge/image2d/view/to_const.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
+#include <sge/opencl/memory_object/scoped_objects.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <sge/renderer/device.hpp>
@@ -17,12 +22,14 @@
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_lock.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
-#include <sge/opencl/memory_object/scoped_objects.hpp>
 #include <sge/renderer/state/cull_mode.hpp>
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>
+#include <sge/renderer/texture/address_mode2.hpp>
+#include <sge/renderer/texture/const_scoped_planar_lock.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/planar_parameters.hpp>
+#include <sge/renderer/texture/set_address_mode2.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/renderer/vf/iterator.hpp>
 #include <sge/renderer/vf/vertex.hpp>
@@ -36,7 +43,9 @@
 #include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/io/cout.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
+#include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/output.hpp>
+#include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
 #include <fcppt/math/vector/basic_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -44,17 +53,6 @@
 #include <cmath>
 #include <fcppt/config/external_end.hpp>
 
-// DEBUG
-#include <sge/renderer/texture/const_scoped_planar_lock.hpp>
-#include <sge/image2d/save_from_view.hpp>
-#include <fcppt/math/dim/structure_cast.hpp>
-#include <sge/image2d/l8.hpp>
-#include <sge/image2d/dim.hpp>
-#include <sge/image2d/view/object.hpp>
-#include <sge/image2d/algorithm/copy_and_convert.hpp>
-#include <sge/image2d/view/to_const.hpp>
-#include <sge/image2d/view/to_const.hpp>
-#include <sge/image/store.hpp>
 
 namespace
 {
@@ -80,7 +78,7 @@ flakelib::volume::density::visual::visual(
 	sge::image2d::system &_image_system,
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::build_options const &_build_options,
-	density::grid_size const &_grid_size,
+	volume::grid_size const &_grid_size,
 	boundary::view const &_boundary)
 :
 	renderer_(
@@ -89,8 +87,6 @@ flakelib::volume::density::visual::visual(
 		_command_queue),
 	image_system_(
 		_image_system),
-	boundary_(
-		_boundary),
 	boundary_texture_(
 		_renderer.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
@@ -197,15 +193,9 @@ flakelib::volume::density::visual::visual(
 				.name(
 					FCPPT_TEXT("cube shader")))
 {
-	/*
 	this->volume_image_to_planar_texture(
 		_boundary.get(),
 		boundary_cl_texture_);
-
-	this->save_texture_to_file(
-		*boundary_texture_,
-		fcppt::filesystem::path(FCPPT_TEXT("/tmp/boundary.png")));
-		*/
 
 	sge::renderer::scoped_vertex_lock const vblock(
 		*vb_,
@@ -271,14 +261,6 @@ flakelib::volume::density::visual::update(
 	this->volume_image_to_planar_texture(
 		_view,
 		cl_texture_);
-
-	this->volume_image_to_planar_texture(
-		boundary_.get(),
-		boundary_cl_texture_);
-
-	this->save_texture_to_file(
-		*boundary_texture_,
-		fcppt::filesystem::path(FCPPT_TEXT("/tmp/boundary.png")));
 }
 
 void

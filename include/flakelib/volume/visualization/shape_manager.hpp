@@ -1,6 +1,7 @@
 #ifndef FLAKELIB_VOLUME_VISUALIZATION_SHAPE_MANAGER_HPP_INCLUDED
 #define FLAKELIB_VOLUME_VISUALIZATION_SHAPE_MANAGER_HPP_INCLUDED
 
+#include <flakelib/volume/boundary/obstacle_sequence.hpp>
 #include <flakelib/volume/boundary/cube/object.hpp>
 #include <flakelib/volume/boundary/sphere/object.hpp>
 #include <flakelib/volume/visualization/compiled_model.hpp>
@@ -30,19 +31,12 @@ public:
 	explicit
 	shape_manager(
 		sge::renderer::device &,
-		sge::image2d::system &);
+		sge::image2d::system &,
+		boundary::obstacle_sequence const &);
 
 	void
 	render(
 		sge::renderer::matrix4 const &);
-
-	void
-	add(
-		boundary::sphere::object const &);
-
-	void
-	add(
-		boundary::cube::object const &);
 
 	sge::renderer::vertex_declaration const &
 	vertex_declaration() const;
@@ -68,6 +62,14 @@ private:
 	visualization::compiled_model cube_model_;
 	sphere_sequence spheres_;
 	cube_sequence cubes_;
+
+	void
+	add(
+		boundary::sphere::object const &);
+
+	void
+	add(
+		boundary::cube::object const &);
 };
 }
 }

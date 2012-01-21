@@ -14,8 +14,7 @@ advect(
 	global float4 *output,
 	global float const *boundary,
 	int const buffer_width,
-	float const dt,
-	float const grid_scale)
+	float const dt)
 {
 	int3 const position =
 		(int3)(
@@ -40,7 +39,6 @@ advect(
 	float4 const advected_vector =
 		(float4)(position.x,position.y,position.z,0.0f) -
 		dt *
-		(1.0f / grid_scale) *
 		current_velocity;
 
 	int3 advected_lefttopback =
@@ -354,8 +352,7 @@ divergence(
 	global float4 const *input,
 	global float *output,
 	global float const *boundary,
-	int const buffer_width,
-	float const grid_scale)
+	int const buffer_width)
 {
 	int3 const currentpos =
 		(int3)(
@@ -398,8 +395,8 @@ divergence(
 
 	output[current_index] =
 		// FIXME back.z - front.z might be an error, try if everything else fails
-		//((right.x - left.x) + (bottom.y - top.y) + (back.z - front.z)) / (2.0f * grid_scale);
-		((right.x - left.x) + (bottom.y - top.y) + (front.z - back.z)) / (2.0f * grid_scale);
+		//((right.x - left.x) + (bottom.y - top.y) + (back.z - front.z)) / 2.0f;
+		((right.x - left.x) + (bottom.y - top.y) + (front.z - back.z)) / 2.0f;
 }
 
 // Calculate the gradient of p and calculate
@@ -407,11 +404,10 @@ divergence(
 kernel void
 gradient_and_subtract(
 	/* 0 */global float const *p,
-	/* 1 */float const grid_scale,
-	/* 2 */global float4 const *w,
-	/* 3 */global float const *boundary,
-	/* 4 */global float4 *output,
-	/* 5 */int const buffer_width)
+	/* 1 */global float4 const *w,
+	/* 2 */global float const *boundary,
+	/* 3 */global float4 *output,
+	/* 4 */int const buffer_width)
 {
 	int3 const currentpos =
 		(int3)(
@@ -509,7 +505,7 @@ gradient_and_subtract(
 		w[current_index];
 
 	float4 const pressure_gradient =
-		(0.5f / grid_scale) *
+		0.5f *
 			(float4)(
 				right-left,
 				bottom-top,

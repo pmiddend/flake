@@ -2,7 +2,7 @@
 #define FLAKELIB_PLANAR_MONITOR_DUMMY_SPRITE_COLLECTION_HPP_INCLUDED
 
 #include <flakelib/planar/monitor/dummy_sprite/choices.hpp>
-#include <sge/sprite/intrusive/system.hpp>
+#include <sge/sprite/intrusive/collection.hpp>
 
 namespace flakelib
 {
@@ -13,7 +13,7 @@ namespace monitor
 namespace dummy_sprite
 {
 typedef
-sge::sprite::intrusive::system<dummy_sprite::choices>
+sge::sprite::intrusive::collection<dummy_sprite::choices>
 collection;
 }
 }
