@@ -1,4 +1,3 @@
-#include <flakelib/volume/simulation/stam/wind_blower.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <flakelib/volume/flake_simulation.hpp>
@@ -10,6 +9,7 @@
 #include <flakelib/volume/flakes/object.hpp>
 #include <flakelib/volume/laplace_solver/jacobi.hpp>
 #include <flakelib/volume/simulation/stam/object.hpp>
+#include <flakelib/volume/simulation/stam/wind_blower.hpp>
 #include <flakelib/volume/visualization/arrows.hpp>
 #include <flakelib/volume/visualization/arrows_manager.hpp>
 #include <flakelib/volume/visualization/ground.hpp>
@@ -102,7 +102,9 @@ flakelib::volume::flake_simulation::flake_simulation(
 			fcppt::ref(
 				*utility_),
 			fcppt::ref(
-				*laplace_solver_))),
+				*laplace_solver_),
+			simulation::stam::use_maccormack(
+				false))),
 	shape_manager_(
 		fcppt::make_unique_ptr<visualization::shape_manager>(
 			fcppt::ref(

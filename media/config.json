@@ -49,17 +49,20 @@
 		"particle-maximum-size" : 7.0,
 		"particle-count" : 32768,
 		"snow-texture-size" : [512,512],
+		"density-strength-minimum" : 0.0,
+		"density-strength-maximum" : 0.3,
+		"density-change-frequency" : 20.0,
 		"obstacles" :
 		[
 			{
 				"type" : "sphere",
-				"center" : [50,40,40],
+				"center" : [45,40,40],
 				"radius" : 8
 			},
 			{
 				"type" : "cube",
-				"position" : [20,25,25],
-				"size" : [12,12,12]
+				"position" : [10,25,25],
+				"size" : [8,8,8]
 			}
 
 		]

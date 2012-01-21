@@ -113,22 +113,35 @@ advect(
 
 kernel void
 apply_sources(
-	global float const *sources,
 	global float *density,
-	float const density_strength)
+	float const density_strength,
+	int const buffer_width)
 {
-	int const position =
-		get_global_id(
-			0);
+	int3 const position =
+		(int3)(
+			get_global_id(
+				0),
+			get_global_id(
+				1),
+			get_global_id(
+				2));
 
-	int
-		x =
-			position % 64,
-		y =
-			position % (64*64) / 64,
-		z =
-			position / (64*64);
+	float4 const float_position =
+		(float4)(
+			position.x,
+			position.y,
+			position.z,
+			0.0f);
 
-	if(sources[position] > 0.5f || (x == 0 && y >= 27 && y <= 37 && z >= 27 && z <= 37))
-		density[position] = 0.1f;
+	float4 const circle_center =
+		(float4)(
+			0.0f,
+			32.0f,
+			32.0f,
+			0.0f);
+
+	float const circle_radius = 2.0f;
+
+	if(fast_distance(float_position,circle_center) < circle_radius*circle_radius)
+		density[FLAKE_VOLUME_AT(buffer_width,position)] = density_strength;
 }

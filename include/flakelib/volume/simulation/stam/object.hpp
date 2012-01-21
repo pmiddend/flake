@@ -10,6 +10,7 @@
 #include <flakelib/volume/boundary/view.hpp>
 #include <flakelib/volume/laplace_solver/base_fwd.hpp>
 #include <flakelib/volume/simulation/stam/backward_advected.hpp>
+#include <flakelib/volume/simulation/stam/use_maccormack.hpp>
 #include <flakelib/volume/simulation/stam/external_force_magnitude.hpp>
 #include <flakelib/volume/simulation/stam/forward_advected.hpp>
 #include <flakelib/volume/simulation/stam/pressure.hpp>
@@ -55,7 +56,8 @@ public:
 		flakelib::build_options const &,
 		buffer_pool::object &,
 		utility::object &,
-		volume::laplace_solver::base &);
+		volume::laplace_solver::base &,
+		stam::use_maccormack const &);
 
 	// @override
 	buffer::volume_view<cl_float4> const
@@ -122,6 +124,7 @@ private:
 	unique_volume_float_lock vector_magnitude_image_;
 	unique_volume_float_lock residual_image_;
 	unique_volume_float_lock pressure_image_;
+	bool use_maccormack_;
 
 	unique_volume_float4_lock
 	advect(

@@ -1,3 +1,4 @@
+#include <flakelib/volume/density/strength_modulator.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <flakelib/volume/smoke_simulation.hpp>
@@ -101,7 +102,9 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 			fcppt::ref(
 				*utility_),
 			fcppt::ref(
-				*laplace_solver_))),
+				*laplace_solver_),
+			simulation::stam::use_maccormack(
+				true))),
 	shape_manager_(
 		fcppt::make_unique_ptr<visualization::shape_manager>(
 			fcppt::ref(
@@ -161,6 +164,25 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 				boundary_->get().size()),
 			boundary::view(
 				boundary_->get()))),
+	strength_modulator_(
+		fcppt::make_unique_ptr<density::strength_modulator>(
+			fcppt::ref(
+				*density_advector_),
+			density::strength_minimum(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("density-strength-minimum")))),
+			density::strength_maximum(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("density-strength-maximum")))),
+			density::change_frequency(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("density-change-frequency")))))),
 	draw_arrows_(
 		false)
 {
@@ -176,6 +198,9 @@ flakelib::volume::smoke_simulation::update(
 	if(draw_arrows_)
 		arrows_->convert(
 			simulation_->velocity());
+
+	strength_modulator_->update(
+		_duration);
 
 	density_advector_->update(
 		simulation_->velocity(),

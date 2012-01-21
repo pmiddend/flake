@@ -136,6 +136,7 @@ SET(
 	src/flakelib/volume/boundary/sphere/object.cpp
 	src/flakelib/volume/conversion/object.cpp
 	src/flakelib/volume/density/advector.cpp
+	src/flakelib/volume/density/strength_modulator.cpp
 	src/flakelib/volume/density/visual.cpp
 	src/flakelib/volume/flake_simulation.cpp
 	src/flakelib/volume/flakes/object.cpp

@@ -2,8 +2,8 @@
 #define FLAKELIB_VOLUME_SIMULATION_STAM_WIND_BLOWER_HPP_INCLUDED
 
 #include <flakelib/duration.hpp>
-#include <flakelib/volume/simulation/stam/wind_change_frequency.hpp>
 #include <flakelib/volume/simulation/stam/object_fwd.hpp>
+#include <flakelib/volume/simulation/stam/wind_change_frequency.hpp>
 #include <flakelib/volume/simulation/stam/wind_speed_maximum.hpp>
 #include <flakelib/volume/simulation/stam/wind_speed_minimum.hpp>
 #include <fcppt/noncopyable.hpp>
