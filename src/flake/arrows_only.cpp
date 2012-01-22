@@ -275,7 +275,7 @@ try
 				/
 				sge::parse::json::find_and_convert_member<fcppt::string>(
 					config_file,
-					sge::parse::json::string_to_path(FCPPT_TEXT("stam-test/boundary-file"))));
+					sge::parse::json::string_to_path(FCPPT_TEXT("arrows-only-test/boundary-file"))));
 
 	flakelib::buffer_pool::object scalar_pool(
 		opencl_system.context());
@@ -301,7 +301,7 @@ try
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
 			config_file,
 			sge::parse::json::string_to_path(
-				FCPPT_TEXT("stam-test"))),
+				FCPPT_TEXT("arrows-only-test"))),
 		global_build_options,
 		scalar_pool,
 		utility_object,

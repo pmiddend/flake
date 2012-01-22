@@ -246,7 +246,21 @@ try
 			sge::camera::first_person::rotation_speed(
 				200.f),
 			sys.keyboard_collector(),
-			sys.mouse_collector()));
+			sys.mouse_collector())
+			.gizmo(
+				sge::camera::gizmo_type()
+					.position(
+						sge::renderer::vector3(
+							14.7123f,18.2458f,-5.18994f))
+					.right(
+						sge::renderer::vector3(
+							0.891568f,0.0f,-0.452886f))
+					.up(
+						sge::renderer::vector3(
+							0.148895f,0.94441f,0.293121f))
+					.forward(
+						sge::renderer::vector3(
+							0.427711f,-0.32877f,0.842006f))));
 
 	fcppt::signal::scoped_connection const console_cb(
 		sys.keyboard_collector().key_callback(
@@ -342,6 +356,13 @@ try
 		camera.update(
 			sge::timer::elapsed<sge::camera::duration>(
 				camera_timer));
+
+		/*
+		std::cout << "camera gizmo pos: " << camera.gizmo().position() << "\n";
+		std::cout << "camera gizmo right: " << camera.gizmo().right() << "\n";
+		std::cout << "camera gizmo up: " << camera.gizmo().up() << "\n";
+		std::cout << "camera gizmo forward: " << camera.gizmo().forward() << "\n";
+		*/
 
 		camera_timer.reset();
 

@@ -96,7 +96,7 @@ flakelib::planar::arrows_only::arrows_only(
 
 	master_box_.push_back_child(
 		velocity_arrows_.widget(),
-		rucksack::alignment::left_or_top);
+		rucksack::alignment::center);
 }
 
 void
@@ -129,7 +129,7 @@ flakelib::planar::arrows_only::render_states() const
 	return
 		sge::renderer::state::list
 			(sge::renderer::state::bool_::clear_back_buffer = true)
-			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::paleturquoise());
+			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::grey());
 }
 
 flakelib::planar::arrows_only::~arrows_only()

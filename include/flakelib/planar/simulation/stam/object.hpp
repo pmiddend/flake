@@ -15,6 +15,7 @@
 #include <flakelib/planar/simulation/stam/solution.hpp>
 #include <flakelib/planar/simulation/stam/vector_field.hpp>
 #include <flakelib/planar/simulation/stam/velocity.hpp>
+#include <flakelib/planar/simulation/stam/gravity_magnitude.hpp>
 #include <flakelib/profiler/object.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
@@ -104,11 +105,13 @@ private:
 	buffer_pool::object &buffer_cache_;
 	planar::laplace_solver::base &laplace_solver_;
 	cl_float const external_force_magnitude_;
+	cl_float const gravity_magnitude_;
 	cl_float const grid_scale_;
 	bool const profiling_enabled_;
 	sge::opencl::program::object main_program_;
 	sge::opencl::kernel::object advect_kernel_;
 	sge::opencl::kernel::object apply_external_forces_kernel_;
+	sge::opencl::kernel::object apply_gravity_kernel_;
 	sge::opencl::kernel::object divergence_kernel_;
 	sge::opencl::kernel::object laplacian_residual_absolute_value_kernel_;
 	sge::opencl::kernel::object gradient_and_subtract_kernel_;
@@ -117,6 +120,7 @@ private:
 	flakelib::profiler::object parent_profiler_;
 	flakelib::profiler::object advection_profiler_;
 	flakelib::profiler::object external_forces_profiler_;
+	flakelib::profiler::object gravity_profiler_;
 	flakelib::profiler::object divergence_profiler_;
 	flakelib::profiler::object project_profiler_;
 	flakelib::profiler::object solve_profiler_;
@@ -136,6 +140,11 @@ private:
 	void
 	apply_forces(
 		planar_float2_view const &);
+
+	void
+	apply_gravity(
+		planar_float2_view const &,
+		flakelib::duration const &);
 
 	unique_planar_float_lock
 	divergence(

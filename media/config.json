@@ -6,6 +6,7 @@
 		"density-splat-radius" : 4,
 		"pressure-scale" : 1.00,
 		"velocity-magnitude-scale" : 0.2,
+		"gravity-magnitude" : 0.1,
 		"divergence-scale" : 100.00,
 		"residual-scale" : 1.0,
 		"grid-position" : [10.0,10.0],
@@ -13,12 +14,21 @@
 		"border-size" : 2,
 		"font-size" : 20
 	},
+	"arrows-only-test" :
+	{
+		"profiling" : true,
+		"external-force-magnitude" : 7.0,
+		"gravity-magnitude" : 0.0,
+		"grid-scale" : 1.0,
+		"boundary-file" : "boundary_circle_256.png"
+	},
 	"stam-test" :
 	{
 		"profiling" : true,
 		"external-force-magnitude" : 7.0,
+		"gravity-magnitude" : 0.0,
 		"grid-scale" : 1.0,
-		"boundary-file" : "boundary_box_ground_64.png"
+		"boundary-file" : "zagged_256.png"
 	},
 	"simulation-solver" :
 	{

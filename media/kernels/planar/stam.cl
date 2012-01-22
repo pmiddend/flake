@@ -77,12 +77,6 @@ advect(
 			input[FLAKE_PLANAR_RIGHT_BOTTOM_OF(buffer_width,clamped_advected_vector)];
 
 	output[current_index] =
-		/*
-		(1.0f - fractions.x) * (1.0f - fractions.y) * left +
-		fractions.x * (1.0f - fractions.y) * right +
-		(1.0f - fractions.x) * fractions.y * leftbottom +
-		fractions.x * fractions.y * rightbottom;
-		*/
 		mix(
 			mix(
 				left,
@@ -212,6 +206,15 @@ apply_external_forces(
 	// Right border (fill with right-1 border)
 	input[i * buffer_width + (buffer_width-1)] =
 		input[i * buffer_width + (buffer_width-2)];
+}
+
+kernel void
+apply_gravity(
+	global float2 *input,
+	float const magnitude,
+	float const dt)
+{
+	input[get_global_id(0)] += dt * (float2)(0.0,magnitude);
 }
 
 kernel void

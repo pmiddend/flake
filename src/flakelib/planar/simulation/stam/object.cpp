@@ -59,6 +59,11 @@ flakelib::planar::simulation::stam::object::object(
 			_config_file,
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("external-force-magnitude")))),
+	gravity_magnitude_(
+		sge::parse::json::find_and_convert_member<cl_float>(
+			_config_file,
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("gravity-magnitude")))),
 	grid_scale_(
 		sge::parse::json::find_and_convert_member<cl_float>(
 			_config_file,
@@ -86,6 +91,10 @@ flakelib::planar::simulation::stam::object::object(
 		main_program_,
 		sge::opencl::kernel::name(
 			"apply_external_forces")),
+	apply_gravity_kernel_(
+		main_program_,
+		sge::opencl::kernel::name(
+			"apply_gravity")),
 	divergence_kernel_(
 		main_program_,
 		sge::opencl::kernel::name(
@@ -117,6 +126,11 @@ flakelib::planar::simulation::stam::object::object(
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	external_forces_profiler_(
 		FCPPT_TEXT("apply_external_forces"),
+		profiler::optional_parent(
+			parent_profiler_),
+		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
+	gravity_profiler_(
+		FCPPT_TEXT("apply_gravity"),
 		profiler::optional_parent(
 			parent_profiler_),
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
@@ -238,6 +252,10 @@ flakelib::planar::simulation::stam::object::update(
 
 	this->apply_forces(
 		velocity_image_->value());
+
+	this->apply_gravity(
+		velocity_image_->value(),
+		dt);
 
 	unique_planar_float2_lock
 		forward_advected =
@@ -400,6 +418,39 @@ flakelib::planar::simulation::stam::object::apply_forces(
 		apply_external_forces_kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
 			(from.size()[0]).container());
+}
+
+void
+flakelib::planar::simulation::stam::object::apply_gravity(
+	planar_float2_view const &from,
+	flakelib::duration const &dt)
+{
+	profiler::scoped scoped_profiler(
+		gravity_profiler_,
+		command_queue_);
+
+	apply_gravity_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			0),
+		from.buffer());
+
+	apply_gravity_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			1),
+		static_cast<cl_float>(
+			gravity_magnitude_));
+
+	apply_gravity_kernel_.argument(
+		sge::opencl::kernel::argument_index(
+			2),
+		static_cast<cl_float>(
+			dt.count()));
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		apply_gravity_kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(from.size().content()).container());
 }
 
 flakelib::planar::simulation::stam::object::unique_planar_float_lock

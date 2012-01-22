@@ -138,11 +138,11 @@ flakelib::planar::framework::framework(
 
 	master_box_.push_back_child(
 		velocity_arrows_.widget(),
-		rucksack::alignment::left_or_top);
+		rucksack::alignment::center);
 
 	master_box_.push_back_child(
 		density_monitor_.monitor().widget(),
-		rucksack::alignment::left_or_top);
+		rucksack::alignment::center);
 
 	/*
 	for(
@@ -243,7 +243,7 @@ flakelib::planar::framework::render_states() const
 	return
 		sge::renderer::state::list
 			(sge::renderer::state::bool_::clear_back_buffer = true)
-			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::paleturquoise());
+			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::grey());
 }
 
 flakelib::planar::framework::~framework()
