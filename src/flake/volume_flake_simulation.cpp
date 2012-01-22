@@ -129,6 +129,8 @@
 #include <fcppt/config/external_end.hpp>
 // Separator
 #include <flakelib/main_head.hpp>
+#undef near
+#undef far
 
 namespace
 {
@@ -397,6 +399,8 @@ try
 		if(console_gfx.active())
 			console_gfx.render();
 	}
+
+	return EXIT_SUCCESS;
 }
 catch(
 	fcppt::exception const &_error

@@ -22,6 +22,8 @@ namespace stam
 {
 class wind_blower
 {
+FCPPT_NONCOPYABLE(
+	wind_blower);
 public:
 	explicit
 	wind_blower(

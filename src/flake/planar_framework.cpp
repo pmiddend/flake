@@ -390,6 +390,8 @@ try
 		if(console_gfx.active())
 			console_gfx.render();
 	}
+
+	return EXIT_SUCCESS;
 }
 catch(fcppt::exception const &e)
 {

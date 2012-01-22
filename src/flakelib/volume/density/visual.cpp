@@ -234,9 +234,9 @@ flakelib::volume::density::visual::visual(
 				position_vector res(0,0,0);
 				res[x] = static_cast<position_vector::value_type>(
 					(side > x) ? b : a);
-				res[x == 0 ? 1 : 0] = static_cast<position_vector::value_type>(
+				res[static_cast<unsigned>(x == 0 ? 1 : 0)] = static_cast<position_vector::value_type>(
 					y);
-				res[x == 2 ? 1 : 2] = static_cast<position_vector::value_type>(
+				res[static_cast<unsigned>(x == 2 ? 1 : 2)] = static_cast<position_vector::value_type>(
 					z);
 
 				(*vb_it++).set<cube_vf::position>(

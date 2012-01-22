@@ -221,6 +221,8 @@ try
 			flakelib::planar::monitor::optional_projection(
 				camera.projection()));
 	}
+
+	return EXIT_SUCCESS;
 }
 catch(fcppt::exception const &e)
 {

@@ -20,6 +20,8 @@ namespace density
 {
 class strength_modulator
 {
+FCPPT_NONCOPYABLE(
+	strength_modulator);
 public:
 	explicit
 	strength_modulator(
