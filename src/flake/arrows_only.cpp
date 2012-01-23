@@ -257,7 +257,8 @@ try
 	sge::opencl::single_device_system::object opencl_system(
 		sge::opencl::single_device_system::parameters()
 			.renderer(
-				sys.renderer()));
+				sys.renderer())
+			.prefer_gpu());
 
 	flakelib::build_options global_build_options(
 		std::string(

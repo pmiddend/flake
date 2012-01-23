@@ -230,7 +230,8 @@ try
 	sge::opencl::single_device_system::object opencl_system(
 		sge::opencl::single_device_system::parameters()
 			.renderer(
-				sys.renderer()));
+				sys.renderer())
+			.prefer_gpu());
 
 	bool running =
 		true;

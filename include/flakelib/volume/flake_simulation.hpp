@@ -19,6 +19,7 @@
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
+#include <sge/camera/base_fwd.hpp>
 #include <sge/parse/json/object_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/matrix4.hpp>
@@ -40,6 +41,7 @@ public:
 	flake_simulation(
 		sge::opencl::command_queue::object &,
 		sge::renderer::device &,
+		sge::camera::base &,
 		sge::image2d::system &,
 		flakelib::build_options const &,
 		sge::parse::json::object const &);
@@ -49,9 +51,7 @@ public:
 		flakelib::duration const &);
 
 	void
-	render(
-		sge::renderer::vector3 const &,
-		sge::renderer::matrix4 const &);
+	render();
 
 	void
 	toggle_arrows();
@@ -62,6 +62,7 @@ public:
 
 	~flake_simulation();
 private:
+	sge::camera::base &camera_;
 	fcppt::scoped_ptr<flakelib::utility::object> utility_;
 	fcppt::scoped_ptr<buffer_pool::object> buffer_pool_;
 	fcppt::scoped_ptr<boundary::object> boundary_;

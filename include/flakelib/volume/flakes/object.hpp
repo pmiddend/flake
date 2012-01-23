@@ -14,6 +14,7 @@
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
+#include <sge/camera/base_fwd.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <sge/renderer/device_fwd.hpp>
@@ -50,6 +51,7 @@ public:
 	explicit
 	object(
 		sge::renderer::device &,
+		sge::camera::base &,
 		sge::image2d::system &,
 		sge::opencl::command_queue::object &,
 		boundary::view const &,
@@ -65,8 +67,7 @@ public:
 		buffer::volume_view<cl_float4> const &);
 
 	void
-	render(
-		sge::renderer::matrix4 const &);
+	render();
 
 	sge::renderer::texture::planar_ptr const
 	current_snow_texture();
@@ -82,6 +83,7 @@ private:
 	cl_image_array;
 
 	sge::renderer::device &renderer_;
+	sge::camera::base &camera_;
 	sge::opencl::command_queue::object &command_queue_;
 	sge::renderer::vertex_declaration_ptr vertex_declaration_;
 	sge::renderer::vertex_buffer_ptr vertex_buffer_;

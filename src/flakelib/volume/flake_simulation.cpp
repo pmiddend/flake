@@ -15,6 +15,7 @@
 #include <flakelib/volume/visualization/ground.hpp>
 #include <flakelib/volume/visualization/shape_manager.hpp>
 #include <sge/opencl/clinclude.hpp>
+#include <sge/camera/base.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
@@ -32,10 +33,13 @@
 flakelib::volume::flake_simulation::flake_simulation(
 	sge::opencl::command_queue::object &_command_queue,
 	sge::renderer::device &_renderer,
+	sge::camera::base &_camera,
 	sge::image2d::system &_image_system,
 	flakelib::build_options const &_build_options,
 	sge::parse::json::object const &_json_config)
 :
+	camera_(
+		_camera),
 	utility_(
 		fcppt::make_unique_ptr<flakelib::utility::object>(
 			fcppt::ref(
@@ -145,6 +149,8 @@ flakelib::volume::flake_simulation::flake_simulation(
 			fcppt::ref(
 				_renderer),
 			fcppt::ref(
+				_camera),
+			fcppt::ref(
 				_image_system),
 			fcppt::ref(
 				_command_queue),
@@ -225,19 +231,16 @@ flakelib::volume::flake_simulation::update(
 }
 
 void
-flakelib::volume::flake_simulation::render(
-	sge::renderer::vector3 const &_camera_position,
-	sge::renderer::matrix4 const &_mvp)
+flakelib::volume::flake_simulation::render()
 {
 	shape_manager_->render(
-		_mvp);
+		camera_.mvp());
 
 	ground_->render(
-		_mvp,
+		camera_.mvp(),
 		flakes_->current_snow_texture());
 
-	flakes_->render(
-		_mvp);
+	flakes_->render();
 
 	if(draw_arrows_)
 	{
@@ -246,12 +249,12 @@ flakelib::volume::flake_simulation::render(
 			sge::shader::activate_everything());
 
 		arrows_manager_->camera_position(
-			_camera_position);
+			camera_.gizmo().position());
 
 		arrows_manager_->shader().update_uniform(
 			"mvp",
 			sge::shader::matrix(
-				_mvp,
+				camera_.mvp(),
 				sge::shader::matrix_flags::projection));
 
 		arrows_->render();

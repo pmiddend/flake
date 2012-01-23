@@ -1,3 +1,4 @@
+#include <sge/camera/base.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/volume/flakes/object.hpp>
@@ -57,6 +58,7 @@
 
 flakelib::volume::flakes::object::object(
 	sge::renderer::device &_renderer,
+	sge::camera::base &_camera,
 	sge::image2d::system &_image_system,
 	sge::opencl::command_queue::object &_command_queue,
 	boundary::view const &_boundary,
@@ -68,6 +70,8 @@ flakelib::volume::flakes::object::object(
 :
 	renderer_(
 		_renderer),
+	camera_(
+		_camera),
 	command_queue_(
 		_command_queue),
 	vertex_declaration_(
@@ -87,6 +91,15 @@ flakelib::volume::flakes::object::object(
 			*vertex_declaration_,
 			sge::shader::vf_to_string<vf::format>(),
 			fcppt::assign::make_container<sge::shader::variable_sequence>
+				(sge::shader::variable(
+					"maximum_distance",
+					sge::shader::variable_type::constant,
+					static_cast<sge::renderer::scalar>(
+						_boundary.get().size()[0])))
+				(sge::shader::variable(
+					"camera_position",
+					sge::shader::variable_type::uniform,
+					sge::renderer::vector3()))
 				(sge::shader::variable(
 					"mvp",
 					sge::shader::variable_type::uniform,
@@ -225,17 +238,20 @@ flakelib::volume::flakes::object::update(
 }
 
 void
-flakelib::volume::flakes::object::render(
-	sge::renderer::matrix4 const &_mvp)
+flakelib::volume::flakes::object::render()
 {
 	sge::shader::scoped scoped_shader(
 		shader_,
 		sge::shader::activate_everything());
 
 	shader_.update_uniform(
+		"camera_position",
+		camera_.gizmo().position());
+
+	shader_.update_uniform(
 		"mvp",
 		sge::shader::matrix(
-			_mvp,
+			camera_.mvp(),
 			sge::shader::matrix_flags::projection));
 
 	sge::renderer::scoped_vertex_buffer scoped_vb(

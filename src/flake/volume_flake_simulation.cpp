@@ -229,7 +229,8 @@ try
 	sge::opencl::single_device_system::object opencl_system(
 		sge::opencl::single_device_system::parameters()
 			.renderer(
-				sys.renderer()));
+				sys.renderer())
+			.prefer_gpu());
 
 	bool running =
 		true;
@@ -296,6 +297,7 @@ try
 	flakelib::volume::flake_simulation flake_simulation(
 		opencl_system.command_queue(),
 		sys.renderer(),
+		camera,
 		sys.image_system(),
 		global_build_options,
 		sge::parse::json::find_member_exn<sge::parse::json::object>(
@@ -391,9 +393,7 @@ try
 					(sge::renderer::state::source_blend_func::src_alpha)
 					(sge::renderer::state::dest_blend_func::inv_src_alpha));
 
-			flake_simulation.render(
-				camera.gizmo().position(),
-				camera.mvp());
+			flake_simulation.render();
 		}
 
 		if(console_gfx.active())
