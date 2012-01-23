@@ -18,20 +18,19 @@ advect(
 	/* 0 */int const cube_size,
 	/* 1 */global float const *boundary,
 	/* 2 */int const particle_count,
-	/* 3 */global float4 const *velocity,
-	/* 4 */global struct vertex *particles,
-	/* 5 */float const dt,
-	/* 6 */global read_only image2d_t distribution_input,
-	/* 7 */global write_only image2d_t distribution_output)
+	/* 3 */global float4 *positions,
+	/* 4 */global float4 *starting_positions,
+	/* 5 */global float const *point_sizes,
+	/* 6 */global float4 const *velocity,
+	/* 7 */float const dt,
+	/* 8 */global read_only image2d_t distribution_input,
+	/* 9 */global write_only image2d_t distribution_output)
 {
-	global struct vertex *current_particle =
-		&particles[get_global_id(0)];
-
 	float4
 		current_position =
-			current_particle->position,
+			positions[get_global_id(0)],
 		starting_position =
-			current_particle->starting_position;
+			starting_positions[get_global_id(0)];
 
 	int3 const lefttopback_position =
 		(int3)(
@@ -79,7 +78,7 @@ advect(
 					texture_coordinates) + 0.20f);
 		}
 
-		current_particle->position =
+		positions[get_global_id(0)] =
 			starting_position;
 			//particles[max(0,(int)(current_position.x + current_position.y + current_position.z) % particle_count)].starting_position;
 		return;
@@ -87,7 +86,7 @@ advect(
 
 	if(lefttopback_position.y > 1 && boundary[FLAKE_VOLUME_AT(cube_size,lefttopback_position)] > 0.2f)
 	{
-		current_particle->position =
+		positions[get_global_id(0)] =
 			starting_position;
 		return;
 	}
@@ -102,7 +101,7 @@ advect(
 		floors,
 		fractions =
 			fract(
-				current_particle->position,
+				positions[get_global_id(0)],
 				&floors);
 
 	float4 const
@@ -123,7 +122,7 @@ advect(
 		rightbottomfront =
 			velocity[FLAKE_VOLUME_RIGHT_BOTTOM_OF(cube_size,lefttopfront_position)];
 
-	current_particle->position =
+	positions[get_global_id(0)] =
 		current_position +
 		dt * (float4)(0.0,-1.0,0.0,0.0) +
 		dt *

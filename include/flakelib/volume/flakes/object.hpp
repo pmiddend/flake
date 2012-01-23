@@ -90,9 +90,13 @@ private:
 	sge::camera::base &camera_;
 	sge::opencl::command_queue::object &command_queue_;
 	sge::renderer::vertex_declaration_ptr vertex_declaration_;
-	sge::renderer::vertex_buffer_ptr vertex_buffer_;
+	sge::renderer::vertex_buffer_ptr positions_buffer_;
+	sge::renderer::vertex_buffer_ptr starting_positions_buffer_;
+	sge::renderer::vertex_buffer_ptr point_sizes_buffer_;
 	sge::shader::object shader_;
-	fcppt::scoped_ptr<sge::opencl::memory_object::buffer> cl_buffer_;
+	fcppt::scoped_ptr<sge::opencl::memory_object::buffer> cl_positions_buffer_;
+	fcppt::scoped_ptr<sge::opencl::memory_object::buffer> cl_starting_positions_buffer_;
+	fcppt::scoped_ptr<sge::opencl::memory_object::buffer> cl_point_sizes_buffer_;
 	sge::opencl::program::object program_;
 	sge::opencl::kernel::object advect_kernel_;
 	planar_ptr_array planar_ptrs_;
