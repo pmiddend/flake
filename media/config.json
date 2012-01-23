@@ -83,6 +83,7 @@
 		"particle-minimum-size" : 5.0,
 		"particle-maximum-size" : 20.0,
 		"particle-count" : 32768,
+		"light-position" : [0.0,40.0,0.0],
 		"snow-texture-size" : [512,512],
 		"wind-speed-minimum" : 0.0,
 		"wind-speed-maximum" : 5.0,

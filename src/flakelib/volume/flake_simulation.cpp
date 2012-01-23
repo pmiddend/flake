@@ -185,12 +185,19 @@ flakelib::volume::flake_simulation::flake_simulation(
 		fcppt::make_unique_ptr<visualization::ground>(
 			fcppt::ref(
 				_renderer),
+			fcppt::ref(
+				_camera),
 			fcppt::cref(
 				shape_manager_->vertex_declaration()),
 			fcppt::ref(
 				_image_system),
 			volume::grid_size(
-				boundary_->get().size()))),
+				boundary_->get().size()),
+			visualization::light_position(
+				sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("light-position")))))),
 	wind_blower_(
 		fcppt::make_unique_ptr<simulation::stam::wind_blower>(
 			fcppt::ref(
@@ -241,7 +248,6 @@ flakelib::volume::flake_simulation::render()
 		camera_.mvp());
 
 	ground_->render(
-		camera_.mvp(),
 		flakes_->current_snow_texture());
 
 	flakes_->render();
