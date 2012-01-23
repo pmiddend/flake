@@ -177,8 +177,10 @@ flakelib::volume::visualization::shape_manager::render(
 			sge::shader::matrix(
 				_mvp *
 				fcppt::math::matrix::translation(
-					fcppt::math::dim::structure_cast<sge::renderer::vector3>(
-						it->position().get()) +
+					sge::renderer::vector3(
+						it->position().get()[0]-1,
+						it->position().get()[1],
+						it->position().get()[2]) +
 					scaling_vector / static_cast<sge::renderer::scalar>(2)) *
 				fcppt::math::matrix::scaling(
 					scaling_vector),
