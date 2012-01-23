@@ -16,6 +16,7 @@
 #include <flakelib/volume/visualization/arrows_manager_fwd.hpp>
 #include <flakelib/volume/visualization/shape_manager_fwd.hpp>
 #include <sge/image2d/system_fwd.hpp>
+#include <sge/camera/base_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
@@ -39,6 +40,7 @@ public:
 	smoke_simulation(
 		sge::opencl::command_queue::object &,
 		sge::renderer::device &,
+		sge::camera::base &,
 		sge::image2d::system &,
 		flakelib::build_options const &,
 		sge::parse::json::object const &);

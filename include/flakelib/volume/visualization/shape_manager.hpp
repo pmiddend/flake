@@ -7,8 +7,10 @@
 #include <flakelib/volume/visualization/compiled_model.hpp>
 #include <flakelib/volume/visualization/movement_hack.hpp>
 #include <flakelib/volume/visualization/scaling_hack.hpp>
+#include <flakelib/volume/visualization/light_position.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/model/obj/loader_ptr.hpp>
+#include <sge/camera/base_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/matrix4.hpp>
 #include <sge/renderer/vertex_buffer_ptr.hpp>
@@ -33,14 +35,15 @@ public:
 	explicit
 	shape_manager(
 		sge::renderer::device &,
+		sge::camera::base &,
 		sge::image2d::system &,
 		boundary::obstacle_sequence const &,
 		visualization::movement_hack const &,
-		visualization::scaling_hack const &);
+		visualization::scaling_hack const &,
+		visualization::light_position const &);
 
 	void
-	render(
-		sge::renderer::matrix4 const &);
+	render();
 
 	sge::renderer::vertex_declaration const &
 	vertex_declaration() const;
@@ -59,6 +62,7 @@ private:
 	cube_sequence;
 
 	sge::renderer::device &renderer_;
+	sge::camera::base &camera_;
 	bool const movement_hack_;
 	bool const scaling_hack_;
 	sge::model::obj::loader_ptr obj_loader_;

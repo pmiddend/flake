@@ -32,6 +32,7 @@
 flakelib::volume::smoke_simulation::smoke_simulation(
 	sge::opencl::command_queue::object &_command_queue,
 	sge::renderer::device &_renderer,
+	sge::camera::base &_camera,
 	sge::image2d::system &_image_system,
 	flakelib::build_options const &_build_options,
 	sge::parse::json::object const &_json_config)
@@ -110,6 +111,8 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 			fcppt::ref(
 				_renderer),
 			fcppt::ref(
+				_camera),
+			fcppt::ref(
 				_image_system),
 			boundary::json::to_obstacle_sequence(
 				sge::parse::json::find_and_convert_member<sge::parse::json::array>(
@@ -119,7 +122,12 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 			visualization::movement_hack(
 				false),
 			visualization::scaling_hack(
-				true))),
+				true),
+			visualization::light_position(
+				sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
+					_json_config,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("light-position")))))),
 	conversion_(
 		fcppt::make_unique_ptr<conversion::object>(
 			fcppt::ref(
@@ -219,8 +227,7 @@ flakelib::volume::smoke_simulation::render(
 	sge::renderer::vector3 const &_camera_position,
 	sge::renderer::matrix4 const &_mvp)
 {
-	shape_manager_->render(
-		_mvp);
+	shape_manager_->render();
 
 	if(draw_arrows_)
 	{

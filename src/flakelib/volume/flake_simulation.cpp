@@ -114,6 +114,8 @@ flakelib::volume::flake_simulation::flake_simulation(
 			fcppt::ref(
 				_renderer),
 			fcppt::ref(
+				_camera),
+			fcppt::ref(
 				_image_system),
 			boundary::json::to_obstacle_sequence(
 				sge::parse::json::find_and_convert_member<sge::parse::json::array>(
@@ -123,7 +125,12 @@ flakelib::volume::flake_simulation::flake_simulation(
 			visualization::movement_hack(
 				true),
 			visualization::scaling_hack(
-				false))),
+				false),
+			visualization::light_position(
+				sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
+						_json_config,
+						sge::parse::json::string_to_path(
+							FCPPT_TEXT("light-position")))))),
 	conversion_(
 		fcppt::make_unique_ptr<conversion::object>(
 			fcppt::ref(
@@ -244,8 +251,7 @@ flakelib::volume::flake_simulation::update(
 void
 flakelib::volume::flake_simulation::render()
 {
-	shape_manager_->render(
-		camera_.mvp());
+	shape_manager_->render();
 
 	ground_->render(
 		flakes_->current_snow_texture());

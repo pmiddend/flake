@@ -294,6 +294,7 @@ try
 	flakelib::volume::smoke_simulation smoke_simulation(
 		opencl_system.command_queue(),
 		sys.renderer(),
+		camera,
 		sys.image_system(),
 		global_build_options,
 		sge::parse::json::find_member_exn<sge::parse::json::object>(

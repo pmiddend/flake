@@ -11,6 +11,7 @@
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/shader/activate_bare.hpp>
 #include <sge/shader/object_parameters.hpp>
+#include <sge/camera/base.hpp>
 #include <sge/shader/scoped.hpp>
 #include <sge/shader/variable.hpp>
 #include <sge/shader/variable_sequence.hpp>
@@ -28,13 +29,17 @@
 
 flakelib::volume::visualization::shape_manager::shape_manager(
 	sge::renderer::device &_renderer,
+	sge::camera::base &_camera,
 	sge::image2d::system &_image_loader,
 	boundary::obstacle_sequence const &_obstacles,
 	visualization::movement_hack const &_movement_hack,
-	visualization::scaling_hack const &_scaling_hack)
+	visualization::scaling_hack const &_scaling_hack,
+	visualization::light_position const &_light_position)
 :
 	renderer_(
 		_renderer),
+	camera_(
+		_camera),
 	movement_hack_(
 		_movement_hack.get()),
 	scaling_hack_(
@@ -55,7 +60,11 @@ flakelib::volume::visualization::shape_manager::shape_manager(
 					sge::shader::variable_type::uniform,
 					sge::shader::matrix(
 						sge::renderer::matrix4::identity(),
-						sge::shader::matrix_flags::projection))),
+						sge::shader::matrix_flags::projection)))
+				(sge::shader::variable(
+					"light_position",
+					sge::shader::variable_type::uniform,
+					_light_position.get())),
 			fcppt::assign::make_container<sge::shader::sampler_sequence>
 				(sge::shader::sampler(
 					"primary_texture",
@@ -125,8 +134,7 @@ flakelib::volume::visualization::shape_manager::shape_manager(
 }
 
 void
-flakelib::volume::visualization::shape_manager::render(
-	sge::renderer::matrix4 const &_mvp)
+flakelib::volume::visualization::shape_manager::render()
 {
 	sge::renderer::scoped_vertex_declaration scoped_vd(
 		renderer_,
@@ -155,15 +163,23 @@ flakelib::volume::visualization::shape_manager::render(
 				static_cast<sge::renderer::scalar>(
 					 1.0 + 1.0/64.0);
 
+		sge::renderer::matrix4 const transformation =
+			fcppt::math::matrix::translation(
+				fcppt::math::dim::structure_cast<sge::renderer::vector3>(
+					it->position().get())) *
+			fcppt::math::matrix::scaling(
+				scaling_vector);
+
+		shader_.update_uniform(
+			"mv",
+			sge::shader::matrix(
+				camera_.world() * transformation,
+				sge::shader::matrix_flags::none));
+
 		shader_.update_uniform(
 			"mvp",
 			sge::shader::matrix(
-				_mvp *
-				fcppt::math::matrix::translation(
-					fcppt::math::dim::structure_cast<sge::renderer::vector3>(
-						it->position().get())) *
-				fcppt::math::matrix::scaling(
-					scaling_vector),
+				camera_.mvp() * transformation,
 				sge::shader::matrix_flags::projection));
 
 		sphere_model_.render();
@@ -202,15 +218,23 @@ flakelib::volume::visualization::shape_manager::render(
 						static_cast<sge::renderer::scalar>(
 							it->position().get()[2]));
 
+		sge::renderer::matrix4 const transformation =
+			fcppt::math::matrix::translation(
+				translation +
+				scaling_vector / static_cast<sge::renderer::scalar>(2)) *
+			fcppt::math::matrix::scaling(
+				scaling_vector);
+
+		shader_.update_uniform(
+			"mv",
+			sge::shader::matrix(
+				camera_.world() * transformation,
+				sge::shader::matrix_flags::none));
+
 		shader_.update_uniform(
 			"mvp",
 			sge::shader::matrix(
-				_mvp *
-				fcppt::math::matrix::translation(
-					translation +
-					scaling_vector / static_cast<sge::renderer::scalar>(2)) *
-				fcppt::math::matrix::scaling(
-					scaling_vector),
+				camera_.mvp() * transformation,
 				sge::shader::matrix_flags::projection));
 
 		cube_model_.render();
