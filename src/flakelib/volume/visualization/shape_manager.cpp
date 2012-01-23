@@ -34,7 +34,7 @@ flakelib::volume::visualization::shape_manager::shape_manager(
 	boundary::obstacle_sequence const &_obstacles,
 	visualization::movement_hack const &_movement_hack,
 	visualization::scaling_hack const &_scaling_hack,
-	visualization::light_position const &_light_position)
+	visualization::sun_direction const &_sun_direction)
 :
 	renderer_(
 		_renderer),
@@ -70,7 +70,7 @@ flakelib::volume::visualization::shape_manager::shape_manager(
 				(sge::shader::variable(
 					"sun_direction",
 					sge::shader::variable_type::uniform,
-					_light_position.get())),
+					_sun_direction.get())),
 			fcppt::assign::make_container<sge::shader::sampler_sequence>
 				(sge::shader::sampler(
 					"primary_texture",
@@ -80,7 +80,9 @@ flakelib::volume::visualization::shape_manager::shape_manager(
 						FCPPT_TEXT("shaders/model/vertex.glsl")))
 				.fragment_shader(
 					flakelib::media_path_from_string(
-						FCPPT_TEXT("shaders/model/fragment.glsl")))),
+						FCPPT_TEXT("shaders/model/fragment.glsl")))
+				.name(
+					FCPPT_TEXT("model shader"))),
 	sphere_model_(
 		obj_loader_->load(
 			flakelib::media_path_from_string(

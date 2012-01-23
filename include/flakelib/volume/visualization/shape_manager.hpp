@@ -7,7 +7,7 @@
 #include <flakelib/volume/visualization/compiled_model.hpp>
 #include <flakelib/volume/visualization/movement_hack.hpp>
 #include <flakelib/volume/visualization/scaling_hack.hpp>
-#include <flakelib/volume/visualization/light_position.hpp>
+#include <flakelib/volume/visualization/sun_direction.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/model/obj/loader_ptr.hpp>
 #include <sge/camera/base_fwd.hpp>
@@ -40,7 +40,7 @@ public:
 		boundary::obstacle_sequence const &,
 		visualization::movement_hack const &,
 		visualization::scaling_hack const &,
-		visualization::light_position const &);
+		visualization::sun_direction const &);
 
 	void
 	render();

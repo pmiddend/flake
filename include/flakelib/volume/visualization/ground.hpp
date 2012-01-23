@@ -2,7 +2,7 @@
 #define FLAKELIB_VOLUME_VISUALIZATION_GROUND_HPP_INCLUDED
 
 #include <flakelib/volume/grid_size.hpp>
-#include <flakelib/volume/visualization/light_position.hpp>
+#include <flakelib/volume/visualization/sun_direction.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/camera/base_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
@@ -30,7 +30,7 @@ public:
 		sge::renderer::vertex_declaration const &,
 		sge::image2d::system &,
 		volume::grid_size const &,
-		visualization::light_position const &);
+		visualization::sun_direction const &);
 
 	void
 	render(

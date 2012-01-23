@@ -123,11 +123,11 @@ flakelib::volume::smoke_simulation::smoke_simulation(
 				false),
 			visualization::scaling_hack(
 				true),
-			visualization::light_position(
+			visualization::sun_direction(
 				sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("light-position")))))),
+						FCPPT_TEXT("sun-direction")))))),
 	conversion_(
 		fcppt::make_unique_ptr<conversion::object>(
 			fcppt::ref(

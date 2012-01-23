@@ -3,6 +3,7 @@
 $$$HEADER$$$
 
 out vec3 position_interp;
+out vec3 normal_interp;
 out vec2 texcoord_interp;
 
 void

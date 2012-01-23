@@ -58,16 +58,18 @@
 		"density-strength-minimum" : 0.0,
 		"density-strength-maximum" : 0.3,
 		"density-change-frequency" : 20.0,
+		"sun-direction" : [0.578,-0.578,0.578],
+		"sun-direction-old" : [1.0,0.0,0.0],
 		"obstacles" :
 		[
 			{
 				"type" : "sphere",
-				"center" : [45,40,40],
+				"center" : [35,40,40],
 				"radius" : 8
 			},
 			{
 				"type" : "cube",
-				"position" : [10,25,25],
+				"position" : [10,30,25],
 				"size" : [8,8,8]
 			}
 
@@ -83,7 +85,8 @@
 		"particle-minimum-size" : 5.0,
 		"particle-maximum-size" : 20.0,
 		"particle-count" : 32768,
-		"light-position" : [0.0,40.0,0.0],
+		"sun-direction" : [0.578,-0.578,0.578],
+		"sun-direction-old" : [1.0,0.0,0.0],
 		"snow-texture-size" : [512,512],
 		"wind-speed-minimum" : 0.0,
 		"wind-speed-maximum" : 5.0,

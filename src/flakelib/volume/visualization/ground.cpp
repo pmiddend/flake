@@ -35,7 +35,7 @@ flakelib::volume::visualization::ground::ground(
 	sge::renderer::vertex_declaration const &_vertex_declaration,
 	sge::image2d::system &_image_system,
 	volume::grid_size const &_grid_size,
-	visualization::light_position const &_light_position)
+	visualization::sun_direction const &_sun_direction)
 :
 	renderer_(
 		_renderer),
@@ -56,15 +56,9 @@ flakelib::volume::visualization::ground::ground(
 						sge::renderer::matrix4::identity(),
 						sge::shader::matrix_flags::projection)))
 				(sge::shader::variable(
-					"mv",
-					sge::shader::variable_type::uniform,
-					sge::shader::matrix(
-						sge::renderer::matrix4::identity(),
-						sge::shader::matrix_flags::none)))
-				(sge::shader::variable(
 					"sun_direction",
 					sge::shader::variable_type::uniform,
-					_light_position.get())),
+					_sun_direction.get())),
 			fcppt::assign::make_container<sge::shader::sampler_sequence>
 				(sge::shader::sampler(
 					"ground_texture",
@@ -210,12 +204,6 @@ flakelib::volume::visualization::ground::render(
 		sge::shader::matrix(
 			camera_.mvp(),
 			sge::shader::matrix_flags::projection));
-
-	shader_.update_uniform(
-		"mv",
-		sge::shader::matrix(
-			camera_.world(),
-			sge::shader::matrix_flags::none));
 
 	sge::renderer::scoped_vertex_buffer scoped_vb(
 		renderer_,
