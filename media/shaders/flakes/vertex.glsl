@@ -8,14 +8,15 @@ main()
 	float
 		distance_camera_point =
 			distance(
-					position.xyz - camera_position),
+					position.xyz,
+					camera_position),
 		unnormalized_distance =
-			1.0 -
+			maximum_distance -
 			min(
 				maximum_distance,
 				distance_camera_point),
 		normalized_distance =
-			unnomalized_distance / maximum_distance,
+			unnormalized_distance / maximum_distance,
 		maxed_distance =
 			max(
 				normalized_distance,
