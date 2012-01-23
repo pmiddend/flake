@@ -166,7 +166,7 @@ try
 			(sge::systems::window(
 				sge::window::parameters(
 					sge::window::title(
-						FCPPT_TEXT("Test for 3D stuff")),
+						FCPPT_TEXT("3D flake simulation with simple snow accumulation")),
 					window_size)))
 			(sge::systems::renderer(
 				sge::renderer::parameters(
@@ -330,6 +330,14 @@ try
 					SGE_FONT_TEXT_LIT("Usage: /toggle_arrows")))
 				.long_description(
 					SGE_FONT_TEXT_LIT("Toggle arrow drawing"))));
+
+	fcppt::signal::scoped_connection const toggle_arrows_key_cb(
+		sys.keyboard_collector().key_callback(
+			sge::input::keyboard::action(
+				sge::input::keyboard::key_code::f2,
+				std::tr1::bind(
+					&flakelib::volume::flake_simulation::toggle_arrows,
+					&flake_simulation))));
 
 	sge::timer::basic<sge::timer::clocks::standard> camera_timer(
 		sge::timer::parameters<sge::timer::clocks::standard>(

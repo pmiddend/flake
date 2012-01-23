@@ -167,7 +167,7 @@ try
 			(sge::systems::window(
 				sge::window::parameters(
 					sge::window::title(
-						FCPPT_TEXT("Test for 3D stuff")),
+						FCPPT_TEXT("3D smoke simulation using a simple raycaster")),
 					window_size)))
 			(sge::systems::renderer(
 				sge::renderer::parameters(

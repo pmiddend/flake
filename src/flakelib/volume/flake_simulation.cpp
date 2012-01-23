@@ -119,7 +119,11 @@ flakelib::volume::flake_simulation::flake_simulation(
 				sge::parse::json::find_and_convert_member<sge::parse::json::array>(
 					_json_config,
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("obstacles")))))),
+						FCPPT_TEXT("obstacles")))),
+			visualization::movement_hack(
+				true),
+			visualization::scaling_hack(
+				false))),
 	conversion_(
 		fcppt::make_unique_ptr<conversion::object>(
 			fcppt::ref(

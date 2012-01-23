@@ -5,6 +5,8 @@
 #include <flakelib/volume/boundary/cube/object.hpp>
 #include <flakelib/volume/boundary/sphere/object.hpp>
 #include <flakelib/volume/visualization/compiled_model.hpp>
+#include <flakelib/volume/visualization/movement_hack.hpp>
+#include <flakelib/volume/visualization/scaling_hack.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/model/obj/loader_ptr.hpp>
 #include <sge/renderer/device_fwd.hpp>
@@ -32,7 +34,9 @@ public:
 	shape_manager(
 		sge::renderer::device &,
 		sge::image2d::system &,
-		boundary::obstacle_sequence const &);
+		boundary::obstacle_sequence const &,
+		visualization::movement_hack const &,
+		visualization::scaling_hack const &);
 
 	void
 	render(
@@ -55,6 +59,8 @@ private:
 	cube_sequence;
 
 	sge::renderer::device &renderer_;
+	bool const movement_hack_;
+	bool const scaling_hack_;
 	sge::model::obj::loader_ptr obj_loader_;
 	sge::renderer::vertex_declaration_ptr vd_;
 	sge::shader::object shader_;

@@ -29,10 +29,16 @@
 flakelib::volume::visualization::shape_manager::shape_manager(
 	sge::renderer::device &_renderer,
 	sge::image2d::system &_image_loader,
-	boundary::obstacle_sequence const &_obstacles)
+	boundary::obstacle_sequence const &_obstacles,
+	visualization::movement_hack const &_movement_hack,
+	visualization::scaling_hack const &_scaling_hack)
 :
 	renderer_(
 		_renderer),
+	movement_hack_(
+		_movement_hack.get()),
+	scaling_hack_(
+		_scaling_hack.get()),
 	obj_loader_(
 		sge::model::obj::create()),
 	vd_(
@@ -136,13 +142,18 @@ flakelib::volume::visualization::shape_manager::render(
 		it != spheres_.end();
 		++it)
 	{
-		sge::renderer::vector3 const scaling_vector(
+		sge::renderer::vector3 scaling_vector(
 			static_cast<sge::renderer::scalar>(
 				it->radius().get()),
 			static_cast<sge::renderer::scalar>(
 				it->radius().get()),
 			static_cast<sge::renderer::scalar>(
 				it->radius().get()));
+
+		if(scaling_hack_)
+			scaling_vector *=
+				static_cast<sge::renderer::scalar>(
+					 1.0/64.0);
 
 		shader_.update_uniform(
 			"mvp",
@@ -172,15 +183,31 @@ flakelib::volume::visualization::shape_manager::render(
 			static_cast<sge::renderer::scalar>(
 				it->size().get()[2]));
 
+		sge::renderer::vector3 const translation =
+			movement_hack_
+			?
+				sge::renderer::vector3(
+						static_cast<sge::renderer::scalar>(
+							it->position().get()[0]-1),
+						static_cast<sge::renderer::scalar>(
+							it->position().get()[1]),
+						static_cast<sge::renderer::scalar>(
+							it->position().get()[2]))
+			:
+				sge::renderer::vector3(
+						static_cast<sge::renderer::scalar>(
+							it->position().get()[0]),
+						static_cast<sge::renderer::scalar>(
+							it->position().get()[1]),
+						static_cast<sge::renderer::scalar>(
+							it->position().get()[2]));
+
 		shader_.update_uniform(
 			"mvp",
 			sge::shader::matrix(
 				_mvp *
 				fcppt::math::matrix::translation(
-					sge::renderer::vector3(
-						it->position().get()[0]-1,
-						it->position().get()[1],
-						it->position().get()[2]) +
+					translation +
 					scaling_vector / static_cast<sge::renderer::scalar>(2)) *
 				fcppt::math::matrix::scaling(
 					scaling_vector),

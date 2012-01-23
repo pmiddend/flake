@@ -162,7 +162,7 @@ try
 			(sge::systems::window(
 				sge::window::parameters(
 					sge::window::title(
-						FCPPT_TEXT("Simulation of fluid dynamics via Stam's Method")),
+						FCPPT_TEXT("Simulation of fluid dynamics via Stam's Method - arrows and density advection")),
 					window_size)))
 			(sge::systems::renderer(
 				sge::renderer::parameters(

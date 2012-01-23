@@ -167,7 +167,7 @@ try
 			(sge::systems::window(
 				sge::window::parameters(
 					sge::window::title(
-						FCPPT_TEXT("Simulation of fluid dynamics via Stam's Method")),
+						FCPPT_TEXT("Step by step 2D simulation - arrows only")),
 					window_size)))
 			(sge::systems::renderer(
 				sge::renderer::parameters(
@@ -250,9 +250,9 @@ try
 			.zoom_to_zooming_speed_factor(
 				sge::renderer::vector2(
 					static_cast<sge::renderer::scalar>(
-						0.1),
+						0.01),
 					static_cast<sge::renderer::scalar>(
-						0.1))));
+						0.01))));
 
 	sge::opencl::single_device_system::object opencl_system(
 		sge::opencl::single_device_system::parameters()
