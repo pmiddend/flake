@@ -125,7 +125,7 @@ advect(
 
 	current_particle->position =
 		current_position +
-		dt * (float4)(0.0,-2.0,0.0,0.0) +
+		dt * (float4)(0.0,-1.0,0.0,0.0) +
 		dt *
 		mix(
 			mix(

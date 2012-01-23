@@ -376,12 +376,19 @@ flakelib::volume::flakes::object::generate_particles(
 			fcppt::random::make_inclusive_range<sge::renderer::scalar>(
 				1.0f,
 				static_cast<sge::renderer::scalar>(
-					_grid_size.get()[0]-1)),
+					_grid_size.get()[0]/2-1)),
 			number_generator),
 		y_rng_(
 			fcppt::random::make_inclusive_range<sge::renderer::scalar>(
 				static_cast<sge::renderer::scalar>(
 					_grid_size.get()[1]/5),
+				static_cast<sge::renderer::scalar>(
+					_grid_size.get()[1]/2+10)),
+			number_generator),
+		second_y_rng_(
+			fcppt::random::make_inclusive_range<sge::renderer::scalar>(
+				static_cast<sge::renderer::scalar>(
+					3),
 				static_cast<sge::renderer::scalar>(
 					_grid_size.get()[1]/2+10)),
 			number_generator),
@@ -398,12 +405,18 @@ flakelib::volume::flakes::object::generate_particles(
 		i != _particle_count;
 		++i)
 	{
-		sge::renderer::vector4 const starting_position =
+		sge::renderer::vector4 starting_position =
 			sge::renderer::vector4(
 				x_rng_(),
 				y_rng_(),
 				z_rng_(),
 				1.0f);
+
+		if(starting_position[0] < _grid_size.get()[0] / 10)
+		{
+			starting_position[1] =
+				second_y_rng_();
+		}
 
 		vertex_buffer_it->set<vf::point_size>(
 			vf::point_size::packed_type(
