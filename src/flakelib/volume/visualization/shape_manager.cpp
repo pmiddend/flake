@@ -153,7 +153,7 @@ flakelib::volume::visualization::shape_manager::render(
 		if(scaling_hack_)
 			scaling_vector *=
 				static_cast<sge::renderer::scalar>(
-					 1.0/64.0);
+					 1.0 + 1.0/64.0);
 
 		shader_.update_uniform(
 			"mvp",
