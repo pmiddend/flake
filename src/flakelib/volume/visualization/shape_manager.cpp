@@ -62,7 +62,13 @@ flakelib::volume::visualization::shape_manager::shape_manager(
 						sge::renderer::matrix4::identity(),
 						sge::shader::matrix_flags::projection)))
 				(sge::shader::variable(
-					"light_position",
+					"world",
+					sge::shader::variable_type::uniform,
+					sge::shader::matrix(
+						sge::renderer::matrix4::identity(),
+						sge::shader::matrix_flags::none)))
+				(sge::shader::variable(
+					"sun_direction",
 					sge::shader::variable_type::uniform,
 					_light_position.get())),
 			fcppt::assign::make_container<sge::shader::sampler_sequence>
@@ -171,9 +177,9 @@ flakelib::volume::visualization::shape_manager::render()
 				scaling_vector);
 
 		shader_.update_uniform(
-			"mv",
+			"world",
 			sge::shader::matrix(
-				camera_.world() * transformation,
+				transformation,
 				sge::shader::matrix_flags::none));
 
 		shader_.update_uniform(
@@ -226,9 +232,9 @@ flakelib::volume::visualization::shape_manager::render()
 				scaling_vector);
 
 		shader_.update_uniform(
-			"mv",
+			"world",
 			sge::shader::matrix(
-				camera_.world() * transformation,
+				transformation,
 				sge::shader::matrix_flags::none));
 
 		shader_.update_uniform(

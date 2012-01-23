@@ -13,13 +13,6 @@ void main()
 			snow_distribution,
 			texcoord_interp).r;
 
-	vec3 light_to_pos =
-		light_position - position_interp;
-
-	float dist =
-		length(
-			light_to_pos);
-
 	vec3 normal = vec3(0.0,1.0,0.0);
 
 	float intensity =
@@ -27,7 +20,7 @@ void main()
 			0.0,
 			dot(
 				normal,
-				light_to_pos / dist));
+				sun_direction));
 
 	vec4 snow_result =
 		vec4(

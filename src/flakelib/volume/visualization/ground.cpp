@@ -62,7 +62,7 @@ flakelib::volume::visualization::ground::ground(
 						sge::renderer::matrix4::identity(),
 						sge::shader::matrix_flags::none)))
 				(sge::shader::variable(
-					"light_position",
+					"sun_direction",
 					sge::shader::variable_type::uniform,
 					_light_position.get())),
 			fcppt::assign::make_container<sge::shader::sampler_sequence>
