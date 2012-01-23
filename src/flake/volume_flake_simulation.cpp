@@ -121,6 +121,9 @@
 #include <sge/window/title.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/mpl/vector/vector10.hpp>
+//#include <boost/spirit/home/phoenix/operator.hpp>
+//#include <boost/spirit/home/phoenix/core.hpp>
+#include <boost/spirit/home/phoenix.hpp>
 #include <cmath>
 #include <cstdlib>
 #include <exception>
@@ -143,6 +146,18 @@ toggle_console_active(
 		!_console_gfx.active());
 	_camera.active(
 		!_console_gfx.active());
+}
+
+void
+change_flake_size(
+	flakelib::volume::flake_simulation &s,
+	sge::renderer::scalar &current,
+	sge::renderer::scalar const change)
+{
+	current += change;
+	s.flake_size_multiplier(
+		current);
+	std::cout << "Changed size to " << current << "\n";
 }
 }
 
@@ -303,6 +318,56 @@ try
 		sge::parse::json::find_member_exn<sge::parse::json::object>(
 			config_file.members,
 			FCPPT_TEXT("flake-simulation")));
+
+	sge::renderer::scalar current_size_multiplier =
+		1.0f;
+
+	fcppt::signal::scoped_connection const increase_size_cb(
+		sys.keyboard_collector().key_callback(
+			sge::input::keyboard::action(
+				sge::input::keyboard::key_code::q,
+				std::tr1::bind(
+					&change_flake_size,
+					fcppt::ref(
+						flake_simulation),
+					fcppt::ref(
+						current_size_multiplier),
+					static_cast<sge::renderer::scalar>(
+						0.25)))));
+
+	fcppt::signal::scoped_connection const decrease_size_cb(
+		sys.keyboard_collector().key_callback(
+			sge::input::keyboard::action(
+				sge::input::keyboard::key_code::e,
+				std::tr1::bind(
+					&change_flake_size,
+					fcppt::ref(
+						flake_simulation),
+					fcppt::ref(
+						current_size_multiplier),
+					static_cast<sge::renderer::scalar>(
+						-0.25)))));
+	/*
+	fcppt::signal::scoped_connection const increase_size_cb(
+		sys.keyboard_collector().key_callback(
+			sge::input::keyboard::action(
+				sge::input::keyboard::key_code::add,
+				(boost::phoenix::ref(current_size_multiplier) += 0.25f,
+				boost::phoenix::bind(
+					&flakelib::volume::flake_simulation::flake_size_multiplier,
+					flake_simulation,
+					boost::phoenix::ref(
+						current_size_multiplier))))));
+						*/
+
+	/*
+	fcppt::signal::scoped_connection const decrease_size_cb(
+		sys.keyboard_collector().key_callback(
+			sge::input::keyboard::action(
+				sge::input::keyboard::key_code::minus,
+				boost::phoenix::ref(current_size_multiplier) -= 0.25)));
+				*/
+
 
 	fcppt::signal::scoped_connection const wind_speed_cb(
 		console_object.insert(

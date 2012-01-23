@@ -22,8 +22,7 @@
 #include <sge/camera/base_fwd.hpp>
 #include <sge/parse/json/object_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
-#include <sge/renderer/matrix4.hpp>
-#include <sge/renderer/vector3.hpp>
+#include <sge/renderer/scalar.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
 
@@ -59,6 +58,10 @@ public:
 	void
 	external_force_magnitude(
 		cl_float);
+
+	void
+	flake_size_multiplier(
+		sge::renderer::scalar);
 
 	~flake_simulation();
 private:

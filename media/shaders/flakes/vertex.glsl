@@ -23,7 +23,7 @@ main()
 				0.01);
 
 	gl_PointSize =
-		maxed_distance * point_size;
+		size_multiplier * maxed_distance * point_size;
 
 	gl_Position =
 		mvp *

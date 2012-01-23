@@ -1,3 +1,4 @@
+#include <sge/shader/update_single_uniform.hpp>
 #include <sge/camera/base.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/volume_view.hpp>
@@ -100,6 +101,11 @@ flakelib::volume::flakes::object::object(
 					"camera_position",
 					sge::shader::variable_type::uniform,
 					sge::renderer::vector3()))
+				(sge::shader::variable(
+					"size_multiplier",
+					sge::shader::variable_type::uniform,
+					static_cast<sge::renderer::scalar>(
+						1)))
 				(sge::shader::variable(
 					"mvp",
 					sge::shader::variable_type::uniform,
@@ -264,7 +270,8 @@ flakelib::volume::flakes::object::render()
 			(sge::renderer::state::bool_::enable_point_sprites = true)
 			(sge::renderer::state::source_blend_func::src_alpha)
 			(sge::renderer::state::dest_blend_func::inv_src_alpha)
-			//(sge::renderer::state::depth_func::off)
+			(sge::renderer::state::depth_func::less)
+			(sge::renderer::state::bool_::write_to_depth_buffer = false)
 			(sge::renderer::state::bool_::enable_alpha_blending = true));
 
 	renderer_.render_nonindexed(
@@ -273,6 +280,16 @@ flakelib::volume::flakes::object::render()
 		sge::renderer::vertex_count(
 			vertex_buffer_->size()),
 		sge::renderer::nonindexed_primitive_type::point);
+}
+
+void
+flakelib::volume::flakes::object::size_multiplier(
+	sge::renderer::scalar const _size_multiplier)
+{
+	sge::shader::update_single_uniform(
+		shader_,
+		"size_multiplier",
+		_size_multiplier);
 }
 
 sge::renderer::texture::planar_ptr const

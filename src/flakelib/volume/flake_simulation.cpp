@@ -291,6 +291,14 @@ flakelib::volume::flake_simulation::external_force_magnitude(
 		_external_force);
 }
 
+void
+flakelib::volume::flake_simulation::flake_size_multiplier(
+	sge::renderer::scalar const _size_multiplier)
+{
+	flakes_->size_multiplier(
+		_size_multiplier);
+}
+
 flakelib::volume::flake_simulation::~flake_simulation()
 {
 	fcppt::io::cout() << simulation_->parent_profiler() << FCPPT_TEXT("\n");

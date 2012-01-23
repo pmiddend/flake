@@ -18,9 +18,9 @@
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <sge/renderer/device_fwd.hpp>
-#include <sge/renderer/matrix4.hpp>
 #include <sge/renderer/vertex_buffer_ptr.hpp>
 #include <sge/renderer/vertex_declaration_ptr.hpp>
+#include <sge/renderer/scalar.hpp>
 #include <sge/renderer/texture/planar_ptr.hpp>
 #include <sge/shader/object.hpp>
 #include <sge/shader/object.hpp>
@@ -68,6 +68,10 @@ public:
 
 	void
 	render();
+
+	void
+	size_multiplier(
+		sge::renderer::scalar);
 
 	sge::renderer::texture::planar_ptr const
 	current_snow_texture();
