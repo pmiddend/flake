@@ -13,6 +13,13 @@ struct __attribute__((packed)) vertex
 	float point_size;
 };
 
+float
+float_rng(
+	float const f)
+{
+	return (as_float(as_int(f) & 0x007fffff | 0x40000000) - 3.0f + 1.0f)/2.0f;
+}
+
 float4 const
 new_position_randomized(
 	float4 const borders,
@@ -20,9 +27,15 @@ new_position_randomized(
 {
 	float4 result;
 
-	result.x = as_float(((0x7f-2) << 23) + (as_int(f.x + f.z) & 0xffffff));
-	result.y = borders.y / 2.0f;
-	result.z = as_float(((0x7f-2) << 23) + (as_int(f.x + f.z + f.y) & 0xffffff));
+
+	result.x = 
+		float_rng((f.x + f.z) / f.y);
+	result.z = 
+		float_rng(f.x / f.z + f.y);
+
+	result.y = 
+		// 1/5.0f + float_rng(f.x - f.z - f.y) / 2.0f;
+		(result.x + (1.0f - result.x) * float_rng(f.x - f.z - f.y))/2.0f;
 
 	return
 		result * borders;
@@ -52,6 +65,13 @@ advect(
 			(int)floor(current_position.x),
 			(int)floor(current_position.y),
 			(int)floor(current_position.z));
+
+	float4 cube_size_vector = 
+		(float4)(
+				cube_size,
+				cube_size,
+				cube_size,
+				0.0f);
 
 	if(any(lefttopback_position < (int3)(0)) || any(lefttopback_position >= (int3)(cube_size-1)))
 	{
@@ -95,11 +115,7 @@ advect(
 
 		positions[get_global_id(0)] =
 			new_position_randomized(
-				(float4)(
-					get_global_size(0),
-					get_global_size(1),
-					get_global_size(2),
-					0.0f),
+				cube_size_vector,
 				positions[get_global_id(0)]);
 			//starting_position;
 			//particles[max(0,(int)(current_position.x + current_position.y + current_position.z) % particle_count)].starting_position;
@@ -110,15 +126,8 @@ advect(
 	{
 		positions[get_global_id(0)] =
 			new_position_randomized(
-				(float4)(
-					get_global_size(0),
-					get_global_size(1),
-					get_global_size(2),
-					0.0f),
+				cube_size_vector,
 				positions[get_global_id(0)]);
-		/*
-			starting_position;
-			*/
 		return;
 	}
 
