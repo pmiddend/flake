@@ -13,6 +13,21 @@ struct __attribute__((packed)) vertex
 	float point_size;
 };
 
+float4 const
+new_position_randomized(
+	float4 const borders,
+	float4 const f)
+{
+	float4 result;
+
+	result.x = as_float(((0x7f-2) << 23) + (as_int(f.x + f.z) & 0xffffff));
+	result.y = borders.y / 2.0f;
+	result.z = as_float(((0x7f-2) << 23) + (as_int(f.x + f.z + f.y) & 0xffffff));
+
+	return
+		result * borders;
+}
+
 kernel void
 advect(
 	/* 0 */int const cube_size,
@@ -79,7 +94,14 @@ advect(
 		}
 
 		positions[get_global_id(0)] =
-			starting_position;
+			new_position_randomized(
+				(float4)(
+					get_global_size(0),
+					get_global_size(1),
+					get_global_size(2),
+					0.0f),
+				positions[get_global_id(0)]);
+			//starting_position;
 			//particles[max(0,(int)(current_position.x + current_position.y + current_position.z) % particle_count)].starting_position;
 		return;
 	}
@@ -87,7 +109,16 @@ advect(
 	if(lefttopback_position.y > 1 && boundary[FLAKE_VOLUME_AT(cube_size,lefttopback_position)] > 0.2f)
 	{
 		positions[get_global_id(0)] =
+			new_position_randomized(
+				(float4)(
+					get_global_size(0),
+					get_global_size(1),
+					get_global_size(2),
+					0.0f),
+				positions[get_global_id(0)]);
+		/*
 			starting_position;
+			*/
 		return;
 	}
 
