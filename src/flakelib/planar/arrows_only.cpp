@@ -51,7 +51,7 @@ flakelib::planar::arrows_only::arrows_only(
 			sge::parse::json::find_and_convert_member<sge::font::size_type>(
 				_config_file,
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("font-size")))),
+					FCPPT_TEXT("visualization/monitor-font-size")))),
 		monitor::font_color(
 			sge::image::colors::black())),
 	planar_converter_(
@@ -78,12 +78,12 @@ flakelib::planar::arrows_only::arrows_only(
 			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
 				_config_file,
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("arrow-scale")))),
+					FCPPT_TEXT("visualization/monitor-arrow-scale")))),
 		monitor::grid_scale(
 			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
 				_config_file,
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("grid-scale")))),
+					FCPPT_TEXT("visualization/monitor-arrow-grid-scale")))),
 		sge::renderer::texture::create_planar_from_view(
 			renderer_,
 			_boundary.get(),

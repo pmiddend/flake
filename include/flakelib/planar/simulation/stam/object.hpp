@@ -10,19 +10,20 @@
 #include <flakelib/planar/simulation/base.hpp>
 #include <flakelib/planar/simulation/stam/backward_advected.hpp>
 #include <flakelib/planar/simulation/stam/forward_advected.hpp>
+#include <flakelib/planar/simulation/stam/external_force_magnitude.hpp>
 #include <flakelib/planar/simulation/stam/pressure.hpp>
 #include <flakelib/planar/simulation/stam/rhs.hpp>
 #include <flakelib/planar/simulation/stam/solution.hpp>
 #include <flakelib/planar/simulation/stam/vector_field.hpp>
 #include <flakelib/planar/simulation/stam/velocity.hpp>
 #include <flakelib/planar/simulation/stam/gravity_magnitude.hpp>
+#include <flakelib/planar/simulation/stam/profiling_enabled.hpp>
 #include <flakelib/profiler/object.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/program/object.hpp>
-#include <sge/parse/json/object_fwd.hpp>
 #include <fcppt/unique_ptr.hpp>
 
 
@@ -39,8 +40,6 @@ namespace stam
 
 It displays the resulting vector field at the left (with the boundary in the
 background), as well as helper images at the right.
-
-Parameters are given to the class via a json object.
 */
 class object
 :
@@ -53,11 +52,13 @@ public:
 	object(
 		sge::opencl::command_queue::object &,
 		flakelib::planar::boundary_view const &,
-		sge::parse::json::object const &,
 		flakelib::build_options const &,
 		buffer_pool::object &,
 		utility::object &,
-		planar::laplace_solver::base &);
+		planar::laplace_solver::base &,
+		stam::external_force_magnitude const &,
+		stam::gravity_magnitude const &,
+		stam::profiling_enabled const &);
 
 	// @override
 	buffer::planar_view<cl_float2> const
@@ -106,7 +107,6 @@ private:
 	planar::laplace_solver::base &laplace_solver_;
 	cl_float const external_force_magnitude_;
 	cl_float const gravity_magnitude_;
-	cl_float const grid_scale_;
 	bool const profiling_enabled_;
 	sge::opencl::program::object main_program_;
 	sge::opencl::kernel::object advect_kernel_;

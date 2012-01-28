@@ -118,8 +118,6 @@ try
 		cache,
 		opencl_system.command_queue(),
 		global_build_options,
-		flakelib::planar::laplace_solver::grid_scale(
-			1.0f),
 		flakelib::planar::laplace_solver::iterations(
 			5*15));
 
@@ -133,8 +131,6 @@ try
 		opencl_system.command_queue(),
 		global_build_options,
 		jacobi_solver,
-		flakelib::planar::laplace_solver::grid_scale(
-			1.0f),
 		flakelib::planar::laplace_solver::termination_size(
 			64),
 		flakelib::planar::laplace_solver::debug_output(

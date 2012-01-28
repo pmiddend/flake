@@ -1,50 +1,69 @@
 {
 	"window-size" : [1024,768],
-	"arrow-visualization" :
+	"planar-framework-test" :
 	{
-		"arrow-scale" : 1.0,
-		"density-splat-radius" : 4,
-		"pressure-scale" : 1.00,
-		"velocity-magnitude-scale" : 0.2,
-		"gravity-magnitude" : 0.1,
-		"divergence-scale" : 100.00,
-		"residual-scale" : 1.0,
-		"grid-position" : [10.0,10.0],
-		"grid-scale" : 1.8,
-		"border-size" : 2,
-		"font-size" : 20
+		"boundary-file" : "256/zagged.png",
+		"visualization" :
+		{
+			"monitor-font-size" : 20,
+			"monitor-arrow-scale" : 1.0,
+			"monitor-arrow-grid-scale" : 1.5,
+			"master-and-slave-padding" : 3,
+			"child-size-denominator" : 2,
+			"scales" :
+			{
+				"pressure" : 1.0,
+				"velocity-magnitude" : 0.2,
+				"divergence" : 100.0,
+				"residual" : 1.0
+			}
+		},
+		"simulation" :
+		{
+			"profiling-enabled" : true,
+			"external-force-magnitude" : 7.0,
+			"gravity-magnitude" : 0.0,
+			"solver" :
+			{
+				"type" : "jacobi",
+				"iterations" : 51
+			}
+		},
+		"density-splat-radius" : 4
 	},
 	"arrows-only-test" :
 	{
-		"profiling" : true,
-		"external-force-magnitude" : 7.0,
-		"gravity-magnitude" : 0.0,
-		"grid-scale" : 1.0,
-		"boundary-file" : "boundary_circle_256.png"
-	},
-	"stam-test" :
-	{
-		"profiling" : true,
-		"external-force-magnitude" : 7.0,
-		"gravity-magnitude" : 0.0,
-		"grid-scale" : 1.0,
-		"boundary-file" : "zagged_256.png"
+		"simulation" :
+		{
+			"profiling-enabled" : true,
+			"external-force-magnitude" : 7.0,
+			"gravity-magnitude" : 0.0,
+			"solver" :
+			{
+				"type" : "jacobi",
+				"iterations" : 51
+			}
+		},
+		"visualization" :
+		{
+			"monitor-font-size" : 20,
+			"monitor-arrow-scale" : 1.0,
+			"monitor-arrow-grid-scale" : 1.5
+		},
+		"boundary-file" : "256/circle.png"
 	},
 	"simulation-solver" :
 	{
 		"type" : "jacobi",
-		"grid-scale" : 1.0,
 		"iterations" : 51
 	},
 	"simulation-solver-mg" :
 	{
 		"type" : "multigrid",
-		"grid-scale" : 1.0,
 		"termination-size" : 64,
 		"inner-solver" :
 		{
 			"type" : "jacobi",
-			"grid-scale" : 1.0,
 			"iterations" : 5
 		}
 	},

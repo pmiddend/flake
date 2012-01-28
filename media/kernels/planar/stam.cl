@@ -14,8 +14,7 @@ advect(
 	global float2 *output,
 	global float const *boundary,
 	int const buffer_width,
-	float const dt,
-	float const grid_scale)
+	float const dt)
 {
 	int2 const position =
 		(int2)(
@@ -41,7 +40,6 @@ advect(
 	float2 const advected_vector =
 		convert_float2(position) -
 		dt *
-		(1.0f / grid_scale) *
 		current_velocity;
 
 	int2 advected_lefttop =
@@ -222,8 +220,7 @@ divergence(
 	global float2 const *input,
 	global float *output,
 	global float const *boundary,
-	int const buffer_width,
-	float const grid_scale)
+	int const buffer_width)
 {
 	int2 const currentpos =
 		(int2)(
@@ -269,7 +266,7 @@ divergence(
 
 	output[current_index] =
 //		((right.x - left.x) + (top.y - bottom.y)) / (2.0f * grid_scale);
-		((right.x - left.x) + (bottom.y - top.y)) / (2.0f * grid_scale);
+		((right.x - left.x) + (bottom.y - top.y)) / 2.0f;
 }
 
 // Calculate the gradient of p and calculate
@@ -279,8 +276,7 @@ gradient(
 	/* 0 */global float const *p,
 	/* 1 */global float const *boundary,
 	/* 2 */global float2 *output,
-	/* 3 */int const buffer_width,
-	/* 4 */float const grid_scale)
+	/* 3 */int const buffer_width)
 {
 	int2 const currentpos =
 		(int2)(
@@ -337,7 +333,7 @@ gradient(
 		bottom = center;
 
 	float2 const pressure_gradient =
-		10.0f * (0.5f / grid_scale) *
+		10.0f * 0.5f *
 			(float2)(
 				right-left,
 				bottom-top);
@@ -350,11 +346,10 @@ gradient(
 kernel void
 gradient_and_subtract(
 	/* 0 */global float const *p,
-	/* 1 */float const grid_scale,
-	/* 2 */global float2 const *w,
-	/* 3 */global float const *boundary,
-	/* 4 */global float2 *output,
-	/* 5 */int const buffer_width)
+	/* 1 */global float2 const *w,
+	/* 2 */global float const *boundary,
+	/* 3 */global float2 *output,
+	/* 4 */int const buffer_width)
 {
 	int2 const currentpos =
 		(int2)(
@@ -430,7 +425,7 @@ gradient_and_subtract(
 		w[current_index];
 
 	float2 const pressure_gradient =
-		(0.5f / grid_scale) *
+		0.5f *
 			(float2)(
 				right-left,
 				bottom-top);
@@ -447,8 +442,7 @@ laplacian_residual_absolute_value(
 	/* 1 */global float const *boundary,
 	/* 2 */global float const *from,
 	/* 3 */global float *to,
-	/* 4 */float const grid_scale,
-	/* 5 */int const buffer_width)
+	/* 4 */int const buffer_width)
 {
 	int2 const currentpos =
 		(int2)(
@@ -495,7 +489,7 @@ laplacian_residual_absolute_value(
 
 	float const
 		laplace =
-			(left + right + top + bottom - 4.0f * center) / (grid_scale * grid_scale),
+			left + right + top + bottom - 4.0f * center,
 		rhs_value =
 			rhs[current_index];
 

@@ -28,13 +28,6 @@ flakelib::planar::laplace_solver::dynamic_factory::dynamic_factory(
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("type")));
 
-	// This is an attribute common to all solvers, so store it here
-	planar::laplace_solver::grid_scale::value_type const grid_scale =
-		sge::parse::json::find_and_convert_member<planar::laplace_solver::grid_scale::value_type>(
-			_config_file,
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("grid-scale")));
-
 	if(type == FCPPT_TEXT("multigrid"))
 	{
 		sge::parse::json::object const &inner_json =
@@ -66,8 +59,6 @@ flakelib::planar::laplace_solver::dynamic_factory::dynamic_factory(
 				_build_options,
 				fcppt::ref(
 					inner_factory_->value()),
-				planar::laplace_solver::grid_scale(
-					grid_scale),
 				planar::laplace_solver::termination_size(
 					sge::parse::json::find_and_convert_member<planar::laplace_solver::termination_size::value_type>(
 						_config_file,
@@ -85,8 +76,6 @@ flakelib::planar::laplace_solver::dynamic_factory::dynamic_factory(
 				fcppt::ref(
 					_command_queue),
 				_build_options,
-				planar::laplace_solver::grid_scale(
-					grid_scale),
 				planar::laplace_solver::iterations(
 					sge::parse::json::find_and_convert_member<planar::laplace_solver::iterations::value_type>(
 						_config_file,

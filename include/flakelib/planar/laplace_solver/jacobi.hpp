@@ -4,7 +4,6 @@
 #include <flakelib/build_options.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/planar/laplace_solver/base.hpp>
-#include <flakelib/planar/laplace_solver/grid_scale.hpp>
 #include <flakelib/planar/laplace_solver/iterations.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
@@ -30,7 +29,6 @@ public:
 		flakelib::buffer_pool::object &,
 		sge::opencl::command_queue::object &,
 		flakelib::build_options const &,
-		planar::laplace_solver::grid_scale const &,
 		planar::laplace_solver::iterations const &);
 
 	void
@@ -47,7 +45,6 @@ public:
 private:
 	flakelib::buffer_pool::object &buffer_cache_;
 	sge::opencl::command_queue::object &command_queue_;
-	grid_scale::value_type const grid_scale_;
 	iterations::value_type const iterations_;
 	sge::opencl::program::object jacobi_program_;
 	sge::opencl::kernel::object jacobi_kernel_;

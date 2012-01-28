@@ -6,8 +6,7 @@ advect(
 	/* 1 */global float *output,
 	/* 2 */global float2 const *velocity,
 	/* 3 */int const buffer_width,
-	/* 4 */float const dt,
-	/* 5 */float const grid_scale)
+	/* 4 */float const dt)
 {
 	int2 const position =
 		(int2)(
@@ -25,7 +24,6 @@ advect(
 	float2 const advected_vector =
 		convert_float2(position) -
 		dt *
-		(1.0f / grid_scale) *
 		current_velocity;
 
 	int2 advected_lefttop =

@@ -7,7 +7,6 @@
 #include <flakelib/planar/laplace_solver/base.hpp>
 #include <flakelib/planar/laplace_solver/debug_output.hpp>
 #include <flakelib/planar/laplace_solver/from.hpp>
-#include <flakelib/planar/laplace_solver/grid_scale.hpp>
 #include <flakelib/planar/laplace_solver/initial_guess.hpp>
 #include <flakelib/planar/laplace_solver/iterations.hpp>
 #include <flakelib/planar/laplace_solver/rhs.hpp>
@@ -43,7 +42,6 @@ public:
 		sge::opencl::command_queue::object &,
 		flakelib::build_options const &,
 		planar::laplace_solver::base &inner_solver,
-		planar::laplace_solver::grid_scale const &,
 		planar::laplace_solver::termination_size const &,
 		planar::laplace_solver::debug_output const &);
 
@@ -67,7 +65,6 @@ private:
 	flakelib::utility::object &utility_;
 	sge::opencl::command_queue::object &command_queue_;
 	planar::laplace_solver::base &inner_solver_;
-	grid_scale::value_type const grid_scale_;
 	termination_size::value_type const termination_size_;
 	bool const debug_output_;
 	sge::opencl::program::object main_program_;

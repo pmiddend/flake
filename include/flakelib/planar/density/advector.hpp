@@ -6,7 +6,6 @@
 #include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/buffer_pool/planar_lock.hpp>
 #include <flakelib/planar/density/grid_dimensions.hpp>
-#include <flakelib/planar/density/grid_scale.hpp>
 #include <flakelib/planar/density/velocity_image.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
@@ -35,8 +34,7 @@ public:
 		buffer_pool::object &,
 		utility::object &,
 		flakelib::build_options const &,
-		density::grid_dimensions const &,
-		density::grid_scale const &);
+		density::grid_dimensions const &);
 
 	void
 	update(
@@ -60,7 +58,6 @@ private:
 
 	sge::opencl::command_queue::object &command_queue_;
 	buffer_pool::object &buffer_pool_;
-	cl_float const grid_scale_;
 	sge::opencl::program::object program_;
 	sge::opencl::kernel::object apply_sources_kernel_;
 	sge::opencl::kernel::object advect_kernel_;

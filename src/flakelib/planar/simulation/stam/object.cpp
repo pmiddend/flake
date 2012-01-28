@@ -14,8 +14,6 @@
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <sge/opencl/program/source_string_sequence.hpp>
-#include <sge/parse/json/find_and_convert_member.hpp>
-#include <sge/parse/json/string_to_path.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/optional.hpp>
 #include <fcppt/ref.hpp>
@@ -40,11 +38,13 @@
 flakelib::planar::simulation::stam::object::object(
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::planar::boundary_view const &_boundary_image,
-	sge::parse::json::object const &_config_file,
 	flakelib::build_options const &_build_options,
 	buffer_pool::object &_buffer_cache,
 	utility::object &_utility,
-	planar::laplace_solver::base &_laplace_solver)
+	planar::laplace_solver::base &_laplace_solver,
+	stam::external_force_magnitude const &_external_force_magnitude,
+	stam::gravity_magnitude const &_gravity_magnitude,
+	stam::profiling_enabled const &_profiling_enabled)
 :
 	command_queue_(
 		_command_queue),
@@ -55,25 +55,11 @@ flakelib::planar::simulation::stam::object::object(
 	laplace_solver_(
 		_laplace_solver),
 	external_force_magnitude_(
-		sge::parse::json::find_and_convert_member<cl_float>(
-			_config_file,
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("external-force-magnitude")))),
+		_external_force_magnitude.get()),
 	gravity_magnitude_(
-		sge::parse::json::find_and_convert_member<cl_float>(
-			_config_file,
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("gravity-magnitude")))),
-	grid_scale_(
-		sge::parse::json::find_and_convert_member<cl_float>(
-			_config_file,
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("grid-scale")))),
+		_gravity_magnitude.get()),
 	profiling_enabled_(
-		sge::parse::json::find_and_convert_member<bool>(
-			_config_file,
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("profiling")))),
+		_profiling_enabled.get()),
 	main_program_(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
@@ -369,11 +355,6 @@ flakelib::planar::simulation::stam::object::advect(
 		static_cast<cl_float>(
 			dt.count()));
 
-	advect_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			5),
-		grid_scale_);
-
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		advect_kernel_,
@@ -491,11 +472,6 @@ flakelib::planar::simulation::stam::object::divergence(
 		static_cast<cl_int>(
 			from.size()[0]));
 
-	divergence_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			4),
-		grid_scale_);
-
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		divergence_kernel_,
@@ -567,30 +543,25 @@ flakelib::planar::simulation::stam::object::gradient_and_subtract(
 			0),
 		_pressure.get().buffer());
 
-	gradient_and_subtract_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			1),
-		grid_scale_);
-
 	// Temporary vector field (from which the divergence was calculated)
 	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			2),
+			1),
 		_vector_field.get().buffer());
 
 	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			3),
+			2),
 		boundary_image_.value().buffer());
 
 	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			4),
+			3),
 		result->value().buffer());
 
 	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			5),
+			4),
 		static_cast<cl_int>(
 			_vector_field.get().size()[0]));
 
@@ -643,11 +614,6 @@ flakelib::planar::simulation::stam::object::laplacian_residual(
 	laplacian_residual_absolute_value_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			4),
-		grid_scale_);
-
-	laplacian_residual_absolute_value_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			5),
 		static_cast<cl_int>(
 			_divergence.get().size()[0]));
 
@@ -716,11 +682,6 @@ flakelib::planar::simulation::stam::object::gradient(
 			3),
 		static_cast<cl_int>(
 			boundary_image_.value().size()[0]));
-
-	gradient_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			4),
-		grid_scale_);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,

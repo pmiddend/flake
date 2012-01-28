@@ -75,6 +75,7 @@ private:
 	monitor::parent monitor_parent_;
 	monitor::planar_converter planar_converter_;
 	rucksack::widget::viewport_adaptor viewport_widget_;
+	rucksack::widget::master_and_slaves master_and_slave_;
 	rucksack::widget::box::base master_box_;
 	monitor::planar_arrows velocity_arrows_;
 	density::advector density_advector_;

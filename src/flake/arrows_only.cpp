@@ -269,14 +269,17 @@ try
 				flakelib::media_path_from_string(
 					FCPPT_TEXT("kernels")))));
 
+	sge::parse::json::path const json_prefix(
+		FCPPT_TEXT("arrows-only-test"));
+
 	sge::image2d::file_ptr boundary_image =
 		sys.image_system().load(
 			flakelib::media_path()
-				/ FCPPT_TEXT("images")
+				/ FCPPT_TEXT("boundaries")
 				/
 				sge::parse::json::find_and_convert_member<fcppt::string>(
 					config_file,
-					sge::parse::json::string_to_path(FCPPT_TEXT("arrows-only-test/boundary-file"))));
+					json_prefix / FCPPT_TEXT("boundary-file")));
 
 	flakelib::buffer_pool::object scalar_pool(
 		opencl_system.context());
@@ -290,8 +293,7 @@ try
 		opencl_system.command_queue(),
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
 			config_file,
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("simulation-solver"))),
+			json_prefix / FCPPT_TEXT("simulation") / FCPPT_TEXT("solver")),
 		global_build_options,
 		utility_object);
 
@@ -299,14 +301,22 @@ try
 		opencl_system.command_queue(),
 		flakelib::planar::boundary_view(
 			boundary_image->view()),
-		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
-			config_file,
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("arrows-only-test"))),
 		global_build_options,
 		scalar_pool,
 		utility_object,
-		configurable_solver.value());
+		configurable_solver.value(),
+		flakelib::planar::simulation::stam::external_force_magnitude(
+			sge::parse::json::find_and_convert_member<cl_float>(
+				config_file,
+				json_prefix / FCPPT_TEXT("simulation") / FCPPT_TEXT("external-force-magnitude"))),
+		flakelib::planar::simulation::stam::gravity_magnitude(
+			sge::parse::json::find_and_convert_member<cl_float>(
+				config_file,
+				json_prefix / FCPPT_TEXT("simulation") / FCPPT_TEXT("gravity-magnitude"))),
+		flakelib::planar::simulation::stam::profiling_enabled(
+			sge::parse::json::find_and_convert_member<bool>(
+				config_file,
+				json_prefix / FCPPT_TEXT("simulation") / FCPPT_TEXT("profiling-enabled"))));
 
 	fcppt::signal::scoped_connection const stats_cb(
 		console_object.insert(
@@ -333,8 +343,7 @@ try
 			boundary_image->view()),
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
 			config_file,
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("arrow-visualization"))));
+			json_prefix));
 
 	bool running =
 		true;

@@ -32,7 +32,6 @@ flakelib::planar::laplace_solver::multigrid::multigrid(
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::build_options const &_build_options,
 	planar::laplace_solver::base &_inner_solver,
-	planar::laplace_solver::grid_scale const &_grid_scale,
 	planar::laplace_solver::termination_size const &_termination_size,
 	planar::laplace_solver::debug_output const &_debug_output)
 :
@@ -44,8 +43,6 @@ flakelib::planar::laplace_solver::multigrid::multigrid(
 		_command_queue),
 	inner_solver_(
 		_inner_solver),
-	grid_scale_(
-		_grid_scale.get()),
 	termination_size_(
 		_termination_size.get()),
 	debug_output_(
@@ -363,11 +360,6 @@ flakelib::planar::laplace_solver::multigrid::laplacian_residual(
 			4),
 		static_cast<cl_int>(
 			_rhs.get().size()[0]));
-
-	laplacian_residual_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			5),
-		grid_scale_);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,

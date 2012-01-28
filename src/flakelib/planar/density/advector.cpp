@@ -21,15 +21,12 @@ flakelib::planar::density::advector::advector(
 	buffer_pool::object &_buffer_pool,
 	utility::object &_utility,
 	flakelib::build_options const &_build_options,
-	density::grid_dimensions const &_grid_dimensions,
-	density::grid_scale const &_grid_scale)
+	density::grid_dimensions const &_grid_dimensions)
 :
 	command_queue_(
 		_command_queue),
 	buffer_pool_(
 		_buffer_pool),
-	grid_scale_(
-		_grid_scale.get()),
 	program_(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
@@ -147,11 +144,6 @@ flakelib::planar::density::advector::advect(
 			4),
 		static_cast<cl_float>(
 			_dt.count()));
-
-	advect_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			5),
-		grid_scale_);
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,

@@ -54,7 +54,7 @@ flakelib::planar::framework::framework(
 			sge::parse::json::find_and_convert_member<sge::font::size_type>(
 				_config_file,
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("font-size")))),
+					FCPPT_TEXT("visualization/monitor-font-size")))),
 		monitor::font_color(
 			sge::image::colors::black())),
 	planar_converter_(
@@ -63,8 +63,14 @@ flakelib::planar::framework::framework(
 	viewport_widget_(
 		_viewport_manager,
 		_renderer),
+	master_and_slave_(
+		rucksack::padding(
+			sge::parse::json::find_and_convert_member<rucksack::scalar>(
+				_config_file,
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("visualization/master-and-slave-padding"))))),
 	master_box_(
-		rucksack::axis::x,
+		rucksack::axis::y,
 		rucksack::aspect(
 			1,
 			1)),
@@ -81,12 +87,12 @@ flakelib::planar::framework::framework(
 			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
 				_config_file,
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("arrow-scale")))),
+					FCPPT_TEXT("visualization/monitor-arrow-scale")))),
 		monitor::grid_scale(
 			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
 				_config_file,
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("grid-scale")))),
+					FCPPT_TEXT("visualization/monitor-arrow-grid-scale")))),
 		sge::renderer::texture::create_planar_from_view(
 			renderer_,
 			_boundary.get(),
@@ -101,12 +107,7 @@ flakelib::planar::framework::framework(
 		density::grid_dimensions(
 			fcppt::math::dim::structure_cast<density::grid_dimensions::value_type>(
 				sge::image2d::view::size(
-					_boundary.get()))),
-		density::grid_scale(
-			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
-				_config_file,
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("grid-scale"))))),
+					_boundary.get())))),
 	density_cursor_splatter_(
 		_command_queue,
 		density::source_image(
@@ -134,6 +135,9 @@ flakelib::planar::framework::framework(
 	additional_data_()
 {
 	viewport_widget_.child(
+		master_and_slave_);
+
+	master_and_slave_.master_pane(
 		master_box_);
 
 	master_box_.push_back_child(
@@ -144,7 +148,11 @@ flakelib::planar::framework::framework(
 		density_monitor_.monitor().widget(),
 		rucksack::alignment::center);
 
-	/*
+	rucksack::scalar const child_size_denominator =
+		sge::parse::json::find_and_convert_member<rucksack::scalar>(
+			_config_file,
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("visualization/child-size-denominator")));
 	for(
 		flakelib::planar::additional_scalar_data::const_iterator it =
 			simulation_.additional_scalar_data().begin();
@@ -165,19 +173,19 @@ flakelib::planar::framework::framework(
 							_boundary.get()))),
 				monitor::rect::dim(
 					static_cast<monitor::scalar>(
-						velocity_arrows_.widget().axis_policy().x().minimum_size()/static_cast<rucksack::scalar>(4)),
+						velocity_arrows_.widget().axis_policy().x().minimum_size()/child_size_denominator),
 					static_cast<monitor::scalar>(
-						velocity_arrows_.widget().axis_policy().y().minimum_size()/static_cast<rucksack::scalar>(4))),
+						velocity_arrows_.widget().axis_policy().y().minimum_size()/child_size_denominator)),
 				monitor::scaling_factor(
 					sge::parse::json::find_and_convert_member<monitor::scalar>(
 						_config_file,
-						sge::parse::json::string_to_path(
-							it->key()+FCPPT_TEXT("-scale"))))));
+						sge::parse::json::path(FCPPT_TEXT("visualization"))
+							/ FCPPT_TEXT("scales")
+							/ it->key()))));
 
-		master_and_slaves_.push_back_child(
+		master_and_slave_.push_back_child(
 			additional_data_.find(it->key())->second->widget());
 	}
-	*/
 }
 
 void
@@ -203,7 +211,6 @@ flakelib::planar::framework::update(
 		monitor::arrow_scale(
 			velocity_arrows_.arrow_scale()));
 
-	/*
 	for(
 		flakelib::planar::additional_scalar_data::const_iterator it =
 			simulation_.additional_scalar_data().begin();
@@ -225,7 +232,6 @@ flakelib::planar::framework::update(
 					it2->second->scaling_factor()));
 		}
 	}
-	*/
 
 	monitor_parent_.update();
 }

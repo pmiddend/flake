@@ -20,15 +20,12 @@ flakelib::planar::laplace_solver::jacobi::jacobi(
 	flakelib::buffer_pool::object &_buffer_cache,
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::build_options const &_build_options,
-	planar::laplace_solver::grid_scale const &_grid_scale,
 	planar::laplace_solver::iterations const &_iterations)
 :
 	buffer_cache_(
 		_buffer_cache),
 	command_queue_(
 		_command_queue),
-	grid_scale_(
-		_grid_scale.get()),
 	iterations_(
 		_iterations.get()),
 	jacobi_program_(
@@ -70,36 +67,23 @@ flakelib::planar::laplace_solver::jacobi::solve(
 		buffer_cache_,
 		_rhs.get().size());
 
-	// Alpha
-	jacobi_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
-		-(grid_scale_ * grid_scale_));
-
-	// Beta (rbeta)
-	jacobi_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			1),
-		static_cast<cl_float>(
-			1.0f/4.0f));
-
 	// buffer width
 	jacobi_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			2),
+			0),
 		static_cast<cl_int>(
 			_rhs.get().size()[0]));
 
 	// rhs
 	jacobi_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			3),
+			1),
 		_rhs.get().buffer());
 
 	// boundary
 	jacobi_kernel_.argument(
 		sge::opencl::kernel::argument_index(
-			4),
+			2),
 		_boundary.get().buffer());
 
 	sge::opencl::memory_object::buffer
@@ -113,13 +97,13 @@ flakelib::planar::laplace_solver::jacobi::solve(
 		// x
 		jacobi_kernel_.argument(
 			sge::opencl::kernel::argument_index(
-				5),
+				3),
 			*current_source);
 
 		// output
 		jacobi_kernel_.argument(
 			sge::opencl::kernel::argument_index(
-				6),
+				4),
 			*current_dest);
 
 		if(i == 0)

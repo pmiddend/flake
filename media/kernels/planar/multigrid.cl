@@ -136,8 +136,7 @@ laplacian_residual(
 	global float const *boundary,
 	global float const *from,
 	global float *to,
-	int const buffer_width,
-	float const grid_scale)
+	int const buffer_width)
 {
 	int2 const currentpos =
 		(int2)(
@@ -184,9 +183,7 @@ laplacian_residual(
 
 	float const
 		laplace =
-			native_divide(
-				left + right + top + bottom - 4.0f * center,
-				grid_scale * grid_scale),
+			left + right + top + bottom - 4.0f * center,
 		rhs_value =
 			rhs[current_index];
 
