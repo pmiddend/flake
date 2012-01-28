@@ -44,7 +44,8 @@ flakelib::planar::simulation::stam::object::object(
 	planar::laplace_solver::base &_laplace_solver,
 	stam::external_force_magnitude const &_external_force_magnitude,
 	stam::gravity_magnitude const &_gravity_magnitude,
-	stam::profiling_enabled const &_profiling_enabled)
+	stam::profiling_enabled const &_profiling_enabled,
+	stam::use_maccormack const &_use_maccormack)
 :
 	command_queue_(
 		_command_queue),
@@ -60,6 +61,8 @@ flakelib::planar::simulation::stam::object::object(
 		_gravity_magnitude.get()),
 	profiling_enabled_(
 		_profiling_enabled.get()),
+	use_maccormack_(
+		_use_maccormack.get()),
 	main_program_(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
@@ -243,31 +246,41 @@ flakelib::planar::simulation::stam::object::update(
 		velocity_image_->value(),
 		dt);
 
-	unique_planar_float2_lock
-		forward_advected =
+	unique_planar_float2_lock advected;
+
+	if(use_maccormack_)
+	{
+		unique_planar_float2_lock
+			forward_advected =
+				this->advect(
+					velocity_image_->value(),
+					dt),
+			backward_advected =
+				this->advect(
+					forward_advected->value(),
+					-dt);
+
+		advected =
+			this->maccormack(
+				stam::forward_advected(
+					forward_advected->value()),
+				stam::backward_advected(
+					backward_advected->value()),
+				stam::velocity(
+					velocity_image_->value()),
+				dt);
+	}
+	else
+	{
+		advected =
 			this->advect(
 				velocity_image_->value(),
-				dt),
-		backward_advected =
-			this->advect(
-				forward_advected->value(),
-				-dt);
-
-	unique_planar_float2_lock advected =
-		this->maccormack(
-			stam::forward_advected(
-				forward_advected->value()),
-			stam::backward_advected(
-				backward_advected->value()),
-			stam::velocity(
-				velocity_image_->value()),
-			dt);
+				dt);
+	}
 
 	// The old version of the velocity is already advected (into the
 	// "advected" variable), we don't need it anymore.
 	velocity_image_.reset();
-	forward_advected.reset();
-	backward_advected.reset();
 
 	// We need the divergence only in solve, so we could discard it here,
 	// but we want to visualize it.

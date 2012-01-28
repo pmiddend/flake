@@ -18,6 +18,7 @@
 #include <flakelib/planar/simulation/stam/velocity.hpp>
 #include <flakelib/planar/simulation/stam/gravity_magnitude.hpp>
 #include <flakelib/planar/simulation/stam/profiling_enabled.hpp>
+#include <flakelib/planar/simulation/stam/use_maccormack.hpp>
 #include <flakelib/profiler/object.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
@@ -58,7 +59,8 @@ public:
 		planar::laplace_solver::base &,
 		stam::external_force_magnitude const &,
 		stam::gravity_magnitude const &,
-		stam::profiling_enabled const &);
+		stam::profiling_enabled const &,
+		stam::use_maccormack const &);
 
 	// @override
 	buffer::planar_view<cl_float2> const
@@ -108,6 +110,7 @@ private:
 	cl_float const external_force_magnitude_;
 	cl_float const gravity_magnitude_;
 	bool const profiling_enabled_;
+	bool const use_maccormack_;
 	sge::opencl::program::object main_program_;
 	sge::opencl::kernel::object advect_kernel_;
 	sge::opencl::kernel::object apply_external_forces_kernel_;

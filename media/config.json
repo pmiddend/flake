@@ -23,6 +23,7 @@
 			"profiling-enabled" : true,
 			"external-force-magnitude" : 7.0,
 			"gravity-magnitude" : 0.0,
+			"use-maccormack" : false,
 			"solver" :
 			{
 				"type" : "jacobi",
@@ -38,6 +39,7 @@
 			"profiling-enabled" : true,
 			"external-force-magnitude" : 7.0,
 			"gravity-magnitude" : 0.0,
+			"use-maccormack" : true,
 			"solver" :
 			{
 				"type" : "jacobi",

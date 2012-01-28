@@ -316,7 +316,11 @@ try
 		flakelib::planar::simulation::stam::profiling_enabled(
 			sge::parse::json::find_and_convert_member<bool>(
 				config_file,
-				json_prefix / FCPPT_TEXT("simulation") / FCPPT_TEXT("profiling-enabled"))));
+				json_prefix / FCPPT_TEXT("simulation") / FCPPT_TEXT("profiling-enabled"))),
+		flakelib::planar::simulation::stam::use_maccormack(
+			sge::parse::json::find_and_convert_member<bool>(
+				config_file,
+				json_prefix / FCPPT_TEXT("simulation") / FCPPT_TEXT("use-maccormack"))));
 
 	fcppt::signal::scoped_connection const stats_cb(
 		console_object.insert(
