@@ -42,8 +42,6 @@ flakelib::planar::simulation::stam::object::object(
 	buffer_pool::object &_buffer_cache,
 	utility::object &_utility,
 	planar::laplace_solver::base &_laplace_solver,
-	stam::external_force_magnitude const &_external_force_magnitude,
-	stam::gravity_magnitude const &_gravity_magnitude,
 	stam::profiling_enabled const &_profiling_enabled,
 	stam::use_maccormack const &_use_maccormack)
 :
@@ -55,10 +53,6 @@ flakelib::planar::simulation::stam::object::object(
 		_buffer_cache),
 	laplace_solver_(
 		_laplace_solver),
-	external_force_magnitude_(
-		_external_force_magnitude.get()),
-	gravity_magnitude_(
-		_gravity_magnitude.get()),
 	profiling_enabled_(
 		_profiling_enabled.get()),
 	use_maccormack_(
@@ -76,14 +70,6 @@ flakelib::planar::simulation::stam::object::object(
 		main_program_,
 		sge::opencl::kernel::name(
 			"advect")),
-	apply_external_forces_kernel_(
-		main_program_,
-		sge::opencl::kernel::name(
-			"apply_external_forces")),
-	apply_gravity_kernel_(
-		main_program_,
-		sge::opencl::kernel::name(
-			"apply_gravity")),
 	divergence_kernel_(
 		main_program_,
 		sge::opencl::kernel::name(
@@ -110,16 +96,6 @@ flakelib::planar::simulation::stam::object::object(
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	advection_profiler_(
 		FCPPT_TEXT("advection"),
-		profiler::optional_parent(
-			parent_profiler_),
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
-	external_forces_profiler_(
-		FCPPT_TEXT("apply_external_forces"),
-		profiler::optional_parent(
-			parent_profiler_),
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
-	gravity_profiler_(
-		FCPPT_TEXT("apply_gravity"),
 		profiler::optional_parent(
 			parent_profiler_),
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
@@ -238,13 +214,6 @@ flakelib::planar::simulation::stam::object::update(
 	profiler::scoped scoped_profiler(
 		parent_profiler_,
 		command_queue_);
-
-	this->apply_forces(
-		velocity_image_->value());
-
-	this->apply_gravity(
-		velocity_image_->value(),
-		dt);
 
 	unique_planar_float2_lock advected;
 
@@ -378,73 +347,6 @@ flakelib::planar::simulation::stam::object::advect(
 	return
 		fcppt::move(
 			result);
-}
-
-void
-flakelib::planar::simulation::stam::object::apply_forces(
-	planar_float2_view const &from)
-{
-	FCPPT_ASSERT_PRE(
-		from.size()[0] == from.size()[1]);
-
-	profiler::scoped scoped_profiler(
-		external_forces_profiler_,
-		command_queue_);
-
-	apply_external_forces_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
-		from.buffer());
-
-	apply_external_forces_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			1),
-		external_force_magnitude_);
-
-	apply_external_forces_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			2),
-		static_cast<cl_int>(
-			from.size()[0]));
-
-	sge::opencl::command_queue::enqueue_kernel(
-		command_queue_,
-		apply_external_forces_kernel_,
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(from.size()[0]).container());
-}
-
-void
-flakelib::planar::simulation::stam::object::apply_gravity(
-	planar_float2_view const &from,
-	flakelib::duration const &dt)
-{
-	profiler::scoped scoped_profiler(
-		gravity_profiler_,
-		command_queue_);
-
-	apply_gravity_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
-		from.buffer());
-
-	apply_gravity_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			1),
-		static_cast<cl_float>(
-			gravity_magnitude_));
-
-	apply_gravity_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			2),
-		static_cast<cl_float>(
-			dt.count()));
-
-	sge::opencl::command_queue::enqueue_kernel(
-		command_queue_,
-		apply_gravity_kernel_,
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(from.size().content()).container());
 }
 
 flakelib::planar::simulation::stam::object::unique_planar_float_lock

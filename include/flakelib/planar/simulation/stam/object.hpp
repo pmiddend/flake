@@ -10,13 +10,11 @@
 #include <flakelib/planar/simulation/base.hpp>
 #include <flakelib/planar/simulation/stam/backward_advected.hpp>
 #include <flakelib/planar/simulation/stam/forward_advected.hpp>
-#include <flakelib/planar/simulation/stam/external_force_magnitude.hpp>
 #include <flakelib/planar/simulation/stam/pressure.hpp>
 #include <flakelib/planar/simulation/stam/rhs.hpp>
 #include <flakelib/planar/simulation/stam/solution.hpp>
 #include <flakelib/planar/simulation/stam/vector_field.hpp>
 #include <flakelib/planar/simulation/stam/velocity.hpp>
-#include <flakelib/planar/simulation/stam/gravity_magnitude.hpp>
 #include <flakelib/planar/simulation/stam/profiling_enabled.hpp>
 #include <flakelib/planar/simulation/stam/use_maccormack.hpp>
 #include <flakelib/profiler/object.hpp>
@@ -57,8 +55,6 @@ public:
 		buffer_pool::object &,
 		utility::object &,
 		planar::laplace_solver::base &,
-		stam::external_force_magnitude const &,
-		stam::gravity_magnitude const &,
 		stam::profiling_enabled const &,
 		stam::use_maccormack const &);
 
@@ -107,14 +103,10 @@ private:
 	utility::object &utility_;
 	buffer_pool::object &buffer_cache_;
 	planar::laplace_solver::base &laplace_solver_;
-	cl_float const external_force_magnitude_;
-	cl_float const gravity_magnitude_;
 	bool const profiling_enabled_;
 	bool const use_maccormack_;
 	sge::opencl::program::object main_program_;
 	sge::opencl::kernel::object advect_kernel_;
-	sge::opencl::kernel::object apply_external_forces_kernel_;
-	sge::opencl::kernel::object apply_gravity_kernel_;
 	sge::opencl::kernel::object divergence_kernel_;
 	sge::opencl::kernel::object laplacian_residual_absolute_value_kernel_;
 	sge::opencl::kernel::object gradient_and_subtract_kernel_;
@@ -122,8 +114,6 @@ private:
 	sge::opencl::kernel::object maccormack_kernel_;
 	flakelib::profiler::object parent_profiler_;
 	flakelib::profiler::object advection_profiler_;
-	flakelib::profiler::object external_forces_profiler_;
-	flakelib::profiler::object gravity_profiler_;
 	flakelib::profiler::object divergence_profiler_;
 	flakelib::profiler::object project_profiler_;
 	flakelib::profiler::object solve_profiler_;
@@ -137,15 +127,6 @@ private:
 
 	unique_planar_float2_lock
 	advect(
-		planar_float2_view const &,
-		flakelib::duration const &);
-
-	void
-	apply_forces(
-		planar_float2_view const &);
-
-	void
-	apply_gravity(
 		planar_float2_view const &,
 		flakelib::duration const &);
 

@@ -103,7 +103,6 @@ SET(
 	src/flakelib/exception.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
-	src/flakelib/planar/arrows_only.cpp
 	src/flakelib/planar/density/advector.cpp
 	src/flakelib/planar/density/cursor_splatter.cpp
 	src/flakelib/planar/density/monitor_proxy.cpp
@@ -119,7 +118,9 @@ SET(
 	src/flakelib/planar/monitor/planar_converter.cpp
 	src/flakelib/planar/monitor/texture.cpp
 	src/flakelib/planar/simulation/base.cpp
+	src/flakelib/planar/simulation/stam/gravity_source.cpp
 	src/flakelib/planar/simulation/stam/object.cpp
+	src/flakelib/planar/simulation/stam/wind_source.cpp
 	src/flakelib/profiler/object.cpp
 	src/flakelib/profiler/scoped.cpp
 	src/flakelib/scoped_frame_limiter.cpp
@@ -175,28 +176,6 @@ TARGET_LINK_LIBRARIES(
 INSTALL(
 	TARGETS
 	planar_framework
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# planar_framework end
-
-# planar_framework begin
-ADD_EXECUTABLE(
-	arrows_only
-	WIN32
-	src/flake/arrows_only.cpp)
-
-TARGET_LINK_LIBRARIES(
-	arrows_only
-	flakelib
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Rucksack_LIBRARIES}
-	${Boost_LIBRARIES})
-
-INSTALL(
-	TARGETS
-	arrows_only
 	DESTINATION
 	${INSTALL_BINARY_DIR})
 # planar_framework end

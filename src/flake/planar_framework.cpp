@@ -7,8 +7,6 @@
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/planar/framework.hpp>
-#include <flakelib/planar/laplace_solver/dynamic_factory.hpp>
-#include <flakelib/planar/simulation/stam/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/config/media_path.hpp>
 #include <sge/console/arg_list.hpp>
@@ -19,6 +17,7 @@
 #include <sge/console/sprite_object.hpp>
 #include <sge/console/sprite_parameters.hpp>
 #include <sge/console/callback/from_functor.hpp>
+#include <sge/sprite/object_impl.hpp>
 #include <sge/font/system.hpp>
 #include <sge/font/text/lit.hpp>
 #include <sge/image/capabilities_field.hpp>
@@ -103,15 +102,11 @@
 namespace
 {
 void
-update_simulation_and_visualization(
-	flakelib::planar::simulation::stam::object &_simulation,
-	flakelib::planar::framework &_visual,
+update_framework(
+	flakelib::planar::framework &_framework,
 	flakelib::duration const &_delta)
 {
-			_simulation.update(
-				_delta);
-
-			_visual.update(
+			_framework.update(
 				_delta);
 }
 
@@ -121,13 +116,6 @@ toggle_console_active(
 {
 	_console_gfx.active(
 		!_console_gfx.active());
-}
-
-void
-stats_console_callback(
-	flakelib::planar::simulation::stam::object const &_simulation)
-{
-	fcppt::io::cout() << _simulation.parent_profiler() << FCPPT_TEXT("\n");
 }
 }
 
@@ -267,59 +255,10 @@ try
 		opencl_system.command_queue(),
 		global_build_options);
 
-	flakelib::planar::laplace_solver::dynamic_factory configurable_solver(
-		scalar_pool,
-		opencl_system.command_queue(),
-		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
-			config_file,
-			json_prefix / FCPPT_TEXT("simulation") / FCPPT_TEXT("solver")),
-		global_build_options,
-		utility_object);
-
-	flakelib::planar::simulation::stam::object simulation(
-		opencl_system.command_queue(),
-		flakelib::planar::boundary_view(
-			boundary_image->view()),
-		global_build_options,
-		scalar_pool,
-		utility_object,
-		configurable_solver.value(),
-		flakelib::planar::simulation::stam::external_force_magnitude(
-			sge::parse::json::find_and_convert_member<cl_float>(
-				config_file,
-				json_prefix / FCPPT_TEXT("simulation") / FCPPT_TEXT("external-force-magnitude"))),
-		flakelib::planar::simulation::stam::gravity_magnitude(
-			sge::parse::json::find_and_convert_member<cl_float>(
-				config_file,
-				json_prefix / FCPPT_TEXT("simulation") / FCPPT_TEXT("gravity-magnitude"))),
-		flakelib::planar::simulation::stam::profiling_enabled(
-			sge::parse::json::find_and_convert_member<bool>(
-				config_file,
-				json_prefix / FCPPT_TEXT("simulation") / FCPPT_TEXT("profiling-enabled"))),
-		flakelib::planar::simulation::stam::use_maccormack(
-			sge::parse::json::find_and_convert_member<bool>(
-				config_file,
-				json_prefix / FCPPT_TEXT("simulation") / FCPPT_TEXT("use-maccormack"))));
-
-	fcppt::signal::scoped_connection const stats_cb(
-		console_object.insert(
-			sge::console::callback::from_functor<void()>(
-				std::tr1::bind(
-					&stats_console_callback,
-					fcppt::cref(
-						simulation)),
-				sge::console::callback::name(
-					SGE_FONT_TEXT_LIT("stats")),
-				sge::console::callback::short_description(
-					SGE_FONT_TEXT_LIT("Usage: /stats")))
-				.long_description(
-					SGE_FONT_TEXT_LIT("Outputs simulation profiling statistics"))));
-
-	flakelib::planar::framework visualization(
+	flakelib::planar::framework framework(
 		sys.viewport_manager(),
 		sys.renderer(),
 		opencl_system.command_queue(),
-		simulation,
 		sys.font_system(),
 		global_build_options,
 		flakelib::planar::boundary_view(
@@ -346,11 +285,9 @@ try
 			sge::input::keyboard::action(
 				sge::input::keyboard::key_code::space,
 				std::tr1::bind(
-					&update_simulation_and_visualization,
+					&update_framework,
 					fcppt::ref(
-						simulation),
-					fcppt::ref(
-						visualization),
+						framework),
 					flakelib::duration(
 						1.00f)))));
 
@@ -362,10 +299,7 @@ try
 
 	sys.window_system().poll();
 
-	simulation.update(
-		flakelib::duration(0.0f));
-
-	visualization.update(
+	framework.update(
 		flakelib::duration(0.0f));
 
 	while(running)
@@ -377,10 +311,7 @@ try
 				delta_timer);
 
 		{
-			simulation.update(
-				delta);
-
-			visualization.update(
+			framework.update(
 				delta);
 
 			delta = flakelib::duration(0.0f);
@@ -394,12 +325,12 @@ try
 
 		sge::renderer::state::scoped scoped_state(
 			sys.renderer(),
-			visualization.render_states());
+			framework.render_states());
 
 		sge::renderer::scoped_block const block_(
 			sys.renderer());
 
-		visualization.render();
+		framework.render();
 
 		if(console_gfx.active())
 			console_gfx.render();

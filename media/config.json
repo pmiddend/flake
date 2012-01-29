@@ -21,7 +21,7 @@
 		"simulation" :
 		{
 			"profiling-enabled" : true,
-			"external-force-magnitude" : 7.0,
+			"wind-speed" : 7.0,
 			"gravity-magnitude" : 0.0,
 			"use-maccormack" : false,
 			"solver" :
@@ -53,11 +53,6 @@
 			"monitor-arrow-grid-scale" : 1.5
 		},
 		"boundary-file" : "256/circle.png"
-	},
-	"simulation-solver" :
-	{
-		"type" : "jacobi",
-		"iterations" : 51
 	},
 	"simulation-solver-mg" :
 	{
