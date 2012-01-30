@@ -1,8 +1,8 @@
 {
-	"window-size" : [1024,768],
+	"window-size" : [1280,1024],
 	"planar-framework-test" :
 	{
-		"boundary-file" : "256/zagged.png",
+		"boundary-file" : "256/black.png",
 		"visualization" :
 		{
 			"monitor-font-size" : 20,
@@ -21,16 +21,20 @@
 		"simulation" :
 		{
 			"profiling-enabled" : true,
-			"wind-speed" : 7.0,
+			"wind-speed" : 0.0,
 			"gravity-magnitude" : 0.0,
-			"use-maccormack" : false,
+			"use-maccormack" : true,
 			"solver" :
 			{
 				"type" : "jacobi",
 				"iterations" : 51
 			}
 		},
-		"density-splat-radius" : 4
+		"density-splat-radius" : 4,
+		"temperature-splat-radius" : 4,
+		"density-strength" : 0.1,
+		"temperature-strength" : 0.1,
+		"ambient-temperature" : 0.0
 	},
 	"arrows-only-test" :
 	{

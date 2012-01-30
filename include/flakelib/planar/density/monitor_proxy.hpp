@@ -8,6 +8,7 @@
 #include <flakelib/planar/monitor/parent_fwd.hpp>
 #include <flakelib/planar/monitor/planar_converter_fwd.hpp>
 #include <flakelib/planar/monitor/texture.hpp>
+#include <flakelib/planar/monitor/name.hpp>
 #include <fcppt/noncopyable.hpp>
 
 
@@ -27,7 +28,8 @@ public:
 		monitor::parent &,
 		monitor::grid_dimensions const &,
 		monitor::dim const &,
-		monitor::planar_converter &);
+		monitor::planar_converter &,
+		monitor::name const &);
 
 	void
 	update(

@@ -10,6 +10,7 @@
 #include <flakelib/planar/monitor/parent.hpp>
 #include <flakelib/planar/monitor/planar_arrows.hpp>
 #include <flakelib/planar/monitor/planar_converter.hpp>
+#include <flakelib/planar/buoyancy/object.hpp>
 #include <rucksack/widget/master_and_slaves.hpp>
 #include <rucksack/widget/viewport_adaptor.hpp>
 #include <rucksack/widget/box/base.hpp>
@@ -202,7 +203,78 @@ flakelib::planar::framework::framework(
 				static_cast<monitor::scalar>(
 					velocity_arrows_->widget().axis_policy().y().minimum_size())),
 			fcppt::ref(
-				*planar_converter_))),
+				*planar_converter_),
+			monitor::name(
+				FCPPT_TEXT("density")))),
+	temperature_advector_(
+		fcppt::make_unique_ptr<density::advector>(
+			fcppt::ref(
+				_command_queue),
+			fcppt::ref(
+				_buffer_pool),
+			fcppt::ref(
+				_utility),
+			_build_options,
+			density::grid_dimensions(
+				fcppt::math::dim::structure_cast<density::grid_dimensions::value_type>(
+					sge::image2d::view::size(
+						_boundary.get()))))),
+	temperature_cursor_splatter_(
+		fcppt::make_unique_ptr<density::cursor_splatter>(
+			fcppt::ref(
+				_command_queue),
+			density::source_image(
+				temperature_advector_->source_image()),
+			fcppt::ref(
+				_cursor),
+			fcppt::ref(
+				renderer_),
+			_build_options,
+			density::splat_radius(
+				sge::parse::json::find_and_convert_member<density::splat_radius::value_type>(
+					_config_file,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("temperature-splat-radius")))))),
+	temperature_monitor_(
+		fcppt::make_unique_ptr<density::monitor_proxy>(
+			fcppt::ref(
+				*monitor_parent_),
+			monitor::grid_dimensions(
+				fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
+					sge::image2d::view::size(
+						_boundary.get()))),
+			monitor::rect::dim(
+				static_cast<monitor::scalar>(
+					velocity_arrows_->widget().axis_policy().x().minimum_size()),
+				static_cast<monitor::scalar>(
+					velocity_arrows_->widget().axis_policy().y().minimum_size())),
+			fcppt::ref(
+				*planar_converter_),
+			monitor::name(
+				FCPPT_TEXT("temperature")))),
+	buoyancy_(
+		fcppt::make_unique_ptr<buoyancy::object>(
+			fcppt::ref(
+				_command_queue),
+			_build_options,
+			/*
+			buoyancy::boundary(
+				_boundary.get()),*/
+			buoyancy::temperature_strength(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					_config_file,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("temperature-strength")))),
+			buoyancy::density_strength(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					_config_file,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("density-strength")))),
+			buoyancy::ambient_temperature(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					_config_file,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("ambient-temperature")))))),
 	additional_data_()
 {
 	viewport_widget_->child(
@@ -218,6 +290,9 @@ flakelib::planar::framework::framework(
 	master_box_->push_back_child(
 		density_monitor_->monitor().widget(),
 		rucksack::alignment::center);
+
+	master_and_slave_->push_back_child(
+		temperature_monitor_->monitor().widget());
 
 	rucksack::scalar const child_size_denominator =
 		sge::parse::json::find_and_convert_member<rucksack::scalar>(
@@ -266,6 +341,15 @@ flakelib::planar::framework::update(
 	wind_source_->update(
 		simulation_->velocity());
 
+	buoyancy_->update(
+		buoyancy::velocity(
+			simulation_->velocity()),
+		buoyancy::temperature(
+			temperature_advector_->density_image()),
+		buoyancy::density(
+			density_advector_->density_image()),
+		_dt);
+
 	simulation_->update(
 		_dt);
 
@@ -279,6 +363,17 @@ flakelib::planar::framework::update(
 
 	density_monitor_->update(
 		density_advector_->density_image());
+
+	temperature_cursor_splatter_->update_cursor_rectangle(
+		temperature_monitor_->rectangle());
+
+	temperature_advector_->update(
+		density::velocity_image(
+			simulation_->velocity()),
+		_dt);
+
+	temperature_monitor_->update(
+		temperature_advector_->density_image());
 
 	planar_converter_->to_arrow_vb(
 		simulation_->velocity(),

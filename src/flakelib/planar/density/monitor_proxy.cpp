@@ -9,12 +9,12 @@ flakelib::planar::density::monitor_proxy::monitor_proxy(
 	monitor::parent &_parent,
 	monitor::grid_dimensions const &_grid_dimensions,
 	monitor::dim const &_dim,
-	monitor::planar_converter &_planar_converter)
+	monitor::planar_converter &_planar_converter,
+	monitor::name const &_name)
 :
 	density_texture_(
 		_parent,
-		monitor::name(
-			FCPPT_TEXT("density")),
+		_name,
 		_grid_dimensions,
 		_dim,
 		monitor::scaling_factor(

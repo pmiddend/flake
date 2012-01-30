@@ -9,6 +9,7 @@
 #include <flakelib/planar/density/advector_fwd.hpp>
 #include <flakelib/planar/density/cursor_splatter_fwd.hpp>
 #include <flakelib/planar/density/monitor_proxy_fwd.hpp>
+#include <flakelib/planar/buoyancy/object_fwd.hpp>
 #include <flakelib/planar/monitor/parent_fwd.hpp>
 #include <flakelib/planar/monitor/planar_arrows_fwd.hpp>
 #include <flakelib/planar/monitor/planar_converter_fwd.hpp>
@@ -86,6 +87,10 @@ private:
 	fcppt::unique_ptr<density::advector> density_advector_;
 	fcppt::unique_ptr<density::cursor_splatter> density_cursor_splatter_;
 	fcppt::unique_ptr<density::monitor_proxy> density_monitor_;
+	fcppt::unique_ptr<density::advector> temperature_advector_;
+	fcppt::unique_ptr<density::cursor_splatter> temperature_cursor_splatter_;
+	fcppt::unique_ptr<density::monitor_proxy> temperature_monitor_;
+	fcppt::unique_ptr<buoyancy::object> buoyancy_;
 	additional_data_monitors additional_data_;
 };
 }

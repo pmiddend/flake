@@ -103,6 +103,7 @@ SET(
 	src/flakelib/exception.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
+	src/flakelib/planar/buoyancy/object.cpp
 	src/flakelib/planar/density/advector.cpp
 	src/flakelib/planar/density/cursor_splatter.cpp
 	src/flakelib/planar/density/monitor_proxy.cpp
