@@ -1,8 +1,9 @@
 #ifndef FLAKELIB_PLANAR_BUOYANCY_AMBIENT_TEMPERATURE_HPP_INCLUDED
 #define FLAKELIB_PLANAR_BUOYANCY_AMBIENT_TEMPERATURE_HPP_INCLUDED
 
-#include <fcppt/strong_typedef.hpp>
 #include <sge/opencl/clinclude.hpp>
+#include <fcppt/strong_typedef.hpp>
+
 
 namespace flakelib
 {

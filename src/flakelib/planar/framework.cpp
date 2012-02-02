@@ -1,16 +1,18 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/planar/framework.hpp>
-#include <flakelib/planar/laplace_solver/dynamic_factory.hpp>
-#include <flakelib/planar/monitor/texture.hpp>
-#include <flakelib/planar/simulation/stam/object.hpp>
-#include <flakelib/planar/simulation/stam/wind_source.hpp>
+#include <flakelib/planar/buoyancy/object.hpp>
 #include <flakelib/planar/density/advector.hpp>
 #include <flakelib/planar/density/cursor_splatter.hpp>
 #include <flakelib/planar/density/monitor_proxy.hpp>
+#include <flakelib/planar/laplace_solver/dynamic_factory.hpp>
 #include <flakelib/planar/monitor/parent.hpp>
 #include <flakelib/planar/monitor/planar_arrows.hpp>
 #include <flakelib/planar/monitor/planar_converter.hpp>
-#include <flakelib/planar/buoyancy/object.hpp>
+#include <flakelib/planar/monitor/texture.hpp>
+#include <flakelib/planar/simulation/stam/gravity_source.hpp>
+#include <flakelib/planar/simulation/stam/object.hpp>
+#include <flakelib/planar/simulation/stam/vorticity.hpp>
+#include <flakelib/planar/simulation/stam/wind_source.hpp>
 #include <rucksack/widget/master_and_slaves.hpp>
 #include <rucksack/widget/viewport_adaptor.hpp>
 #include <rucksack/widget/box/base.hpp>
@@ -39,13 +41,14 @@
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/vector/basic_impl.hpp>
 
+
 flakelib::planar::framework::framework(
 	sge::viewport::manager &_viewport_manager,
 	sge::renderer::device &_renderer,
 	sge::opencl::command_queue::object &_command_queue,
 	sge::font::system &_font_system,
 	flakelib::build_options const &_build_options,
-	flakelib::planar::boundary_view const &_boundary,
+	flakelib::planar::boundary_image_view const &_boundary,
 	sge::parse::json::object const &_config_file,
 	sge::input::cursor::object &_cursor,
 	buffer_pool::object &_buffer_pool,
@@ -94,6 +97,18 @@ flakelib::planar::framework::framework(
 				sge::parse::json::find_and_convert_member<cl_float>(
 					_config_file,
 					sge::parse::json::path(FCPPT_TEXT("simulation")) / FCPPT_TEXT("wind-speed"))))),
+	vorticity_(
+		fcppt::make_unique_ptr<simulation::stam::vorticity>(
+			fcppt::ref(
+				_command_queue),
+			_build_options,
+			fcppt::ref(
+				_buffer_pool),
+			simulation_->boundary(),
+			flakelib::planar::simulation::stam::vorticity_strength(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					_config_file,
+					sge::parse::json::path(FCPPT_TEXT("simulation")) / FCPPT_TEXT("vorticity-strength"))))),
 	monitor_parent_(
 		fcppt::make_unique_ptr<monitor::parent>(
 			fcppt::ref(
@@ -257,9 +272,6 @@ flakelib::planar::framework::framework(
 			fcppt::ref(
 				_command_queue),
 			_build_options,
-			/*
-			buoyancy::boundary(
-				_boundary.get()),*/
 			buoyancy::temperature_strength(
 				sge::parse::json::find_and_convert_member<cl_float>(
 					_config_file,
@@ -275,6 +287,16 @@ flakelib::planar::framework::framework(
 					_config_file,
 					sge::parse::json::string_to_path(
 						FCPPT_TEXT("ambient-temperature")))))),
+	gravity_source_(
+		fcppt::make_unique_ptr<simulation::stam::gravity_source>(
+			fcppt::ref(
+				_command_queue),
+			_build_options,
+			simulation::stam::gravity_magnitude(
+				sge::parse::json::find_and_convert_member<cl_float>(
+					_config_file,
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("gravity-magnitude")))))),
 	additional_data_()
 {
 	viewport_widget_->child(
@@ -338,8 +360,16 @@ void
 flakelib::planar::framework::update(
 	flakelib::duration const &_dt)
 {
+	vorticity_->update(
+		simulation_->velocity(),
+		_dt);
+
 	wind_source_->update(
 		simulation_->velocity());
+
+	gravity_source_->update(
+		simulation_->velocity(),
+		_dt);
 
 	buoyancy_->update(
 		buoyancy::velocity(

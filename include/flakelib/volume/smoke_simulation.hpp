@@ -8,15 +8,15 @@
 #include <flakelib/volume/boundary/object_fwd.hpp>
 #include <flakelib/volume/conversion/object_fwd.hpp>
 #include <flakelib/volume/density/advector_fwd.hpp>
-#include <flakelib/volume/density/visual_fwd.hpp>
 #include <flakelib/volume/density/strength_modulator_fwd.hpp>
+#include <flakelib/volume/density/visual_fwd.hpp>
 #include <flakelib/volume/laplace_solver/unique_base_ptr.hpp>
 #include <flakelib/volume/simulation/stam/object_fwd.hpp>
 #include <flakelib/volume/visualization/arrows_fwd.hpp>
 #include <flakelib/volume/visualization/arrows_manager_fwd.hpp>
 #include <flakelib/volume/visualization/shape_manager_fwd.hpp>
-#include <sge/image2d/system_fwd.hpp>
 #include <sge/camera/base_fwd.hpp>
+#include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
@@ -26,6 +26,7 @@
 #include <sge/renderer/vector3.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
+
 
 namespace flakelib
 {

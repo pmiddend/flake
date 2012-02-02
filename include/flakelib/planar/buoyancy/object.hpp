@@ -1,21 +1,22 @@
 #ifndef FLAKELIB_PLANAR_BUOYANCY_OBJECT_HPP_INCLUDED
 #define FLAKELIB_PLANAR_BUOYANCY_OBJECT_HPP_INCLUDED
 
-#include <flakelib/buffer/planar_view_fwd.hpp>
 #include <flakelib/build_options.hpp>
 #include <flakelib/duration.hpp>
+#include <flakelib/buffer/planar_view_fwd.hpp>
 #include <flakelib/planar/buoyancy/ambient_temperature.hpp>
-#include <flakelib/planar/buoyancy/temperature_strength.hpp>
-#include <flakelib/planar/buoyancy/density_strength.hpp>
-#include <flakelib/planar/buoyancy/velocity.hpp>
-#include <flakelib/planar/buoyancy/temperature.hpp>
-#include <flakelib/planar/buoyancy/density.hpp>
 #include <flakelib/planar/buoyancy/boundary.hpp>
-#include <sge/opencl/command_queue/object_fwd.hpp>
-#include <sge/opencl/program/object.hpp>
-#include <sge/opencl/kernel/object.hpp>
+#include <flakelib/planar/buoyancy/density.hpp>
+#include <flakelib/planar/buoyancy/density_strength.hpp>
+#include <flakelib/planar/buoyancy/temperature.hpp>
+#include <flakelib/planar/buoyancy/temperature_strength.hpp>
+#include <flakelib/planar/buoyancy/velocity.hpp>
 #include <sge/opencl/clinclude.hpp>
+#include <sge/opencl/command_queue/object_fwd.hpp>
+#include <sge/opencl/kernel/object.hpp>
+#include <sge/opencl/program/object.hpp>
 #include <fcppt/noncopyable.hpp>
+
 
 namespace flakelib
 {

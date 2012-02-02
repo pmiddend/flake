@@ -5,18 +5,25 @@
 #include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/buffer_pool/planar_lock.hpp>
 #include <flakelib/planar/additional_scalar_data.hpp>
-#include <flakelib/planar/boundary_view.hpp>
+#include <flakelib/planar/boundary_image_view.hpp>
+#include <flakelib/planar/boundary_buffer_view.hpp>
+#include <flakelib/planar/float2_buffer_lock.hpp>
+#include <flakelib/planar/float2_view.hpp>
+#include <flakelib/planar/float_buffer_lock.hpp>
+#include <flakelib/planar/float_view.hpp>
+#include <flakelib/planar/unique_float2_buffer_lock.hpp>
+#include <flakelib/planar/unique_float_buffer_lock.hpp>
 #include <flakelib/planar/laplace_solver/base_fwd.hpp>
 #include <flakelib/planar/simulation/base.hpp>
 #include <flakelib/planar/simulation/stam/backward_advected.hpp>
 #include <flakelib/planar/simulation/stam/forward_advected.hpp>
 #include <flakelib/planar/simulation/stam/pressure.hpp>
+#include <flakelib/planar/simulation/stam/profiling_enabled.hpp>
 #include <flakelib/planar/simulation/stam/rhs.hpp>
 #include <flakelib/planar/simulation/stam/solution.hpp>
+#include <flakelib/planar/simulation/stam/use_maccormack.hpp>
 #include <flakelib/planar/simulation/stam/vector_field.hpp>
 #include <flakelib/planar/simulation/stam/velocity.hpp>
-#include <flakelib/planar/simulation/stam/profiling_enabled.hpp>
-#include <flakelib/planar/simulation/stam/use_maccormack.hpp>
 #include <flakelib/profiler/object.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
@@ -50,7 +57,7 @@ public:
 	explicit
 	object(
 		sge::opencl::command_queue::object &,
-		flakelib::planar::boundary_view const &,
+		flakelib::planar::boundary_image_view const &,
 		flakelib::build_options const &,
 		buffer_pool::object &,
 		utility::object &,
@@ -73,32 +80,11 @@ public:
 	update(
 		flakelib::duration const &);
 
+	flakelib::planar::boundary_buffer_view const
+	boundary() const;
+
 	~object();
 private:
-	typedef
-	flakelib::buffer_pool::planar_lock<cl_float>
-	planar_float_lock;
-
-	typedef
-	flakelib::buffer_pool::planar_lock<cl_float2>
-	planar_float2_lock;
-
-	typedef
-	fcppt::unique_ptr<planar_float_lock>
-	unique_planar_float_lock;
-
-	typedef
-	fcppt::unique_ptr<planar_float2_lock>
-	unique_planar_float2_lock;
-
-	typedef
-	flakelib::buffer::planar_view<cl_float>
-	planar_float_view;
-
-	typedef
-	flakelib::buffer::planar_view<cl_float2>
-	planar_float2_view;
-
 	sge::opencl::command_queue::object &command_queue_;
 	utility::object &utility_;
 	buffer_pool::object &buffer_cache_;
@@ -118,45 +104,45 @@ private:
 	flakelib::profiler::object project_profiler_;
 	flakelib::profiler::object solve_profiler_;
 	mutable flakelib::planar::additional_scalar_data additional_scalar_data_;
-	planar_float_lock boundary_image_;
-	unique_planar_float2_lock velocity_image_,old_velocity_image_,gradient_image_;
-	unique_planar_float_lock divergence_image_;
-	unique_planar_float_lock vector_magnitude_image_;
-	unique_planar_float_lock residual_image_;
-	unique_planar_float_lock pressure_image_;
+	planar::float_buffer_lock boundary_buffer_;
+	planar::unique_float2_buffer_lock velocity_image_,old_velocity_image_,gradient_image_;
+	planar::unique_float_buffer_lock divergence_image_;
+	planar::unique_float_buffer_lock vector_magnitude_image_;
+	planar::unique_float_buffer_lock residual_image_;
+	planar::unique_float_buffer_lock pressure_image_;
 
-	unique_planar_float2_lock
+	planar::unique_float2_buffer_lock
 	advect(
-		planar_float2_view const &,
+		planar::float2_view const &,
 		flakelib::duration const &);
 
-	unique_planar_float_lock
+	planar::unique_float_buffer_lock
 	divergence(
-		planar_float2_view const &);
+		planar::float2_view const &);
 
-	unique_planar_float_lock
+	planar::unique_float_buffer_lock
 	solve(
-		planar_float_view const &);
+		planar::float_view const &);
 
-	unique_planar_float2_lock
+	planar::unique_float2_buffer_lock
 	gradient_and_subtract(
 		stam::vector_field const &,
 		stam::pressure const &);
 
-	unique_planar_float_lock
+	planar::unique_float_buffer_lock
 	laplacian_residual(
 		stam::solution const &,
 		stam::rhs const &);
 
-	unique_planar_float_lock
+	planar::unique_float_buffer_lock
 	vector_magnitude(
-		planar_float2_view const &);
+		planar::float2_view const &);
 
-	unique_planar_float2_lock
+	planar::unique_float2_buffer_lock
 	gradient(
-		planar_float_view const &);
+		planar::float_view const &);
 
-	unique_planar_float2_lock
+	planar::unique_float2_buffer_lock
 	maccormack(
 		stam::forward_advected const &,
 		stam::backward_advected const &,

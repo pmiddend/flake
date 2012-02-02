@@ -121,6 +121,7 @@ SET(
 	src/flakelib/planar/simulation/base.cpp
 	src/flakelib/planar/simulation/stam/gravity_source.cpp
 	src/flakelib/planar/simulation/stam/object.cpp
+	src/flakelib/planar/simulation/stam/vorticity.cpp
 	src/flakelib/planar/simulation/stam/wind_source.cpp
 	src/flakelib/profiler/object.cpp
 	src/flakelib/profiler/scoped.cpp

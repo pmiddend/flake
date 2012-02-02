@@ -37,7 +37,7 @@
 
 flakelib::planar::simulation::stam::object::object(
 	sge::opencl::command_queue::object &_command_queue,
-	flakelib::planar::boundary_view const &_boundary_image,
+	flakelib::planar::boundary_image_view const &_boundary_image,
 	flakelib::build_options const &_build_options,
 	buffer_pool::object &_buffer_cache,
 	utility::object &_utility,
@@ -115,7 +115,7 @@ flakelib::planar::simulation::stam::object::object(
 			parent_profiler_),
 		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	additional_scalar_data_(),
-	boundary_image_(
+	boundary_buffer_(
 		buffer_cache_,
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
 			sge::image2d::view::size(
@@ -124,15 +124,15 @@ flakelib::planar::simulation::stam::object::object(
 	// guess" for further computations. It will be zero-initialized in the
 	// ctor.
 	velocity_image_(
-		fcppt::make_unique_ptr<planar_float2_lock>(
+		fcppt::make_unique_ptr<planar::float2_buffer_lock>(
 			fcppt::ref(
 				buffer_cache_),
-			boundary_image_.value().size())),
+			boundary_buffer_.value().size())),
 	gradient_image_(
-		fcppt::make_unique_ptr<planar_float2_lock>(
+		fcppt::make_unique_ptr<planar::float2_buffer_lock>(
 			fcppt::ref(
 				buffer_cache_),
-			boundary_image_.value().size())),
+			boundary_buffer_.value().size())),
 	// All of those images are initialized "along the way" in object::update
 	divergence_image_(),
 	vector_magnitude_image_(),
@@ -165,7 +165,7 @@ flakelib::planar::simulation::stam::object::object(
 	cl::planar_image_view_to_float_buffer(
 		command_queue_,
 		_boundary_image.get(),
-		boundary_image_.value());
+		boundary_buffer_.value());
 }
 
 flakelib::buffer::planar_view<cl_float2> const
@@ -215,11 +215,11 @@ flakelib::planar::simulation::stam::object::update(
 		parent_profiler_,
 		command_queue_);
 
-	unique_planar_float2_lock advected;
+	planar::unique_float2_buffer_lock advected;
 
 	if(use_maccormack_)
 	{
-		unique_planar_float2_lock
+		planar::unique_float2_buffer_lock
 			forward_advected =
 				this->advect(
 					velocity_image_->value(),
@@ -286,23 +286,31 @@ flakelib::planar::simulation::stam::object::update(
 				divergence_image_->value()));
 }
 
+flakelib::planar::boundary_buffer_view const
+flakelib::planar::simulation::stam::object::boundary() const
+{
+	return
+		flakelib::planar::boundary_buffer_view(
+			this->boundary_buffer_.value());
+}
+
 flakelib::planar::simulation::stam::object::~object()
 {
 	if(profiling_enabled_)
 		fcppt::io::cout() << parent_profiler_ << FCPPT_TEXT("\n");
 }
 
-flakelib::planar::simulation::stam::object::unique_planar_float2_lock
+flakelib::planar::unique_float2_buffer_lock
 flakelib::planar::simulation::stam::object::advect(
-	planar_float2_view const &from,
+	planar::float2_view const &from,
 	flakelib::duration const &dt)
 {
 	profiler::scoped scoped_profiler(
 		advection_profiler_,
 		command_queue_);
 
-	unique_planar_float2_lock result(
-		fcppt::make_unique_ptr<planar_float2_lock>(
+	planar::unique_float2_buffer_lock result(
+		fcppt::make_unique_ptr<planar::float2_buffer_lock>(
 			fcppt::ref(
 				buffer_cache_),
 			from.size()));
@@ -323,7 +331,7 @@ flakelib::planar::simulation::stam::object::advect(
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
-		boundary_image_.value().buffer());
+		boundary_buffer_.value().buffer());
 
 	advect_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -349,16 +357,16 @@ flakelib::planar::simulation::stam::object::advect(
 			result);
 }
 
-flakelib::planar::simulation::stam::object::unique_planar_float_lock
+flakelib::planar::unique_float_buffer_lock
 flakelib::planar::simulation::stam::object::divergence(
-	planar_float2_view const &from)
+	flakelib::planar::float2_view const &from)
 {
 	profiler::scoped scoped_profiler(
 		divergence_profiler_,
 		command_queue_);
 
-	unique_planar_float_lock result(
-		fcppt::make_unique_ptr<planar_float_lock>(
+	planar::unique_float_buffer_lock result(
+		fcppt::make_unique_ptr<planar::float_buffer_lock>(
 			fcppt::ref(
 				buffer_cache_),
 			from.size()));
@@ -379,7 +387,7 @@ flakelib::planar::simulation::stam::object::divergence(
 	divergence_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
-		boundary_image_.value().buffer());
+		boundary_buffer_.value().buffer());
 
 	divergence_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -399,22 +407,22 @@ flakelib::planar::simulation::stam::object::divergence(
 			result);
 }
 
-flakelib::planar::simulation::stam::object::unique_planar_float_lock
+flakelib::planar::unique_float_buffer_lock
 flakelib::planar::simulation::stam::object::solve(
-	planar_float_view const &_rhs)
+	planar::float_view const &_rhs)
 {
 	profiler::scoped scoped_profiler(
 		solve_profiler_,
 		command_queue_);
 
-	unique_planar_float_lock result(
-		fcppt::make_unique_ptr<planar_float_lock>(
+	planar::unique_float_buffer_lock result(
+		fcppt::make_unique_ptr<planar::float_buffer_lock>(
 			fcppt::ref(
 				buffer_cache_),
 			_rhs.size()));
 
-	unique_planar_float_lock initial_guess(
-		fcppt::make_unique_ptr<planar_float_lock>(
+	planar::unique_float_buffer_lock initial_guess(
+		fcppt::make_unique_ptr<planar::float_buffer_lock>(
 			fcppt::ref(
 				buffer_cache_),
 			_rhs.size()));
@@ -431,14 +439,14 @@ flakelib::planar::simulation::stam::object::solve(
 		planar::laplace_solver::initial_guess(
 			initial_guess->value()),
 		planar::laplace_solver::boundary(
-			boundary_image_.value()));
+			boundary_buffer_.value()));
 
 	return
 		fcppt::move(
 			result);
 }
 
-flakelib::planar::simulation::stam::object::unique_planar_float2_lock
+flakelib::planar::unique_float2_buffer_lock
 flakelib::planar::simulation::stam::object::gradient_and_subtract(
 	stam::vector_field const &_vector_field,
 	stam::pressure const &_pressure)
@@ -447,8 +455,8 @@ flakelib::planar::simulation::stam::object::gradient_and_subtract(
 		project_profiler_,
 		command_queue_);
 
-	unique_planar_float2_lock result(
-		fcppt::make_unique_ptr<planar_float2_lock>(
+	planar::unique_float2_buffer_lock result(
+		fcppt::make_unique_ptr<planar::float2_buffer_lock>(
 			fcppt::ref(
 				buffer_cache_),
 			_pressure.get().size()));
@@ -467,7 +475,7 @@ flakelib::planar::simulation::stam::object::gradient_and_subtract(
 	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			2),
-		boundary_image_.value().buffer());
+		boundary_buffer_.value().buffer());
 
 	gradient_and_subtract_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -492,7 +500,7 @@ flakelib::planar::simulation::stam::object::gradient_and_subtract(
 			result);
 }
 
-flakelib::planar::simulation::stam::object::unique_planar_float_lock
+flakelib::planar::unique_float_buffer_lock
 flakelib::planar::simulation::stam::object::laplacian_residual(
 	stam::solution const &_solution,
 	stam::rhs const &_divergence)
@@ -500,8 +508,8 @@ flakelib::planar::simulation::stam::object::laplacian_residual(
 	FCPPT_ASSERT_PRE(
 		_solution.get().size() == _divergence.get().size());
 
-	unique_planar_float_lock result(
-		fcppt::make_unique_ptr<planar_float_lock>(
+	planar::unique_float_buffer_lock result(
+		fcppt::make_unique_ptr<planar::float_buffer_lock>(
 			fcppt::ref(
 				buffer_cache_),
 			_solution.get().size()));
@@ -514,7 +522,7 @@ flakelib::planar::simulation::stam::object::laplacian_residual(
 	laplacian_residual_absolute_value_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		boundary_image_.value().buffer());
+		boundary_buffer_.value().buffer());
 
 	laplacian_residual_absolute_value_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -544,12 +552,12 @@ flakelib::planar::simulation::stam::object::laplacian_residual(
 			result);
 }
 
-flakelib::planar::simulation::stam::object::unique_planar_float_lock
+flakelib::planar::unique_float_buffer_lock
 flakelib::planar::simulation::stam::object::vector_magnitude(
-	planar_float2_view const &_from)
+	planar::float2_view const &_from)
 {
-	unique_planar_float_lock result(
-		fcppt::make_unique_ptr<planar_float_lock>(
+	planar::unique_float_buffer_lock result(
+		fcppt::make_unique_ptr<planar::float_buffer_lock>(
 			fcppt::ref(
 				buffer_cache_),
 			_from.size()));
@@ -567,12 +575,12 @@ flakelib::planar::simulation::stam::object::vector_magnitude(
 			result);
 }
 
-flakelib::planar::simulation::stam::object::unique_planar_float2_lock
+flakelib::planar::unique_float2_buffer_lock
 flakelib::planar::simulation::stam::object::gradient(
-	planar_float_view const &_pressure)
+	planar::float_view const &_pressure)
 {
-	unique_planar_float2_lock result(
-		fcppt::make_unique_ptr<planar_float2_lock>(
+	planar::unique_float2_buffer_lock result(
+		fcppt::make_unique_ptr<planar::float2_buffer_lock>(
 			fcppt::ref(
 				buffer_cache_),
 			_pressure.size()));
@@ -585,7 +593,7 @@ flakelib::planar::simulation::stam::object::gradient(
 	gradient_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			1),
-		boundary_image_.value().buffer());
+		boundary_buffer_.value().buffer());
 
 	gradient_kernel_.argument(
 		sge::opencl::kernel::argument_index(
@@ -596,7 +604,7 @@ flakelib::planar::simulation::stam::object::gradient(
 		sge::opencl::kernel::argument_index(
 			3),
 		static_cast<cl_int>(
-			boundary_image_.value().size()[0]));
+			boundary_buffer_.value().size()[0]));
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
@@ -610,15 +618,15 @@ flakelib::planar::simulation::stam::object::gradient(
 			result);
 }
 
-flakelib::planar::simulation::stam::object::unique_planar_float2_lock
+flakelib::planar::unique_float2_buffer_lock
 flakelib::planar::simulation::stam::object::maccormack(
 	stam::forward_advected const &_forward_advected,
 	stam::backward_advected const &_backward_advected,
 	stam::velocity const &_velocity,
 	flakelib::duration const &_dt)
 {
-	unique_planar_float2_lock result(
-		fcppt::make_unique_ptr<planar_float2_lock>(
+	planar::unique_float2_buffer_lock result(
+		fcppt::make_unique_ptr<planar::float2_buffer_lock>(
 			fcppt::ref(
 				buffer_cache_),
 			_forward_advected.get().size()));
@@ -646,7 +654,7 @@ flakelib::planar::simulation::stam::object::maccormack(
 	maccormack_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			4),
-		boundary_image_.value().buffer());
+		boundary_buffer_.value().buffer());
 
 	maccormack_kernel_.argument(
 		sge::opencl::kernel::argument_index(

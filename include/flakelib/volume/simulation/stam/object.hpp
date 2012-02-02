@@ -10,13 +10,13 @@
 #include <flakelib/volume/boundary/view.hpp>
 #include <flakelib/volume/laplace_solver/base_fwd.hpp>
 #include <flakelib/volume/simulation/stam/backward_advected.hpp>
-#include <flakelib/volume/simulation/stam/use_maccormack.hpp>
 #include <flakelib/volume/simulation/stam/external_force_magnitude.hpp>
 #include <flakelib/volume/simulation/stam/forward_advected.hpp>
 #include <flakelib/volume/simulation/stam/pressure.hpp>
 #include <flakelib/volume/simulation/stam/profiling_enabled.hpp>
 #include <flakelib/volume/simulation/stam/rhs.hpp>
 #include <flakelib/volume/simulation/stam/solution.hpp>
+#include <flakelib/volume/simulation/stam/use_maccormack.hpp>
 #include <flakelib/volume/simulation/stam/vector_field.hpp>
 #include <flakelib/volume/simulation/stam/velocity.hpp>
 #include <sge/opencl/clinclude.hpp>

@@ -1,12 +1,11 @@
-#include <sge/shader/update_single_uniform.hpp>
-#include <sge/camera/base.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/volume/flakes/object.hpp>
 #include <flakelib/volume/flakes/vf/format.hpp>
+#include <flakelib/volume/flakes/vf/point_size_part.hpp>
 #include <flakelib/volume/flakes/vf/position_part.hpp>
 #include <flakelib/volume/flakes/vf/starting_position_part.hpp>
-#include <flakelib/volume/flakes/vf/point_size_part.hpp>
+#include <sge/camera/base.hpp>
 #include <sge/image/colors.hpp>
 #include <sge/image2d/file.hpp>
 #include <sge/image2d/system.hpp>
@@ -20,7 +19,6 @@
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
-#include <sge/renderer/vf/view.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_lock.hpp>
@@ -36,11 +34,13 @@
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/renderer/vf/iterator.hpp>
 #include <sge/renderer/vf/vertex.hpp>
+#include <sge/renderer/vf/view.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/renderer/vf/dynamic/part_index.hpp>
 #include <sge/shader/activate_everything.hpp>
 #include <sge/shader/object_parameters.hpp>
 #include <sge/shader/scoped.hpp>
+#include <sge/shader/update_single_uniform.hpp>
 #include <sge/shader/vf_to_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>

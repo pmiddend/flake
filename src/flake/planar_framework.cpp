@@ -261,7 +261,7 @@ try
 		opencl_system.command_queue(),
 		sys.font_system(),
 		global_build_options,
-		flakelib::planar::boundary_view(
+		flakelib::planar::boundary_image_view(
 			boundary_image->view()),
 		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
 			config_file,

@@ -4,17 +4,19 @@
 #include <flakelib/build_options.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
-#include <flakelib/planar/laplace_solver/dynamic_factory_fwd.hpp>
-#include <flakelib/planar/boundary_view.hpp>
+#include <flakelib/planar/boundary_image_view.hpp>
+#include <flakelib/planar/buoyancy/object_fwd.hpp>
 #include <flakelib/planar/density/advector_fwd.hpp>
 #include <flakelib/planar/density/cursor_splatter_fwd.hpp>
 #include <flakelib/planar/density/monitor_proxy_fwd.hpp>
-#include <flakelib/planar/buoyancy/object_fwd.hpp>
+#include <flakelib/planar/laplace_solver/dynamic_factory_fwd.hpp>
 #include <flakelib/planar/monitor/parent_fwd.hpp>
 #include <flakelib/planar/monitor/planar_arrows_fwd.hpp>
 #include <flakelib/planar/monitor/planar_converter_fwd.hpp>
 #include <flakelib/planar/monitor/texture_fwd.hpp>
-#include <flakelib/planar/simulation/base_fwd.hpp>
+#include <flakelib/planar/simulation/stam/object_fwd.hpp>
+#include <flakelib/planar/simulation/stam/gravity_source_fwd.hpp>
+#include <flakelib/planar/simulation/stam/vorticity_fwd.hpp>
 #include <flakelib/planar/simulation/stam/wind_source_fwd.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <rucksack/widget/master_and_slaves_fwd.hpp>
@@ -22,12 +24,12 @@
 #include <rucksack/widget/box/base_fwd.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <sge/input/cursor/object_fwd.hpp>
-#include <sge/renderer/state/list.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/parse/json/object_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/matrix4.hpp>
+#include <sge/renderer/state/list.hpp>
 #include <sge/viewport/manager_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/unique_ptr.hpp>
@@ -52,7 +54,7 @@ public:
 		sge::opencl::command_queue::object &,
 		sge::font::system &,
 		flakelib::build_options const &,
-		flakelib::planar::boundary_view const &,
+		flakelib::planar::boundary_image_view const &,
 		sge::parse::json::object const &,
 		sge::input::cursor::object &,
 		buffer_pool::object &,
@@ -76,8 +78,9 @@ private:
 
 	sge::renderer::device &renderer_;
 	fcppt::unique_ptr<laplace_solver::dynamic_factory> solver_factory_;
-	fcppt::unique_ptr<simulation::base> simulation_;
+	fcppt::unique_ptr<simulation::stam::object> simulation_;
 	fcppt::unique_ptr<simulation::stam::wind_source> wind_source_;
+	fcppt::unique_ptr<simulation::stam::vorticity> vorticity_;
 	fcppt::unique_ptr<monitor::parent> monitor_parent_;
 	fcppt::unique_ptr<monitor::planar_converter> planar_converter_;
 	fcppt::unique_ptr<rucksack::widget::viewport_adaptor> viewport_widget_;
@@ -91,6 +94,7 @@ private:
 	fcppt::unique_ptr<density::cursor_splatter> temperature_cursor_splatter_;
 	fcppt::unique_ptr<density::monitor_proxy> temperature_monitor_;
 	fcppt::unique_ptr<buoyancy::object> buoyancy_;
+	fcppt::unique_ptr<simulation::stam::gravity_source> gravity_source_;
 	additional_data_monitors additional_data_;
 };
 }

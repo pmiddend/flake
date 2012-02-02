@@ -1,14 +1,15 @@
-#include <fcppt/chrono/duration_impl.hpp>
-#include <fcppt/assign/make_array.hpp>
-#include <sge/opencl/command_queue/enqueue_kernel.hpp>
+#include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/planar_view_impl.hpp>
 #include <flakelib/planar/buoyancy/object.hpp>
+#include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
-#include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <flakelib/media_path_from_string.hpp>
-#include <fcppt/text.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
+#include <sge/opencl/program/file_to_source_string_sequence.hpp>
+#include <fcppt/text.hpp>
+#include <fcppt/assign/make_array.hpp>
+#include <fcppt/chrono/duration_impl.hpp>
+
 
 flakelib::planar::buoyancy::object::object(
 	sge::opencl::command_queue::object &_command_queue,

@@ -1,15 +1,16 @@
 #ifndef FLAKELIB_PLANAR_SIMULATION_STAM_GRAVITY_SOURCE_HPP_INCLUDED
 #define FLAKELIB_PLANAR_SIMULATION_STAM_GRAVITY_SOURCE_HPP_INCLUDED
 
-#include <flakelib/planar/simulation/stam/gravity_magnitude.hpp>
-#include <flakelib/buffer/planar_view_fwd.hpp>
 #include <flakelib/build_options.hpp>
 #include <flakelib/duration.hpp>
-#include <sge/opencl/command_queue/object_fwd.hpp>
+#include <flakelib/buffer/planar_view_fwd.hpp>
+#include <flakelib/planar/simulation/stam/gravity_magnitude.hpp>
 #include <sge/opencl/clinclude.hpp>
-#include <sge/opencl/program/object.hpp>
+#include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/object.hpp>
+#include <sge/opencl/program/object.hpp>
 #include <fcppt/noncopyable.hpp>
+
 
 namespace flakelib
 {
@@ -36,7 +37,7 @@ public:
 
 	void
 	update(
-		buffer::planar_view<cl_float> const &,
+		buffer::planar_view<cl_float2> const &,
 		flakelib::duration const &);
 
 	~gravity_source();

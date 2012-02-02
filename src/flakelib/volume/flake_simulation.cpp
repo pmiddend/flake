@@ -14,8 +14,8 @@
 #include <flakelib/volume/visualization/arrows_manager.hpp>
 #include <flakelib/volume/visualization/ground.hpp>
 #include <flakelib/volume/visualization/shape_manager.hpp>
-#include <sge/opencl/clinclude.hpp>
 #include <sge/camera/base.hpp>
+#include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>

@@ -1,6 +1,7 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/volume/visualization/shape_manager.hpp>
 #include <flakelib/volume/visualization/model_vf/format.hpp>
+#include <sge/camera/base.hpp>
 #include <sge/model/obj/create.hpp>
 #include <sge/model/obj/loader.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
@@ -11,7 +12,6 @@
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/shader/activate_bare.hpp>
 #include <sge/shader/object_parameters.hpp>
-#include <sge/camera/base.hpp>
 #include <sge/shader/scoped.hpp>
 #include <sge/shader/variable.hpp>
 #include <sge/shader/variable_sequence.hpp>

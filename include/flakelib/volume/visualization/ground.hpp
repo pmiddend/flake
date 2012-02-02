@@ -3,8 +3,8 @@
 
 #include <flakelib/volume/grid_size.hpp>
 #include <flakelib/volume/visualization/sun_direction.hpp>
-#include <sge/image2d/system_fwd.hpp>
 #include <sge/camera/base_fwd.hpp>
+#include <sge/image2d/system_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/matrix4.hpp>
 #include <sge/renderer/vertex_buffer_ptr.hpp>

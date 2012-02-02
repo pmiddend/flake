@@ -5,10 +5,10 @@
 #include <flakelib/planar/density/cursor_rectangle.hpp>
 #include <flakelib/planar/monitor/dim.hpp>
 #include <flakelib/planar/monitor/grid_dimensions.hpp>
+#include <flakelib/planar/monitor/name.hpp>
 #include <flakelib/planar/monitor/parent_fwd.hpp>
 #include <flakelib/planar/monitor/planar_converter_fwd.hpp>
 #include <flakelib/planar/monitor/texture.hpp>
-#include <flakelib/planar/monitor/name.hpp>
 #include <fcppt/noncopyable.hpp>
 
 

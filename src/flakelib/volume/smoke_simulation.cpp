@@ -1,4 +1,3 @@
-#include <flakelib/volume/density/strength_modulator.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/utility/object.hpp>
 #include <flakelib/volume/smoke_simulation.hpp>
@@ -6,6 +5,7 @@
 #include <flakelib/volume/boundary/json/to_obstacle_sequence.hpp>
 #include <flakelib/volume/conversion/object.hpp>
 #include <flakelib/volume/density/advector.hpp>
+#include <flakelib/volume/density/strength_modulator.hpp>
 #include <flakelib/volume/density/visual.hpp>
 #include <flakelib/volume/flakes/object.hpp>
 #include <flakelib/volume/laplace_solver/jacobi.hpp>

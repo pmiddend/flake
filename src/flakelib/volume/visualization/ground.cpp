@@ -1,8 +1,8 @@
-#include <sge/camera/base.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/volume/visualization/ground.hpp>
 #include <flakelib/volume/visualization/model_vf/format.hpp>
 #include <flakelib/volume/visualization/model_vf/format_part_view.hpp>
+#include <sge/camera/base.hpp>
 #include <sge/image2d/file.hpp>
 #include <sge/image2d/system.hpp>
 #include <sge/image2d/view/const_elements_wrapper.hpp>
