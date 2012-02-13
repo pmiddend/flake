@@ -108,7 +108,8 @@ flakelib::planar::monitor::texture::texture(
 				fcppt::make_shared_ptr<sge::texture::part_raw>(
 					renderer_texture_))
 			.connection(
-				child::parent().sprite_collection().connection())),
+				child::parent().sprite_collection().connection(
+					0))),
 	box_parent_(
 		rucksack::axis::y,
 		rucksack::aspect(

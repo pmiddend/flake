@@ -1,3 +1,4 @@
+#include <sge/sprite/process/default_geometry_options.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/planar/monitor/parent.hpp>
 #include <flakelib/planar/monitor/arrow_vf/format.hpp>
@@ -11,13 +12,12 @@
 #include <sge/shader/object_parameters.hpp>
 #include <sge/shader/vf_to_string.hpp>
 #include <sge/sprite/compare/default.hpp>
-#include <sge/sprite/render/all.hpp>
-#include <sge/sprite/render/geometry_options.hpp>
+#include <sge/sprite/intrusive/process/ordered_with_options.hpp>
+#include <sge/sprite/intrusive/process/ordered.hpp>
 #include <sge/sprite/render/matrix_options.hpp>
 #include <sge/sprite/render/options.hpp>
 #include <sge/sprite/render/state_options.hpp>
 #include <sge/sprite/render/vertex_options.hpp>
-#include <sge/sprite/render/with_options.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/scoped_ptr.hpp>
@@ -71,7 +71,7 @@ flakelib::planar::monitor::parent::parent(
 					FCPPT_TEXT("shaders/arrow/fragment.glsl")))),
 	sprite_system_(
 		renderer_,
-		sge::sprite::buffers_option::dynamic),
+		sge::sprite::buffers::option::dynamic),
 	sprite_collection_(),
 	children_()
 {
@@ -149,25 +149,32 @@ flakelib::planar::monitor::parent::render(
 				sge::renderer::matrix4::identity()));
 
 
-		sge::sprite::render::with_options
+		sge::sprite::intrusive::process::ordered_with_options
 		<
-			sge::sprite::render::options
+			sge::sprite::process::options
 			<
-				sge::sprite::render::geometry_options::fill,
-				sge::sprite::render::matrix_options::nothing,
-				sge::sprite::render::state_options::set,
-				sge::sprite::render::vertex_options::declaration_and_buffer
+				sge::sprite::process::default_geometry_options
+				<
+					dummy_sprite::choices,
+					sge::sprite::compare::default_
+				>::value,
+				sge::sprite::render::options
+				<
+					sge::sprite::render::matrix_options::nothing,
+					sge::sprite::render::state_options::set,
+					sge::sprite::render::vertex_options::declaration
+				>
 			>
 		>(
-			sprite_collection_.range(),
-			sprite_system_.buffers(),
+			sprite_collection_,
+			sprite_system_,
 			sge::sprite::compare::default_());
 	}
 	else
 	{
-		sge::sprite::render::all(
-			sprite_collection_.range(),
-			sprite_system_.buffers(),
+		sge::sprite::intrusive::process::ordered(
+			sprite_collection_,
+			sprite_system_,
 			sge::sprite::compare::default_());
 	}
 

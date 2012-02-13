@@ -12,7 +12,8 @@
 #include <sge/image/color/any/object.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/sprite/object_decl.hpp>
-#include <sge/sprite/system_decl.hpp>
+#include <sge/sprite/buffers/with_declaration.hpp>
+#include <sge/sprite/buffers/single.hpp>
 #include <sge/sprite/config/choices.hpp>
 #include <sge/sprite/config/float_type.hpp>
 #include <sge/sprite/config/normal_size.hpp>
@@ -106,7 +107,7 @@ private:
 				sge::sprite::config::texture_level_count<
 					1u
 				>,
-				sge::sprite::config::texture_coordinates::normal
+				sge::sprite::config::texture_coordinates::automatic
 			>
 		>
 	> sprite_choices;
@@ -119,8 +120,8 @@ private:
 		sprite_object
 	> sprite_container;
 
-	typedef sge::sprite::system<
-		sprite_choices
+	typedef sge::sprite::buffers::with_declaration<
+		sge::sprite::buffers::single<sprite_choices>
 	> sprite_system;
 
 	sprite_system sprite_system_;

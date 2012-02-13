@@ -1,3 +1,5 @@
+#include <sge/sprite/process/options.hpp>
+#include <sge/sprite/process/default_geometry_options.hpp>
 #include <flakelib/sprite_drawer_3d.hpp>
 #include <sge/image/color/any/convert.hpp>
 #include <sge/image2d/dim.hpp>
@@ -6,14 +8,12 @@
 #include <sge/renderer/caps/object.hpp>
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
-#include <sge/sprite/buffers_option.hpp>
 #include <sge/sprite/object_impl.hpp>
 #include <sge/sprite/parameters_impl.hpp>
-#include <sge/sprite/system_impl.hpp>
+#include <sge/sprite/process/with_options.hpp>
 #include <sge/sprite/compare/default.hpp>
 #include <sge/sprite/geometry/make_random_access_range.hpp>
 #include <sge/sprite/render/options.hpp>
-#include <sge/sprite/render/with_options.hpp>
 #include <sge/texture/rect_fragmented.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
@@ -62,7 +62,7 @@ flakelib::sprite_drawer_3d::sprite_drawer_3d(
 	textures_(),
 	sprite_system_(
 		_renderer,
-		sge::sprite::buffers_option::dynamic
+		sge::sprite::buffers::option::dynamic
 	),
 	sprites_()
 {
@@ -136,23 +136,29 @@ flakelib::sprite_drawer_3d::draw_char(
 void
 flakelib::sprite_drawer_3d::end_rendering()
 {
-	sge::sprite::render::with_options
+	sge::sprite::process::with_options
 	<
-		sge::sprite::render::options
+		sge::sprite::process::options
 		<
-			sge::sprite::render::geometry_options::fill,
-		        sge::sprite::render::matrix_options::nothing,
-			sge::sprite::render::state_options::set,
-			sge::sprite::render::vertex_options::declaration_and_buffer
+			sge::sprite::process::default_geometry_options
+			<
+				sprite_choices,
+				sge::sprite::compare::default_
+			>::value,
+			sge::sprite::render::options
+			<
+				sge::sprite::render::matrix_options::nothing,
+				sge::sprite::render::state_options::set,
+				sge::sprite::render::vertex_options::declaration_and_buffer
+			>
 		>
 	>(
 		sge::sprite::geometry::make_random_access_range(
 			sprites_.begin(),
 			sprites_.end()
 		),
-		sprite_system_.buffers(),
-		sge::sprite::compare::default_()
-	);
+		sprite_system_,
+		sge::sprite::compare::default_());
 }
 
 void
