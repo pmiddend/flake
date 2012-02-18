@@ -8,27 +8,26 @@
 #include <fcppt/ref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <flakelib/planar/simulation/stam/semilagrangian_advection.hpp>
-#include <flakelib/program/create_from_context.hpp>
+#include <flakelib/planar/program_context.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer_pool/object.hpp>
-#include <flakelib/cl/process_planar_buffer.hpp>
 #include <fcppt/move.hpp>
 
 flakelib::planar::simulation::stam::semilagrangian_advection::semilagrangian_advection(
-	program::context const &_context,
+	planar::program_context const &_program_context,
 	flakelib::buffer_pool::object &_buffer_pool)
 :
 	buffer_pool_(
 		_buffer_pool),
 	program_(
-		flakelib::program::create_from_context(
-			_context,
-			flakelib::media_path_from_string(
-				FCPPT_TEXT("kernels/planar/semilagrangian_advection.cl")))),
+		_program_context.command_queue(),
+		flakelib::media_path_from_string(
+			FCPPT_TEXT("kernels/planar/semilagrangian_advection.cl")),
+		_program_context.compiler_flags()),
 	advect_kernel_(
-		*program_,
-		sge::opencl::kernel::name(
-			"apply"))
+		program_.create_kernel(
+			sge::opencl::kernel::name(
+				"apply")))
 {
 }
 
@@ -47,36 +46,29 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update(
 				buffer_pool_),
 			_buffer.size()));
 
-	advect_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			0),
+	advect_kernel_->buffer_argument(
+		"boundary",
 		_boundary.get().buffer());
 
-	advect_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			1),
+	advect_kernel_->buffer_argument(
+		"input",
 		_buffer.buffer());
 
-	advect_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			2),
+	advect_kernel_->buffer_argument(
+		"output",
 		result->value().buffer());
 
-	advect_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			3),
+	advect_kernel_->numerical_argument(
+		"buffer_pitch",
 		static_cast<cl_uint>(
 			_buffer.size().w()));
 
-	advect_kernel_.argument(
-		sge::opencl::kernel::argument_index(
-			4),
+	advect_kernel_->numerical_argument(
+		"dt",
 		static_cast<cl_float>(
 			_dt.count()));
 
-	flakelib::cl::process_planar_buffer(
-		command_queue_,
-		advect_kernel_,
+	advect_kernel_->enqueue_automatic(
 		_buffer.size());
 
 	return

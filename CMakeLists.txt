@@ -97,9 +97,10 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 SET(
 	FLAKELIB_FILES
 	src/flakelib/buffer_pool/object.cpp
-	src/flakelib/cl/apply_kernel_to_planar_image.cpp
+	src/flakelib/cl/kernel.cpp
 	src/flakelib/cl/planar_image_view_to_cl_image.cpp
 	src/flakelib/cl/planar_image_view_to_float_buffer.cpp
+	src/flakelib/cl/program.cpp
 	src/flakelib/exception.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
@@ -118,9 +119,11 @@ SET(
 	src/flakelib/planar/monitor/planar_arrows.cpp
 	src/flakelib/planar/monitor/planar_converter.cpp
 	src/flakelib/planar/monitor/texture.cpp
+	src/flakelib/planar/program_context.cpp
 	src/flakelib/planar/simulation/base.cpp
 	src/flakelib/planar/simulation/stam/gravity_source.cpp
 	src/flakelib/planar/simulation/stam/object.cpp
+	src/flakelib/planar/simulation/stam/semilagrangian_advection.cpp
 	src/flakelib/planar/simulation/stam/vorticity.cpp
 	src/flakelib/planar/simulation/stam/wind_source.cpp
 	src/flakelib/profiler/object.cpp

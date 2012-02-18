@@ -1,7 +1,6 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/linear_view.hpp>
 #include <flakelib/buffer_pool/planar_lock.hpp>
-#include <flakelib/cl/apply_kernel_to_planar_image.hpp>
 #include <flakelib/planar/laplace_solver/multigrid.hpp>
 #include <flakelib/utility/object.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>

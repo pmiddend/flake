@@ -6,14 +6,16 @@
 #include <flake/planar/load_right_neighborhood.cl>
 #include <flake/planar/right_neighborhood.cl>
 #include <flake/boundary_is_solid.cl>
+#include <flake/kernel_name.cl>
+#include <flake/kernel_argument.cl>
 
 kernel void
-apply(
-	global float const *boundary,
-	global float2 const *input,
-	global float2 *output,
-	uint const buffer_pitch,
-	float const dt)
+FLAKE_KERNEL_NAME(apply)(
+	global float const *FLAKE_KERNEL_ARGUMENT(boundary),
+	global float2 const *FLAKE_KERNEL_ARGUMENT(input),
+	global float2 *FLAKE_KERNEL_ARGUMENT(output),
+	uint const FLAKE_KERNEL_ARGUMENT(buffer_pitch),
+	float const FLAKE_KERNEL_ARGUMENT(dt))
 {
 	int2 const position =
 		flake_planar_current_position();

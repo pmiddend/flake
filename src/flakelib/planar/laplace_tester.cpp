@@ -1,6 +1,5 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/linear_view.hpp>
-#include <flakelib/cl/apply_kernel_to_planar_image.hpp>
 #include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
 #include <flakelib/planar/laplace_tester.hpp>
 #include <flakelib/planar/laplace_solver/base.hpp>
