@@ -62,7 +62,6 @@ public:
 		buffer_pool::object &,
 		utility::object &,
 		planar::laplace_solver::base &,
-		stam::profiling_enabled const &,
 		stam::use_maccormack const &);
 
 	// @override
@@ -89,7 +88,6 @@ private:
 	utility::object &utility_;
 	buffer_pool::object &buffer_cache_;
 	planar::laplace_solver::base &laplace_solver_;
-	bool const profiling_enabled_;
 	bool const use_maccormack_;
 	sge::opencl::program::object main_program_;
 	sge::opencl::kernel::object advect_kernel_;
@@ -98,11 +96,6 @@ private:
 	sge::opencl::kernel::object gradient_and_subtract_kernel_;
 	sge::opencl::kernel::object gradient_kernel_;
 	sge::opencl::kernel::object maccormack_kernel_;
-	flakelib::profiler::object parent_profiler_;
-	flakelib::profiler::object advection_profiler_;
-	flakelib::profiler::object divergence_profiler_;
-	flakelib::profiler::object project_profiler_;
-	flakelib::profiler::object solve_profiler_;
 	mutable flakelib::planar::additional_scalar_data additional_scalar_data_;
 	planar::float_buffer_lock boundary_buffer_;
 	planar::unique_float2_buffer_lock velocity_image_,old_velocity_image_,gradient_image_;

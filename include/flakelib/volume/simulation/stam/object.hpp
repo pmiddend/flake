@@ -5,7 +5,6 @@
 #include <flakelib/duration.hpp>
 #include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/buffer_pool/volume_lock.hpp>
-#include <flakelib/profiler/object.hpp>
 #include <flakelib/utility/object_fwd.hpp>
 #include <flakelib/volume/boundary/view.hpp>
 #include <flakelib/volume/laplace_solver/base_fwd.hpp>
@@ -13,7 +12,6 @@
 #include <flakelib/volume/simulation/stam/external_force_magnitude.hpp>
 #include <flakelib/volume/simulation/stam/forward_advected.hpp>
 #include <flakelib/volume/simulation/stam/pressure.hpp>
-#include <flakelib/volume/simulation/stam/profiling_enabled.hpp>
 #include <flakelib/volume/simulation/stam/rhs.hpp>
 #include <flakelib/volume/simulation/stam/solution.hpp>
 #include <flakelib/volume/simulation/stam/use_maccormack.hpp>
@@ -52,7 +50,6 @@ public:
 		sge::opencl::command_queue::object &,
 		volume::boundary::view const &,
 		stam::external_force_magnitude const &,
-		stam::profiling_enabled const &,
 		flakelib::build_options const &,
 		buffer_pool::object &,
 		utility::object &,
@@ -62,9 +59,6 @@ public:
 	// @override
 	buffer::volume_view<cl_float4> const
 	velocity();
-
-	profiler::object const &
-	parent_profiler() const;
 
 	void
 	update(
@@ -105,19 +99,12 @@ private:
 	buffer_pool::object &buffer_pool_;
 	volume::laplace_solver::base &laplace_solver_;
 	cl_float external_force_magnitude_;
-	bool const profiling_enabled_;
 	sge::opencl::program::object main_program_;
 	sge::opencl::kernel::object advect_kernel_;
 	sge::opencl::kernel::object apply_external_forces_kernel_;
 	sge::opencl::kernel::object divergence_kernel_;
 	sge::opencl::kernel::object gradient_and_subtract_kernel_;
 	sge::opencl::kernel::object maccormack_kernel_;
-	flakelib::profiler::object parent_profiler_;
-	flakelib::profiler::object advection_profiler_;
-	flakelib::profiler::object external_forces_profiler_;
-	flakelib::profiler::object divergence_profiler_;
-	flakelib::profiler::object project_profiler_;
-	flakelib::profiler::object solve_profiler_;
 	volume::boundary::view boundary_;
 	unique_volume_float4_lock velocity_image_;
 	unique_volume_float_lock divergence_image_;

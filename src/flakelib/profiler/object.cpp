@@ -21,7 +21,7 @@ print(
 		<< fcppt::string(tabs,FCPPT_TEXT('\t'))
 		<< std::left
 		<< std::setw(static_cast<int>(spaces))
-		<< o.name()
+		<< o.title().get()
 		<< FCPPT_TEXT(" | ")
 		<< std::setw(10)
 		<< o.calls() << FCPPT_TEXT(" calls");
@@ -47,7 +47,7 @@ print(
 		max_child_size =
 			std::max(
 				max_child_size,
-				child->name().length());
+				child->title().get().length());
 
 	if(!o.children().empty())
 		s << FCPPT_TEXT("↘") << FCPPT_TEXT("\n");
@@ -67,29 +67,45 @@ print(
 }
 
 flakelib::profiler::object::object(
-	fcppt::string const &_name,
-	profiler::optional_parent const &_parent,
-	profiler::activation::type const _activation)
+	profiler::title const &_title,
+	profiler::parent const &_parent)
 :
-	name_(
-		_name),
+	title_(
+		_title),
+	parent_(
+		_parent.get()),
 	children_(),
 	calls_(
 		0),
 	total_time_(
 		0),
-	activation_(
-		_activation)
+	is_active_()
 {
-	if(_parent)
-		_parent->add_child(
-			*this);
+	parent_->add_child(
+		*this);
 }
 
-fcppt::string const &
-flakelib::profiler::object::name() const
+flakelib::profiler::object::object(
+	profiler::title const &_title,
+	profiler::is_active const &_is_active)
+:
+	title_(
+		_title),
+	parent_(),
+	children_(),
+	calls_(
+		0),
+	total_time_(
+		0),
+	is_active_(
+		_is_active.get())
 {
-	return name_;
+}
+
+flakelib::profiler::title const &
+flakelib::profiler::object::title() const
+{
+	return title_;
 }
 
 flakelib::profiler::child_sequence const &
@@ -110,18 +126,23 @@ flakelib::profiler::object::total_time() const
 	return total_time_;
 }
 
-flakelib::profiler::activation::type
-flakelib::profiler::object::activation() const
+bool
+flakelib::profiler::object::is_active() const
 {
-	return activation_;
+	return
+		parent_
+		?
+			parent_->is_active()
+		:
+			is_active_;
 }
 
 void
-flakelib::profiler::object::activation(
-	profiler::activation::type const _activation)
+flakelib::profiler::object::is_active(
+	bool const _is_active)
 {
-	activation_ =
-		_activation;
+	is_active_ =
+		_is_active;
 }
 
 flakelib::profiler::object::~object()

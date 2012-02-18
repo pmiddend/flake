@@ -24,3 +24,13 @@
 
 #define FLAKE_PLANAR_AT(buffer_width,currentpos)\
 	(buffer_width) * currentpos.y + currentpos.x
+
+
+int2
+flake_planar_global_size()
+{
+	return
+		(int2)(
+			get_global_id(0),
+			get_global_id(1));
+}

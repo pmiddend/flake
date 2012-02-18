@@ -1,16 +1,19 @@
 #ifndef FLAKELIB_PROFILER_OBJECT_HPP_INCLUDED
 #define FLAKELIB_PROFILER_OBJECT_HPP_INCLUDED
 
-#include <flakelib/profiler/activation.hpp>
+#include <flakelib/profiler/title.hpp>
+#include <flakelib/profiler/is_active.hpp>
 #include <flakelib/profiler/call_count.hpp>
 #include <flakelib/profiler/child_sequence.hpp>
-#include <flakelib/profiler/duration.hpp>
 #include <flakelib/profiler/optional_parent.hpp>
+#include <flakelib/profiler/duration.hpp>
+#include <flakelib/profiler/parent.hpp>
 #include <flakelib/profiler/scoped_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/chrono/duration_impl.hpp>
 #include <fcppt/io/ostream.hpp>
+#include <fcppt/optional_impl.hpp>
 
 
 namespace flakelib
@@ -24,12 +27,16 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	object(
-		fcppt::string const &,
-		profiler::optional_parent const &,
-		profiler::activation::type);
+		profiler::title const &,
+		profiler::parent const &);
 
-	fcppt::string const &
-	name() const;
+	explicit
+	object(
+		profiler::title const &,
+		profiler::is_active const &);
+
+	profiler::title const &
+	title() const;
 
 	profiler::child_sequence const &
 	children() const;
@@ -40,22 +47,23 @@ public:
 	profiler::duration const &
 	total_time() const;
 
-	profiler::activation::type
-	activation() const;
+	bool
+	is_active() const;
 
 	void
-	activation(
-		profiler::activation::type);
+	is_active(
+		bool);
 
 	~object();
 private:
 	friend class profiler::scoped;
 
-	fcppt::string const name_;
+	profiler::title const title_;
+	profiler::optional_parent parent_;
 	profiler::child_sequence children_;
 	profiler::call_count calls_;
 	profiler::duration total_time_;
-	profiler::activation::type activation_;
+	bool is_active_;
 
 	void
 	add_child(

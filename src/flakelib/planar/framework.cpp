@@ -80,10 +80,6 @@ flakelib::planar::framework::framework(
 				_utility),
 			fcppt::ref(
 				solver_factory_->value()),
-			flakelib::planar::simulation::stam::profiling_enabled(
-				sge::parse::json::find_and_convert_member<bool>(
-					_config_file,
-					sge::parse::json::path(FCPPT_TEXT("simulation")) / FCPPT_TEXT("profiling-enabled"))),
 			flakelib::planar::simulation::stam::use_maccormack(
 				sge::parse::json::find_and_convert_member<bool>(
 					_config_file,

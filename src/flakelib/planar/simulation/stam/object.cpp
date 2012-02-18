@@ -42,7 +42,6 @@ flakelib::planar::simulation::stam::object::object(
 	buffer_pool::object &_buffer_cache,
 	utility::object &_utility,
 	planar::laplace_solver::base &_laplace_solver,
-	stam::profiling_enabled const &_profiling_enabled,
 	stam::use_maccormack const &_use_maccormack)
 :
 	command_queue_(
@@ -53,8 +52,6 @@ flakelib::planar::simulation::stam::object::object(
 		_buffer_cache),
 	laplace_solver_(
 		_laplace_solver),
-	profiling_enabled_(
-		_profiling_enabled.get()),
 	use_maccormack_(
 		_use_maccormack.get()),
 	main_program_(
@@ -90,30 +87,6 @@ flakelib::planar::simulation::stam::object::object(
 		main_program_,
 		sge::opencl::kernel::name(
 			"maccormack")),
-	parent_profiler_(
-		FCPPT_TEXT("stam simulation"),
-		profiler::optional_parent(),
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
-	advection_profiler_(
-		FCPPT_TEXT("advection"),
-		profiler::optional_parent(
-			parent_profiler_),
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
-	divergence_profiler_(
-		FCPPT_TEXT("divergence"),
-		profiler::optional_parent(
-			parent_profiler_),
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
-	project_profiler_(
-		FCPPT_TEXT("project"),
-		profiler::optional_parent(
-			parent_profiler_),
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
-	solve_profiler_(
-		FCPPT_TEXT("solve"),
-		profiler::optional_parent(
-			parent_profiler_),
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	additional_scalar_data_(),
 	boundary_buffer_(
 		buffer_cache_,
@@ -201,20 +174,10 @@ flakelib::planar::simulation::stam::object::additional_scalar_data() const
 		additional_scalar_data_;
 }
 
-flakelib::profiler::object const &
-flakelib::planar::simulation::stam::object::parent_profiler() const
-{
-	return parent_profiler_;
-}
-
 void
 flakelib::planar::simulation::stam::object::update(
 	flakelib::duration const &dt)
 {
-	profiler::scoped scoped_profiler(
-		parent_profiler_,
-		command_queue_);
-
 	planar::unique_float2_buffer_lock advected;
 
 	if(use_maccormack_)
@@ -296,8 +259,6 @@ flakelib::planar::simulation::stam::object::boundary() const
 
 flakelib::planar::simulation::stam::object::~object()
 {
-	if(profiling_enabled_)
-		fcppt::io::cout() << parent_profiler_ << FCPPT_TEXT("\n");
 }
 
 flakelib::planar::unique_float2_buffer_lock
@@ -305,10 +266,6 @@ flakelib::planar::simulation::stam::object::advect(
 	planar::float2_view const &from,
 	flakelib::duration const &dt)
 {
-	profiler::scoped scoped_profiler(
-		advection_profiler_,
-		command_queue_);
-
 	planar::unique_float2_buffer_lock result(
 		fcppt::make_unique_ptr<planar::float2_buffer_lock>(
 			fcppt::ref(
@@ -361,9 +318,6 @@ flakelib::planar::unique_float_buffer_lock
 flakelib::planar::simulation::stam::object::divergence(
 	flakelib::planar::float2_view const &from)
 {
-	profiler::scoped scoped_profiler(
-		divergence_profiler_,
-		command_queue_);
 
 	planar::unique_float_buffer_lock result(
 		fcppt::make_unique_ptr<planar::float_buffer_lock>(
@@ -411,9 +365,6 @@ flakelib::planar::unique_float_buffer_lock
 flakelib::planar::simulation::stam::object::solve(
 	planar::float_view const &_rhs)
 {
-	profiler::scoped scoped_profiler(
-		solve_profiler_,
-		command_queue_);
 
 	planar::unique_float_buffer_lock result(
 		fcppt::make_unique_ptr<planar::float_buffer_lock>(
@@ -451,9 +402,6 @@ flakelib::planar::simulation::stam::object::gradient_and_subtract(
 	stam::vector_field const &_vector_field,
 	stam::pressure const &_pressure)
 {
-	profiler::scoped scoped_profiler(
-		project_profiler_,
-		command_queue_);
 
 	planar::unique_float2_buffer_lock result(
 		fcppt::make_unique_ptr<planar::float2_buffer_lock>(

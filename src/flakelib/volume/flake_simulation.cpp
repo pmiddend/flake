@@ -95,11 +95,6 @@ flakelib::volume::flake_simulation::flake_simulation(
 					_json_config,
 					sge::parse::json::string_to_path(
 						FCPPT_TEXT("external-force-magnitude")))),
-			simulation::stam::profiling_enabled(
-				sge::parse::json::find_and_convert_member<bool>(
-					_json_config,
-					sge::parse::json::string_to_path(
-						FCPPT_TEXT("profiling-enabled")))),
 			_build_options,
 			fcppt::ref(
 				*buffer_pool_),
@@ -301,5 +296,4 @@ flakelib::volume::flake_simulation::flake_size_multiplier(
 
 flakelib::volume::flake_simulation::~flake_simulation()
 {
-	fcppt::io::cout() << simulation_->parent_profiler() << FCPPT_TEXT("\n");
 }

@@ -2,7 +2,6 @@
 #include <flakelib/buffer/linear_view.hpp>
 #include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/buffer_pool/volume_lock.hpp>
-#include <flakelib/profiler/scoped.hpp>
 #include <flakelib/utility/object.hpp>
 #include <flakelib/volume/laplace_solver/base.hpp>
 #include <flakelib/volume/simulation/stam/object.hpp>
@@ -32,7 +31,6 @@ flakelib::volume::simulation::stam::object::object(
 	sge::opencl::command_queue::object &_command_queue,
 	volume::boundary::view const &_boundary,
 	stam::external_force_magnitude const &_external_force_magnitude,
-	stam::profiling_enabled const &_profiling_enabled,
 	flakelib::build_options const &_build_options,
 	buffer_pool::object &_buffer_pool,
 	utility::object &_utility,
@@ -49,8 +47,6 @@ flakelib::volume::simulation::stam::object::object(
 		_laplace_solver),
 	external_force_magnitude_(
 		_external_force_magnitude.get()),
-	profiling_enabled_(
-		_profiling_enabled.get()),
 	main_program_(
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
@@ -80,35 +76,6 @@ flakelib::volume::simulation::stam::object::object(
 		main_program_,
 		sge::opencl::kernel::name(
 			"maccormack")),
-	parent_profiler_(
-		FCPPT_TEXT("stam simulation"),
-		profiler::optional_parent(),
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
-	advection_profiler_(
-		FCPPT_TEXT("advection"),
-		profiler::optional_parent(
-			parent_profiler_),
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
-	external_forces_profiler_(
-		FCPPT_TEXT("apply_external_forces"),
-		profiler::optional_parent(
-			parent_profiler_),
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
-	divergence_profiler_(
-		FCPPT_TEXT("divergence"),
-		profiler::optional_parent(
-			parent_profiler_),
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
-	project_profiler_(
-		FCPPT_TEXT("project"),
-		profiler::optional_parent(
-			parent_profiler_),
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
-	solve_profiler_(
-		FCPPT_TEXT("solve"),
-		profiler::optional_parent(
-			parent_profiler_),
-		profiling_enabled_ ? profiler::activation::enabled : profiler::activation::disabled),
 	boundary_(
 		_boundary),
 	// This has to be initialized here because we need it as the "initial
@@ -139,20 +106,10 @@ flakelib::volume::simulation::stam::object::velocity()
 	return velocity_image_->value();
 }
 
-flakelib::profiler::object const &
-flakelib::volume::simulation::stam::object::parent_profiler() const
-{
-	return parent_profiler_;
-}
-
 void
 flakelib::volume::simulation::stam::object::update(
 	flakelib::duration const &dt)
 {
-	profiler::scoped scoped_profiler(
-		parent_profiler_,
-		command_queue_);
-
 	this->apply_forces(
 		velocity_image_->value());
 
@@ -225,10 +182,6 @@ flakelib::volume::simulation::stam::object::advect(
 	volume_float4_view const &from,
 	flakelib::duration const &dt)
 {
-	profiler::scoped scoped_profiler(
-		advection_profiler_,
-		command_queue_);
-
 	unique_volume_float4_lock result(
 		fcppt::make_unique_ptr<volume_float4_lock>(
 			fcppt::ref(
@@ -282,10 +235,6 @@ void
 flakelib::volume::simulation::stam::object::apply_forces(
 	volume_float4_view const &from)
 {
-	profiler::scoped scoped_profiler(
-		external_forces_profiler_,
-		command_queue_);
-
 	apply_external_forces_kernel_.argument(
 		sge::opencl::kernel::argument_index(
 			0),
@@ -314,10 +263,6 @@ flakelib::volume::simulation::stam::object::unique_volume_float_lock
 flakelib::volume::simulation::stam::object::divergence(
 	volume_float4_view const &from)
 {
-	profiler::scoped scoped_profiler(
-		divergence_profiler_,
-		command_queue_);
-
 	unique_volume_float_lock result(
 		fcppt::make_unique_ptr<volume_float_lock>(
 			fcppt::ref(
@@ -365,10 +310,6 @@ flakelib::volume::simulation::stam::object::unique_volume_float_lock
 flakelib::volume::simulation::stam::object::solve(
 	volume_float_view const &_rhs)
 {
-	profiler::scoped scoped_profiler(
-		solve_profiler_,
-		command_queue_);
-
 	unique_volume_float_lock result(
 		fcppt::make_unique_ptr<volume_float_lock>(
 			fcppt::ref(
@@ -403,10 +344,6 @@ flakelib::volume::simulation::stam::object::gradient_and_subtract(
 	stam::vector_field const &_vector_field,
 	stam::pressure const &_pressure)
 {
-	profiler::scoped scoped_profiler(
-		project_profiler_,
-		command_queue_);
-
 	unique_volume_float4_lock result(
 		fcppt::make_unique_ptr<volume_float4_lock>(
 			fcppt::ref(

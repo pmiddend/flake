@@ -2,19 +2,17 @@
 #define FLAKELIB_PROFILER_OPTIONAL_PARENT_HPP_INCLUDED
 
 #include <flakelib/profiler/object_fwd.hpp>
-#include <fcppt/optional.hpp>
+#include <fcppt/optional_fwd.hpp>
 
 namespace flakelib
 {
 namespace profiler
 {
 typedef
-fcppt::optional
-<
-	profiler::object &
->
+fcppt::optional<profiler::object &>
 optional_parent;
 }
 }
 
 #endif
+
