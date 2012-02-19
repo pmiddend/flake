@@ -1,13 +1,17 @@
-#include <fcppt/math/dim/basic_impl.hpp>
-#include <fcppt/assign/make_array.hpp>
-#include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <flakelib/exception.hpp>
 #include <flakelib/cl/kernel.hpp>
-#include <fcppt/algorithm/shortest_levenshtein.hpp>
+#include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <fcppt/from_std_string.hpp>
 #include <fcppt/text.hpp>
-#include <iterator>
+#include <fcppt/algorithm/shortest_levenshtein.hpp>
+#include <fcppt/assign/make_array.hpp>
+#include <fcppt/math/dim/basic_impl.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <boost/algorithm/string/join.hpp>
 #include <algorithm>
+#include <iterator>
+#include <fcppt/config/external_end.hpp>
+
 
 flakelib::cl::kernel::kernel(
 	sge::opencl::program::object &_program,
@@ -17,11 +21,14 @@ flakelib::cl::kernel::kernel(
 :
 	command_queue_(
 		_command_queue),
+	name_(
+		_name),
 	kernel_(
 		_program,
 		_name),
 	kernel_parameters_(
-		_kernel_parameters)
+		_kernel_parameters),
+	unassigned_parameters_()
 {
 	if(_kernel_parameters.empty())
 		throw
@@ -30,6 +37,13 @@ flakelib::cl::kernel::kernel(
 				fcppt::from_std_string(
 					_name.get())+
 				FCPPT_TEXT("\n\nDoesn't have any parameters defined."));
+
+	std::copy(
+		kernel_parameters_.begin(),
+		kernel_parameters_.end(),
+		std::inserter(
+			unassigned_parameters_,
+			unassigned_parameters_.end()));
 }
 
 void
@@ -37,6 +51,9 @@ flakelib::cl::kernel::numerical_argument(
 	std::string const &_name,
 	sge::opencl::kernel::numeric_type const &_value)
 {
+	unassigned_parameters_.erase(
+		_name);
+
 	kernel_.argument(
 		this->index_for_name(
 			_name),
@@ -48,6 +65,9 @@ flakelib::cl::kernel::buffer_argument(
 	std::string const &_name,
 	sge::opencl::memory_object::base &_memory_object)
 {
+	unassigned_parameters_.erase(
+		_name);
+
 	kernel_.argument(
 		this->index_for_name(
 			_name),
@@ -58,6 +78,19 @@ void
 flakelib::cl::kernel::enqueue_automatic(
 	sge::opencl::memory_object::dim1 const &_d)
 {
+	if(!unassigned_parameters_.empty())
+		throw
+			flakelib::exception(
+				FCPPT_TEXT("The following arguments to the kernel\n\n")+
+				fcppt::from_std_string(
+					name_.get())+
+				FCPPT_TEXT("\n\nhave not been assigned:")+
+				fcppt::from_std_string(
+					boost::algorithm::join(
+						unassigned_parameters_,
+						std::string(
+							"\n"))));
+
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		kernel_,

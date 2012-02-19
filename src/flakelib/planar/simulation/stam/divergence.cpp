@@ -2,19 +2,20 @@
 #include <flakelib/buffer/planar_view_impl.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/buffer_pool/planar_lock_impl.hpp>
+#include <flakelib/cl/kernel.hpp>
 #include <flakelib/planar/program_context.hpp>
-#include <flakelib/planar/simulation/stam/semilagrangian_advection.hpp>
+#include <flakelib/planar/simulation/stam/divergence.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/move.hpp>
 #include <fcppt/ref.hpp>
+#include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
-#include <fcppt/chrono/duration_impl.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 
 
-flakelib::planar::simulation::stam::semilagrangian_advection::semilagrangian_advection(
+flakelib::planar::simulation::stam::divergence::divergence(
 	planar::program_context const &_program_context,
 	flakelib::buffer_pool::object &_buffer_pool)
 :
@@ -23,7 +24,7 @@ flakelib::planar::simulation::stam::semilagrangian_advection::semilagrangian_adv
 	program_(
 		_program_context.command_queue(),
 		flakelib::media_path_from_string(
-			FCPPT_TEXT("kernels/planar/semilagrangian_advection.cl")),
+			FCPPT_TEXT("kernels/planar/divergence.cl")),
 		_program_context.compiler_flags()),
 	kernel_(
 		program_.create_kernel(
@@ -32,17 +33,16 @@ flakelib::planar::simulation::stam::semilagrangian_advection::semilagrangian_adv
 {
 }
 
-flakelib::planar::unique_float2_buffer_lock
-flakelib::planar::simulation::stam::semilagrangian_advection::update(
+flakelib::planar::unique_float_buffer_lock
+flakelib::planar::simulation::stam::divergence::update(
 	planar::boundary_buffer_view const &_boundary,
-	planar::float2_view const &_buffer,
-	flakelib::duration const &_dt)
+	planar::float2_view const &_buffer)
 {
 	FCPPT_ASSERT_PRE(
 		_buffer.size() == _boundary.get().size());
 
-	flakelib::planar::unique_float2_buffer_lock result(
-		fcppt::make_unique_ptr<flakelib::planar::float2_buffer_lock>(
+	flakelib::planar::unique_float_buffer_lock result(
+		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
 			fcppt::ref(
 				buffer_pool_),
 			_buffer.size()));
@@ -64,11 +64,6 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update(
 		static_cast<cl_uint>(
 			_buffer.size().w()));
 
-	kernel_->numerical_argument(
-		"dt",
-		static_cast<cl_float>(
-			_dt.count()));
-
 	kernel_->enqueue_automatic(
 		_buffer.size());
 
@@ -77,6 +72,6 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update(
 			result);
 }
 
-flakelib::planar::simulation::stam::semilagrangian_advection::~semilagrangian_advection()
+flakelib::planar::simulation::stam::divergence::~divergence()
 {
 }

@@ -12,8 +12,8 @@
 #include <sge/image/color/any/object.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/sprite/object_decl.hpp>
-#include <sge/sprite/buffers/with_declaration.hpp>
 #include <sge/sprite/buffers/single.hpp>
+#include <sge/sprite/buffers/with_declaration.hpp>
 #include <sge/sprite/config/choices.hpp>
 #include <sge/sprite/config/float_type.hpp>
 #include <sge/sprite/config/normal_size.hpp>
@@ -32,6 +32,7 @@
 #include <map>
 #include <vector>
 #include <fcppt/config/external_end.hpp>
+
 
 namespace flakelib
 {

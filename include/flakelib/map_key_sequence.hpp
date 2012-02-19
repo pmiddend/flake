@@ -1,12 +1,15 @@
 #ifndef FLAKELIB_MAP_KEY_SEQUENCE_HPP_INCLUDED
 #define FLAKELIB_MAP_KEY_SEQUENCE_HPP_INCLUDED
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <fcppt/config/external_begin.hpp>
 #include <boost/function.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <boost/spirit/home/phoenix/bind.hpp>
 #include <boost/spirit/home/phoenix/core.hpp>
 #include <map>
+#include <fcppt/config/external_end.hpp>
+
 
 namespace flakelib
 {

@@ -121,9 +121,13 @@ SET(
 	src/flakelib/planar/monitor/texture.cpp
 	src/flakelib/planar/program_context.cpp
 	src/flakelib/planar/simulation/base.cpp
+	src/flakelib/planar/simulation/stam/divergence.cpp
 	src/flakelib/planar/simulation/stam/gravity_source.cpp
+	src/flakelib/planar/simulation/stam/jacobi.cpp
 	src/flakelib/planar/simulation/stam/object.cpp
+	src/flakelib/planar/simulation/stam/outflow_boundaries.cpp
 	src/flakelib/planar/simulation/stam/semilagrangian_advection.cpp
+	src/flakelib/planar/simulation/stam/subtract_pressure_gradient.cpp
 	src/flakelib/planar/simulation/stam/vorticity.cpp
 	src/flakelib/planar/simulation/stam/wind_source.cpp
 	src/flakelib/profiler/object.cpp

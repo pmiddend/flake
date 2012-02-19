@@ -1,18 +1,21 @@
 #ifndef FLAKELIB_CL_PROGRAM_HPP_INCLUDED
 #define FLAKELIB_CL_PROGRAM_HPP_INCLUDED
 
+#include <flakelib/cl/compiler_flags.hpp>
+#include <flakelib/cl/kernel_parameters.hpp>
+#include <flakelib/cl/unique_kernel_ptr.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
+#include <sge/opencl/kernel/name.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/object.hpp>
-#include <sge/opencl/kernel/name.hpp>
-#include <flakelib/cl/compiler_flags.hpp>
-#include <flakelib/cl/unique_kernel_ptr.hpp>
-#include <flakelib/cl/kernel_parameters.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/filesystem/path.hpp>
 #include <fcppt/unique_ptr_impl.hpp>
-#include <string>
+#include <fcppt/filesystem/path.hpp>
+#include <fcppt/config/external_begin.hpp>
 #include <map>
+#include <string>
+#include <fcppt/config/external_end.hpp>
+
 
 namespace flakelib
 {

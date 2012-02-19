@@ -1,19 +1,19 @@
 #ifndef FLAKELIB_PROFILER_OBJECT_HPP_INCLUDED
 #define FLAKELIB_PROFILER_OBJECT_HPP_INCLUDED
 
-#include <flakelib/profiler/title.hpp>
-#include <flakelib/profiler/is_active.hpp>
 #include <flakelib/profiler/call_count.hpp>
 #include <flakelib/profiler/child_sequence.hpp>
-#include <flakelib/profiler/optional_parent.hpp>
 #include <flakelib/profiler/duration.hpp>
+#include <flakelib/profiler/is_active.hpp>
+#include <flakelib/profiler/optional_parent.hpp>
 #include <flakelib/profiler/parent.hpp>
 #include <flakelib/profiler/scoped_fwd.hpp>
+#include <flakelib/profiler/title.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/optional_impl.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/chrono/duration_impl.hpp>
 #include <fcppt/io/ostream.hpp>
-#include <fcppt/optional_impl.hpp>
 
 
 namespace flakelib

@@ -1,18 +1,19 @@
-#include <flakelib/buffer_pool/planar_lock_impl.hpp>
-#include <fcppt/ref.hpp>
-#include <fcppt/assign/make_array.hpp>
-#include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/planar_view_impl.hpp>
-#include <flakelib/planar/simulation/stam/vorticity.hpp>
+#include <flakelib/buffer_pool/planar_lock_impl.hpp>
 #include <flakelib/planar/unique_float_buffer_lock.hpp>
+#include <flakelib/planar/simulation/stam/vorticity.hpp>
+#include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
+#include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/assign/make_array.hpp>
 #include <fcppt/chrono/duration_impl.hpp>
+
 
 flakelib::planar::simulation::stam::vorticity::vorticity(
 	sge::opencl::command_queue::object &_command_queue,

@@ -5,8 +5,8 @@
 #include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/buffer_pool/planar_lock.hpp>
 #include <flakelib/planar/additional_scalar_data.hpp>
-#include <flakelib/planar/boundary_image_view.hpp>
 #include <flakelib/planar/boundary_buffer_view.hpp>
+#include <flakelib/planar/boundary_image_view.hpp>
 #include <flakelib/planar/float2_buffer_lock.hpp>
 #include <flakelib/planar/float2_view.hpp>
 #include <flakelib/planar/float_buffer_lock.hpp>

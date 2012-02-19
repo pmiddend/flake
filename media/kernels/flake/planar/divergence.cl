@@ -8,13 +8,15 @@
 #include <flake/kernel_name.cl>
 #include <flake/kernel_argument.cl>
 
+/**
+\brief Calculates the divergence, assuming the boundary elements have zero velocity
+*/
 kernel void
-FLAKE_KERNEL_NAME(jacobi)(
-	uint const FLAKE_KERNEL_ARGUMENT(buffer_pitch),
-	global float const *FLAKE_KERNEL_ARGUMENT(rhs),
+FLAKE_KERNEL_NAME(divergence)(
+	global float2 const *FLAKE_KERNEL_ARGUMENT(input),
+	global float *FLAKE_KERNEL_ARGUMENT(output),
 	global float const *FLAKE_KERNEL_ARGUMENT(boundary),
-	global float const *FLAKE_KERNEL_ARGUMENT(input),
-	global float *FLAKE_KERNEL_ARGUMENT(output))
+	uint const FLAKE_KERNEL_ARGUMENT(buffer_pitch))
 {
 	int2 const position =
 		flake_planar_current_position();
@@ -45,43 +47,18 @@ FLAKE_KERNEL_NAME(jacobi)(
 				flake_planar_global_size(),
 				position);
 
-	float const
-		center =
-			input[current_index],
+	// Here, if the boundary is 1, we set the input to zero.
+	// Instead of doing that, we could set it to the obstacle's velocity.
+	float2
 		left =
-			mix(
-				input[left_index],
-				center,
-				boundary[left_index]),
+			(1.0f - boundary[left_index]) * input[left_index],
 		right =
-			mix(
-				input[right_index],
-				center,
-				boundary[right_index]),
+			(1.0f - boundary[right_index]) * input[right_index],
 		top =
-			mix(
-				input[top_index],
-				center,
-				boundary[top_index]),
+			(1.0f - boundary[top_index]) * input[top_index],
 		bottom =
-			mix(
-				input[bottom_index],
-				center,
-				boundary[bottom_index]);
-
-	float const
-		rhs_value =
-			rhs[current_index],
-		result =
-			(left + right + top + bottom - rhs_value) * 0.25f;
+			(1.0f - boundary[bottom_index]) * input[bottom_index];
 
 	output[current_index] =
-#ifndef WEIGHTED_JACOBI
-		result;
-#else
-		mix(
-			center,
-			result,
-			2.0f/3.0f);
-#endif
+		((right.x - left.x) + (bottom.y - top.y)) / 2.0f;
 }

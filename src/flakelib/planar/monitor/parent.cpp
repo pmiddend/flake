@@ -1,4 +1,3 @@
-#include <sge/sprite/process/default_geometry_options.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/planar/monitor/parent.hpp>
 #include <flakelib/planar/monitor/arrow_vf/format.hpp>
@@ -12,8 +11,9 @@
 #include <sge/shader/object_parameters.hpp>
 #include <sge/shader/vf_to_string.hpp>
 #include <sge/sprite/compare/default.hpp>
-#include <sge/sprite/intrusive/process/ordered_with_options.hpp>
 #include <sge/sprite/intrusive/process/ordered.hpp>
+#include <sge/sprite/intrusive/process/ordered_with_options.hpp>
+#include <sge/sprite/process/default_geometry_options.hpp>
 #include <sge/sprite/render/matrix_options.hpp>
 #include <sge/sprite/render/options.hpp>
 #include <sge/sprite/render/state_options.hpp>
@@ -27,6 +27,7 @@
 #include <fcppt/math/dim/basic_impl.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/output.hpp>
+
 
 flakelib::planar::monitor::parent::parent(
 	sge::renderer::device &_renderer,

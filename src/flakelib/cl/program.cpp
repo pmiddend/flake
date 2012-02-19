@@ -1,24 +1,27 @@
-#include <fcppt/cref.hpp>
-#include <fcppt/ref.hpp>
-#include <flakelib/cl/kernel.hpp>
-#include <fcppt/filesystem/path_to_string.hpp>
+#include <flakelib/exception.hpp>
 #include <flakelib/map_key_sequence.hpp>
-#include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/algorithm/shortest_levenshtein.hpp>
-#include <boost/next_prior.hpp>
-#include <utility>
+#include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program.hpp>
-#include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
+#include <sge/opencl/program/file_to_source_string_sequence.hpp>
+#include <fcppt/cref.hpp>
+#include <fcppt/from_std_string.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/optional_impl.hpp>
-#include <flakelib/exception.hpp>
-#include <fcppt/io/stream_to_string.hpp>
-#include <fcppt/io/cifstream.hpp>
+#include <fcppt/ref.hpp>
 #include <fcppt/algorithm/contains.hpp>
+#include <fcppt/algorithm/shortest_levenshtein.hpp>
+#include <fcppt/filesystem/path_to_string.hpp>
+#include <fcppt/io/cifstream.hpp>
+#include <fcppt/io/stream_to_string.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <boost/next_prior.hpp>
 #include <fstream>
 #include <set>
-#include <fcppt/from_std_string.hpp>
+#include <utility>
+#include <fcppt/config/external_end.hpp>
+
 
 flakelib::cl::program::program(
 	sge::opencl::command_queue::object &_command_queue,

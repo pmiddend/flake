@@ -1,5 +1,3 @@
-#include <sge/sprite/process/options.hpp>
-#include <sge/sprite/process/default_geometry_options.hpp>
 #include <flakelib/sprite_drawer_3d.hpp>
 #include <sge/image/color/any/convert.hpp>
 #include <sge/image2d/dim.hpp>
@@ -10,9 +8,11 @@
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/sprite/object_impl.hpp>
 #include <sge/sprite/parameters_impl.hpp>
-#include <sge/sprite/process/with_options.hpp>
 #include <sge/sprite/compare/default.hpp>
 #include <sge/sprite/geometry/make_random_access_range.hpp>
+#include <sge/sprite/process/default_geometry_options.hpp>
+#include <sge/sprite/process/options.hpp>
+#include <sge/sprite/process/with_options.hpp>
 #include <sge/sprite/render/options.hpp>
 #include <sge/texture/rect_fragmented.hpp>
 #include <fcppt/ref.hpp>

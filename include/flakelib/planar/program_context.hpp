@@ -1,9 +1,10 @@
 #ifndef FLAKELIB_PLANAR_PROGRAM_CONTEXT_HPP_INCLUDED
 #define FLAKELIB_PLANAR_PROGRAM_CONTEXT_HPP_INCLUDED
 
-#include <sge/opencl/command_queue/object_fwd.hpp>
 #include <flakelib/cl/compiler_flags.hpp>
+#include <sge/opencl/command_queue/object_fwd.hpp>
 #include <fcppt/nonassignable.hpp>
+
 
 namespace flakelib
 {
