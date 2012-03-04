@@ -9,6 +9,8 @@
 #include <exception>
 #include <fcppt/io/cerr.hpp>
 
+// Purely a hack because libclang doesn't get this try {} catch notation.
+#ifndef FLAKE_NO_CATCH_STATEMENTS
 #define FLAKE_CATCH_STATEMENTS\
 	catch(\
 		fcppt::exception const &e)\
@@ -30,7 +32,10 @@
 		std::cerr << "unknown exception caught\n";\
 		return\
 			awl::main::exit_failure();\
-	}\
+	}
+#else
+#define FLAKE_CATCH_STATEMENTS
+#endif
 
 #endif
 

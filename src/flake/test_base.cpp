@@ -43,14 +43,17 @@
 #include <sge/window/parameters.hpp>
 #include <sge/window/system.hpp>
 #include <sge/window/title.hpp>
+#include <sge/window/object.hpp>
 
 awl::main::exit_code const
 flake::test_base::run()
 {
+	systems_->window().show();
+
 	while(systems_->window_system().poll())
 	{
 		flakelib::scoped_frame_limiter frame_limiter(
-			);
+			desired_fps_);
 
 		this->update();
 
@@ -93,7 +96,7 @@ flake::test_base::test_base(
 								sge::parse::json::find_and_convert_member<sge::window::dim>(
 									*configuration_,
 									sge::parse::json::string_to_path(
-										FCPPT_TEXT("tests/window-size"))))))
+										FCPPT_TEXT("tests/window-size"))))).dont_show())
 						(sge::systems::renderer(
 							sge::renderer::parameters(
 								sge::renderer::visual_depth::depth32,

@@ -78,6 +78,14 @@ private:
 	rucksack::widget::box::base box_parent_;
 	rucksack::widget::dummy font_box_;
 	rucksack::widget::dummy sprite_box_;
+
+	void
+	render_font(
+		monitor::optional_projection const &);
+
+	void
+	render_arrows(
+		monitor::optional_projection const &);
 };
 }
 }

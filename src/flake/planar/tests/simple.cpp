@@ -8,6 +8,7 @@
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/dim/arithmetic.hpp>
 #include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/image2d/view/const_elements_wrapper.hpp>
@@ -97,6 +98,11 @@ flake::planar::tests::simple::simple(
 			fcppt::ref(
 				this->buffer_pool()),
 			boundary_buffer_.value().size())),
+	smoke_density_buffer_(
+		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
+			fcppt::ref(
+				this->buffer_pool()),
+			boundary_buffer_.value().size())),
 	monitor_parent_(
 		this->renderer(),
 		this->opencl_system().command_queue(),
@@ -135,6 +141,24 @@ flake::planar::tests::simple::simple(
 			sge::renderer::texture::mipmap::off(),
 			sge::renderer::resource_flags_field(
 				sge::renderer::resource_flags::none))),
+	smoke_density_texture_(
+		monitor_parent_,
+		monitor::name(
+			FCPPT_TEXT("smoke density")),
+		monitor::grid_dimensions(
+			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("tests/planar/simple/texture-grid-scale"))) *
+			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
+				sge::image2d::view::size(
+					boundary_image_file_->view()))),
+		monitor::texture_size(
+			fcppt::math::dim::structure_cast<monitor::dim>(
+				sge::image2d::view::size(
+					boundary_image_file_->view()))),
+		monitor::scaling_factor(
+			1.0f)),
 	rucksack_viewport_adaptor_(
 		this->viewport_manager(),
 		this->renderer()),
@@ -162,6 +186,9 @@ flake::planar::tests::simple::simple(
 	rucksack_enumeration_.push_back_child(
 		velocity_arrows_.widget());
 
+	rucksack_enumeration_.push_back_child(
+		smoke_density_texture_.widget());
+
 	flakelib::cl::planar_image_view_to_float_buffer(
 		this->opencl_system().command_queue(),
 		boundary_image_file_->view(),
@@ -183,7 +210,6 @@ flake::planar::tests::simple::run()
 
 flake::planar::tests::simple::~simple()
 {
-
 }
 
 void

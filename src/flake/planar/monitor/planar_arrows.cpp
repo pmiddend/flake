@@ -1,3 +1,4 @@
+#include <fcppt/ref.hpp>
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/planar_arrows.hpp>
 #include <flake/planar/monitor/dummy_sprite/parameters.hpp>
@@ -9,6 +10,7 @@
 #include <sge/font/text/size.hpp>
 #include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
 #include <sge/renderer/device.hpp>
+#include <sge/renderer/scoped_transform.hpp>
 #include <sge/renderer/first_index.hpp>
 #include <sge/renderer/nonindexed_primitive_type.hpp>
 #include <sge/renderer/resource_flags.hpp>
@@ -22,15 +24,18 @@
 #include <sge/renderer/projection/near.hpp>
 #include <sge/renderer/projection/orthogonal_wh.hpp>
 #include <sge/renderer/vf/dynamic/part_index.hpp>
+#include <sge/renderer/onscreen_target.hpp>
 #include <sge/shader/activate_everything.hpp>
 #include <sge/shader/matrix.hpp>
 #include <sge/shader/matrix_flags.hpp>
 #include <sge/shader/object.hpp>
 #include <sge/shader/scoped.hpp>
 #include <sge/sprite/parameters.hpp>
+#include <sge/sprite/projection_matrix.hpp>
 #include <sge/texture/part_raw.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/scoped_ptr.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
@@ -198,6 +203,80 @@ void
 flake::planar::monitor::planar_arrows::render(
 	monitor::optional_projection const &_projection)
 {
+	this->render_font(
+		_projection);
+
+	this->render_arrows(
+		_projection);
+}
+
+void
+flake::planar::monitor::planar_arrows::update()
+{
+	if(sprite_)
+	{
+		sprite_->pos(
+			fcppt::math::vector::structure_cast<monitor::dummy_sprite::object::vector>(
+				sprite_box_.position()));
+
+		sprite_->size(
+			fcppt::math::dim::structure_cast<monitor::dummy_sprite::object::dim>(
+				sprite_box_.size()));
+	}
+}
+
+rucksack::widget::base &
+flake::planar::monitor::planar_arrows::widget()
+{
+	return box_parent_;
+}
+
+flake::planar::monitor::planar_arrows::~planar_arrows()
+{
+}
+
+void
+flake::planar::monitor::planar_arrows::render_font(
+	monitor::optional_projection const &_projection)
+{
+	sge::renderer::scoped_transform world_transform(
+		child::parent().renderer(),
+		sge::renderer::matrix_mode::world,
+		sge::renderer::matrix4::identity());
+
+	fcppt::scoped_ptr<sge::renderer::scoped_transform> projection_transform;
+
+	projection_transform.take(
+		fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
+			fcppt::ref(
+				child::parent().renderer()),
+			sge::renderer::matrix_mode::projection,
+			_projection
+			?
+				*_projection
+			:
+				sge::sprite::projection_matrix(
+					child::parent().renderer().onscreen_target().viewport())));
+
+	sge::font::text::draw(
+		child::parent().font_metrics(),
+		child::parent().font_drawer(),
+		sge::font::text::from_fcppt_string(
+			this->name()),
+		sge::font::rect(
+			fcppt::math::vector::structure_cast<sge::font::rect::vector>(
+				font_box_.position()),
+			fcppt::math::dim::structure_cast<sge::font::rect::dim>(
+				font_box_.size())),
+		sge::font::text::align_h::center,
+		sge::font::text::align_v::center,
+		sge::font::text::flags::none);
+}
+
+void
+flake::planar::monitor::planar_arrows::render_arrows(
+	monitor::optional_projection const &_projection)
+{
 	// Activate the shader and the vertex declaration
 	sge::shader::scoped scoped_shader(
 		child::parent().arrow_shader(),
@@ -233,29 +312,4 @@ flake::planar::monitor::planar_arrows::render(
 		sge::renderer::vertex_count(
 			vb_->size()),
 		sge::renderer::nonindexed_primitive_type::line);
-}
-
-void
-flake::planar::monitor::planar_arrows::update()
-{
-	if(sprite_)
-	{
-		sprite_->pos(
-			fcppt::math::vector::structure_cast<monitor::dummy_sprite::object::vector>(
-				sprite_box_.position()));
-
-		sprite_->size(
-			fcppt::math::dim::structure_cast<monitor::dummy_sprite::object::dim>(
-				sprite_box_.size()));
-	}
-}
-
-rucksack::widget::base &
-flake::planar::monitor::planar_arrows::widget()
-{
-	return box_parent_;
-}
-
-flake::planar::monitor::planar_arrows::~planar_arrows()
-{
 }

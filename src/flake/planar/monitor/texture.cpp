@@ -76,7 +76,7 @@ flake::planar::monitor::texture::texture(
 	monitor::parent &_parent,
 	monitor::name const &_name,
 	monitor::grid_dimensions const &_grid_dimensions,
-	monitor::dim const &_dim,
+	monitor::texture_size const &_texture_size,
 	monitor::scaling_factor const &_scaling)
 :
 	monitor::child(
@@ -103,7 +103,7 @@ flake::planar::monitor::texture::texture(
 	sprite_(
 		dummy_sprite::parameters()
 			.size(
-				_dim)
+				_texture_size.get())
 			.texture(
 				fcppt::make_shared_ptr<sge::texture::part_raw>(
 					renderer_texture_))
@@ -125,14 +125,14 @@ flake::planar::monitor::texture::texture(
 			rucksack::axis_policy(
 				rucksack::minimum_size(
 					static_cast<rucksack::scalar>(
-						_dim.w())),
+						_texture_size.get().w())),
 				rucksack::preferred_size(),
 				rucksack::is_expanding(
 					false)),
 			rucksack::axis_policy(
 				rucksack::minimum_size(
 					static_cast<rucksack::scalar>(
-						_dim.h())),
+						_texture_size.get().h())),
 				rucksack::preferred_size(),
 				rucksack::is_expanding(
 					false)),

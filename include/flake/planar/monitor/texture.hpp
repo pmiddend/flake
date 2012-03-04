@@ -2,11 +2,11 @@
 #define FLAKE_PLANAR_MONITOR_TEXTURE_HPP_INCLUDED
 
 #include <flake/planar/monitor/child.hpp>
-#include <flake/planar/monitor/dim.hpp>
 #include <flake/planar/monitor/grid_dimensions.hpp>
 #include <flake/planar/monitor/name.hpp>
 #include <flake/planar/monitor/parent_fwd.hpp>
 #include <flake/planar/monitor/scaling_factor.hpp>
+#include <flake/planar/monitor/texture_size.hpp>
 #include <flake/planar/monitor/dummy_sprite/object.hpp>
 #include <rucksack/widget/dummy.hpp>
 #include <rucksack/widget/box/base.hpp>
@@ -34,7 +34,7 @@ public:
 		monitor::parent &,
 		monitor::name const &,
 		monitor::grid_dimensions const &,
-		monitor::dim const &,
+		monitor::texture_size const &,
 		monitor::scaling_factor const &);
 
 	sge::opencl::memory_object::image::planar &

@@ -6,6 +6,7 @@
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/planar_converter.hpp>
 #include <flake/planar/monitor/planar_arrows.hpp>
+#include <flake/planar/monitor/texture.hpp>
 #include <awl/main/function_context_fwd.hpp>
 #include <awl/main/exit_code.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -59,11 +60,13 @@ private:
 	sge::image2d::file_ptr boundary_image_file_;
 	flakelib::planar::float_buffer_lock boundary_buffer_;
 	flakelib::planar::unique_float2_buffer_lock velocity_buffer_;
+	flakelib::planar::unique_float_buffer_lock smoke_density_buffer_;
 
 	// Monitors
 	flake::planar::monitor::parent monitor_parent_;
 	flake::planar::monitor::planar_converter monitor_planar_converter_;
 	flake::planar::monitor::planar_arrows velocity_arrows_;
+	flake::planar::monitor::texture smoke_density_texture_;
 	rucksack::widget::viewport_adaptor rucksack_viewport_adaptor_;
 	rucksack::widget::enumeration rucksack_enumeration_;
 
