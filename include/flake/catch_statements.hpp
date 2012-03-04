@@ -4,10 +4,13 @@
 #include <awl/main/exit_failure.hpp>
 #include <fcppt/exception.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/io/cerr.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <exception>
 #include <iostream>
 #include <ostream>
-#include <exception>
-#include <fcppt/io/cerr.hpp>
+#include <fcppt/config/external_end.hpp>
+
 
 // Purely a hack because libclang doesn't get this try {} catch notation.
 #ifndef FLAKE_NO_CATCH_STATEMENTS

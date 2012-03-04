@@ -1,8 +1,8 @@
 #ifndef FLAKELIB_MEDIA_PATH_FROM_STRING_HPP_INCLUDED
 #define FLAKELIB_MEDIA_PATH_FROM_STRING_HPP_INCLUDED
 
-#include <fcppt/string.hpp>
 #include <flakelib/symbol.hpp>
+#include <fcppt/string.hpp>
 #include <fcppt/filesystem/path.hpp>
 
 

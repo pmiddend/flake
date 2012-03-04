@@ -12,9 +12,6 @@
 #include <iterator>
 #include <fcppt/config/external_end.hpp>
 
-// DEBUG
-#include <iostream>
-
 flakelib::cl::kernel::kernel(
 	sge::opencl::program::object &_program,
 	sge::opencl::command_queue::object &_command_queue,

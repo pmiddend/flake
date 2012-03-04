@@ -1,4 +1,3 @@
-#include <fcppt/ref.hpp>
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/planar_arrows.hpp>
 #include <flake/planar/monitor/dummy_sprite/parameters.hpp>
@@ -10,10 +9,11 @@
 #include <sge/font/text/size.hpp>
 #include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/scoped_transform.hpp>
 #include <sge/renderer/first_index.hpp>
 #include <sge/renderer/nonindexed_primitive_type.hpp>
+#include <sge/renderer/onscreen_target.hpp>
 #include <sge/renderer/resource_flags.hpp>
+#include <sge/renderer/scoped_transform.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/size_type.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
@@ -24,7 +24,6 @@
 #include <sge/renderer/projection/near.hpp>
 #include <sge/renderer/projection/orthogonal_wh.hpp>
 #include <sge/renderer/vf/dynamic/part_index.hpp>
-#include <sge/renderer/onscreen_target.hpp>
 #include <sge/shader/activate_everything.hpp>
 #include <sge/shader/matrix.hpp>
 #include <sge/shader/matrix_flags.hpp>
@@ -35,6 +34,7 @@
 #include <sge/texture/part_raw.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/ref.hpp>
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/math/box/basic_impl.hpp>
@@ -44,6 +44,7 @@
 #include <fcppt/config/external_begin.hpp>
 #include <limits>
 #include <fcppt/config/external_end.hpp>
+
 
 namespace
 {

@@ -4,9 +4,9 @@
 #include <flakelib/symbol.hpp>
 #include <flakelib/cl/kernel_fwd.hpp>
 #include <flakelib/cl/program.hpp>
+#include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/planar/boundary_buffer_view.hpp>
 #include <flakelib/planar/float2_view.hpp>
-#include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/planar/simulation/stam/wind_strength.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <fcppt/noncopyable.hpp>

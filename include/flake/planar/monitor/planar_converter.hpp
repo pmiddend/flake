@@ -1,15 +1,15 @@
 #ifndef FLAKE_PLANAR_MONITOR_PLANAR_CONVERTER_HPP_INCLUDED
 #define FLAKE_PLANAR_MONITOR_PLANAR_CONVERTER_HPP_INCLUDED
 
-#include <flakelib/buffer/planar_view_fwd.hpp>
-#include <flakelib/cl/program_context_fwd.hpp>
-#include <flakelib/planar/float2_view.hpp>
-#include <flakelib/planar/float_view.hpp>
-#include <flakelib/cl/program.hpp>
-#include <flakelib/cl/unique_kernel_ptr.hpp>
 #include <flake/planar/monitor/arrow_scale.hpp>
 #include <flake/planar/monitor/grid_scale.hpp>
 #include <flake/planar/monitor/scaling_factor.hpp>
+#include <flakelib/buffer/planar_view_fwd.hpp>
+#include <flakelib/cl/program.hpp>
+#include <flakelib/cl/program_context_fwd.hpp>
+#include <flakelib/cl/unique_kernel_ptr.hpp>
+#include <flakelib/planar/float2_view.hpp>
+#include <flakelib/planar/float_view.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>

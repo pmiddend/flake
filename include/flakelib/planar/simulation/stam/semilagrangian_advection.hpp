@@ -1,18 +1,18 @@
 #ifndef FLAKELIB_PLANAR_SIMULATION_STAM_SEMILAGRANGIAN_ADVECTION_HPP_INCLUDED
 #define FLAKELIB_PLANAR_SIMULATION_STAM_SEMILAGRANGIAN_ADVECTION_HPP_INCLUDED
 
-#include <flakelib/symbol.hpp>
 #include <flakelib/duration.hpp>
+#include <flakelib/symbol.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program.hpp>
+#include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/planar/boundary_buffer_view.hpp>
 #include <flakelib/planar/float2_view.hpp>
 #include <flakelib/planar/float_view.hpp>
-#include <flakelib/planar/simulation/stam/velocity.hpp>
-#include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/planar/unique_float2_buffer_lock.hpp>
 #include <flakelib/planar/unique_float_buffer_lock.hpp>
+#include <flakelib/planar/simulation/stam/velocity.hpp>
 #include <fcppt/noncopyable.hpp>
 
 

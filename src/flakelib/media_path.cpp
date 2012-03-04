@@ -1,8 +1,6 @@
+#include <flake/build/media_path.hpp>
 #include <flakelib/media_path.hpp>
 #include <fcppt/filesystem/path.hpp>
-#include <fcppt/config/external_begin.hpp>
-#include <flake/build/media_path.hpp>
-#include <fcppt/config/external_end.hpp>
 
 
 fcppt::filesystem::path const

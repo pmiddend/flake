@@ -1,24 +1,25 @@
 #ifndef FLAKE_TEST_BASE_HPP_INCLUDED
 #define FLAKE_TEST_BASE_HPP_INCLUDED
 
-#include <sge/parse/json/object_fwd.hpp>
-#include <sge/systems/instance_fwd.hpp>
-#include <sge/opencl/single_device_system/object_fwd.hpp>
-#include <sge/window/title.hpp>
-#include <sge/renderer/device_fwd.hpp>
-#include <sge/input/cursor/object_fwd.hpp>
-#include <sge/image2d/system_fwd.hpp>
-#include <sge/input/keyboard/device_fwd.hpp>
-#include <sge/systems/cursor_option_field.hpp>
+#include <flakelib/scoped_frame_limiter.hpp>
+#include <flakelib/buffer_pool/object_fwd.hpp>
+#include <flakelib/cl/program_context_fwd.hpp>
 #include <sge/font/system_fwd.hpp>
+#include <sge/image2d/system_fwd.hpp>
+#include <sge/input/cursor/object_fwd.hpp>
+#include <sge/input/keyboard/device_fwd.hpp>
+#include <sge/opencl/single_device_system/object_fwd.hpp>
+#include <sge/parse/json/object_fwd.hpp>
+#include <sge/renderer/device_fwd.hpp>
+#include <sge/systems/cursor_option_field.hpp>
+#include <sge/systems/instance_fwd.hpp>
 #include <sge/viewport/manager_fwd.hpp>
-#include <awl/main/function_context_fwd.hpp>
+#include <sge/window/title.hpp>
 #include <awl/main/exit_code.hpp>
+#include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
-#include <flakelib/cl/program_context_fwd.hpp>
-#include <flakelib/buffer_pool/object_fwd.hpp>
-#include <flakelib/scoped_frame_limiter.hpp>
+
 
 namespace flake
 {

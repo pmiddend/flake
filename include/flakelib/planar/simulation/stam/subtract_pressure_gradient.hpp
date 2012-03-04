@@ -4,8 +4,8 @@
 #include <flakelib/symbol.hpp>
 #include <flakelib/cl/kernel_fwd.hpp>
 #include <flakelib/cl/program.hpp>
-#include <flakelib/planar/boundary_buffer_view.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
+#include <flakelib/planar/boundary_buffer_view.hpp>
 #include <flakelib/planar/velocity_buffer_view.hpp>
 #include <flakelib/planar/simulation/stam/pressure_buffer_view.hpp>
 #include <fcppt/noncopyable.hpp>

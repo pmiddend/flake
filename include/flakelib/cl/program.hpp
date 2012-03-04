@@ -1,8 +1,8 @@
 #ifndef FLAKELIB_CL_PROGRAM_HPP_INCLUDED
 #define FLAKELIB_CL_PROGRAM_HPP_INCLUDED
 
-#include <flakelib/cl/compiler_flags.hpp>
 #include <flakelib/symbol.hpp>
+#include <flakelib/cl/compiler_flags.hpp>
 #include <flakelib/cl/kernel_parameters.hpp>
 #include <flakelib/cl/unique_kernel_ptr.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>

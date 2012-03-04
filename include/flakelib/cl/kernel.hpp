@@ -1,8 +1,8 @@
 #ifndef FLAKELIB_CL_KERNEL_HPP_INCLUDED
 #define FLAKELIB_CL_KERNEL_HPP_INCLUDED
 
-#include <flakelib/cl/kernel_parameters.hpp>
 #include <flakelib/symbol.hpp>
+#include <flakelib/cl/kernel_parameters.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/name.hpp>
 #include <sge/opencl/kernel/numeric_type.hpp>
