@@ -3,7 +3,7 @@
 
 #include <flakelib/buffer/linear_view_fwd.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
-#include <sge/opencl/memory_object/size_type.hpp>
+#include <sge/opencl/memory_object/dim1.hpp>
 #include <fcppt/nonassignable.hpp>
 
 namespace flakelib
@@ -27,7 +27,7 @@ public:
 	sge::opencl::memory_object::buffer &
 	buffer() const;
 
-	sge::opencl::memory_object::size_type
+	sge::opencl::memory_object::dim1
 	size() const;
 
 	~linear_view();

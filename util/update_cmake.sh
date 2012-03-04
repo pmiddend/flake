@@ -21,3 +21,8 @@ update_cmake_file \
 	CMakeLists.txt \
 	FLAKELIB_FILES \
 	src/flakelib \
+
+update_cmake_file \
+	CMakeLists.txt \
+	FLAKE_FILES \
+	src/flake \

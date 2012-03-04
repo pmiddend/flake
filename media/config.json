@@ -1,5 +1,24 @@
 {
-	"window-size" : [1280,1024],
+	"tests" :
+	{
+		"window-size" : [1280,1024],
+		"desired-fps" : 60,
+		"opencl-compiler-flags" : "-cl-mad-enable -cl-fast-relaxed-math -Werror",
+		"planar" :
+		{
+			"simple" :
+			{
+				"wind-strength" : 10.0,
+				"jacobi-iterations" : 50,
+				"monitor-font-size" : 15,
+				"master-and-slave-padding" : 3,
+				"boundary" : "256/zagged.png",
+				"velocity-arrow-scale" : 3.0,
+				"velocity-grid-scale" : 3.0,
+				"clock-multiplier" : 20.0
+			}
+		}
+	},
 	"planar-framework-test" :
 	{
 		"boundary-file" : "256/zagged.png",

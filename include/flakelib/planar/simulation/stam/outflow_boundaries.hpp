@@ -4,10 +4,10 @@
 #include <flakelib/cl/kernel_fwd.hpp>
 #include <flakelib/cl/program.hpp>
 #include <flakelib/planar/boundary_buffer_view.hpp>
-#include <flakelib/planar/program_context_fwd.hpp>
-#include <flakelib/planar/velocity_buffer_view.hpp>
 #include <flakelib/planar/float2_view.hpp>
+#include <flakelib/cl/program_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
+
 
 namespace flakelib
 {
@@ -24,7 +24,7 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	outflow_boundaries(
-		planar::program_context const &);
+		cl::program_context const &);
 
 	void
 	update(

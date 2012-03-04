@@ -6,7 +6,7 @@
 #include <flakelib/cl/program.hpp>
 #include <flakelib/planar/boundary_buffer_view.hpp>
 #include <flakelib/planar/float2_view.hpp>
-#include <flakelib/planar/program_context_fwd.hpp>
+#include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/planar/unique_float_buffer_lock.hpp>
 #include <flakelib/planar/simulation/stam/initial_guess_buffer_view.hpp>
 #include <flakelib/planar/simulation/stam/iterations.hpp>
@@ -29,7 +29,7 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	jacobi(
-		planar::program_context const &,
+		cl::program_context const &,
 		flakelib::buffer_pool::object &,
 		planar::simulation::stam::iterations const &);
 

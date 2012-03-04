@@ -1,6 +1,0 @@
-#ifndef FLAKE_KERNEL_NAME_CL_INCLUDED
-#define FLAKE_KERNEL_NAME_CL_INCLUDED
-
-#define FLAKE_KERNEL_NAME(name) name
-
-#endif

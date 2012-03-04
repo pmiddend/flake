@@ -4,6 +4,7 @@
 #include <flakelib/buffer/linear_view_decl.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/assert/pre.hpp>
+#include <fcppt/math/dim/basic_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <cstdlib>
 #include <fcppt/config/external_end.hpp>
@@ -28,11 +29,12 @@ flakelib::buffer::linear_view<T>::buffer() const
 }
 
 template<typename T>
-sge::opencl::memory_object::size_type
+sge::opencl::memory_object::dim1
 flakelib::buffer::linear_view<T>::size() const
 {
 	return
-		buffer_.byte_size() / sizeof(T);
+		sge::opencl::memory_object::dim1(
+			buffer_.byte_size() / sizeof(T));
 }
 
 template<typename T>

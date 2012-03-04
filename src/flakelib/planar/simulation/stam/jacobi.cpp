@@ -3,7 +3,7 @@
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/buffer_pool/planar_lock_impl.hpp>
 #include <flakelib/cl/kernel.hpp>
-#include <flakelib/planar/program_context.hpp>
+#include <flakelib/cl/program_context.hpp>
 #include <flakelib/planar/simulation/stam/jacobi.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
@@ -19,7 +19,7 @@
 
 
 flakelib::planar::simulation::stam::jacobi::jacobi(
-	planar::program_context const &_program_context,
+	cl::program_context const &_program_context,
 	flakelib::buffer_pool::object &_buffer_pool,
 	planar::simulation::stam::iterations const &_iterations)
 :
@@ -28,7 +28,7 @@ flakelib::planar::simulation::stam::jacobi::jacobi(
 	program_(
 		_program_context.command_queue(),
 		flakelib::media_path_from_string(
-			FCPPT_TEXT("kernels/planar/jacobi.cl")),
+			FCPPT_TEXT("kernels/flakelib/planar/jacobi.cl")),
 		_program_context.compiler_flags()),
 	kernel_(
 		program_.create_kernel(

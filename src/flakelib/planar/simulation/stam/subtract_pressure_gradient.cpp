@@ -1,7 +1,7 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/planar_view_impl.hpp>
 #include <flakelib/cl/kernel.hpp>
-#include <flakelib/planar/program_context.hpp>
+#include <flakelib/cl/program_context.hpp>
 #include <flakelib/planar/simulation/stam/subtract_pressure_gradient.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/text.hpp>
@@ -10,12 +10,12 @@
 
 
 flakelib::planar::simulation::stam::subtract_pressure_gradient::subtract_pressure_gradient(
-	planar::program_context const &_program_context)
+	cl::program_context const &_program_context)
 :
 	program_(
 		_program_context.command_queue(),
 		flakelib::media_path_from_string(
-			FCPPT_TEXT("kernels/planar/subtract_pressure_gradient.cl")),
+			FCPPT_TEXT("kernels/flakelib/planar/subtract_pressure_gradient.cl")),
 		_program_context.compiler_flags()),
 	kernel_(
 		program_.create_kernel(

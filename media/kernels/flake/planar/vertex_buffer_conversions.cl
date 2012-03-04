@@ -1,3 +1,8 @@
+#include <flakelib/planar/current_position.cl>
+#include <flakelib/planar/at.cl>
+#include <flakelib/kernel_name.cl>
+#include <flakelib/kernel_argument.cl>
+
 struct __attribute__((packed)) vertex
 {
 	float2 start_position;
@@ -9,74 +14,72 @@ struct __attribute__((packed)) vertex
 };
 
 kernel void
-to_arrow_vb(
-	global struct vertex *vb,
-	global float2 const *buffer,
-	uint buffer_width,
-	float const grid_scale,
-	float const arrow_scale)
+FLAKELIB_KERNEL_NAME(to_arrow_vb)(
+	global struct vertex *FLAKELIB_KERNEL_ARGUMENT(vb),
+	global float2 const *FLAKELIB_KERNEL_ARGUMENT(buffer),
+	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch),
+	float const FLAKELIB_KERNEL_ARGUMENT(grid_scale),
+	float const FLAKELIB_KERNEL_ARGUMENT(arrow_scale))
 {
-	int2 const this_pos = (int2)(
-		get_global_id(0),
-		get_global_id(1));
+	int2 const position =
+		flakelib_planar_current_position();
 
-	size_t const base_index =
-		this_pos.y * buffer_width + this_pos.x;
+	int const
+		current_index =
+			flakelib_planar_at(
+				buffer_pitch,
+				position);
 
-	float2 const this_pos_float =
-		(float2)(
-			(float)this_pos.x,
-			(float)this_pos.y);
+	float2 const position_float =
+		convert_float2(
+			position);
 
-	float2 const this_arrow = buffer[base_index];
-	float2 const start_position = grid_scale * (this_pos_float + 0.5f);
-	float2 const end_position = start_position + arrow_scale * (float2)(this_arrow.x,this_arrow.y);
-	float2 const first_normal =
-		fast_normalize(
-			(float2)(
-				this_arrow.y,-this_arrow.x));
-	float2 const second_normal =
-		fast_normalize(
-			(float2)(
-				-this_arrow.y,this_arrow.x));
+	float2 const
+		this_arrow =
+			buffer[current_index],
+		start_position =
+			grid_scale * (position_float + 0.5f),
+		end_position =
+			start_position + arrow_scale * (float2)(this_arrow.x,this_arrow.y),
+		first_normal =
+			fast_normalize(
+				(float2)(
+					this_arrow.y,-this_arrow.x)),
+		second_normal =
+			fast_normalize(
+				(float2)(
+					-this_arrow.y,this_arrow.x));
 
-	float2 arrow_tip_1_start;
-	float2 arrow_tip_1_end;
-	float2 arrow_tip_2_start;
-	float2 arrow_tip_2_end;
-
-	vb[base_index].start_position = start_position;
-	vb[base_index].end_position = end_position;
-	vb[base_index].arrow_tip_1_start = end_position;
-	vb[base_index].arrow_tip_2_start = end_position;
-	vb[base_index].arrow_tip_1_end =
+	vb[current_index].start_position = start_position;
+	vb[current_index].end_position = end_position;
+	vb[current_index].arrow_tip_1_start = end_position;
+	vb[current_index].arrow_tip_2_start = end_position;
+	vb[current_index].arrow_tip_1_end =
 		start_position +
 		arrow_scale * this_arrow * 0.8 +
 		fast_length(this_arrow) * 0.1 * first_normal;
-	vb[base_index].arrow_tip_2_end =
+	vb[current_index].arrow_tip_2_end =
 		start_position +
 		arrow_scale * this_arrow * 0.8 +
 		fast_length(this_arrow) * 0.1 * second_normal;
 }
 
 kernel void
-scalar_to_texture(
-	global float const *input,
-	global write_only image2d_t output,
-	float const scaling)
+FLAKELIB_KERNEL_NAME(scalar_to_texture)(
+	global float const *FLAKELIB_KERNEL_ARGUMENT(input),
+	global write_only image2d_t FLAKELIB_KERNEL_ARGUMENT(output),
+	float const FLAKELIB_KERNEL_ARGUMENT(scaling))
 {
-	int2 const this_pos =
-		(int2)(
-			get_global_id(0),
-			get_global_id(1));
+	int2 const position =
+		flakelib_planar_current_position();
 
 	float const rgb =
 		scaling *
-		input[get_image_width(output) * this_pos.y + this_pos.x];
+		input[get_image_width(output) * position.y + position.x];
 
 	write_imagef(
 		output,
-		this_pos,
+		position,
 		(float4)(
 			rgb,
 			rgb,

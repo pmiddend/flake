@@ -7,7 +7,7 @@
 #include <flakelib/cl/program.hpp>
 #include <flakelib/planar/boundary_buffer_view.hpp>
 #include <flakelib/planar/float2_view.hpp>
-#include <flakelib/planar/program_context_fwd.hpp>
+#include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/planar/unique_float2_buffer_lock.hpp>
 #include <fcppt/noncopyable.hpp>
 
@@ -27,7 +27,7 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	semilagrangian_advection(
-		planar::program_context const &,
+		cl::program_context const &,
 		flakelib::buffer_pool::object &);
 
 	planar::unique_float2_buffer_lock

@@ -2,6 +2,7 @@
 #include <flakelib/map_key_sequence.hpp>
 #include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program.hpp>
+#include <flakelib/log.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
@@ -10,6 +11,7 @@
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/optional_impl.hpp>
 #include <fcppt/ref.hpp>
+#include <fcppt/log/headers.hpp>
 #include <fcppt/algorithm/contains.hpp>
 #include <fcppt/algorithm/shortest_levenshtein.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
@@ -21,7 +23,6 @@
 #include <set>
 #include <utility>
 #include <fcppt/config/external_end.hpp>
-
 
 flakelib::cl::program::program(
 	sge::opencl::command_queue::object &_command_queue,
@@ -40,16 +41,29 @@ flakelib::cl::program::program(
 					_compiler_flags.get()))),
 	kernel_name_to_parameters_()
 {
+	FCPPT_LOG_DEBUG(
+		flakelib::log(),
+		fcppt::log::_
+			<< FCPPT_TEXT("Parsing OpenCL program: ")
+			<< fcppt::filesystem::path_to_string(_file_path));
+
 	this->fill_kernel_name_to_parameters(
 		_file_path);
 
 	if(kernel_name_to_parameters_.empty())
+	{
 		throw
 			flakelib::exception(
 				FCPPT_TEXT("The program\n\n")+
 				fcppt::filesystem::path_to_string(
 					_file_path)+
 				FCPPT_TEXT("\n\nDoesn't have any kernels defined."));
+	}
+
+	FCPPT_LOG_DEBUG(
+		flakelib::log(),
+		fcppt::log::_
+			<< FCPPT_TEXT("Program successfully parsed!"));
 }
 
 flakelib::cl::unique_kernel_ptr
@@ -99,15 +113,23 @@ flakelib::cl::program::fill_kernel_name_to_parameters(
 	fcppt::io::cifstream s(
 		_file_path);
 
+	if(!s.is_open())
+		throw
+			flakelib::exception(
+				FCPPT_TEXT("File \n\n")+
+				fcppt::filesystem::path_to_string(
+					_file_path)+
+				FCPPT_TEXT("\n\nCould not be opened!"));
+
 	std::string const content =
 		fcppt::io::stream_to_string(
 			s);
 
 	std::string const
 		kernel_name_search_term =
-			"FLAKE_KERNEL_NAME",
+			"FLAKELIB_KERNEL_NAME",
 		kernel_argument_search_term =
-			"FLAKE_KERNEL_ARGUMENT";
+			"FLAKELIB_KERNEL_ARGUMENT";
 
 	typedef
 	std::set<std::string::size_type>
@@ -116,12 +138,12 @@ flakelib::cl::program::fill_kernel_name_to_parameters(
 	position_set kernel_name_positions,kernel_argument_positions;
 
 	std::string::size_type search_from_this_position = 0;
-
+	std::string::size_type next_kernel_position;
 	while(
-		std::string::size_type next_kernel_position =
+		(next_kernel_position =
 			content.find(
 				kernel_name_search_term,
-				search_from_this_position))
+				search_from_this_position)) != std::string::npos)
 	{
 		kernel_name_positions.insert(
 			next_kernel_position);
@@ -130,18 +152,34 @@ flakelib::cl::program::fill_kernel_name_to_parameters(
 			next_kernel_position + kernel_name_search_term.length();
 	}
 
+	FCPPT_LOG_DEBUG(
+		flakelib::log(),
+		fcppt::log::_
+			<< FCPPT_TEXT("Extracted ")
+			<< kernel_name_positions.size()
+			<< FCPPT_TEXT(" kernel names"));
+
+	search_from_this_position = 0;
+	std::string::size_type next_kernel_argument_position;
 	while(
-		std::string::size_type next_kernel_position =
+		(next_kernel_argument_position =
 			content.find(
 				kernel_argument_search_term,
-				search_from_this_position))
+				search_from_this_position)) != std::string::npos)
 	{
 		kernel_argument_positions.insert(
-			next_kernel_position);
+			next_kernel_argument_position);
 
 		search_from_this_position =
-			next_kernel_position + kernel_argument_search_term.length();
+			next_kernel_argument_position + kernel_argument_search_term.length();
 	}
+
+	FCPPT_LOG_DEBUG(
+		flakelib::log(),
+		fcppt::log::_
+			<< FCPPT_TEXT("Extracted ")
+			<< kernel_argument_positions.size()
+			<< FCPPT_TEXT(" kernel argument names"));
 
 
 	for(
@@ -175,6 +213,12 @@ flakelib::cl::program::fill_kernel_name_to_parameters(
 				static_cast<std::string::size_type>(
 					on_closing_brace - after_opening_brace));
 
+		FCPPT_LOG_DEBUG(
+			flakelib::log(),
+			fcppt::log::_
+				<< FCPPT_TEXT("Extracted kernel name: ")
+				<< fcppt::from_std_string(kernel_name));
+
 		if(kernel_name_to_parameters_.find(kernel_name) != kernel_name_to_parameters_.end())
 		{
 			throw
@@ -192,7 +236,7 @@ flakelib::cl::program::fill_kernel_name_to_parameters(
 					cl::kernel_parameters())).first->second;
 
 		bool const next_position_available =
-			current_kernel_position ==
+			current_kernel_position !=
 			boost::prior(
 				kernel_name_positions.end());
 
@@ -214,6 +258,7 @@ flakelib::cl::program::fill_kernel_name_to_parameters(
 			current_argument_position != one_past_last_argument;
 			++current_argument_position)
 		{
+
 			std::string::size_type const
 				argument_after_opening_brace =
 					static_cast<std::string::size_type>(
@@ -237,6 +282,12 @@ flakelib::cl::program::fill_kernel_name_to_parameters(
 					argument_after_opening_brace,
 					static_cast<std::string::size_type>(
 						argument_on_closing_brace - argument_after_opening_brace));
+
+			FCPPT_LOG_DEBUG(
+				flakelib::log(),
+				fcppt::log::_
+					<< FCPPT_TEXT("Extracted kernel argument: ")
+					<< fcppt::from_std_string(kernel_argument_name));
 
 			if(fcppt::algorithm::contains(parameters,kernel_argument_name))
 			{

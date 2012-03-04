@@ -4,7 +4,7 @@
 #include <flakelib/cl/kernel_fwd.hpp>
 #include <flakelib/cl/program.hpp>
 #include <flakelib/planar/boundary_buffer_view.hpp>
-#include <flakelib/planar/program_context_fwd.hpp>
+#include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/planar/velocity_buffer_view.hpp>
 #include <flakelib/planar/simulation/stam/pressure_buffer_view.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -25,7 +25,7 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	subtract_pressure_gradient(
-		planar::program_context const &);
+		cl::program_context const &);
 
 	void
 	update(

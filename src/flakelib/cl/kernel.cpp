@@ -12,6 +12,8 @@
 #include <iterator>
 #include <fcppt/config/external_end.hpp>
 
+// DEBUG
+#include <iostream>
 
 flakelib::cl::kernel::kernel(
 	sge::opencl::program::object &_program,
@@ -31,12 +33,14 @@ flakelib::cl::kernel::kernel(
 	unassigned_parameters_()
 {
 	if(_kernel_parameters.empty())
+	{
 		throw
 			flakelib::exception(
 				FCPPT_TEXT("The kernel\n\n")+
 				fcppt::from_std_string(
 					_name.get())+
 				FCPPT_TEXT("\n\nDoesn't have any parameters defined."));
+	}
 
 	std::copy(
 		kernel_parameters_.begin(),
