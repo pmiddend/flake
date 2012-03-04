@@ -145,9 +145,10 @@ flakelib::cl::kernel::index_for_name(
 				fcppt::from_std_string(
 					_name)+
 				FCPPT_TEXT("\" not found. Did you mean \"")+
-				fcppt::algorithm::shortest_levenshtein(
-					kernel_parameters_,
-					_name)+
+				fcppt::from_std_string(
+					fcppt::algorithm::shortest_levenshtein(
+						kernel_parameters_,
+						_name))+
 				FCPPT_TEXT("\"?"));
 
 	return

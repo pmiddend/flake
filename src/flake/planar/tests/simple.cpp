@@ -200,6 +200,12 @@ flake::planar::tests::simple::simple(
 			velocity_buffer_->value().buffer()),
 		static_cast<cl_float>(
 			0));
+
+	fill_buffer_.apply(
+		flakelib::buffer::linear_view<cl_float>(
+			smoke_density_buffer_->value().buffer()),
+		static_cast<cl_float>(
+			0));
 }
 
 awl::main::exit_code const
@@ -294,4 +300,10 @@ flake::planar::tests::simple::update()
 		velocity_arrows_.cl_buffer(),
 		velocity_arrows_.grid_scale(),
 		velocity_arrows_.arrow_scale());
+
+	monitor_planar_converter_.scalar_to_texture(
+		smoke_density_buffer_->value(),
+		smoke_density_texture_.cl_texture(),
+		monitor::scaling_factor(
+			1.0f));
 }
