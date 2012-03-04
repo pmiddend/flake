@@ -25,19 +25,27 @@ flakelib::planar::simulation::stam::semilagrangian_advection::semilagrangian_adv
 		flakelib::media_path_from_string(
 			FCPPT_TEXT("kernels/flakelib/planar/semilagrangian_advection.cl")),
 		_program_context.compiler_flags()),
-	kernel_(
+	planar_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply")))
+				"apply_planar"))),
+	scalar_kernel_(
+		program_.create_kernel(
+			sge::opencl::kernel::name(
+				"apply_scalar")))
 {
 }
 
 flakelib::planar::unique_float2_buffer_lock
-flakelib::planar::simulation::stam::semilagrangian_advection::update(
+flakelib::planar::simulation::stam::semilagrangian_advection::update_planar(
 	planar::boundary_buffer_view const &_boundary,
+	stam::velocity const &_velocity,
 	planar::float2_view const &_buffer,
 	flakelib::duration const &_dt)
 {
+	FCPPT_ASSERT_PRE(
+		_velocity.get().size() == _boundary.get().size());
+
 	FCPPT_ASSERT_PRE(
 		_buffer.size() == _boundary.get().size());
 
@@ -47,29 +55,86 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update(
 				buffer_pool_),
 			_buffer.size()));
 
-	kernel_->buffer_argument(
+	planar_kernel_->buffer_argument(
 		"boundary",
 		_boundary.get().buffer());
 
-	kernel_->buffer_argument(
+	planar_kernel_->buffer_argument(
 		"input",
 		_buffer.buffer());
 
-	kernel_->buffer_argument(
+	planar_kernel_->buffer_argument(
+		"velocity",
+		_velocity.get().buffer());
+
+	planar_kernel_->buffer_argument(
 		"output",
 		result->value().buffer());
 
-	kernel_->numerical_argument(
+	planar_kernel_->numerical_argument(
 		"buffer_pitch",
 		static_cast<cl_uint>(
 			_buffer.size().w()));
 
-	kernel_->numerical_argument(
+	planar_kernel_->numerical_argument(
 		"dt",
 		static_cast<cl_float>(
 			_dt.count()));
 
-	kernel_->enqueue_automatic(
+	planar_kernel_->enqueue_automatic(
+		_buffer.size());
+
+	return
+		fcppt::move(
+			result);
+}
+
+flakelib::planar::unique_float_buffer_lock
+flakelib::planar::simulation::stam::semilagrangian_advection::update_scalar(
+	planar::boundary_buffer_view const &_boundary,
+	stam::velocity const &_velocity,
+	planar::float_view const &_buffer,
+	flakelib::duration const &_dt)
+{
+	FCPPT_ASSERT_PRE(
+		_velocity.get().size() == _boundary.get().size());
+
+	FCPPT_ASSERT_PRE(
+		_buffer.size() == _boundary.get().size());
+
+	flakelib::planar::unique_float_buffer_lock result(
+		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
+			fcppt::ref(
+				buffer_pool_),
+			_buffer.size()));
+
+	scalar_kernel_->buffer_argument(
+		"boundary",
+		_boundary.get().buffer());
+
+	scalar_kernel_->buffer_argument(
+		"input",
+		_buffer.buffer());
+
+	scalar_kernel_->buffer_argument(
+		"velocity",
+		_velocity.get().buffer());
+
+	scalar_kernel_->buffer_argument(
+		"output",
+		result->value().buffer());
+
+	scalar_kernel_->numerical_argument(
+		"buffer_pitch",
+		static_cast<cl_uint>(
+			_buffer.size().w()));
+
+	scalar_kernel_->numerical_argument(
+		"dt",
+		static_cast<cl_float>(
+			_dt.count()));
+
+	scalar_kernel_->enqueue_automatic(
 		_buffer.size());
 
 	return

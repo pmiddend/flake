@@ -13,9 +13,9 @@
 				"monitor-font-size" : 15,
 				"master-and-slave-padding" : 3,
 				"boundary" : "256/zagged.png",
-				"velocity-arrow-scale" : 3.0,
-				"velocity-grid-scale" : 3.0,
-				"clock-multiplier" : 20.0
+				"velocity-arrow-scale" : 1.0,
+				"velocity-grid-scale" : 2.0,
+				"clock-multiplier" : 10.0
 			}
 		}
 	}

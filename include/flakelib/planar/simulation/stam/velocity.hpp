@@ -1,7 +1,7 @@
 #ifndef FLAKELIB_PLANAR_SIMULATION_STAM_VELOCITY_HPP_INCLUDED
 #define FLAKELIB_PLANAR_SIMULATION_STAM_VELOCITY_HPP_INCLUDED
 
-#include <flakelib/buffer/planar_view.hpp>
+#include <flakelib/planar/float2_view.hpp>
 #include <fcppt/strong_typedef.hpp>
 
 
@@ -14,7 +14,7 @@ namespace simulation
 namespace stam
 {
 FCPPT_MAKE_STRONG_TYPEDEF(
-	flakelib::buffer::planar_view<cl_float2>,
+	flakelib::planar::float2_view,
 	velocity);
 }
 }

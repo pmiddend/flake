@@ -8,8 +8,11 @@
 #include <flakelib/cl/program.hpp>
 #include <flakelib/planar/boundary_buffer_view.hpp>
 #include <flakelib/planar/float2_view.hpp>
+#include <flakelib/planar/float_view.hpp>
+#include <flakelib/planar/simulation/stam/velocity.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/planar/unique_float2_buffer_lock.hpp>
+#include <flakelib/planar/unique_float_buffer_lock.hpp>
 #include <fcppt/noncopyable.hpp>
 
 
@@ -34,9 +37,18 @@ public:
 
 	FLAKELIB_SYMBOL
 	planar::unique_float2_buffer_lock
-	update(
+	update_planar(
 		planar::boundary_buffer_view const &,
+		stam::velocity const &,
 		planar::float2_view const &,
+		flakelib::duration const &);
+
+	FLAKELIB_SYMBOL
+	planar::unique_float_buffer_lock
+	update_scalar(
+		planar::boundary_buffer_view const &,
+		stam::velocity const &,
+		planar::float_view const &,
 		flakelib::duration const &);
 
 	FLAKELIB_SYMBOL
@@ -44,7 +56,8 @@ public:
 private:
 	flakelib::buffer_pool::object &buffer_pool_;
 	cl::program program_;
-	cl::unique_kernel_ptr kernel_;
+	cl::unique_kernel_ptr planar_kernel_;
+	cl::unique_kernel_ptr scalar_kernel_;
 };
 }
 }

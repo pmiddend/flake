@@ -3,7 +3,7 @@
 
 #include <flakelib/planar/right_neighborhood.cl>
 
-float2
+float
 flakelib_planar_interpolate_right_neighborhood(
 	struct flakelib_planar_right_neighborhood *ns,
 	float2 const fractions)

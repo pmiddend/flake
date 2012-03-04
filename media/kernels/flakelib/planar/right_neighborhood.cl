@@ -3,7 +3,7 @@
 
 struct flakelib_planar_right_neighborhood
 {
-	float2 at,right,bottom,rightbottom;
+	float at,right,bottom,rightbottom;
 };
 
 #endif

@@ -219,9 +219,11 @@ flake::planar::tests::simple::update()
 		velocity_buffer_->value());
 
 	velocity_buffer_ =
-		semilagrangian_advection_.update(
+		semilagrangian_advection_.update_planar(
 			flakelib::planar::boundary_buffer_view(
 				boundary_buffer_.value()),
+			flakelib::planar::simulation::stam::velocity(
+				velocity_buffer_->value()),
 			velocity_buffer_->value(),
 			delta);
 
