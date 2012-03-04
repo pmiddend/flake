@@ -2,6 +2,7 @@
 #define FLAKELIB_CL_PROGRAM_HPP_INCLUDED
 
 #include <flakelib/cl/compiler_flags.hpp>
+#include <flakelib/symbol.hpp>
 #include <flakelib/cl/kernel_parameters.hpp>
 #include <flakelib/cl/unique_kernel_ptr.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
@@ -29,16 +30,19 @@ public:
 	// Taking a command queue instead a the (more correct) context binds
 	// the program to a specific command queue. Since we're simulating with
 	// just one queue everywhere, that's not a problem.
+	FLAKELIB_SYMBOL
 	explicit
 	program(
 		sge::opencl::command_queue::object &,
 		fcppt::filesystem::path const &,
 		flakelib::cl::compiler_flags const &);
 
+	FLAKELIB_SYMBOL
 	cl::unique_kernel_ptr
 	create_kernel(
 		sge::opencl::kernel::name const &);
 
+	FLAKELIB_SYMBOL
 	~program();
 private:
 	typedef

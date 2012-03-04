@@ -1,6 +1,7 @@
 #ifndef FLAKELIB_BUFFER_POOL_OBJECT_HPP_INCLUDED
 #define FLAKELIB_BUFFER_POOL_OBJECT_HPP_INCLUDED
 
+#include <flakelib/symbol.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/memory_object/byte_size.hpp>
@@ -19,18 +20,22 @@ class object
 FCPPT_NONCOPYABLE(
 	object);
 public:
+	FLAKELIB_SYMBOL
 	explicit
 	object(
 		sge::opencl::context::object &);
 
+	FLAKELIB_SYMBOL
 	sge::opencl::memory_object::buffer &
 	get_and_lock(
 		sge::opencl::memory_object::byte_size const &);
 
+	FLAKELIB_SYMBOL
 	void
 	unlock(
 		sge::opencl::memory_object::buffer &);
 
+	FLAKELIB_SYMBOL
 	~object();
 private:
 	typedef

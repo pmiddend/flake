@@ -2,6 +2,7 @@
 #define FLAKELIB_CL_KERNEL_HPP_INCLUDED
 
 #include <flakelib/cl/kernel_parameters.hpp>
+#include <flakelib/symbol.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/name.hpp>
 #include <sge/opencl/kernel/numeric_type.hpp>
@@ -26,6 +27,7 @@ class kernel
 FCPPT_NONCOPYABLE(
 	kernel);
 public:
+	FLAKELIB_SYMBOL
 	explicit
 	kernel(
 		sge::opencl::program::object &,
@@ -33,28 +35,34 @@ public:
 		sge::opencl::kernel::name const &,
 		cl::kernel_parameters const &);
 
+	FLAKELIB_SYMBOL
 	void
 	numerical_argument(
 		std::string const &,
 		sge::opencl::kernel::numeric_type const &);
 
+	FLAKELIB_SYMBOL
 	void
 	buffer_argument(
 		std::string const &,
 		sge::opencl::memory_object::base &);
 
+	FLAKELIB_SYMBOL
 	void
 	enqueue_automatic(
 		sge::opencl::memory_object::dim1 const &);
 
+	FLAKELIB_SYMBOL
 	void
 	enqueue_automatic(
 		sge::opencl::memory_object::dim2 const &);
 
+	FLAKELIB_SYMBOL
 	void
 	enqueue_automatic(
 		sge::opencl::memory_object::dim3 const &);
 
+	FLAKELIB_SYMBOL
 	~kernel();
 private:
 	typedef

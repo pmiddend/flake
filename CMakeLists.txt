@@ -4,8 +4,13 @@ project(flake)
 
 include(
 	FcpptCMakeUtils)
+
 include(
 	AwlMainGenerator)
+
+include(
+	FcpptSymbol
+)
 
 find_package(
 	Boost 1.45.0 REQUIRED COMPONENTS
@@ -111,6 +116,16 @@ sge_config_add_custom_path(
 	${INSTALL_MEDIA_DIR}
 )
 
+fcppt_generate_symbol_header(
+	FLAKELIB_STATIC_LINK
+	flakelib
+	FLAKELIB
+	flakelib
+)
+
+include_directories(
+	${CMAKE_BINARY_DIR}/include)
+
 include_directories(
 	${CMAKE_SOURCE_DIR}/include)
 
@@ -147,7 +162,6 @@ set(
 	src/flake/planar/monitor/planar_arrows.cpp
 	src/flake/planar/monitor/planar_converter.cpp
 	src/flake/planar/monitor/texture.cpp
-	src/flake/planar/tests/simple.cpp
 	src/flake/sprite_drawer_3d.cpp
 	src/flake/test_base.cpp
 )
@@ -155,19 +169,137 @@ set(
 fcppt_utils_add_source_groups(
 	"${FLAKELIB_FILES}")
 
+fcppt_utils_add_source_groups(
+	"${FLAKE_FILES}")
+
+option(
+	ENABLE_SHARED
+	"Build flakelib as a shared library"
+	TRUE
+)
+
+option(
+	ENABLE_STATIC
+	"Build flakelib as a static library"
+	FALSE
+)
+
+if(
+	NOT ENABLE_SHARED AND NOT ENABLE_STATIC
+)
+	message(
+		FATAL_ERROR
+		"You disabled both STATIC and SHARED"
+	)
+endif()
+
+# choose a library to link the tests to
+if(
+	ENABLE_SHARED
+)
+	set(
+		FLAKEKLIB_DEFAULT_LINK_TARGET
+		flakelib
+	)
+endif()
+
+# static overrides shared
+if(
+	ENABLE_STATIC
+)
+	set(
+		FLAKELIB_DEFAULT_LINK_TARGET
+		flakelib_static
+	)
+
+	set(
+		FLAKELIB_CONFIG_LINK_MACROS
+		"-D FLAKELIB_STATIC_LINK"
+	)
+endif()
+
+function(
+	MAKE_FLAKELIB_LIBRARY
+	TARGETNAME
+	VARIANT
+)
+	add_library(
+		${TARGETNAME}
+		${VARIANT}
+		${FLAKELIB_FILES}
+	)
+
+	if(
+		NOT MSVC
+	)
+		target_link_libraries(
+			${TARGETNAME}
+			${Boost_SYSTEM_LIBRARY}
+		)
+	endif()
+
+	if(
+		${VARIANT} STREQUAL "STATIC"
+	)
+		set_target_properties(
+			${TARGETNAME}
+			PROPERTIES
+			COMPILE_DEFINITIONS
+			"FLAKELIB_STATIC_LINK"
+		)
+	endif()
+
+	# This is, of course, extremely overlinked
+	target_link_libraries(
+		${TARGETNAME}
+		${Fcppt_core_LIBRARIES}
+		${Fcppt_filesystem_LIBRARIES}
+		${Awl_LIBRARIES}
+		${SGE_LIBRARIES}
+		${Rucksack_LIBRARIES}
+		${Boost_LIBRARIES})
+
+	install(
+		TARGETS
+		${TARGETNAME}
+		DESTINATION
+		${INSTALL_LIBRARY_DIR}
+	)
+endfunction()
+
+if(
+	ENABLE_STATIC
+)
+	make_flakelib_library(
+		flakelib_static
+		STATIC
+	)
+endif()
+
+if(
+	ENABLE_SHARED
+)
+	make_flakelib_library(
+		flakelib
+		SHARED
+	)
+endif()
+
 add_library(
-	flakelib STATIC ${FLAKELIB_FILES})
+	flake_helper_library
+	STATIC
+	${FLAKE_FILES})
 
 # simple begin
 awl_utils_add_portable_executable(
 	tests_simple
 	"custom_main"
-	src/flake/planar/tests/simple.cpp
-	${FLAKE_FILES})
+	src/flake/planar/tests/simple.cpp)
 
 target_link_libraries(
 	tests_simple
 	flakelib
+	flake_helper_library
 	${Fcppt_core_LIBRARIES}
 	${Fcppt_filesystem_LIBRARIES}
 	${Awl_LIBRARIES}

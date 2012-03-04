@@ -1,6 +1,7 @@
 #ifndef FLAKELIB_PLANAR_SIMULATION_STAM_DIVERGENCE_HPP_INCLUDED
 #define FLAKELIB_PLANAR_SIMULATION_STAM_DIVERGENCE_HPP_INCLUDED
 
+#include <flakelib/symbol.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/cl/kernel_fwd.hpp>
 #include <flakelib/cl/program.hpp>
@@ -24,16 +25,19 @@ class divergence
 FCPPT_NONCOPYABLE(
 	divergence);
 public:
+	FLAKELIB_SYMBOL
 	explicit
 	divergence(
 		cl::program_context const &,
 		flakelib::buffer_pool::object &);
 
+	FLAKELIB_SYMBOL
 	planar::unique_float_buffer_lock
 	update(
 		planar::boundary_buffer_view const &,
 		planar::float2_view const &);
 
+	FLAKELIB_SYMBOL
 	~divergence();
 private:
 	flakelib::buffer_pool::object &buffer_pool_;

@@ -1,6 +1,7 @@
 #ifndef FLAKELIB_SCOPED_FRAME_LIMITER_HPP_INCLUDED
 #define FLAKELIB_SCOPED_FRAME_LIMITER_HPP_INCLUDED
 
+#include <flakelib/symbol.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/chrono/duration_impl.hpp>
 #include <fcppt/chrono/high_resolution_clock.hpp>
@@ -22,10 +23,12 @@ public:
 	clock_type::rep
 	fps_type;
 
+	FLAKELIB_SYMBOL
 	explicit
 	scoped_frame_limiter(
 		fps_type);
 
+	FLAKELIB_SYMBOL
 	~scoped_frame_limiter();
 private:
 	clock_type::time_point const before_frame_;

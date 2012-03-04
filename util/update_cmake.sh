@@ -25,4 +25,7 @@ update_cmake_file \
 update_cmake_file \
 	CMakeLists.txt \
 	FLAKE_FILES \
+	-n \
 	src/flake \
+	src/flake/planar \
+	src/flake/planar/monitor
