@@ -225,7 +225,8 @@ flakelib::cl::program::fill_kernel_name_to_parameters(
 			throw
 				flakelib::exception(
 					FCPPT_TEXT("Kernel name \"")+
-					kernel_name+
+					fcppt::from_std_string(
+						kernel_name)+
 					FCPPT_TEXT("\" appears twice in program"));
 		}
 
@@ -295,7 +296,8 @@ flakelib::cl::program::fill_kernel_name_to_parameters(
 				throw
 					flakelib::exception(
 						FCPPT_TEXT("Kernel argument name \"")+
-						kernel_argument_name+
+						fcppt::from_std_string(
+							kernel_argument_name)+
 						FCPPT_TEXT("\" appears twice in program"));
 			}
 
