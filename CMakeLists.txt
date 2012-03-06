@@ -155,7 +155,6 @@ set(
 	src/flakelib/planar/simulation/stam/subtract_pressure_gradient.cpp
 	src/flakelib/planar/simulation/stam/wind_source.cpp
 	src/flakelib/scoped_frame_limiter.cpp
-	src/flakelib/splatter/circle/object.cpp
 	src/flakelib/splatter/object.cpp
 	src/flakelib/splatter/rectangle/object.cpp
 	src/flakelib/utf8_file_to_fcppt_string.cpp

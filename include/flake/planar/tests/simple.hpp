@@ -9,6 +9,7 @@
 #include <flakelib/buffer_pool/planar_lock_impl.hpp>
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/planar/float_buffer_lock.hpp>
+#include <flakelib/splatter/object.hpp>
 #include <flakelib/planar/unique_float2_buffer_lock.hpp>
 #include <flakelib/planar/simulation/stam/divergence.hpp>
 #include <flakelib/planar/simulation/stam/jacobi.hpp>
@@ -51,6 +52,7 @@ public:
 private:
 	// Programs
 	flakelib::utility::fill_buffer fill_buffer_;
+	flakelib::splatter::object splatter_;
 	flakelib::planar::simulation::stam::wind_source wind_source_;
 	flakelib::planar::simulation::stam::outflow_boundaries outflow_boundaries_;
 	flakelib::planar::simulation::stam::semilagrangian_advection semilagrangian_advection_;

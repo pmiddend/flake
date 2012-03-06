@@ -3,7 +3,6 @@
 #include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/splatter/object.hpp>
-#include <flakelib/splatter/circle/object.hpp>
 #include <flakelib/splatter/rectangle/object.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 
@@ -16,76 +15,110 @@ flakelib::splatter::object::object(
 		flakelib::media_path_from_string(
 			FCPPT_TEXT("kernels/flakelib/splatter/apply.cl")),
 		_program_context.compiler_flags()),
-	splat_float_circle_(
+	splat_float_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"splat_float_circle"))),
-	splat_float2_circle_(
+				"splat_float"))),
+	splat_float2_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"splat_float2_circle"))),
-	splat_float_rectangle_(
-		program_.create_kernel(
-			sge::opencl::kernel::name(
-				"splat_float_rectangle"))),
-	splat_float2_rectangle_(
-		program_.create_kernel(
-			sge::opencl::kernel::name(
-				"splat_float2_rectangle")))
+				"splat_float2")))
 {
 }
 
 void
-flakelib::splatter::object::splat_float_circle(
+flakelib::splatter::object::splat_planar_float(
 	planar::float_view const &_buffer,
-	splatter::circle::object const &_circle,
-	cl_float const _value)
+	splatter::rectangle::object const &_rectangle,
+	cl_float const _value,
+	splatter::pen_type::type const _pen,
+	splatter::hardness::type const _hardness,
+	splatter::mix_mode::type const _mix_mode)
 {
-	splat_float_circle_->buffer_argument(
+	splat_float_->buffer_argument(
 		"input",
 		_buffer.buffer());
 
-	splat_float_circle_->numerical_argument(
-		"circle_position_x",
-		_circle.position().get().w());
+	splat_float_->numerical_argument(
+		"pen_position_x",
+		static_cast<cl_int>(
+			_rectangle.position().get().w()));
 
-	splat_float_circle_->numerical_argument(
-		"circle_position_y",
-		_circle.position().get().h());
+	splat_float_->numerical_argument(
+		"pen_position_y",
+		static_cast<cl_int>(
+			_rectangle.position().get().h()));
 
-	splat_float_circle_->numerical_argument(
-		"circle_radius",
-		_circle.radius().get());
+	splat_float_->numerical_argument(
+		"buffer_pitch",
+		static_cast<cl_uint>(
+			_buffer.size().w()));
 
-	splat_float_circle_->numerical_argument(
+	splat_float_->numerical_argument(
 		"value",
-		_circle.radius().get());
+		_value);
 
-	splat_float_circle_->enqueue_automatic(
-		_buffer.size());
+	switch(_pen)
+	{
+		case splatter::pen_type::round:
+			splat_float_->numerical_argument(
+				"is_rectangle",
+				static_cast<cl_int>(
+					false));
+			break;
+		case splatter::pen_type::square:
+			splat_float_->numerical_argument(
+				"is_rectangle",
+				static_cast<cl_int>(
+					true));
+			break;
+	}
+
+	switch(_hardness)
+	{
+		case splatter::hardness::hard:
+			splat_float_->numerical_argument(
+				"is_hard",
+				static_cast<cl_int>(
+					true));
+			break;
+		case splatter::hardness::soft:
+			splat_float_->numerical_argument(
+				"is_hard",
+				static_cast<cl_int>(
+					false));
+			break;
+	}
+
+	switch(_mix_mode)
+	{
+		case splatter::mix_mode::add:
+			splat_float_->numerical_argument(
+				"do_add",
+				static_cast<cl_int>(
+					true));
+			break;
+		case splatter::mix_mode::set:
+			splat_float_->numerical_argument(
+				"do_add",
+				static_cast<cl_int>(
+					false));
+			break;
+	}
+
+
+	splat_float_->enqueue_automatic(
+		_rectangle.size().get());
 }
 
 void
-flakelib::splatter::object::splat_float2_circle(
-	planar::float2_view const &,
-	splatter::circle::object const &,
-	cl::float2 const &)
-{
-}
-
-void
-flakelib::splatter::object::splat_float_rectangle(
+flakelib::splatter::object::splat_planar_float2(
 	planar::float_view const &,
 	splatter::rectangle::object const &,
-	cl_float)
-{
-}
-
-void
-flakelib::splatter::object::splat_float2_rectangle(
-	planar::float2_view const &,
-	splatter::rectangle::object const &,
-	cl::float2 const &)
+	cl::float2 const &,
+	splatter::pen_type::type,
+	splatter::hardness::type,
+	splatter::mix_mode::type)
 {
 }
 

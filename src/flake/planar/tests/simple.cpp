@@ -5,6 +5,7 @@
 #include <flakelib/media_path.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
+#include <flakelib/splatter/rectangle/object.hpp>
 #include <sge/font/system.hpp>
 #include <sge/image/colors.hpp>
 #include <sge/image/view/const_object.hpp>
@@ -55,6 +56,8 @@ flake::planar::tests::simple::simple(
 			FCPPT_TEXT("Simple 2D Stam simulation")),
 		sge::systems::cursor_option_field::null()),
 	fill_buffer_(
+		this->program_context()),
+	splatter_(
 		this->program_context()),
 	wind_source_(
 		this->program_context(),
@@ -207,6 +210,23 @@ flake::planar::tests::simple::simple(
 			smoke_density_buffer_->value().buffer()),
 		static_cast<cl_float>(
 			0));
+
+	splatter_.splat_planar_float(
+		smoke_density_buffer_->value(),
+		flakelib::splatter::rectangle::object(
+			flakelib::splatter::rectangle::position(
+				flakelib::splatter::rectangle::position::value_type(
+					20,
+					20)),
+			flakelib::splatter::rectangle::size(
+				flakelib::splatter::rectangle::size::value_type(
+					40,
+					40))),
+		static_cast<cl_float>(
+			0.5f),
+		flakelib::splatter::pen_type::round,
+		flakelib::splatter::hardness::soft,
+		flakelib::splatter::mix_mode::add);
 }
 
 awl::main::exit_code const
