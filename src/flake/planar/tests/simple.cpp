@@ -1,7 +1,8 @@
 #include <flake/catch_statements.hpp>
+#include <flake/media_path.hpp>
+#include <flake/media_path_from_string.hpp>
 #include <flake/planar/tests/simple.hpp>
 #include <flakelib/media_path.hpp>
-#include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
 #include <sge/font/system.hpp>
@@ -82,7 +83,7 @@ flake::planar::tests::simple::simple(
 		this->program_context()),
 	boundary_image_file_(
 		this->image_system().load(
-			flakelib::media_path()
+			flake::media_path()
 				/ FCPPT_TEXT("boundaries")
 				/
 				sge::parse::json::find_and_convert_member<fcppt::string>(
@@ -108,7 +109,7 @@ flake::planar::tests::simple::simple(
 		this->renderer(),
 		this->opencl_system().command_queue(),
 		this->font_system().create_font(
-			flakelib::media_path_from_string(
+			flake::media_path_from_string(
 				FCPPT_TEXT("fonts/main.ttf")),
 			sge::parse::json::find_and_convert_member<sge::font::size_type>(
 				this->configuration(),

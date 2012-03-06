@@ -1,8 +1,11 @@
+#include <fcppt/log/headers.hpp>
+#include <flakelib/log.hpp>
+#include <flake/media_path_from_string.hpp>
 #include <flake/test_base.hpp>
 #include <flake/planar/tests/simple.hpp>
-#include <flakelib/media_path_from_string.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
+#include <flakelib/cl/cflags.hpp>
 #include <sge/log/global_context.hpp>
 #include <sge/media/all_extensions.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
@@ -83,7 +86,7 @@ flake::test_base::test_base(
 			fcppt::cref(
 				sge::parse::json::parse_string_exn(
 					flakelib::utf8_file_to_fcppt_string(
-						flakelib::media_path_from_string(
+						flake::media_path_from_string(
 							FCPPT_TEXT("config.json"))))))),
 	systems_(
 		fcppt::make_unique_ptr<sge::systems::instance>(
@@ -131,6 +134,8 @@ flake::test_base::test_base(
 				this->opencl_system().command_queue()),
 			fcppt::cref(
 				flakelib::cl::compiler_flags(
+					flakelib::cl::cflags()+
+					" "+
 					fcppt::to_std_string(
 						sge::parse::json::find_and_convert_member<fcppt::string>(
 							this->configuration(),
@@ -138,7 +143,7 @@ flake::test_base::test_base(
 								FCPPT_TEXT("tests/opencl-compiler-flags")))+
 						FCPPT_TEXT(" -I")+
 						fcppt::filesystem::path_to_string(
-							flakelib::media_path_from_string(
+							flake::media_path_from_string(
 								FCPPT_TEXT("kernels")))))))),
 	buffer_pool_(
 		fcppt::make_unique_ptr<flakelib::buffer_pool::object>(
@@ -150,6 +155,11 @@ flake::test_base::test_base(
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("tests/desired-fps"))))
 {
+	FCPPT_LOG_DEBUG(
+		flakelib::log(),
+		fcppt::log::_
+			<< FCPPT_TEXT("Program initialized, OpenCL compiler flags are:\n\n")
+			<< fcppt::from_std_string(program_context_->compiler_flags().get()));
 }
 
 sge::parse::json::object const &

@@ -1,6 +1,6 @@
+#include <flake/media_path_from_string.hpp>
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/arrow_vf/format.hpp>
-#include <flakelib/media_path_from_string.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/scoped_transform.hpp>
@@ -65,10 +65,10 @@ flake::planar::monitor::parent::parent(
 						sge::shader::matrix_flags::projection)))),
 			sge::shader::sampler_sequence())
 			.vertex_shader(
-				flakelib::media_path_from_string(
+				flake::media_path_from_string(
 					FCPPT_TEXT("shaders/arrow/vertex.glsl")))
 			.fragment_shader(
-				flakelib::media_path_from_string(
+				flake::media_path_from_string(
 					FCPPT_TEXT("shaders/arrow/fragment.glsl")))),
 	sprite_system_(
 		renderer_,

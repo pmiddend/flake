@@ -55,7 +55,7 @@ flakelib::cl::program::program(
 				fcppt::filesystem::path_to_string(
 					_file_path)+
 				FCPPT_TEXT(":\n\n")+
-				e.string());
+				e.what());
 	}
 
 	FCPPT_LOG_DEBUG(

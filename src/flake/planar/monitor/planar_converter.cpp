@@ -1,5 +1,5 @@
+#include <flake/media_path_from_string.hpp>
 #include <flake/planar/monitor/planar_converter.hpp>
-#include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program_context.hpp>
@@ -25,7 +25,7 @@ flake::planar::monitor::planar_converter::planar_converter(
 		_program_context.command_queue()),
 	program_(
 		_program_context.command_queue(),
-		flakelib::media_path_from_string(
+		flake::media_path_from_string(
 			FCPPT_TEXT("kernels/flake/planar/vertex_buffer_conversions.cl")),
 		_program_context.compiler_flags()),
 	to_arrow_vb_kernel_(

@@ -102,10 +102,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR FCPPT_UTILS_COMPILER_IS_CLANGPP)
 		-Wno-old-style-cast)
 endif()
 
-set(
-	INSTALL_MEDIA_DIR
-	${INSTALL_DATA_DIR}/media)
-
 include(
 	SGECustomPath)
 
@@ -113,7 +109,14 @@ sge_config_add_custom_path(
 	flake
 	media
 	${CMAKE_SOURCE_DIR}/media
-	${INSTALL_MEDIA_DIR}
+	${INSTALL_DATA_DIR}/media
+)
+
+sge_config_add_custom_path(
+	flakelib
+	media
+	${CMAKE_SOURCE_DIR}/flakelib_media
+	${INSTALL_DATA_DIR}/flakelib_media
 )
 
 fcppt_generate_symbol_header(
@@ -132,6 +135,7 @@ include_directories(
 set(
 	FLAKELIB_FILES
 	src/flakelib/buffer_pool/object.cpp
+	src/flakelib/cl/cflags.cpp
 	src/flakelib/cl/kernel.cpp
 	src/flakelib/cl/planar_image_view_to_cl_image.cpp
 	src/flakelib/cl/planar_image_view_to_float_buffer.cpp
@@ -151,12 +155,17 @@ set(
 	src/flakelib/planar/simulation/stam/subtract_pressure_gradient.cpp
 	src/flakelib/planar/simulation/stam/wind_source.cpp
 	src/flakelib/scoped_frame_limiter.cpp
+	src/flakelib/splatter/circle/object.cpp
+	src/flakelib/splatter/object.cpp
+	src/flakelib/splatter/rectangle/object.cpp
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/utility/fill_buffer.cpp
 )
 
 set(
 	FLAKE_FILES
+	src/flake/media_path.cpp
+	src/flake/media_path_from_string.cpp
 	src/flake/planar/monitor/child.cpp
 	src/flake/planar/monitor/parent.cpp
 	src/flake/planar/monitor/planar_arrows.cpp
