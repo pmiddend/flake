@@ -1,3 +1,4 @@
+#include <sge/charconv/create_system.hpp>
 #include <fcppt/log/headers.hpp>
 #include <flakelib/log.hpp>
 #include <flake/media_path_from_string.hpp>
@@ -8,6 +9,7 @@
 #include <flakelib/cl/cflags.hpp>
 #include <sge/log/global_context.hpp>
 #include <sge/media/all_extensions.hpp>
+#include <sge/charconv/system.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/opencl/single_device_system/parameters.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
@@ -81,11 +83,14 @@ flake::test_base::test_base(
 	sge::window::title const &_window_title,
 	sge::systems::cursor_option_field const &_cursor_options)
 :
+	charconv_system_(
+		sge::charconv::create_system()),
 	configuration_(
 		fcppt::make_unique_ptr<sge::parse::json::object>(
 			fcppt::cref(
 				sge::parse::json::parse_string_exn(
 					flakelib::utf8_file_to_fcppt_string(
+						*charconv_system_,
 						flake::media_path_from_string(
 							FCPPT_TEXT("config.json"))))))),
 	systems_(

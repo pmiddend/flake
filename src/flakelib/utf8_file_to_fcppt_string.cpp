@@ -1,12 +1,13 @@
 #include <flakelib/exception.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
+#include <sge/charconv/system_fwd.hpp>
+#include <sge/charconv/utf8_string.hpp>
+#include <sge/charconv/utf8_string_to_fcppt.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/filesystem/path.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/io/cifstream.hpp>
-#include <fcppt/utf8/from_std_string.hpp>
-#include <fcppt/utf8/to_fcppt_string.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <iterator>
 #include <string>
@@ -15,6 +16,7 @@
 
 fcppt::string const
 flakelib::utf8_file_to_fcppt_string(
+	sge::charconv::system &charconv_system,
 	fcppt::filesystem::path const &path)
 {
 	fcppt::io::cifstream file_stream(
@@ -25,14 +27,13 @@ flakelib::utf8_file_to_fcppt_string(
 			flakelib::exception(
 				FCPPT_TEXT("Couldn't open file \"")+
 				fcppt::filesystem::path_to_string(
-					path)+
-				FCPPT_TEXT("\"\n"));
+					path));
 
 	return
-		fcppt::utf8::to_fcppt_string(
-			fcppt::utf8::from_std_string(
-				std::string(
-					std::istreambuf_iterator<char>(
-						file_stream),
-					std::istreambuf_iterator<char>())));
+		sge::charconv::utf8_string_to_fcppt(
+			charconv_system,
+			sge::charconv::utf8_string(
+				std::istreambuf_iterator<char>(
+					file_stream),
+				std::istreambuf_iterator<char>()));
 }

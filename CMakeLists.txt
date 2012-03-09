@@ -74,6 +74,7 @@ find_package(
 	config
 	image
 	image2d
+	charconv
 	input
 	renderer
 	log

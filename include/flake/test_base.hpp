@@ -9,6 +9,7 @@
 #include <sge/input/cursor/object_fwd.hpp>
 #include <sge/input/keyboard/device_fwd.hpp>
 #include <sge/opencl/single_device_system/object_fwd.hpp>
+#include <sge/charconv/system_fwd.hpp>
 #include <sge/parse/json/object_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/systems/cursor_option_field.hpp>
@@ -75,6 +76,7 @@ protected:
 	sge::viewport::manager &
 	viewport_manager();
 private:
+	fcppt::scoped_ptr<sge::charconv::system> charconv_system_;
 	fcppt::scoped_ptr<sge::parse::json::object> configuration_;
 	fcppt::scoped_ptr<sge::systems::instance> systems_;
 	fcppt::scoped_ptr<sge::opencl::single_device_system::object> opencl_system_;
