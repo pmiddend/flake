@@ -189,70 +189,28 @@ flake::planar::cursor_splatter::move_callback(
 	if(!e.position())
 		return;
 
-	sge::renderer::pixel_rect const current_viewport(
-		renderer_.onscreen_target().viewport().get());
+	this->splat_at_cursor_position(
+		*e.position());
+}
 
-	// The cursor position is in _window coordinates_. The entities we're
-	// dealing with (the monitor rectangle) are relative to the _viewport_,
-	// however. If the viewport does not fill the whole window, we've got a
-	// problem. So we're converting to viewport coordinates here.
-	sge::input::cursor::position const
-		cursor_position_window_coords(
-			*e.position()),
-		cursor_position_viewport_coords(
-			cursor_position_window_coords -
-			fcppt::math::vector::structure_cast<sge::input::cursor::position>(
-				current_viewport.pos()));
-
-	// To unproject stuff, we're doing our calculations in floating point
-	// mode. So define some types for that.
-	typedef
-	sge::renderer::scalar
-	float_unit;
+void
+flake::planar::cursor_splatter::splat_at_cursor_position(
+	sge::input::cursor::position const &cursor_position_window_coords)
+{
+	sge::renderer::vector2 const unprojected_lefttop(
+		this->unproject_cursor_position(
+			cursor_position_window_coords));
 
 	typedef
 	fcppt::math::box::rect<sge::renderer::scalar>::type
-	float_rect;
+	renderer_scalar_rect;
 
-	typedef
-	sge::renderer::vector2
-	float_vector2;
-
-	typedef
-	sge::renderer::vector3
-	float_vector3;
-
-	float_rect const
-		// We need the viewport to translate the origins from left top
-		// to left bottom and backwards.
-		current_floating_point_viewport =
-			fcppt::math::box::structure_cast<float_rect>(
-				current_viewport),
+	renderer_scalar_rect const
 		// This is the monitor rectangle with the origin at the left
 		// top (relative to the viewport).
 		monitor_rectangle_origin_lefttop =
-			fcppt::math::box::structure_cast<float_rect>(
+			fcppt::math::box::structure_cast<renderer_scalar_rect>(
 				monitor_texture_.content_widget().area());
-
-	float_vector3 const
-		floating_point_cursor_position_leftbottom(
-			static_cast<float_unit>(
-				cursor_position_viewport_coords.x()),
-			static_cast<float_unit>(
-				current_floating_point_viewport.h() - cursor_position_viewport_coords.y()),
-			static_cast<float_unit>(
-				0.0f));
-
-	// We pass in coordinates which are relative to "left bottom" and
-	// receive a value which is relative to "left top".
-	float_vector2 const
-		unprojected_lefttop =
-			fcppt::math::vector::narrow_cast<float_vector2>(
-				unproject(
-					floating_point_cursor_position_leftbottom,
-					fcppt::math::matrix::inverse(
-						camera_.mvp()),
-					current_floating_point_viewport));
 
 	// The monitor rectangle is also absolute, so this works
 	if(!fcppt::math::box::contains_point(monitor_rectangle_origin_lefttop,unprojected_lefttop))
@@ -270,7 +228,7 @@ flake::planar::cursor_splatter::move_callback(
 	flakelib::splatter::rectangle::position::value_type
 	discrete_vector2;
 
-	float_vector2 const
+	sge::renderer::vector2 const
 		unprojected_relative_lefttop(
 			unprojected_lefttop - monitor_rectangle_origin_lefttop.pos());
 
@@ -292,4 +250,57 @@ flake::planar::cursor_splatter::move_callback(
 			pen_,
 			new_pen_rectangle),
 		splat_value_);
+}
+
+sge::renderer::vector2 const
+flake::planar::cursor_splatter::unproject_cursor_position(
+	sge::input::cursor::position const &cursor_position_window_coords)
+{
+	sge::renderer::pixel_rect const current_viewport(
+		renderer_.onscreen_target().viewport().get());
+
+	// The cursor position is in _window coordinates_. The entities we're
+	// dealing with (the monitor rectangle) are relative to the _viewport_,
+	// however. If the viewport does not fill the whole window, we've got a
+	// problem. So we're converting to viewport coordinates here.
+	sge::input::cursor::position const
+		cursor_position_viewport_coords(
+			cursor_position_window_coords -
+			fcppt::math::vector::structure_cast<sge::input::cursor::position>(
+				current_viewport.pos()));
+
+	typedef
+	fcppt::math::box::rect<sge::renderer::scalar>::type
+	renderer_scalar_rect;
+
+	renderer_scalar_rect const
+		// We need the viewport to translate the origins from left top
+		// to left bottom and backwards.
+		current_floating_point_viewport =
+			fcppt::math::box::structure_cast<renderer_scalar_rect>(
+				current_viewport),
+		// This is the monitor rectangle with the origin at the left
+		// top (relative to the viewport).
+		monitor_rectangle_origin_lefttop =
+			fcppt::math::box::structure_cast<renderer_scalar_rect>(
+				monitor_texture_.content_widget().area());
+
+	sge::renderer::vector3 const
+		floating_point_cursor_position_leftbottom(
+			static_cast<sge::renderer::scalar>(
+				cursor_position_viewport_coords.x()),
+			static_cast<sge::renderer::scalar>(
+				current_floating_point_viewport.h() - cursor_position_viewport_coords.y()),
+			static_cast<sge::renderer::scalar>(
+				0.0f));
+
+	// We pass in coordinates which are relative to "left bottom" and
+	// receive a value which is relative to "left top".
+	return
+		fcppt::math::vector::narrow_cast<sge::renderer::vector2>(
+				unproject(
+					floating_point_cursor_position_leftbottom,
+					fcppt::math::matrix::inverse(
+						camera_.mvp()),
+					current_floating_point_viewport));
 }

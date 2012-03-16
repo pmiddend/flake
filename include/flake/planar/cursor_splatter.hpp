@@ -3,10 +3,12 @@
 
 #include <sge/camera/base_fwd.hpp>
 #include <sge/input/cursor/object_fwd.hpp>
+#include <sge/input/cursor/position.hpp>
 #include <sge/input/cursor/button_event_fwd.hpp>
 #include <sge/input/cursor/move_event_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/vector2.hpp>
 #include <flakelib/planar/float_view.hpp>
 #include <flake/planar/monitor/texture_fwd.hpp>
 #include <flakelib/splatter/object_fwd.hpp>
@@ -61,6 +63,14 @@ private:
 	void
 	move_callback(
 		sge::input::cursor::move_event const &);
+
+	void
+	splat_at_cursor_position(
+		sge::input::cursor::position const &);
+
+	sge::renderer::vector2 const
+	unproject_cursor_position(
+		sge::input::cursor::position const &);
 };
 }
 }
