@@ -37,7 +37,7 @@ public:
 
 	FLAKELIB_SYMBOL
 	planar::unique_float2_buffer_lock
-	update_planar(
+	update_float2(
 		planar::boundary_buffer_view const &,
 		stam::velocity const &,
 		planar::float2_view const &,
@@ -45,7 +45,7 @@ public:
 
 	FLAKELIB_SYMBOL
 	planar::unique_float_buffer_lock
-	update_scalar(
+	update_float(
 		planar::boundary_buffer_view const &,
 		stam::velocity const &,
 		planar::float_view const &,

@@ -28,16 +28,16 @@ flakelib::planar::simulation::stam::semilagrangian_advection::semilagrangian_adv
 	planar_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply_planar"))),
+				"apply_float2"))),
 	scalar_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply_scalar")))
+				"apply_float")))
 {
 }
 
 flakelib::planar::unique_float2_buffer_lock
-flakelib::planar::simulation::stam::semilagrangian_advection::update_planar(
+flakelib::planar::simulation::stam::semilagrangian_advection::update_float2(
 	planar::boundary_buffer_view const &_boundary,
 	stam::velocity const &_velocity,
 	planar::float2_view const &_buffer,
@@ -90,7 +90,7 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update_planar(
 }
 
 flakelib::planar::unique_float_buffer_lock
-flakelib::planar::simulation::stam::semilagrangian_advection::update_scalar(
+flakelib::planar::simulation::stam::semilagrangian_advection::update_float(
 	planar::boundary_buffer_view const &_boundary,
 	stam::velocity const &_velocity,
 	planar::float_view const &_buffer,

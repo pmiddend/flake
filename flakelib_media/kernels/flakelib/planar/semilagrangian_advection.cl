@@ -13,7 +13,7 @@
 #include <flakelib/kernel_argument.cl>
 
 kernel void
-FLAKELIB_KERNEL_NAME(apply_planar)(
+FLAKELIB_KERNEL_NAME(apply_float2)(
 	global float const *FLAKELIB_KERNEL_ARGUMENT(boundary),
 	global float2 const *FLAKELIB_KERNEL_ARGUMENT(input),
 	global float2 const *FLAKELIB_KERNEL_ARGUMENT(velocity),
@@ -72,7 +72,7 @@ FLAKELIB_KERNEL_NAME(apply_planar)(
 }
 
 kernel void
-FLAKELIB_KERNEL_NAME(apply_scalar)(
+FLAKELIB_KERNEL_NAME(apply_float)(
 	global float const *FLAKELIB_KERNEL_ARGUMENT(boundary),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(input),
 	global float2 const *FLAKELIB_KERNEL_ARGUMENT(velocity),

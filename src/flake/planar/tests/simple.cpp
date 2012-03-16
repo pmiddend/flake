@@ -321,6 +321,18 @@ flake::planar::tests::simple::update()
 	this->calculate_with_stams_method(
 		delta);
 
+	smoke_density_buffer_ =
+		semilagrangian_advection_.update_float(
+			flakelib::planar::boundary_buffer_view(
+				boundary_buffer_.value()),
+			flakelib::planar::simulation::stam::velocity(
+				velocity_buffer_->value()),
+			smoke_density_buffer_->value(),
+			delta);
+
+	cursor_splatter_.target(
+		smoke_density_buffer_->value());
+
 	monitor_planar_converter_.to_arrow_vb(
 		velocity_buffer_->value(),
 		velocity_arrows_.cl_buffer(),
@@ -332,9 +344,6 @@ flake::planar::tests::simple::update()
 		smoke_density_texture_.cl_texture(),
 		monitor::scaling_factor(
 			1.0f));
-
-	cursor_splatter_.target(
-		smoke_density_buffer_->value());
 }
 
 void
@@ -350,7 +359,7 @@ flake::planar::tests::simple::calculate_with_stams_method(
 	flakelib::duration const &delta)
 {
 	velocity_buffer_ =
-		semilagrangian_advection_.update_planar(
+		semilagrangian_advection_.update_float2(
 			flakelib::planar::boundary_buffer_view(
 				boundary_buffer_.value()),
 			flakelib::planar::simulation::stam::velocity(
