@@ -1,6 +1,5 @@
 {
 	"benchmark-iterations" : 2000,
-	"window-size" : [1280,1024],
 	"arrow-visualization" :
 	{
 		"arrow-scale" : 1.0,

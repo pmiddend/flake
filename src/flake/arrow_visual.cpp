@@ -117,11 +117,9 @@ try
 				flakelib::media_path_from_string(
 					FCPPT_TEXT("config.json"))));
 
-	sge::window::dim const window_size =
-		sge::parse::json::find_and_convert_member<sge::window::dim>(
-			config_file,
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("window-size")));
+	sge::window::dim const window_size(
+		1280,
+		1024);
 
 	sge::systems::instance sys(
 		sge::systems::list()
