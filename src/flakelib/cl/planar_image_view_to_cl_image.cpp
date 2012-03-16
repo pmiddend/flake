@@ -30,7 +30,7 @@ flakelib::cl::planar_image_view_to_cl_image(
 				sge::image2d::view::size(
 					_planar_image)),
 			sge::opencl::memory_object::image::planar_pitch(
-				0)));
+				0u)));
 
 	sge::opencl::command_queue::scoped_planar_mapping scoped_image(
 		_command_queue,

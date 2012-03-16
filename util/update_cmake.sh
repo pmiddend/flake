@@ -21,3 +21,11 @@ update_cmake_file \
 	CMakeLists.txt \
 	FLAKELIB_FILES \
 	src/flakelib \
+
+update_cmake_file \
+	CMakeLists.txt \
+	FLAKE_FILES \
+	-n \
+	src/flake \
+	src/flake/planar \
+	src/flake/planar/monitor

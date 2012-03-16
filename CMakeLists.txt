@@ -1,58 +1,89 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6)
 
-PROJECT(flake)
+project(flake)
 
-INCLUDE(FcpptCMakeUtils)
+include(
+	FcpptCMakeUtils)
 
-FIND_PACKAGE(
+include(
+	AwlMainGenerator)
+
+include(
+	FcpptSymbol
+)
+
+find_package(
 	Boost 1.45.0 REQUIRED COMPONENTS
-	system
-	date_time)
+	system)
 
-INCLUDE_DIRECTORIES(SYSTEM ${Boost_INCLUDE_DIR})
-LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+include_directories(
+	${Boost_INCLUDE_DIR})
+link_directories(
+	${Boost_LIBRARY_DIRS})
 
-IF(
+# boost-1.48 is broken with fusion, workaround
+if(
 	MSVC AND ${Boost_VERSION} STREQUAL "104800")
-	ADD_DEFINITIONS(
+	add_definitions(
 		-D BOOST_FUSION_DONT_USE_PREPROCESSED_FILES
 	)
-ENDIF()
+endif()
 # boost end
 
 # fcppt begin
-FIND_PACKAGE(Fcppt REQUIRED)
-INCLUDE_DIRECTORIES(${Fcppt_INCLUDE_DIRS})
-ADD_DEFINITIONS(${Fcppt_DEFINITIONS})
+find_package(
+	Fcppt REQUIRED)
+include_directories(
+	${Fcppt_INCLUDE_DIRS})
+add_definitions(
+	${Fcppt_DEFINITIONS})
 # fcppt end
 
 # rucksack begin
-FIND_PACKAGE(Rucksack REQUIRED)
-INCLUDE_DIRECTORIES(${Rucksack_INCLUDE_DIR})
-ADD_DEFINITIONS(${Rucksack_DEFINITIONS})
+find_package(
+	Rucksack REQUIRED)
+include_directories(
+	${Rucksack_INCLUDE_DIR})
+add_definitions(
+	${Rucksack_DEFINITIONS})
 # rucksack end
 
 # OpenCL begin
-FIND_PACKAGE(OpenCL REQUIRED)
-INCLUDE_DIRECTORIES(${OPENCL_INCLUDE_DIR})
-ADD_DEFINITIONS(${OpenCL_DEFINITIONS})
+find_package(
+	OpenCL REQUIRED)
+include_directories(
+	${FCPPT_UTILS_INCLUDE_SYSTEM}
+	${OPENCL_INCLUDE_DIR})
+add_definitions(
+	${OpenCL_DEFINITIONS})
 # OpenCL end
 
+# awl begin
+find_package(
+	Awl REQUIRED)
+include_directories(
+	${Awl_INCLUDE_DIR})
+add_definitions(
+	${Awl_DEFINITIONS})
+# awl end
+
 # sge begin
-FIND_PACKAGE(
+find_package(
 	SGE REQUIRED COMPONENTS
 	opencl
 	config
 	image
 	image2d
+	charconv
+	input
+	renderer
 	log
 	media
 	core
-	input
-	renderer
 	sprite
 	camera
 	texture
+	modelobj
 	console
 	font
 	fonttext
@@ -62,178 +93,233 @@ FIND_PACKAGE(
 	window
 	viewport)
 
-INCLUDE_DIRECTORIES(${SGE_INCLUDE_DIRS})
-ADD_DEFINITIONS(${SGE_DEFINITIONS})
+include_directories(${SGE_INCLUDE_DIRS})
+add_definitions(${SGE_DEFINITIONS})
 # sge end
 
 # get rid of a pretty useless warning
-IF(CMAKE_COMPILER_IS_GNUCXX OR FCPPT_UTILS_COMPILER_IS_CLANGPP)
-	ADD_DEFINITIONS(-Wno-old-style-cast)
-ENDIF()
+if(CMAKE_COMPILER_IS_GNUCXX OR FCPPT_UTILS_COMPILER_IS_CLANGPP)
+	add_definitions(
+		-Wno-old-style-cast)
+endif()
 
-SET(
-	INSTALL_MEDIA_DIR
-	${INSTALL_DATA_DIR}/media)
-
-INCLUDE(
+include(
 	SGECustomPath)
 
-SGE_CONFIG_ADD_CUSTOM_PATH(
+sge_config_add_custom_path(
 	flake
 	media
 	${CMAKE_SOURCE_DIR}/media
-	${INSTALL_MEDIA_DIR}
+	${INSTALL_DATA_DIR}/media
 )
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
+sge_config_add_custom_path(
+	flakelib
+	media
+	${CMAKE_SOURCE_DIR}/flakelib_media
+	${INSTALL_DATA_DIR}/flakelib_media
+)
 
-SET(
+fcppt_generate_symbol_header(
+	FLAKELIB_STATIC_LINK
+	flakelib
+	FLAKELIB
+	flakelib
+)
+
+include_directories(
+	${CMAKE_BINARY_DIR}/include)
+
+include_directories(
+	${CMAKE_SOURCE_DIR}/include)
+
+set(
 	FLAKELIB_FILES
-	src/flakelib/arrow_visual.cpp
-	src/flakelib/cl/apply_kernel_to_planar_image.cpp
+	src/flakelib/buffer_pool/object.cpp
+	src/flakelib/cl/cflags.cpp
+	src/flakelib/cl/kernel.cpp
 	src/flakelib/cl/planar_image_view_to_cl_image.cpp
-	src/flakelib/density/advector.cpp
-	src/flakelib/density/cursor_splatter.cpp
-	src/flakelib/density/monitor_proxy.cpp
+	src/flakelib/cl/planar_image_view_to_float_buffer.cpp
+	src/flakelib/cl/program.cpp
+	src/flakelib/cl/program_context.cpp
 	src/flakelib/exception.cpp
-	src/flakelib/laplace_solver/base.cpp
-	src/flakelib/laplace_solver/dynamic_factory.cpp
-	src/flakelib/laplace_solver/jacobi.cpp
-	src/flakelib/laplace_solver/multigrid.cpp
-	src/flakelib/laplace_tester.cpp
+	src/flakelib/log.cpp
+	src/flakelib/log_context.cpp
+	src/flakelib/log_location.cpp
+	src/flakelib/log_parameters.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
-	src/flakelib/monitor/child.cpp
-	src/flakelib/monitor/parent.cpp
-	src/flakelib/monitor/planar_arrows.cpp
-	src/flakelib/monitor/planar_converter.cpp
-	src/flakelib/monitor/texture.cpp
-	src/flakelib/planar_buffer.cpp
-	src/flakelib/planar_framework.cpp
-	src/flakelib/planar_object_size.cpp
-	src/flakelib/planar_pool/object.cpp
-	src/flakelib/planar_pool/scoped_lock.cpp
-	src/flakelib/profiler/object.cpp
-	src/flakelib/profiler/scoped.cpp
+	src/flakelib/planar/simulation/stam/divergence.cpp
+	src/flakelib/planar/simulation/stam/jacobi.cpp
+	src/flakelib/planar/simulation/stam/outflow_boundaries.cpp
+	src/flakelib/planar/simulation/stam/semilagrangian_advection.cpp
+	src/flakelib/planar/simulation/stam/subtract_pressure_gradient.cpp
+	src/flakelib/planar/simulation/stam/wind_source.cpp
 	src/flakelib/scoped_frame_limiter.cpp
-	src/flakelib/simulation/base.cpp
-	src/flakelib/simulation/stam/object.cpp
-	src/flakelib/sprite_drawer_3d.cpp
+	src/flakelib/splatter/object.cpp
+	src/flakelib/splatter/rectangle/object.cpp
 	src/flakelib/utf8_file_to_fcppt_string.cpp
-	src/flakelib/utility/object.cpp
-	src/flakelib/viewport_pager.cpp
+	src/flakelib/utility/fill_buffer.cpp
 )
 
-FCPPT_UTILS_ADD_SOURCE_GROUPS("${FLAKELIB_FILES}")
+set(
+	FLAKE_FILES
+	src/flake/media_path.cpp
+	src/flake/media_path_from_string.cpp
+	src/flake/planar/cursor_splatter.cpp
+	src/flake/planar/monitor/child.cpp
+	src/flake/planar/monitor/parent.cpp
+	src/flake/planar/monitor/planar_arrows.cpp
+	src/flake/planar/monitor/planar_converter.cpp
+	src/flake/planar/monitor/texture.cpp
+	src/flake/sprite_drawer_3d.cpp
+	src/flake/test_base.cpp
+)
 
-ADD_LIBRARY(
-	flakelib STATIC ${FLAKELIB_FILES})
+fcppt_utils_add_source_groups(
+	"${FLAKELIB_FILES}")
 
-# planar_framework begin
-ADD_EXECUTABLE(
-	planar_framework
-	WIN32
-	src/flake/planar_framework.cpp)
+fcppt_utils_add_source_groups(
+	"${FLAKE_FILES}")
 
-TARGET_LINK_LIBRARIES(
-	planar_framework
+option(
+	ENABLE_SHARED
+	"Build flakelib as a shared library"
+	TRUE
+)
+
+option(
+	ENABLE_STATIC
+	"Build flakelib as a static library"
+	FALSE
+)
+
+if(
+	NOT ENABLE_SHARED AND NOT ENABLE_STATIC
+)
+	message(
+		FATAL_ERROR
+		"You disabled both STATIC and SHARED"
+	)
+endif()
+
+# choose a library to link the tests to
+if(
+	ENABLE_SHARED
+)
+	set(
+		FLAKEKLIB_DEFAULT_LINK_TARGET
+		flakelib
+	)
+endif()
+
+# static overrides shared
+if(
+	ENABLE_STATIC
+)
+	set(
+		FLAKELIB_DEFAULT_LINK_TARGET
+		flakelib_static
+	)
+
+	set(
+		FLAKELIB_CONFIG_LINK_MACROS
+		"-D FLAKELIB_STATIC_LINK"
+	)
+endif()
+
+function(
+	MAKE_FLAKELIB_LIBRARY
+	TARGETNAME
+	VARIANT
+)
+	add_library(
+		${TARGETNAME}
+		${VARIANT}
+		${FLAKELIB_FILES}
+	)
+
+	if(
+		NOT MSVC
+	)
+		target_link_libraries(
+			${TARGETNAME}
+			${Boost_SYSTEM_LIBRARY}
+		)
+	endif()
+
+	if(
+		${VARIANT} STREQUAL "STATIC"
+	)
+		set_target_properties(
+			${TARGETNAME}
+			PROPERTIES
+			COMPILE_DEFINITIONS
+			"FLAKELIB_STATIC_LINK"
+		)
+	endif()
+
+	# This is, of course, extremely overlinked
+	target_link_libraries(
+		${TARGETNAME}
+		${Fcppt_core_LIBRARIES}
+		${Fcppt_filesystem_LIBRARIES}
+		${Awl_LIBRARIES}
+		${SGE_LIBRARIES}
+		${Rucksack_LIBRARIES}
+		${Boost_LIBRARIES})
+
+	install(
+		TARGETS
+		${TARGETNAME}
+		DESTINATION
+		${INSTALL_LIBRARY_DIR}
+	)
+endfunction()
+
+if(
+	ENABLE_STATIC
+)
+	make_flakelib_library(
+		flakelib_static
+		STATIC
+	)
+endif()
+
+if(
+	ENABLE_SHARED
+)
+	make_flakelib_library(
+		flakelib
+		SHARED
+	)
+endif()
+
+add_library(
+	flake_helper_library
+	STATIC
+	${FLAKE_FILES})
+
+# simple begin
+awl_utils_add_portable_executable(
+	tests_simple
+	"custom_main"
+	src/flake/planar/tests/simple.cpp)
+
+target_link_libraries(
+	tests_simple
 	flakelib
+	flake_helper_library
 	${Fcppt_core_LIBRARIES}
 	${Fcppt_filesystem_LIBRARIES}
+	${Awl_LIBRARIES}
 	${SGE_LIBRARIES}
 	${Rucksack_LIBRARIES}
 	${Boost_LIBRARIES})
 
-INSTALL(
+install(
 	TARGETS
-	planar_framework
+	tests_simple
 	DESTINATION
 	${INSTALL_BINARY_DIR})
-# planar_framework end
-
-# arrow_visual begin
-ADD_EXECUTABLE(
-	arrow_visual
-	WIN32
-	src/flake/arrow_visual.cpp)
-
-TARGET_LINK_LIBRARIES(
-	arrow_visual
-	flakelib
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Rucksack_LIBRARIES}
-	${Boost_LIBRARIES})
-
-INSTALL(
-	TARGETS
-	arrow_visual
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# arrow_visual end
-
-# benchmark begin
-ADD_EXECUTABLE(
-	benchmark
-	WIN32
-	src/flake/benchmark.cpp)
-
-TARGET_LINK_LIBRARIES(
-	benchmark
-	flakelib
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Rucksack_LIBRARIES}
-	${Boost_LIBRARIES})
-
-INSTALL(
-	TARGETS
-	benchmark
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# benchmark end
-
-# pde_tester begin
-ADD_EXECUTABLE(
-	pde_tester
-	WIN32
-	src/flake/pde_tester.cpp)
-
-TARGET_LINK_LIBRARIES(
-	pde_tester
-	flakelib
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Rucksack_LIBRARIES}
-	${Boost_LIBRARIES})
-
-INSTALL(
-	TARGETS
-	pde_tester
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# pde_tester end
-
-# frobenius_tester begin
-ADD_EXECUTABLE(
-	frobenius_tester
-	WIN32
-	src/flake/frobenius_tester.cpp)
-
-TARGET_LINK_LIBRARIES(
-	frobenius_tester
-	flakelib
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Boost_LIBRARIES})
-
-INSTALL(
-	TARGETS
-	frobenius_tester
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# frobenius_tester end
+# simple end

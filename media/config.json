@@ -1,41 +1,23 @@
 {
-	"benchmark-iterations" : 2000,
-	"arrow-visualization" :
+	"tests" :
 	{
-		"arrow-scale" : 1.0,
-		"density-splat-radius" : 4,
-		"pressure-scale" : 1.00,
-		"velocity-magnitude-scale" : 0.2,
-		"divergence-scale" : 100.00,
-		"residual-scale" : 1.0,
-		"grid-position" : [10.0,10.0],
-		"grid-scale" : 2.0,
-		"border-size" : 2,
-		"font-size" : 20
-	},
-	"stam-test" :
-	{
-		"profiling" : true,
-		"external-force-magnitude" : 7.0,
-		"grid-scale" : 1.0,
-		"boundary-file" : "boundary_jagged_256.png"
-	},
-	"simulation-solver-jac" :
-	{
-		"type" : "jacobi",
-		"grid-scale" : 1.0,
-		"iterations" : 51
-	},
-	"simulation-solver" :
-	{
-		"type" : "multigrid",
-		"grid-scale" : 1.0,
-		"termination-size" : 64,
-		"inner-solver" :
+		"window-size" : [1280,1024],
+		"desired-fps" : 60,
+		"opencl-compiler-flags" : "-cl-mad-enable -cl-fast-relaxed-math -Werror",
+		"planar" :
 		{
-			"type" : "jacobi",
-			"grid-scale" : 1.0,
-			"iterations" : 7
+			"simple" :
+			{
+				"wind-strength" : 10.0,
+				"jacobi-iterations" : 50,
+				"monitor-font-size" : 15,
+				"master-and-slave-padding" : 3,
+				"boundary" : "256/zagged.png",
+				"velocity-arrow-scale" : 1.0,
+				"velocity-grid-scale" : 2.0,
+				"texture-grid-scale" : 1,
+				"clock-multiplier" : 10.0
+			}
 		}
 	}
 }
