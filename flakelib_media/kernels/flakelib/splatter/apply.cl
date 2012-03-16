@@ -10,6 +10,8 @@ FLAKELIB_KERNEL_NAME(splat_float)(
 	global float *FLAKELIB_KERNEL_ARGUMENT(input),
 	int const FLAKELIB_KERNEL_ARGUMENT(pen_position_x),
 	int const FLAKELIB_KERNEL_ARGUMENT(pen_position_y),
+	int const FLAKELIB_KERNEL_ARGUMENT(buffer_width),
+	int const FLAKELIB_KERNEL_ARGUMENT(buffer_height),
 	int const FLAKELIB_KERNEL_ARGUMENT(is_rectangle),
 	int const FLAKELIB_KERNEL_ARGUMENT(is_hard),
 	int const FLAKELIB_KERNEL_ARGUMENT(do_mixing),
@@ -34,6 +36,9 @@ FLAKELIB_KERNEL_NAME(splat_float)(
 			pen_position + pen_radiuses,
 		position_to_test =
 			current_position - pen_center;
+
+	if(current_position.x >= buffer_width || current_position.x < 0 || current_position.y >= buffer_height || current_position.y < 0)
+		return;
 
 	float2 const
 		ellipse_components =

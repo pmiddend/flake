@@ -48,6 +48,16 @@ flakelib::splatter::object::splat_planar_float(
 			_pen.bounding().position().get().y()));
 
 	splat_float_->numerical_argument(
+		"buffer_width",
+		static_cast<cl_int>(
+			_buffer.size().w()));
+
+	splat_float_->numerical_argument(
+		"buffer_height",
+		static_cast<cl_int>(
+			_buffer.size().h()));
+
+	splat_float_->numerical_argument(
 		"buffer_pitch",
 		static_cast<cl_uint>(
 			_buffer.size().w()));
