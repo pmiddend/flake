@@ -309,7 +309,7 @@ flake::planar::monitor::planar_arrows::render_arrows(
 
 	child::parent().renderer().render_nonindexed(
 		sge::renderer::first_vertex(
-			0),
+			0u),
 		sge::renderer::vertex_count(
 			vb_->size()),
 		sge::renderer::nonindexed_primitive_type::line);

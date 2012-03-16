@@ -15,6 +15,7 @@
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/parse_string_exn.hpp>
 #include <sge/parse/json/string_to_path.hpp>
+#include <sge/viewport/manager.hpp>
 #include <sge/renderer/no_multi_sampling.hpp>
 #include <sge/renderer/parameters.hpp>
 #include <sge/renderer/scoped_block.hpp>
@@ -25,7 +26,7 @@
 #include <sge/systems/list.hpp>
 #include <sge/systems/renderer.hpp>
 #include <sge/systems/window.hpp>
-#include <sge/viewport/center_on_resize.hpp>
+#include <sge/viewport/fill_on_resize.hpp>
 #include <sge/window/object.hpp>
 #include <sge/window/parameters.hpp>
 #include <sge/window/system.hpp>
@@ -113,11 +114,7 @@ flake::test_base::test_base(
 								sge::renderer::depth_stencil_buffer::off,
 								sge::renderer::vsync::on,
 								sge::renderer::no_multi_sampling),
-							sge::viewport::center_on_resize(
-								sge::parse::json::find_and_convert_member<sge::window::dim>(
-									*configuration_,
-									sge::parse::json::string_to_path(
-										FCPPT_TEXT("tests/window-size"))))))
+							sge::viewport::fill_on_resize()))
 						(sge::systems::font())
 						(sge::systems::input(
 							sge::systems::input_helper_field(
@@ -158,7 +155,12 @@ flake::test_base::test_base(
 		sge::parse::json::find_and_convert_member<flakelib::scoped_frame_limiter::fps_type>(
 			this->configuration(),
 			sge::parse::json::string_to_path(
-				FCPPT_TEXT("tests/desired-fps"))))
+				FCPPT_TEXT("tests/desired-fps")))),
+	viewport_connection_(
+		systems_->viewport_manager().manage_callback(
+			std::tr1::bind(
+				&test_base::viewport_callback,
+				this)))
 {
 	FCPPT_LOG_DEBUG(
 		flakelib::log(),
@@ -193,6 +195,13 @@ flake::test_base::cursor()
 {
 	return
 		systems_->cursor_demuxer();
+}
+
+sge::input::mouse::device &
+flake::test_base::mouse()
+{
+	return
+		systems_->mouse_collector();
 }
 
 sge::input::keyboard::device &
@@ -235,4 +244,9 @@ flake::test_base::viewport_manager()
 {
 	return
 		systems_->viewport_manager();
+}
+
+void
+flake::test_base::viewport_callback()
+{
 }

@@ -4,6 +4,7 @@
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/splatter/rectangle/object.hpp>
+#include <flakelib/splatter/pen/object_impl.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 
 
@@ -29,11 +30,8 @@ flakelib::splatter::object::object(
 void
 flakelib::splatter::object::splat_planar_float(
 	planar::float_view const &_buffer,
-	splatter::rectangle::object const &_rectangle,
-	cl_float const _value,
-	splatter::pen_type::type const _pen,
-	splatter::hardness::type const _hardness,
-	splatter::mix_mode::type const _mix_mode)
+	splatter::pen::planar const &_pen,
+	cl_float const _value)
 {
 	splat_float_->buffer_argument(
 		"input",
@@ -42,12 +40,12 @@ flakelib::splatter::object::splat_planar_float(
 	splat_float_->numerical_argument(
 		"pen_position_x",
 		static_cast<cl_int>(
-			_rectangle.position().get().w()));
+			_pen.bounding().position().get().x()));
 
 	splat_float_->numerical_argument(
 		"pen_position_y",
 		static_cast<cl_int>(
-			_rectangle.position().get().h()));
+			_pen.bounding().position().get().y()));
 
 	splat_float_->numerical_argument(
 		"buffer_pitch",
@@ -58,67 +56,34 @@ flakelib::splatter::object::splat_planar_float(
 		"value",
 		_value);
 
-	switch(_pen)
-	{
-		case splatter::pen_type::round:
-			splat_float_->numerical_argument(
-				"is_rectangle",
-				static_cast<cl_int>(
-					false));
-			break;
-		case splatter::pen_type::square:
-			splat_float_->numerical_argument(
-				"is_rectangle",
-				static_cast<cl_int>(
-					true));
-			break;
-	}
+	splat_float_->numerical_argument(
+		"is_rectangle",
+		static_cast<cl_int>(
+			!_pen.is_round().get()));
 
-	switch(_hardness)
-	{
-		case splatter::hardness::hard:
-			splat_float_->numerical_argument(
-				"is_hard",
-				static_cast<cl_int>(
-					true));
-			break;
-		case splatter::hardness::soft:
-			splat_float_->numerical_argument(
-				"is_hard",
-				static_cast<cl_int>(
-					false));
-			break;
-	}
+	splat_float_->numerical_argument(
+		"is_hard",
+		static_cast<cl_int>(
+			!_pen.is_smooth().get()));
 
-	switch(_mix_mode)
-	{
-		case splatter::mix_mode::add:
-			splat_float_->numerical_argument(
-				"do_add",
-				static_cast<cl_int>(
-					true));
-			break;
-		case splatter::mix_mode::set:
-			splat_float_->numerical_argument(
-				"do_add",
-				static_cast<cl_int>(
-					false));
-			break;
-	}
+	splat_float_->numerical_argument(
+		"blend_factor",
+		_pen.blend_factor().get());
 
+	splat_float_->numerical_argument(
+		"do_mixing",
+		static_cast<cl_int>(
+			_pen.draw_mode() == pen::draw_mode::mix));
 
 	splat_float_->enqueue_automatic(
-		_rectangle.size().get());
+		_pen.bounding().size().get());
 }
 
 void
 flakelib::splatter::object::splat_planar_float2(
 	planar::float_view const &,
-	splatter::rectangle::object const &,
-	cl::float2 const &,
-	splatter::pen_type::type,
-	splatter::hardness::type,
-	splatter::mix_mode::type)
+	splatter::pen::planar const &_pen,
+	cl::float2 const &)
 {
 }
 

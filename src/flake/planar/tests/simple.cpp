@@ -1,3 +1,4 @@
+#include <sge/renderer/onscreen_target.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/media_path.hpp>
 #include <flake/media_path_from_string.hpp>
@@ -5,10 +6,12 @@
 #include <flakelib/media_path.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
+#include <flakelib/splatter/pen/object_impl.hpp>
 #include <flakelib/splatter/rectangle/object.hpp>
 #include <sge/font/system.hpp>
 #include <sge/image/colors.hpp>
 #include <sge/image/view/const_object.hpp>
+#include <sge/camera/ortho_freelook/parameters.hpp>
 #include <sge/image2d/file.hpp>
 #include <sge/image2d/system.hpp>
 #include <sge/image2d/view/const_elements_wrapper.hpp>
@@ -31,6 +34,7 @@
 #include <fcppt/chrono/seconds.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
+#include <fcppt/math/box/structure_cast.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 
 
@@ -176,6 +180,35 @@ flake::planar::tests::simple::simple(
 		rucksack::aspect(
 			1,
 			1)),
+	freelook_camera_(
+		sge::camera::ortho_freelook::parameters(
+			this->mouse(),
+			this->keyboard())),
+	cursor_splatter_(
+		smoke_density_texture_,
+		splatter_,
+		this->renderer(),
+		freelook_camera_,
+		this->cursor(),
+		static_cast<cl_float>(
+			1.0f),
+		flakelib::splatter::pen::planar(
+			flakelib::splatter::rectangle::object(
+				flakelib::splatter::rectangle::position(
+					flakelib::splatter::rectangle::position::value_type(
+						0,
+						0)),
+				flakelib::splatter::rectangle::size(
+					flakelib::splatter::rectangle::size::value_type(
+						20,
+						20))),
+			flakelib::splatter::pen::is_round(
+				true),
+			flakelib::splatter::pen::is_smooth(
+				true),
+			flakelib::splatter::pen::draw_mode::add,
+			flakelib::splatter::pen::blend_factor(
+				1.0f))),
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			fcppt::chrono::seconds(1))),
@@ -211,22 +244,29 @@ flake::planar::tests::simple::simple(
 		static_cast<cl_float>(
 			0));
 
+	/*
 	splatter_.splat_planar_float(
 		smoke_density_buffer_->value(),
-		flakelib::splatter::rectangle::object(
-			flakelib::splatter::rectangle::position(
-				flakelib::splatter::rectangle::position::value_type(
-					20,
-					20)),
-			flakelib::splatter::rectangle::size(
-				flakelib::splatter::rectangle::size::value_type(
-					40,
-					40))),
+		flakelib::splatter::pen::planar(
+			flakelib::splatter::rectangle::object(
+				flakelib::splatter::rectangle::position(
+					flakelib::splatter::rectangle::position::value_type(
+						20,
+						20)),
+				flakelib::splatter::rectangle::size(
+					flakelib::splatter::rectangle::size::value_type(
+						40,
+						40))),
+			flakelib::splatter::pen::is_round(
+				true),
+			flakelib::splatter::pen::is_smooth(
+				true),
+			flakelib::splatter::pen::draw_mode::add,
+			flakelib::splatter::pen::blend_factor(
+				1.0f)),
 		static_cast<cl_float>(
-			0.5f),
-		flakelib::splatter::pen_type::round,
-		flakelib::splatter::hardness::soft,
-		flakelib::splatter::mix_mode::add);
+			0.5f));
+			*/
 }
 
 awl::main::exit_code const
@@ -253,7 +293,8 @@ flake::planar::tests::simple::render()
 			sge::renderer::clear_flags::back_buffer));
 
 	monitor_parent_.render(
-		monitor::optional_projection());
+		monitor::optional_projection(
+			freelook_camera_.mvp()));
 }
 
 void
@@ -261,10 +302,15 @@ flake::planar::tests::simple::update()
 {
 	monitor_parent_.update();
 
-	flakelib::duration const delta =
-		clock_multiplier_ *
-		sge::timer::elapsed_and_reset<flakelib::duration>(
-			delta_timer_);
+	flakelib::duration const
+		raw_delta =
+			sge::timer::elapsed_and_reset<flakelib::duration>(
+				delta_timer_),
+		delta =
+			clock_multiplier_ * raw_delta;
+
+	freelook_camera_.update(
+		delta);
 
 	outflow_boundaries_.update(
 		velocity_buffer_->value());
@@ -272,6 +318,37 @@ flake::planar::tests::simple::update()
 	wind_source_.update(
 		velocity_buffer_->value());
 
+	this->calculate_with_stams_method(
+		delta);
+
+	monitor_planar_converter_.to_arrow_vb(
+		velocity_buffer_->value(),
+		velocity_arrows_.cl_buffer(),
+		velocity_arrows_.grid_scale(),
+		velocity_arrows_.arrow_scale());
+
+	monitor_planar_converter_.scalar_to_texture(
+		smoke_density_buffer_->value(),
+		smoke_density_texture_.cl_texture(),
+		monitor::scaling_factor(
+			1.0f));
+
+	cursor_splatter_.target(
+		smoke_density_buffer_->value());
+}
+
+void
+flake::planar::tests::simple::viewport_callback()
+{
+	freelook_camera_.projection_rect(
+		fcppt::math::box::structure_cast<sge::renderer::projection::rect>(
+			this->renderer().onscreen_target().viewport().get()));
+}
+
+void
+flake::planar::tests::simple::calculate_with_stams_method(
+	flakelib::duration const &delta)
+{
 	velocity_buffer_ =
 		semilagrangian_advection_.update_planar(
 			flakelib::planar::boundary_buffer_view(
@@ -315,16 +392,4 @@ flake::planar::tests::simple::update()
 			boundary_buffer_.value()),
 		flakelib::planar::simulation::stam::pressure_buffer_view(
 			pressure->value()));
-
-	monitor_planar_converter_.to_arrow_vb(
-		velocity_buffer_->value(),
-		velocity_arrows_.cl_buffer(),
-		velocity_arrows_.grid_scale(),
-		velocity_arrows_.arrow_scale());
-
-	monitor_planar_converter_.scalar_to_texture(
-		smoke_density_buffer_->value(),
-		smoke_density_texture_.cl_texture(),
-		monitor::scaling_factor(
-			1.0f));
 }

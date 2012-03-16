@@ -4,7 +4,6 @@
 #include <flakelib/buffer/planar_view_fwd.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/memory_object/dim2.hpp>
-#include <fcppt/nonassignable.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
 
 namespace flakelib
@@ -14,8 +13,6 @@ namespace buffer
 template<typename T>
 class planar_view
 {
-FCPPT_NONASSIGNABLE(
-	planar_view);
 public:
 	typedef
 	T
@@ -34,7 +31,7 @@ public:
 
 	~planar_view();
 private:
-	sge::opencl::memory_object::buffer &buffer_;
+	sge::opencl::memory_object::buffer *buffer_;
 	sge::opencl::memory_object::dim2 size_;
 };
 }

@@ -80,7 +80,7 @@ flakelib::planar::simulation::stam::jacobi::update(
 		*current_destination =
 			&result->value().buffer();
 
-	for(stam::iterations i(0); i < iterations_; ++i)
+	for(stam::iterations i(0u); i < iterations_; ++i)
 	{
 		kernel_->buffer_argument(
 			"input",

@@ -55,7 +55,7 @@ flakelib::cl::planar_image_view_to_float_buffer(
 		_buffer.buffer(),
 		CL_MAP_WRITE,
 		sge::opencl::memory_object::byte_offset(
-			0),
+			0u),
 		sge::opencl::memory_object::byte_size(
 			_buffer.buffer().byte_size()));
 

@@ -6,6 +6,7 @@
 #include <flake/planar/monitor/planar_arrows.hpp>
 #include <flake/planar/monitor/planar_converter.hpp>
 #include <flake/planar/monitor/texture.hpp>
+#include <flake/planar/cursor_splatter.hpp>
 #include <flakelib/buffer_pool/planar_lock_impl.hpp>
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/planar/float_buffer_lock.hpp>
@@ -21,6 +22,7 @@
 #include <rucksack/widget/enumeration.hpp>
 #include <rucksack/widget/viewport_adaptor.hpp>
 #include <sge/image2d/file_ptr.hpp>
+#include <sge/camera/ortho_freelook/object.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
 #include <awl/main/exit_code.hpp>
@@ -36,7 +38,7 @@ namespace tests
 {
 class simple
 :
-	flake::test_base
+	public flake::test_base
 {
 FCPPT_NONCOPYABLE(
 	simple);
@@ -73,6 +75,10 @@ private:
 	rucksack::widget::viewport_adaptor rucksack_viewport_adaptor_;
 	rucksack::widget::enumeration rucksack_enumeration_;
 
+	// Other stuff
+	sge::camera::ortho_freelook::object freelook_camera_;
+	flake::planar::cursor_splatter cursor_splatter_;
+
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;
 	float const clock_multiplier_;
@@ -82,6 +88,13 @@ private:
 
 	void
 	update();
+
+	void
+	viewport_callback();
+
+	void
+	calculate_with_stams_method(
+		flakelib::duration const &);
 };
 }
 }

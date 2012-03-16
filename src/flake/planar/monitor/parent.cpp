@@ -127,7 +127,7 @@ flake::planar::monitor::parent::render(
 	sge::renderer::texture::filter::scoped scoped_texture_filter(
 		renderer_,
 		sge::renderer::texture::stage(
-			0),
+			0u),
 		sge::renderer::texture::filter::point());
 
 	fcppt::scoped_ptr<sge::renderer::scoped_transform> projection_transform;

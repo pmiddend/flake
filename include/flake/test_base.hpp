@@ -7,6 +7,7 @@
 #include <sge/font/system_fwd.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/input/cursor/object_fwd.hpp>
+#include <sge/input/mouse/device_fwd.hpp>
 #include <sge/input/keyboard/device_fwd.hpp>
 #include <sge/opencl/single_device_system/object_fwd.hpp>
 #include <sge/charconv/system_fwd.hpp>
@@ -19,6 +20,7 @@
 #include <awl/main/exit_code.hpp>
 #include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/signal/scoped_connection.hpp>
 #include <fcppt/scoped_ptr.hpp>
 
 
@@ -58,6 +60,9 @@ protected:
 	sge::input::cursor::object &
 	cursor();
 
+	sge::input::mouse::device &
+	mouse();
+
 	sge::input::keyboard::device &
 	keyboard();
 
@@ -75,6 +80,9 @@ protected:
 
 	sge::viewport::manager &
 	viewport_manager();
+protected:
+	virtual void
+	viewport_callback();
 private:
 	fcppt::scoped_ptr<sge::charconv::system> charconv_system_;
 	fcppt::scoped_ptr<sge::parse::json::object> configuration_;
@@ -83,6 +91,7 @@ private:
 	fcppt::scoped_ptr<flakelib::cl::program_context> program_context_;
 	fcppt::scoped_ptr<flakelib::buffer_pool::object> buffer_pool_;
 	flakelib::scoped_frame_limiter::fps_type desired_fps_;
+	fcppt::signal::scoped_connection viewport_connection_;
 };
 }
 

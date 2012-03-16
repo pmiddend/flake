@@ -12,7 +12,8 @@ FLAKELIB_KERNEL_NAME(splat_float)(
 	int const FLAKELIB_KERNEL_ARGUMENT(pen_position_y),
 	int const FLAKELIB_KERNEL_ARGUMENT(is_rectangle),
 	int const FLAKELIB_KERNEL_ARGUMENT(is_hard),
-	int const FLAKELIB_KERNEL_ARGUMENT(do_add),
+	int const FLAKELIB_KERNEL_ARGUMENT(do_mixing),
+	float const FLAKELIB_KERNEL_ARGUMENT(blend_factor),
 	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch),
 	float const FLAKELIB_KERNEL_ARGUMENT(value))
 {
@@ -67,18 +68,22 @@ FLAKELIB_KERNEL_NAME(splat_float)(
 	}
 
 
-	if(do_add)
-	{
-		float const old_value =
-			input[flakelib_planar_at(buffer_pitch,current_position)];
+	float const old_value =
+		input[flakelib_planar_at(buffer_pitch,current_position)];
 
-		input[flakelib_planar_at(buffer_pitch,current_position)] +=
-			multiplier * value;
+	if(do_mixing)
+	{
+		input[flakelib_planar_at(buffer_pitch,current_position)] =
+			mix(
+				old_value,
+				multiplier * value,
+				blend_factor);
 	}
 	else
 	{
 		input[flakelib_planar_at(buffer_pitch,current_position)] =
-			multiplier * value;
+			old_value +
+			blend_factor * multiplier * value;
 	}
 }
 

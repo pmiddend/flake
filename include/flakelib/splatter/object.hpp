@@ -8,10 +8,7 @@
 #include <flakelib/cl/unique_kernel_ptr.hpp>
 #include <flakelib/planar/float2_view.hpp>
 #include <flakelib/planar/float_view.hpp>
-#include <flakelib/splatter/rectangle/object_fwd.hpp>
-#include <flakelib/splatter/pen_type.hpp>
-#include <flakelib/splatter/mix_mode.hpp>
-#include <flakelib/splatter/hardness.hpp>
+#include <flakelib/splatter/pen/planar.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <fcppt/noncopyable.hpp>
 
@@ -34,29 +31,17 @@ public:
 	void
 	splat_planar_float(
 		planar::float_view const &,
-		splatter::rectangle::object const &,
-		cl_float,
-		splatter::pen_type::type,
-		splatter::hardness::type,
-		splatter::mix_mode::type);
+		splatter::pen::planar const &,
+		cl_float);
 
 	FLAKELIB_SYMBOL
 	void
 	splat_planar_float2(
 		planar::float_view const &,
-		splatter::rectangle::object const &,
-		cl::float2 const &,
-		splatter::pen_type::type,
-		splatter::hardness::type,
-		splatter::mix_mode::type);
+		splatter::pen::planar const &,
+		cl::float2 const &);
 
 	/*
-	void
-	splat_float_sphere(
-		volume::float_view const &,
-		splat::sphere const &,
-		cl_float);
-
 	void
 	splat_float4_sphere(
 		volume:float4_view const &,
