@@ -1,8 +1,9 @@
 #ifndef FLAKE_NOTIFICATIONS_TEXT_HPP_INCLUDED
 #define FLAKE_NOTIFICATIONS_TEXT_HPP_INCLUDED
 
-#include <fcppt/strong_typedef.hpp>
 #include <fcppt/string.hpp>
+#include <fcppt/strong_typedef.hpp>
+
 
 namespace flake
 {

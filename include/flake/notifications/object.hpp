@@ -1,18 +1,21 @@
 #ifndef FLAKE_NOTIFICATIONS_OBJECT_HPP_INCLUDED
 #define FLAKE_NOTIFICATIONS_OBJECT_HPP_INCLUDED
 
-#include <sge/renderer/device_fwd.hpp>
-#include <sge/font/metrics_ptr.hpp>
-#include <sge/font/text/drawer_3d_fwd.hpp>
-#include <sge/timer/clocks/standard.hpp>
-#include <sge/timer/basic_impl.hpp>
+#include <flake/notifications/message.hpp>
 #include <flake/notifications/text.hpp>
 #include <flake/notifications/time_to_live.hpp>
-#include <flake/notifications/message.hpp>
+#include <sge/font/metrics_ptr.hpp>
+#include <sge/font/text/drawer_3d_fwd.hpp>
+#include <sge/renderer/device_fwd.hpp>
+#include <sge/timer/basic_impl.hpp>
+#include <sge/timer/clocks/standard.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/string.hpp>
+#include <fcppt/config/external_begin.hpp>
 #include <list>
+#include <fcppt/config/external_end.hpp>
+
 
 namespace flake
 {

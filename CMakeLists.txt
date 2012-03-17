@@ -176,6 +176,8 @@ set(
 	src/flake/planar/monitor/texture.cpp
 	src/flake/sprite_drawer_3d.cpp
 	src/flake/test_base.cpp
+	src/flake/time_modifier/kernel.cpp
+	src/flake/time_modifier/object.cpp
 )
 
 fcppt_utils_add_source_groups(

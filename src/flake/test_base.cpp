@@ -1,25 +1,22 @@
-#include <sge/font/system.hpp>
-#include <fcppt/ref.hpp>
-#include <fcppt/chrono/milliseconds.hpp>
-#include <sge/charconv/create_system.hpp>
-#include <fcppt/log/headers.hpp>
-#include <flakelib/log.hpp>
+#include <flake/time_modifier/object.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/test_base.hpp>
-#include <flake/planar/tests/simple.hpp>
 #include <flake/notifications/object.hpp>
+#include <flake/planar/tests/simple.hpp>
+#include <flakelib/log.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/cl/cflags.hpp>
+#include <sge/charconv/create_system.hpp>
+#include <sge/charconv/system.hpp>
+#include <sge/font/system.hpp>
 #include <sge/log/global_context.hpp>
 #include <sge/media/all_extensions.hpp>
-#include <sge/charconv/system.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/opencl/single_device_system/parameters.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/parse_string_exn.hpp>
 #include <sge/parse/json/string_to_path.hpp>
-#include <sge/viewport/manager.hpp>
 #include <sge/renderer/no_multi_sampling.hpp>
 #include <sge/renderer/parameters.hpp>
 #include <sge/renderer/scoped_block.hpp>
@@ -31,6 +28,7 @@
 #include <sge/systems/renderer.hpp>
 #include <sge/systems/window.hpp>
 #include <sge/viewport/fill_on_resize.hpp>
+#include <sge/viewport/manager.hpp>
 #include <sge/window/object.hpp>
 #include <sge/window/parameters.hpp>
 #include <sge/window/system.hpp>
@@ -45,9 +43,11 @@
 #include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/to_std_string.hpp>
+#include <fcppt/chrono/milliseconds.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/io/cerr.hpp>
+#include <fcppt/log/headers.hpp>
 #include <fcppt/log/location.hpp>
 #include <fcppt/tr1/functional.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -181,7 +181,13 @@ flake::test_base::test_base(
 					sge::parse::json::find_and_convert_member<fcppt::chrono::milliseconds::rep>(
 						this->configuration(),
 						sge::parse::json::string_to_path(
-							FCPPT_TEXT("tests/notification-ttl-ms")))))))
+							FCPPT_TEXT("tests/notification-ttl-ms"))))))),
+	time_modifier_(
+		fcppt::make_unique_ptr<time_modifier::object>(
+			fcppt::ref(
+				this->keyboard()),
+			fcppt::ref(
+				*notifications_)))
 {
 	FCPPT_LOG_DEBUG(
 		flakelib::log(),
@@ -285,6 +291,13 @@ flake::test_base::post_notification(
 {
 	notifications_->add_message(
 		_text);
+}
+
+flake::time_modifier::multiplier const
+flake::test_base::current_multiplier() const
+{
+	return
+		time_modifier_->current_multiplier();
 }
 
 void

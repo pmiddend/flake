@@ -1,18 +1,20 @@
 #ifndef FLAKE_TEST_BASE_HPP_INCLUDED
 #define FLAKE_TEST_BASE_HPP_INCLUDED
 
+#include <flake/notifications/object_fwd.hpp>
+#include <flake/notifications/text.hpp>
+#include <flake/time_modifier/multiplier.hpp>
+#include <flake/time_modifier/object_fwd.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
-#include <flake/notifications/object_fwd.hpp>
-#include <flake/notifications/text.hpp>
+#include <sge/charconv/system_fwd.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/input/cursor/object_fwd.hpp>
-#include <sge/input/mouse/device_fwd.hpp>
 #include <sge/input/keyboard/device_fwd.hpp>
+#include <sge/input/mouse/device_fwd.hpp>
 #include <sge/opencl/single_device_system/object_fwd.hpp>
-#include <sge/charconv/system_fwd.hpp>
 #include <sge/parse/json/object_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/systems/cursor_option_field.hpp>
@@ -22,8 +24,8 @@
 #include <awl/main/exit_code.hpp>
 #include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/signal/scoped_connection.hpp>
 #include <fcppt/scoped_ptr.hpp>
+#include <fcppt/signal/scoped_connection.hpp>
 
 
 namespace flake
@@ -86,6 +88,9 @@ protected:
 	void
 	post_notification(
 		notifications::text const &);
+
+	time_modifier::multiplier const
+	current_multiplier() const;
 protected:
 	virtual void
 	viewport_callback();
@@ -99,6 +104,7 @@ private:
 	flakelib::scoped_frame_limiter::fps_type desired_fps_;
 	fcppt::signal::scoped_connection viewport_connection_;
 	fcppt::scoped_ptr<flake::notifications::object> notifications_;
+	fcppt::scoped_ptr<flake::time_modifier::object> time_modifier_;
 };
 }
 

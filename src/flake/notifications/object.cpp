@@ -1,23 +1,24 @@
+#include <flake/notifications/object.hpp>
 #include <sge/font/metrics.hpp>
-#include <sge/font/text/part.hpp>
+#include <sge/font/rect.hpp>
+#include <sge/font/text/draw.hpp>
+#include <sge/font/text/drawer_3d.hpp>
 #include <sge/font/text/flags_none.hpp>
 #include <sge/font/text/from_fcppt_string.hpp>
-#include <sge/font/text/draw.hpp>
-#include <sge/image/color/rgba8.hpp>
+#include <sge/font/text/part.hpp>
+#include <sge/image/colors.hpp>
 #include <sge/image/color/init.hpp>
-#include <fcppt/math/box/structure_cast.hpp>
+#include <sge/image/color/rgba8.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/onscreen_target.hpp>
-#include <fcppt/math/box/basic_impl.hpp>
-#include <sge/font/rect.hpp>
-#include <flake/notifications/object.hpp>
+#include <sge/timer/elapsed_and_reset.hpp>
+#include <sge/timer/parameters_impl.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
-#include <sge/image/colors.hpp>
-#include <sge/font/text/drawer_3d.hpp>
-#include <sge/timer/parameters_impl.hpp>
-#include <sge/timer/elapsed_and_reset.hpp>
 #include <fcppt/chrono/seconds.hpp>
+#include <fcppt/math/box/basic_impl.hpp>
+#include <fcppt/math/box/structure_cast.hpp>
+
 
 flake::notifications::object::object(
 	sge::renderer::device &_renderer,

@@ -1,11 +1,12 @@
 #ifndef FLAKELIB_SPLATTER_PEN_OBJECT_DECL_HPP_INCLUDED
 #define FLAKELIB_SPLATTER_PEN_OBJECT_DECL_HPP_INCLUDED
 
-#include <flakelib/splatter/pen/object_fwd.hpp>
 #include <flakelib/splatter/pen/blend_factor.hpp>
-#include <flakelib/splatter/pen/is_smooth.hpp>
-#include <flakelib/splatter/pen/is_round.hpp>
 #include <flakelib/splatter/pen/draw_mode.hpp>
+#include <flakelib/splatter/pen/is_round.hpp>
+#include <flakelib/splatter/pen/is_smooth.hpp>
+#include <flakelib/splatter/pen/object_fwd.hpp>
+
 
 namespace flakelib
 {

@@ -1,24 +1,25 @@
 #ifndef FLAKE_PLANAR_CURSOR_SPLATTER_HPP_INCLUDED
 #define FLAKE_PLANAR_CURSOR_SPLATTER_HPP_INCLUDED
 
+#include <flake/planar/monitor/texture_fwd.hpp>
+#include <flakelib/buffer/planar_view_impl.hpp>
+#include <flakelib/planar/float_view.hpp>
+#include <flakelib/splatter/object_fwd.hpp>
+#include <flakelib/splatter/pen/object_impl.hpp>
+#include <flakelib/splatter/pen/planar.hpp>
+#include <flakelib/splatter/rectangle/object.hpp>
 #include <sge/camera/base_fwd.hpp>
-#include <sge/input/cursor/object_fwd.hpp>
-#include <sge/input/cursor/position.hpp>
 #include <sge/input/cursor/button_event_fwd.hpp>
 #include <sge/input/cursor/move_event_fwd.hpp>
+#include <sge/input/cursor/object_fwd.hpp>
+#include <sge/input/cursor/position.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vector2.hpp>
-#include <flakelib/planar/float_view.hpp>
-#include <flake/planar/monitor/texture_fwd.hpp>
-#include <flakelib/splatter/object_fwd.hpp>
-#include <flakelib/splatter/pen/planar.hpp>
-#include <flakelib/splatter/pen/object_impl.hpp>
-#include <flakelib/splatter/rectangle/object.hpp>
-#include <flakelib/buffer/planar_view_impl.hpp>
-#include <fcppt/optional_impl.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/optional_impl.hpp>
 #include <fcppt/signal/scoped_connection.hpp>
+
 
 namespace flake
 {

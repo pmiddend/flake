@@ -2,15 +2,14 @@
 #define FLAKE_PLANAR_TESTS_SIMPLE_HPP_INCLUDED
 
 #include <flake/test_base.hpp>
+#include <flake/planar/cursor_splatter.hpp>
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/planar_arrows.hpp>
 #include <flake/planar/monitor/planar_converter.hpp>
 #include <flake/planar/monitor/texture.hpp>
-#include <flake/planar/cursor_splatter.hpp>
 #include <flakelib/buffer_pool/planar_lock_impl.hpp>
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/planar/float_buffer_lock.hpp>
-#include <flakelib/splatter/object.hpp>
 #include <flakelib/planar/unique_float2_buffer_lock.hpp>
 #include <flakelib/planar/simulation/stam/divergence.hpp>
 #include <flakelib/planar/simulation/stam/jacobi.hpp>
@@ -18,11 +17,12 @@
 #include <flakelib/planar/simulation/stam/semilagrangian_advection.hpp>
 #include <flakelib/planar/simulation/stam/subtract_pressure_gradient.hpp>
 #include <flakelib/planar/simulation/stam/wind_source.hpp>
+#include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <rucksack/widget/enumeration.hpp>
 #include <rucksack/widget/viewport_adaptor.hpp>
-#include <sge/image2d/file_ptr.hpp>
 #include <sge/camera/ortho_freelook/object.hpp>
+#include <sge/image2d/file_ptr.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
 #include <awl/main/exit_code.hpp>
@@ -81,7 +81,6 @@ private:
 
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;
-	float const clock_multiplier_;
 
 	void
 	render();

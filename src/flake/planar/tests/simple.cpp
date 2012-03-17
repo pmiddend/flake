@@ -1,4 +1,3 @@
-#include <sge/renderer/onscreen_target.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/media_path.hpp>
 #include <flake/media_path_from_string.hpp>
@@ -8,10 +7,10 @@
 #include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
 #include <flakelib/splatter/pen/object_impl.hpp>
 #include <flakelib/splatter/rectangle/object.hpp>
+#include <sge/camera/ortho_freelook/parameters.hpp>
 #include <sge/font/system.hpp>
 #include <sge/image/colors.hpp>
 #include <sge/image/view/const_object.hpp>
-#include <sge/camera/ortho_freelook/parameters.hpp>
 #include <sge/image2d/file.hpp>
 #include <sge/image2d/system.hpp>
 #include <sge/image2d/view/const_elements_wrapper.hpp>
@@ -19,6 +18,7 @@
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
+#include <sge/renderer/onscreen_target.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/state/color.hpp>
 #include <sge/renderer/state/list.hpp>
@@ -33,9 +33,10 @@
 #include <fcppt/text.hpp>
 #include <fcppt/chrono/seconds.hpp>
 #include <fcppt/container/bitfield/basic_impl.hpp>
-#include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
+#include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+
 
 awl::main::exit_code const
 custom_main(
@@ -214,12 +215,7 @@ flake::planar::tests::simple::simple(
 				1.0f))),
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
-			fcppt::chrono::seconds(1))),
-	clock_multiplier_(
-		sge::parse::json::find_and_convert_member<float>(
-			this->configuration(),
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("tests/planar/simple/clock-multiplier"))))
+			fcppt::chrono::seconds(1)))
 {
 	rucksack_viewport_adaptor_.child(
 		rucksack_enumeration_);
@@ -313,31 +309,36 @@ flake::planar::tests::simple::update()
 			sge::timer::elapsed_and_reset<flakelib::duration>(
 				delta_timer_),
 		delta =
-			clock_multiplier_ * raw_delta;
+			boost::rational_cast<flakelib::duration::rep>(
+				this->current_multiplier().get()) *
+			raw_delta;
 
 	freelook_camera_.update(
-		delta);
+		10.0f * raw_delta);
 
-	outflow_boundaries_.update(
-		velocity_buffer_->value());
+	if(this->current_multiplier().get())
+	{
+		outflow_boundaries_.update(
+			velocity_buffer_->value());
 
-	wind_source_.update(
-		velocity_buffer_->value());
+		wind_source_.update(
+			velocity_buffer_->value());
 
-	this->calculate_with_stams_method(
-		delta);
-
-	smoke_density_buffer_ =
-		semilagrangian_advection_.update_float(
-			flakelib::planar::boundary_buffer_view(
-				boundary_buffer_.value()),
-			flakelib::planar::simulation::stam::velocity(
-				velocity_buffer_->value()),
-			smoke_density_buffer_->value(),
+		this->calculate_with_stams_method(
 			delta);
 
-	cursor_splatter_.target(
-		smoke_density_buffer_->value());
+		smoke_density_buffer_ =
+			semilagrangian_advection_.update_float(
+				flakelib::planar::boundary_buffer_view(
+					boundary_buffer_.value()),
+				flakelib::planar::simulation::stam::velocity(
+					velocity_buffer_->value()),
+				smoke_density_buffer_->value(),
+				delta);
+
+		cursor_splatter_.target(
+			smoke_density_buffer_->value());
+	}
 
 	monitor_planar_converter_.to_arrow_vb(
 		velocity_buffer_->value(),

@@ -1,11 +1,12 @@
 #ifndef FLAKELIB_SPLATTER_RECTANGLE_OBJECT_HPP_INCLUDED
 #define FLAKELIB_SPLATTER_RECTANGLE_OBJECT_HPP_INCLUDED
 
-#include <flakelib/splatter/rectangle/position.hpp>
 #include <flakelib/symbol.hpp>
+#include <flakelib/splatter/rectangle/position.hpp>
 #include <flakelib/splatter/rectangle/size.hpp>
 #include <fcppt/math/dim/basic_impl.hpp>
 #include <fcppt/math/vector/basic_impl.hpp>
+
 
 namespace flakelib
 {

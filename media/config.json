@@ -17,8 +17,7 @@
 				"boundary" : "256/zagged.png",
 				"velocity-arrow-scale" : 1.0,
 				"velocity-grid-scale" : 2.0,
-				"texture-grid-scale" : 1,
-				"clock-multiplier" : 10.0
+				"texture-grid-scale" : 1
 			}
 		}
 	}

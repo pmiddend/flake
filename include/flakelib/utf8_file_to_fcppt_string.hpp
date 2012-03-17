@@ -1,8 +1,8 @@
 #ifndef FLAKELIB_UTF8_FILE_TO_FCPPT_STRING_HPP_INCLUDED
 #define FLAKELIB_UTF8_FILE_TO_FCPPT_STRING_HPP_INCLUDED
 
-#include <sge/charconv/system_fwd.hpp>
 #include <flakelib/symbol.hpp>
+#include <sge/charconv/system_fwd.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/filesystem/path.hpp>
 

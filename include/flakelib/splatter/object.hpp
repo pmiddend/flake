@@ -1,8 +1,8 @@
 #ifndef FLAKELIB_SPLATTER_OBJECT_HPP_INCLUDED
 #define FLAKELIB_SPLATTER_OBJECT_HPP_INCLUDED
 
-#include <flakelib/cl/float2.hpp>
 #include <flakelib/symbol.hpp>
+#include <flakelib/cl/float2.hpp>
 #include <flakelib/cl/program.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/cl/unique_kernel_ptr.hpp>

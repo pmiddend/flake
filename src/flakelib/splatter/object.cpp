@@ -3,8 +3,8 @@
 #include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/splatter/object.hpp>
-#include <flakelib/splatter/rectangle/object.hpp>
 #include <flakelib/splatter/pen/object_impl.hpp>
+#include <flakelib/splatter/rectangle/object.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 
 

@@ -1,34 +1,31 @@
-#include <fcppt/math/vector/structure_cast.hpp>
-#include <sge/renderer/vector2.hpp>
-#include <fcppt/math/vector/narrow_cast.hpp>
-#include <fcppt/math/vector/arithmetic.hpp>
-#include <fcppt/math/box/contains_point.hpp>
-#include <sge/renderer/device.hpp>
-#include <fcppt/math/box/structure_cast.hpp>
-#include <sge/input/cursor/move_event.hpp>
-#include <fcppt/math/box/rect.hpp>
-#include <sge/renderer/onscreen_target.hpp>
-#include <fcppt/math/matrix/inverse.hpp>
-#include <fcppt/math/matrix/has_dim.hpp>
-#include <fcppt/math/vector/has_dim.hpp>
-#include <fcppt/math/vector/basic_impl.hpp>
-#include <fcppt/math/matrix/vector.hpp>
-#include <fcppt/math/matrix/basic_impl.hpp>
-#include <sge/renderer/vector3.hpp>
-#include <sge/input/cursor/button_event.hpp>
-#include <fcppt/tr1/functional.hpp>
 #include <flake/planar/cursor_splatter.hpp>
-#include <sge/input/cursor/object.hpp>
 #include <flake/planar/monitor/texture.hpp>
-#include <sge/camera/base.hpp>
 #include <flakelib/splatter/object.hpp>
+#include <sge/camera/base.hpp>
+#include <sge/input/cursor/button_event.hpp>
+#include <sge/input/cursor/move_event.hpp>
+#include <sge/input/cursor/object.hpp>
+#include <sge/renderer/device.hpp>
+#include <sge/renderer/onscreen_target.hpp>
+#include <sge/renderer/vector2.hpp>
+#include <sge/renderer/vector3.hpp>
+#include <fcppt/math/box/contains_point.hpp>
+#include <fcppt/math/box/rect.hpp>
+#include <fcppt/math/box/structure_cast.hpp>
+#include <fcppt/math/matrix/basic_impl.hpp>
+#include <fcppt/math/matrix/has_dim.hpp>
+#include <fcppt/math/matrix/inverse.hpp>
+#include <fcppt/math/matrix/vector.hpp>
+#include <fcppt/math/vector/arithmetic.hpp>
+#include <fcppt/math/vector/basic_impl.hpp>
+#include <fcppt/math/vector/has_dim.hpp>
+#include <fcppt/math/vector/narrow_cast.hpp>
+#include <fcppt/math/vector/structure_cast.hpp>
+#include <fcppt/tr1/functional.hpp>
+#include <fcppt/config/external_begin.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
+#include <fcppt/config/external_end.hpp>
 
-// DEBUG
-#include <iostream>
-#include <fcppt/math/vector/output.hpp>
-#include <fcppt/math/box/output.hpp>
-#include <fcppt/math/dim/output.hpp>
 
 namespace
 {
