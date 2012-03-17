@@ -15,6 +15,7 @@
 #include <flakelib/planar/simulation/stam/jacobi.hpp>
 #include <flakelib/planar/simulation/stam/outflow_boundaries.hpp>
 #include <flakelib/planar/simulation/stam/semilagrangian_advection.hpp>
+#include <flakelib/planar/simulation/stam/vorticity.hpp>
 #include <flakelib/planar/simulation/stam/subtract_pressure_gradient.hpp>
 #include <flakelib/planar/simulation/stam/wind_source.hpp>
 #include <flakelib/splatter/object.hpp>
@@ -61,17 +62,20 @@ private:
 	flakelib::planar::simulation::stam::divergence divergence_;
 	flakelib::planar::simulation::stam::jacobi jacobi_;
 	flakelib::planar::simulation::stam::subtract_pressure_gradient subtract_pressure_gradient_;
+	flakelib::planar::simulation::stam::vorticity vorticity_;
 	// Buffers
 	sge::image2d::file_ptr boundary_image_file_;
 	flakelib::planar::float_buffer_lock boundary_buffer_;
 	flakelib::planar::unique_float2_buffer_lock velocity_buffer_;
 	flakelib::planar::unique_float_buffer_lock smoke_density_buffer_;
+	flakelib::planar::unique_float_buffer_lock vorticity_buffer_;
 
 	// Monitors
 	flake::planar::monitor::parent monitor_parent_;
 	flake::planar::monitor::planar_converter monitor_planar_converter_;
 	flake::planar::monitor::planar_arrows velocity_arrows_;
 	flake::planar::monitor::texture smoke_density_texture_;
+	flake::planar::monitor::texture vorticity_texture_;
 	rucksack::widget::viewport_adaptor rucksack_viewport_adaptor_;
 	rucksack::widget::enumeration rucksack_enumeration_;
 

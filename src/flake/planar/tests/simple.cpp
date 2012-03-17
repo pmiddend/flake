@@ -92,6 +92,9 @@ flake::planar::tests::simple::simple(
 					FCPPT_TEXT("tests/planar/simple/jacobi-iterations"))))),
 	subtract_pressure_gradient_(
 		this->program_context()),
+	vorticity_(
+		this->program_context(),
+		this->buffer_pool()),
 	boundary_image_file_(
 		this->image_system().load(
 			flake::media_path()
@@ -112,6 +115,11 @@ flake::planar::tests::simple::simple(
 				this->buffer_pool()),
 			boundary_buffer_.value().size())),
 	smoke_density_buffer_(
+		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
+			fcppt::ref(
+				this->buffer_pool()),
+			boundary_buffer_.value().size())),
+	vorticity_buffer_(
 		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
 			fcppt::ref(
 				this->buffer_pool()),
@@ -158,6 +166,24 @@ flake::planar::tests::simple::simple(
 		monitor_parent_,
 		monitor::name(
 			FCPPT_TEXT("smoke density")),
+		monitor::grid_dimensions(
+			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("tests/planar/simple/texture-grid-scale"))) *
+			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
+				sge::image2d::view::size(
+					boundary_image_file_->view()))),
+		monitor::texture_size(
+			fcppt::math::dim::structure_cast<monitor::dim>(
+				sge::image2d::view::size(
+					boundary_image_file_->view()))),
+		monitor::scaling_factor(
+			1.0f)),
+	vorticity_texture_(
+		monitor_parent_,
+		monitor::name(
+			FCPPT_TEXT("vorticity")),
 		monitor::grid_dimensions(
 			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
 				this->configuration(),
@@ -226,6 +252,9 @@ flake::planar::tests::simple::simple(
 	rucksack_enumeration_.push_back_child(
 		smoke_density_texture_.widget());
 
+	rucksack_enumeration_.push_back_child(
+		vorticity_texture_.widget());
+
 	flakelib::cl::planar_image_view_to_float_buffer(
 		this->opencl_system().command_queue(),
 		boundary_image_file_->view(),
@@ -242,29 +271,6 @@ flake::planar::tests::simple::simple(
 			smoke_density_buffer_->value().buffer()),
 		static_cast<cl_float>(
 			0));
-	/*
-	splatter_.splat_planar_float(
-		smoke_density_buffer_->value(),
-		flakelib::splatter::pen::planar(
-			flakelib::splatter::rectangle::object(
-				flakelib::splatter::rectangle::position(
-					flakelib::splatter::rectangle::position::value_type(
-						20,
-						20)),
-				flakelib::splatter::rectangle::size(
-					flakelib::splatter::rectangle::size::value_type(
-						40,
-						40))),
-			flakelib::splatter::pen::is_round(
-				true),
-			flakelib::splatter::pen::is_smooth(
-				true),
-			flakelib::splatter::pen::draw_mode::add,
-			flakelib::splatter::pen::blend_factor(
-				1.0f)),
-		static_cast<cl_float>(
-			0.5f));
-			*/
 }
 
 awl::main::exit_code const
@@ -336,6 +342,13 @@ flake::planar::tests::simple::update()
 				smoke_density_buffer_->value(),
 				delta);
 
+		vorticity_buffer_ =
+			vorticity_.apply_vorticity(
+				flakelib::planar::boundary_buffer_view(
+					boundary_buffer_.value()),
+				flakelib::planar::simulation::stam::velocity(
+					velocity_buffer_->value()));
+
 		cursor_splatter_.target(
 			smoke_density_buffer_->value());
 	}
@@ -349,6 +362,12 @@ flake::planar::tests::simple::update()
 	monitor_planar_converter_.scalar_to_texture(
 		smoke_density_buffer_->value(),
 		smoke_density_texture_.cl_texture(),
+		monitor::scaling_factor(
+			1.0f));
+
+	monitor_planar_converter_.scalar_to_texture(
+		vorticity_buffer_->value(),
+		vorticity_texture_.cl_texture(),
 		monitor::scaling_factor(
 			1.0f));
 }

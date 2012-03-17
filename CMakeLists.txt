@@ -154,6 +154,7 @@ set(
 	src/flakelib/planar/simulation/stam/outflow_boundaries.cpp
 	src/flakelib/planar/simulation/stam/semilagrangian_advection.cpp
 	src/flakelib/planar/simulation/stam/subtract_pressure_gradient.cpp
+	src/flakelib/planar/simulation/stam/vorticity.cpp
 	src/flakelib/planar/simulation/stam/wind_source.cpp
 	src/flakelib/scoped_frame_limiter.cpp
 	src/flakelib/splatter/object.cpp
