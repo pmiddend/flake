@@ -28,4 +28,5 @@ update_cmake_file \
 	-n \
 	src/flake \
 	src/flake/planar \
-	src/flake/planar/monitor
+	src/flake/planar/monitor \
+	src/flake/notifications

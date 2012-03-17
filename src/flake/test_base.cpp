@@ -1,9 +1,13 @@
+#include <sge/font/system.hpp>
+#include <fcppt/ref.hpp>
+#include <fcppt/chrono/milliseconds.hpp>
 #include <sge/charconv/create_system.hpp>
 #include <fcppt/log/headers.hpp>
 #include <flakelib/log.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/test_base.hpp>
 #include <flake/planar/tests/simple.hpp>
+#include <flake/notifications/object.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/cl/cflags.hpp>
@@ -160,13 +164,42 @@ flake::test_base::test_base(
 		systems_->viewport_manager().manage_callback(
 			std::tr1::bind(
 				&test_base::viewport_callback,
-				this)))
+				this))),
+	notifications_(
+		fcppt::make_unique_ptr<flake::notifications::object>(
+			fcppt::ref(
+				this->renderer()),
+			this->font_system().create_font(
+				flake::media_path_from_string(
+					FCPPT_TEXT("fonts/notifications.ttf")),
+				sge::parse::json::find_and_convert_member<sge::font::size_type>(
+					this->configuration(),
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("tests/notification-font-size")))),
+			flake::notifications::time_to_live(
+				fcppt::chrono::milliseconds(
+					sge::parse::json::find_and_convert_member<fcppt::chrono::milliseconds::rep>(
+						this->configuration(),
+						sge::parse::json::string_to_path(
+							FCPPT_TEXT("tests/notification-ttl-ms")))))))
 {
 	FCPPT_LOG_DEBUG(
 		flakelib::log(),
 		fcppt::log::_
 			<< FCPPT_TEXT("Program initialized, OpenCL compiler flags are:\n\n")
 			<< fcppt::from_std_string(program_context_->compiler_flags().get()));
+}
+
+void
+flake::test_base::update()
+{
+	notifications_->update();
+}
+
+void
+flake::test_base::render()
+{
+	notifications_->render();
 }
 
 sge::parse::json::object const &
@@ -244,6 +277,14 @@ flake::test_base::viewport_manager()
 {
 	return
 		systems_->viewport_manager();
+}
+
+void
+flake::test_base::post_notification(
+	notifications::text const &_text)
+{
+	notifications_->add_message(
+		_text);
 }
 
 void

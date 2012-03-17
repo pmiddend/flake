@@ -246,7 +246,6 @@ flake::planar::tests::simple::simple(
 			smoke_density_buffer_->value().buffer()),
 		static_cast<cl_float>(
 			0));
-
 	/*
 	splatter_.splat_planar_float(
 		smoke_density_buffer_->value(),
@@ -298,11 +297,15 @@ flake::planar::tests::simple::render()
 	monitor_parent_.render(
 		monitor::optional_projection(
 			freelook_camera_.mvp()));
+
+	test_base::render();
 }
 
 void
 flake::planar::tests::simple::update()
 {
+	test_base::update();
+
 	monitor_parent_.update();
 
 	flakelib::duration const

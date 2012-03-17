@@ -4,6 +4,8 @@
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
+#include <flake/notifications/object_fwd.hpp>
+#include <flake/notifications/text.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/input/cursor/object_fwd.hpp>
@@ -80,6 +82,10 @@ protected:
 
 	sge::viewport::manager &
 	viewport_manager();
+
+	void
+	post_notification(
+		notifications::text const &);
 protected:
 	virtual void
 	viewport_callback();
@@ -92,6 +98,7 @@ private:
 	fcppt::scoped_ptr<flakelib::buffer_pool::object> buffer_pool_;
 	flakelib::scoped_frame_limiter::fps_type desired_fps_;
 	fcppt::signal::scoped_connection viewport_connection_;
+	fcppt::scoped_ptr<flake::notifications::object> notifications_;
 };
 }
 

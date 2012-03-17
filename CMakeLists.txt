@@ -166,6 +166,8 @@ set(
 	FLAKE_FILES
 	src/flake/media_path.cpp
 	src/flake/media_path_from_string.cpp
+	src/flake/notifications/message.cpp
+	src/flake/notifications/object.cpp
 	src/flake/planar/cursor_splatter.cpp
 	src/flake/planar/monitor/child.cpp
 	src/flake/planar/monitor/parent.cpp
