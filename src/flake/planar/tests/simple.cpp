@@ -37,6 +37,9 @@
 #include <fcppt/math/box/structure_cast.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 
+awl::main::exit_code const
+custom_main(
+	awl::main::function_context const &);
 
 awl::main::exit_code const
 custom_main(
