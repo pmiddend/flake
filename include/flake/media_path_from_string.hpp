@@ -2,11 +2,14 @@
 #define FLAKE_MEDIA_PATH_FROM_STRING_HPP_INCLUDED
 
 #include <fcppt/string.hpp>
-#include <fcppt/filesystem/path.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <boost/filesystem/path.hpp>
+#include <fcppt/config/external_end.hpp>
+
 
 namespace flake
 {
-fcppt::filesystem::path const
+boost::filesystem::path const
 media_path_from_string(
 	fcppt::string const &);
 }

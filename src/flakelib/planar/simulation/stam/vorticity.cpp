@@ -12,6 +12,7 @@
 #include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
+#include <fcppt/chrono/duration_impl.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 
 
@@ -66,6 +67,47 @@ flakelib::planar::simulation::stam::vorticity::apply_vorticity(
 
 	vorticity_kernel_->enqueue_automatic(
 		_velocity.get().size());
+
+	return
+		fcppt::move(
+			result);
+}
+
+flakelib::planar::unique_float2_buffer_lock
+flakelib::planar::simulation::stam::vorticity::normalized_vorticity_gradient(
+	planar::float_view const &_vorticity,
+	flakelib::duration const &_dt,
+	stam::vorticity_strength const &_strength)
+{
+	flakelib::planar::unique_float2_buffer_lock result(
+		fcppt::make_unique_ptr<flakelib::planar::float2_buffer_lock>(
+			fcppt::ref(
+				buffer_pool_),
+			_vorticity.size()));
+
+	confinement_kernel_->numerical_argument(
+		"vorticity_strength",
+		_strength.get());
+
+	confinement_kernel_->numerical_argument(
+		"dt",
+		_dt.count());
+
+	confinement_kernel_->buffer_argument(
+		"vorticity",
+		_vorticity.buffer());
+
+	confinement_kernel_->buffer_argument(
+		"output",
+		result->value().buffer());
+
+	confinement_kernel_->numerical_argument(
+		"buffer_pitch",
+		static_cast<cl_uint>(
+			_vorticity.size().w()));
+
+	confinement_kernel_->enqueue_automatic(
+		_vorticity.size());
 
 	return
 		fcppt::move(

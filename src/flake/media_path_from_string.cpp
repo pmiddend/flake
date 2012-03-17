@@ -11,7 +11,7 @@
 #include <fcppt/config/external_end.hpp>
 
 
-fcppt::filesystem::path const
+boost::filesystem::path const
 flake::media_path_from_string(
 	fcppt::string const &s)
 {

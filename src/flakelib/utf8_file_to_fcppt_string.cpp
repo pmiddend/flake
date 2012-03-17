@@ -5,10 +5,9 @@
 #include <sge/charconv/utf8_string_to_fcppt.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
-#include <fcppt/filesystem/path.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
-#include <fcppt/io/cifstream.hpp>
 #include <fcppt/config/external_begin.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <iterator>
 #include <string>
 #include <fcppt/config/external_end.hpp>
@@ -17,9 +16,9 @@
 fcppt::string const
 flakelib::utf8_file_to_fcppt_string(
 	sge::charconv::system &charconv_system,
-	fcppt::filesystem::path const &path)
+	boost::filesystem::path const &path)
 {
-	fcppt::io::cifstream file_stream(
+	boost::filesystem::ifstream file_stream(
 		path);
 
 	if(!file_stream.is_open())

@@ -15,11 +15,11 @@
 #include <fcppt/algorithm/contains.hpp>
 #include <fcppt/algorithm/shortest_levenshtein.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
-#include <fcppt/io/cifstream.hpp>
 #include <fcppt/io/stream_to_string.hpp>
 #include <fcppt/log/headers.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/next_prior.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <fstream>
 #include <set>
 #include <utility>
@@ -28,7 +28,7 @@
 
 flakelib::cl::program::program(
 	sge::opencl::command_queue::object &_command_queue,
-	fcppt::filesystem::path const &_file_path,
+	boost::filesystem::path const &_file_path,
 	flakelib::cl::compiler_flags const &_compiler_flags)
 :
 	command_queue_(
@@ -125,9 +125,9 @@ flakelib::cl::program::~program()
 
 void
 flakelib::cl::program::fill_kernel_name_to_parameters(
-	fcppt::filesystem::path const &_file_path)
+	boost::filesystem::path const &_file_path)
 {
-	fcppt::io::cifstream s(
+	boost::filesystem::ifstream s(
 		_file_path);
 
 	if(!s.is_open())

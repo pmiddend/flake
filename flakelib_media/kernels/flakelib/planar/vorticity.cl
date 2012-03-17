@@ -59,60 +59,52 @@ FLAKELIB_KERNEL_NAME(apply_vorticity)(
 		0.5f * ((right.y - left.y) - (bottom.x - top.x));
 }
 
-#if 0
 kernel void
-gradient_and_cross(
-	float const strength,
-	int const buffer_width,
-	global float const *curl,
-	global float2 *output,
-	float const dt)
+FLAKELIB_KERNEL_NAME(gradient_and_cross)(
+	float const FLAKELIB_KERNEL_ARGUMENT(vorticity_strength),
+	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch),
+	global float const *FLAKELIB_KERNEL_ARGUMENT(vorticity),
+	global float2 *FLAKELIB_KERNEL_ARGUMENT(output),
+	float const FLAKELIB_KERNEL_ARGUMENT(dt))
 {
-	int2 const currentpos =
-		(int2)(
-			get_global_id(
-				0),
-			get_global_id(
-				1));
+	int2 const position =
+		flakelib_planar_current_position();
 
 	int const
 		current_index =
-			FLAKE_PLANAR_AT(buffer_width,currentpos),
+			flakelib_planar_at(
+				buffer_pitch,
+				position),
 		left_index =
-			FLAKE_PLANAR_LEFT_OF(buffer_width,currentpos),
+			flakelib_planar_left_of(
+				buffer_pitch,
+				flakelib_planar_global_size(),
+				position),
 		right_index =
-			FLAKE_PLANAR_RIGHT_OF(buffer_width,currentpos),
+			flakelib_planar_right_of(
+				buffer_pitch,
+				flakelib_planar_global_size(),
+				position),
 		top_index =
-			FLAKE_PLANAR_TOP_OF(buffer_width,currentpos),
+			flakelib_planar_top_of(
+				buffer_pitch,
+				flakelib_planar_global_size(),
+				position),
 		bottom_index =
-			FLAKE_PLANAR_BOTTOM_OF(buffer_width,currentpos);
+			flakelib_planar_bottom_of(
+				buffer_pitch,
+				flakelib_planar_global_size(),
+				position);
 
-	float
-		center =
-			fabs(curl[current_index]),
+	float const
 		left =
-			fabs(curl[left_index]),
+			fabs(vorticity[left_index]),
 		right =
-			fabs(curl[right_index]),
+			fabs(vorticity[right_index]),
 		top =
-			fabs(curl[top_index]),
+			fabs(vorticity[top_index]),
 		bottom =
-			fabs(curl[bottom_index]);
-
-	/*
-	// Use mix here? What about the vmask?
-	if(is_solid(boundary,left_index))
-		left = center;
-
-	if(is_solid(boundary,right_index))
-		right = center;
-
-	if(is_solid(boundary,top_index))
-		top = center;
-
-	if(is_solid(boundary,bottom_index))
-		bottom = center;
-		*/
+			fabs(vorticity[bottom_index]);
 
 	float2 const gradient =
 		0.5f *
@@ -120,16 +112,17 @@ gradient_and_cross(
 			right-left,
 			bottom-top);
 
+	// TODO: What about a zero vector here?
 	float2 const normalized_gradient =
-		gradient /
-		max(
-			0.0001f,
-			fast_length(
-				gradient));
+		fast_normalize(
+			gradient);
 
+	output[current_index] =
+		normalized_gradient;
+	/*
 	output[current_index] +=
 		dt *
 		strength *
 		normalized_gradient.yx;
+		*/
 }
-#endif

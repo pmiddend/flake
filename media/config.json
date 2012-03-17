@@ -17,6 +17,8 @@
 				"boundary" : "256/zagged.png",
 				"velocity-arrow-scale" : 1.0,
 				"velocity-grid-scale" : 2.0,
+				"vorticity-gradient-arrow-scale" : 1.0,
+				"vorticity-gradient-grid-scale" : 2.0,
 				"texture-grid-scale" : 1
 			}
 		}

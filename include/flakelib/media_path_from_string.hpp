@@ -3,13 +3,15 @@
 
 #include <flakelib/symbol.hpp>
 #include <fcppt/string.hpp>
-#include <fcppt/filesystem/path.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <boost/filesystem/path.hpp>
+#include <fcppt/config/external_end.hpp>
 
 
 namespace flakelib
 {
 FLAKELIB_SYMBOL
-fcppt::filesystem::path const
+boost::filesystem::path const
 media_path_from_string(
 	fcppt::string const &);
 }

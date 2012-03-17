@@ -11,8 +11,8 @@
 #include <sge/opencl/program/object.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/unique_ptr_impl.hpp>
-#include <fcppt/filesystem/path.hpp>
 #include <fcppt/config/external_begin.hpp>
+#include <boost/filesystem/path.hpp>
 #include <map>
 #include <string>
 #include <fcppt/config/external_end.hpp>
@@ -34,7 +34,7 @@ public:
 	explicit
 	program(
 		sge::opencl::command_queue::object &,
-		fcppt::filesystem::path const &,
+		boost::filesystem::path const &,
 		flakelib::cl::compiler_flags const &);
 
 	FLAKELIB_SYMBOL
@@ -55,7 +55,7 @@ private:
 
 	void
 	fill_kernel_name_to_parameters(
-		fcppt::filesystem::path const &);
+		boost::filesystem::path const &);
 };
 }
 }

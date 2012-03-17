@@ -124,6 +124,11 @@ flake::planar::tests::simple::simple(
 			fcppt::ref(
 				this->buffer_pool()),
 			boundary_buffer_.value().size())),
+	vorticity_gradient_buffer_(
+		fcppt::make_unique_ptr<flakelib::planar::float2_buffer_lock>(
+			fcppt::ref(
+				this->buffer_pool()),
+			boundary_buffer_.value().size())),
 	monitor_parent_(
 		this->renderer(),
 		this->opencl_system().command_queue(),
@@ -198,6 +203,30 @@ flake::planar::tests::simple::simple(
 					boundary_image_file_->view()))),
 		monitor::scaling_factor(
 			1.0f)),
+	vorticity_gradient_arrows_(
+		monitor_parent_,
+		monitor::name(
+			FCPPT_TEXT("vorticity gradient")),
+		monitor::grid_dimensions(
+			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
+				sge::image2d::view::size(
+					boundary_image_file_->view()))),
+		monitor::arrow_scale(
+			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("tests/planar/simple/vorticity-gradient-arrow-scale")))),
+		monitor::grid_scale(
+			sge::parse::json::find_and_convert_member<monitor::grid_scale::value_type>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("tests/planar/simple/vorticity-gradient-grid-scale")))),
+		sge::renderer::texture::create_planar_from_view(
+			this->renderer(),
+			boundary_image_file_->view(),
+			sge::renderer::texture::mipmap::off(),
+			sge::renderer::resource_flags_field(
+				sge::renderer::resource_flags::none))),
 	rucksack_viewport_adaptor_(
 		this->viewport_manager(),
 		this->renderer()),
@@ -254,6 +283,11 @@ flake::planar::tests::simple::simple(
 
 	rucksack_enumeration_.push_back_child(
 		vorticity_texture_.widget());
+
+	/*
+	rucksack_enumeration_.push_back_child(
+		vorticity_gradient_arrows_.widget());
+		*/
 
 	flakelib::cl::planar_image_view_to_float_buffer(
 		this->opencl_system().command_queue(),
@@ -349,6 +383,15 @@ flake::planar::tests::simple::update()
 				flakelib::planar::simulation::stam::velocity(
 					velocity_buffer_->value()));
 
+		/*
+		vorticity_gradient_buffer_ =
+			vorticity_.normalized_vorticity_gradient(
+				vorticity_buffer_->value(),
+				delta,
+				flakelib::planar::simulation::stam::vorticity_strength(
+					1.0f));
+					*/
+
 		cursor_splatter_.target(
 			smoke_density_buffer_->value());
 	}
@@ -358,6 +401,14 @@ flake::planar::tests::simple::update()
 		velocity_arrows_.cl_buffer(),
 		velocity_arrows_.grid_scale(),
 		velocity_arrows_.arrow_scale());
+
+	/*
+	monitor_planar_converter_.to_arrow_vb(
+		vorticity_gradient_buffer_->value(),
+		vorticity_gradient_arrows_.cl_buffer(),
+		vorticity_gradient_arrows_.grid_scale(),
+		vorticity_gradient_arrows_.arrow_scale());
+		*/
 
 	monitor_planar_converter_.scalar_to_texture(
 		smoke_density_buffer_->value(),
