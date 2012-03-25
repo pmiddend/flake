@@ -15,8 +15,7 @@
 #include <sge/timer/parameters_impl.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
-#include <fcppt/chrono/seconds.hpp>
-#include <fcppt/math/box/basic_impl.hpp>
+#include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
 
 
@@ -42,7 +41,7 @@ flake::notifications::object::object(
 	messages_(),
 	second_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
-			fcppt::chrono::seconds(
+			boost::chrono::seconds(
 				1)))
 {
 }

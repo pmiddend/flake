@@ -9,7 +9,7 @@
 #include <sge/opencl/memory_object/image/sge_color_format_to_opencl.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
-#include <fcppt/container/bitfield/basic_impl.hpp>
+#include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 
 fcppt::unique_ptr<sge::opencl::memory_object::image::planar>

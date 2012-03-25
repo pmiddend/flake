@@ -43,8 +43,16 @@ public:
 
 	FLAKELIB_SYMBOL
 	planar::unique_float2_buffer_lock
-	normalized_vorticity_gradient(
+	confinement_data(
 		planar::float_view const &,
+		flakelib::duration const &,
+		stam::vorticity_strength const &);
+
+	FLAKELIB_SYMBOL
+	planar::unique_float2_buffer_lock
+	apply_confinement(
+		planar::float_view const &,
+		stam::velocity const &,
 		flakelib::duration const &,
 		stam::vorticity_strength const &);
 
@@ -54,6 +62,7 @@ private:
 	flakelib::buffer_pool::object &buffer_pool_;
 	cl::program program_;
 	cl::unique_kernel_ptr vorticity_kernel_;
+	cl::unique_kernel_ptr confinement_data_kernel_;
 	cl::unique_kernel_ptr confinement_kernel_;
 };
 }

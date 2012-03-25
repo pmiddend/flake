@@ -31,8 +31,7 @@
 #include <fcppt/ref.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
-#include <fcppt/chrono/seconds.hpp>
-#include <fcppt/container/bitfield/basic_impl.hpp>
+#include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
@@ -270,7 +269,7 @@ flake::planar::tests::simple::simple(
 				1.0f))),
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
-			fcppt::chrono::seconds(1)))
+			boost::chrono::seconds(1)))
 {
 	rucksack_viewport_adaptor_.child(
 		rucksack_enumeration_);
@@ -284,10 +283,8 @@ flake::planar::tests::simple::simple(
 	rucksack_enumeration_.push_back_child(
 		vorticity_texture_.widget());
 
-	/*
 	rucksack_enumeration_.push_back_child(
 		vorticity_gradient_arrows_.widget());
-		*/
 
 	flakelib::cl::planar_image_view_to_float_buffer(
 		this->opencl_system().command_queue(),
@@ -358,23 +355,26 @@ flake::planar::tests::simple::update()
 
 	if(this->current_multiplier().get())
 	{
-		outflow_boundaries_.update(
-			velocity_buffer_->value());
+		// Order of operations: Advection, Force Application, Projection
 
-		wind_source_.update(
-			velocity_buffer_->value());
-
-		this->calculate_with_stams_method(
-			delta);
-
-		smoke_density_buffer_ =
-			semilagrangian_advection_.update_float(
+		// Advection
+		velocity_buffer_ =
+			semilagrangian_advection_.update_float2(
 				flakelib::planar::boundary_buffer_view(
 					boundary_buffer_.value()),
 				flakelib::planar::simulation::stam::velocity(
 					velocity_buffer_->value()),
-				smoke_density_buffer_->value(),
+				velocity_buffer_->value(),
 				delta);
+
+		// Force application
+		/*
+		outflow_boundaries_.update(
+			velocity_buffer_->value());
+			*/
+
+		wind_source_.update(
+			velocity_buffer_->value());
 
 		vorticity_buffer_ =
 			vorticity_.apply_vorticity(
@@ -383,14 +383,67 @@ flake::planar::tests::simple::update()
 				flakelib::planar::simulation::stam::velocity(
 					velocity_buffer_->value()));
 
-		/*
 		vorticity_gradient_buffer_ =
-			vorticity_.normalized_vorticity_gradient(
+			vorticity_.confinement_data(
 				vorticity_buffer_->value(),
 				delta,
 				flakelib::planar::simulation::stam::vorticity_strength(
 					1.0f));
-					*/
+
+		velocity_buffer_ =
+			vorticity_.apply_confinement(
+				vorticity_buffer_->value(),
+				flakelib::planar::simulation::stam::velocity(
+					velocity_buffer_->value()),
+				delta,
+				flakelib::planar::simulation::stam::vorticity_strength(
+					1.0f));
+
+		// Projection
+		flakelib::planar::unique_float_buffer_lock divergence =
+			divergence_.update(
+				flakelib::planar::boundary_buffer_view(
+					boundary_buffer_.value()),
+				velocity_buffer_->value());
+
+		flakelib::planar::unique_float_buffer_lock initial_guess_buffer_lock(
+			fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
+				fcppt::ref(
+					this->buffer_pool()),
+				velocity_buffer_->value().size()));
+
+		fill_buffer_.apply(
+			flakelib::buffer::linear_view<cl_float>(
+				initial_guess_buffer_lock->value().buffer()),
+			static_cast<cl_float>(
+				0));
+
+		flakelib::planar::unique_float_buffer_lock pressure =
+			jacobi_.update(
+				flakelib::planar::simulation::stam::initial_guess_buffer_view(
+					initial_guess_buffer_lock->value()),
+				flakelib::planar::boundary_buffer_view(
+					boundary_buffer_.value()),
+				flakelib::planar::simulation::stam::rhs_buffer_view(
+					divergence->value()));
+
+		subtract_pressure_gradient_.update(
+			flakelib::planar::velocity_buffer_view(
+				velocity_buffer_->value()),
+			flakelib::planar::boundary_buffer_view(
+				boundary_buffer_.value()),
+			flakelib::planar::simulation::stam::pressure_buffer_view(
+				pressure->value()));
+
+		// "Other stuff"
+		smoke_density_buffer_ =
+			semilagrangian_advection_.update_float(
+				flakelib::planar::boundary_buffer_view(
+					boundary_buffer_.value()),
+				flakelib::planar::simulation::stam::velocity(
+					velocity_buffer_->value()),
+				smoke_density_buffer_->value(),
+				delta);
 
 		cursor_splatter_.target(
 			smoke_density_buffer_->value());
@@ -402,13 +455,11 @@ flake::planar::tests::simple::update()
 		velocity_arrows_.grid_scale(),
 		velocity_arrows_.arrow_scale());
 
-	/*
 	monitor_planar_converter_.to_arrow_vb(
 		vorticity_gradient_buffer_->value(),
 		vorticity_gradient_arrows_.cl_buffer(),
 		vorticity_gradient_arrows_.grid_scale(),
 		vorticity_gradient_arrows_.arrow_scale());
-		*/
 
 	monitor_planar_converter_.scalar_to_texture(
 		smoke_density_buffer_->value(),
@@ -420,7 +471,7 @@ flake::planar::tests::simple::update()
 		vorticity_buffer_->value(),
 		vorticity_texture_.cl_texture(),
 		monitor::scaling_factor(
-			1.0f));
+			0.01f));
 }
 
 void

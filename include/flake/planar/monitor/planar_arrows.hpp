@@ -17,8 +17,8 @@
 #include <sge/renderer/texture/planar_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
-#include <fcppt/math/dim/basic_impl.hpp>
-#include <fcppt/math/vector/basic_impl.hpp>
+#include <fcppt/math/dim/object_impl.hpp>
+#include <fcppt/math/vector/object_impl.hpp>
 
 
 namespace flake

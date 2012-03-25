@@ -3,7 +3,7 @@
 
 #include <sge/renderer/matrix4.hpp>
 #include <fcppt/optional_fwd.hpp>
-#include <fcppt/math/matrix/basic_impl.hpp>
+#include <fcppt/math/matrix/object_impl.hpp>
 
 
 namespace flake

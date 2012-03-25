@@ -4,7 +4,6 @@
 #include <flake/notifications/text.hpp>
 #include <flake/notifications/time_to_live.hpp>
 #include <flakelib/duration.hpp>
-#include <fcppt/chrono/duration_impl.hpp>
 
 namespace flake
 {

@@ -4,7 +4,7 @@
 #include <flakelib/buffer/planar_view_fwd.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/memory_object/dim2.hpp>
-#include <fcppt/math/dim/basic_impl.hpp>
+#include <fcppt/math/dim/object_impl.hpp>
 
 namespace flakelib
 {

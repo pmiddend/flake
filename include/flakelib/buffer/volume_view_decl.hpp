@@ -5,7 +5,7 @@
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
 #include <fcppt/nonassignable.hpp>
-#include <fcppt/math/dim/basic_impl.hpp>
+#include <fcppt/math/dim/object_impl.hpp>
 
 namespace flakelib
 {

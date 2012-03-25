@@ -10,7 +10,6 @@
 #include <fcppt/move.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/assert/pre.hpp>
-#include <fcppt/chrono/duration_impl.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 
 

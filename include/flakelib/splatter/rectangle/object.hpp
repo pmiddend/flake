@@ -4,8 +4,8 @@
 #include <flakelib/symbol.hpp>
 #include <flakelib/splatter/rectangle/position.hpp>
 #include <flakelib/splatter/rectangle/size.hpp>
-#include <fcppt/math/dim/basic_impl.hpp>
-#include <fcppt/math/vector/basic_impl.hpp>
+#include <fcppt/math/dim/object_impl.hpp>
+#include <fcppt/math/vector/object_impl.hpp>
 
 
 namespace flakelib

@@ -3,7 +3,7 @@
 
 #include <flake/planar/monitor/rect.hpp>
 #include <fcppt/make_strong_typedef.hpp>
-#include <fcppt/math/box/basic_impl.hpp>
+#include <fcppt/math/box/object_impl.hpp>
 
 
 namespace flake

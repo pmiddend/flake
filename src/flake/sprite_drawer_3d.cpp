@@ -16,7 +16,7 @@
 #include <sge/sprite/render/options.hpp>
 #include <sge/texture/rect_fragmented.hpp>
 #include <fcppt/ref.hpp>
-#include <fcppt/math/box/basic_impl.hpp>
+#include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/fill.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/config/external_begin.hpp>

@@ -13,7 +13,7 @@
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/sprite/object.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/math/box/basic_impl.hpp>
+#include <fcppt/math/box/object_impl.hpp>
 
 
 namespace flake

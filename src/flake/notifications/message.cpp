@@ -1,5 +1,4 @@
 #include <flake/notifications/message.hpp>
-#include <fcppt/chrono/duration_comparison.hpp>
 
 flake::notifications::message::message(
 	notifications::text const &_text,

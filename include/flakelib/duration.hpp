@@ -2,12 +2,12 @@
 #define FLAKELIB_DURATION_HPP_INCLUDED
 
 #include <sge/renderer/scalar.hpp>
-#include <fcppt/chrono/duration_fwd.hpp>
+#include <boost/chrono/duration.hpp>
 
 namespace flakelib
 {
 typedef
-fcppt::chrono::duration<sge::renderer::scalar>
+boost::chrono::duration<sge::renderer::scalar>
 duration;
 }
 

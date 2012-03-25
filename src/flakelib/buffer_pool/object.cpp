@@ -3,7 +3,7 @@
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/assert/pre.hpp>
-#include <fcppt/container/bitfield/basic_impl.hpp>
+#include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/container/ptr/push_back_unique_ptr.hpp>
 
 

@@ -4,7 +4,7 @@
 #include <flakelib/buffer/linear_view_decl.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/assert/pre.hpp>
-#include <fcppt/math/dim/basic_impl.hpp>
+#include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <cstdlib>
 #include <fcppt/config/external_end.hpp>

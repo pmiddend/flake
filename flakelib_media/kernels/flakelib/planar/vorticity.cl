@@ -64,6 +64,7 @@ FLAKELIB_KERNEL_NAME(gradient_and_cross)(
 	float const FLAKELIB_KERNEL_ARGUMENT(vorticity_strength),
 	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(vorticity),
+	global float2 const *FLAKELIB_KERNEL_ARGUMENT(velocity),
 	global float2 *FLAKELIB_KERNEL_ARGUMENT(output),
 	float const FLAKELIB_KERNEL_ARGUMENT(dt))
 {
@@ -112,17 +113,102 @@ FLAKELIB_KERNEL_NAME(gradient_and_cross)(
 			right-left,
 			bottom-top);
 
-	// TODO: What about a zero vector here?
+	float const gradient_magnitude =
+		fast_length(gradient);
+
+	// I _think_ this guard against small gradient magnitude makes sense.
+	// Otherwise, we have a division by zero (or something like that) and have
+	// a gradient which simply doesn't exist (it should be zero).
 	float2 const normalized_gradient =
-		fast_normalize(
-			gradient);
+		gradient_magnitude < 0.01f
+		?
+			(float2)(0.0f)
+		:
+			gradient / gradient_magnitude;
+
+	output[current_index] =
+		velocity[current_index] +
+		dt *
+		min(
+			1.0f,
+			vorticity[current_index]) *
+		vorticity_strength *
+		min(
+			(float2)(1.0f,1.0f),
+			normalized_gradient.yx);
+}
+
+kernel void
+FLAKELIB_KERNEL_NAME(confinement_data)(
+	float const FLAKELIB_KERNEL_ARGUMENT(vorticity_strength),
+	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch),
+	global float const *FLAKELIB_KERNEL_ARGUMENT(vorticity),
+	global float2 *FLAKELIB_KERNEL_ARGUMENT(output),
+	float const FLAKELIB_KERNEL_ARGUMENT(dt))
+{
+	int2 const position =
+		flakelib_planar_current_position();
+
+	int const
+		current_index =
+			flakelib_planar_at(
+				buffer_pitch,
+				position),
+		left_index =
+			flakelib_planar_left_of(
+				buffer_pitch,
+				flakelib_planar_global_size(),
+				position),
+		right_index =
+			flakelib_planar_right_of(
+				buffer_pitch,
+				flakelib_planar_global_size(),
+				position),
+		top_index =
+			flakelib_planar_top_of(
+				buffer_pitch,
+				flakelib_planar_global_size(),
+				position),
+		bottom_index =
+			flakelib_planar_bottom_of(
+				buffer_pitch,
+				flakelib_planar_global_size(),
+				position);
+
+	float const
+		left =
+			fabs(vorticity[left_index]),
+		right =
+			fabs(vorticity[right_index]),
+		top =
+			fabs(vorticity[top_index]),
+		bottom =
+			fabs(vorticity[bottom_index]);
+
+	float2 const gradient =
+		0.5f *
+		(float2)(
+			right-left,
+			bottom-top);
+
+	float const gradient_magnitude =
+		fast_length(gradient);
+
+	// I _think_ this guard against small gradient magnitude makes sense.
+	// Otherwise, we have a division by zero (or something like that) and have
+	// a gradient which simply doesn't exist (it should be zero).
+	float2 const normalized_gradient =
+		gradient_magnitude < 0.01f
+		?
+			(float2)(0.0f)
+		:
+			gradient / gradient_magnitude;
 
 	output[current_index] =
 		normalized_gradient;
-	/*
-	output[current_index] +=
+		/*
 		dt *
-		strength *
-		normalized_gradient.yx;
-		*/
+		vorticity[current_index] *
+		vorticity_strength *
+		normalized_gradient.yx*/;
 }

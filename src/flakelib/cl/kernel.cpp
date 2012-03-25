@@ -5,7 +5,7 @@
 #include <fcppt/text.hpp>
 #include <fcppt/algorithm/shortest_levenshtein.hpp>
 #include <fcppt/assign/make_array.hpp>
-#include <fcppt/math/dim/basic_impl.hpp>
+#include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <algorithm>

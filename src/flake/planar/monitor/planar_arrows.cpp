@@ -37,7 +37,7 @@
 #include <fcppt/ref.hpp>
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/text.hpp>
-#include <fcppt/math/box/basic_impl.hpp>
+#include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/vector/structure_cast.hpp>

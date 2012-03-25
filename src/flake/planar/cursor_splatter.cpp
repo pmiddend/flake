@@ -12,12 +12,12 @@
 #include <fcppt/math/box/contains_point.hpp>
 #include <fcppt/math/box/rect.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
-#include <fcppt/math/matrix/basic_impl.hpp>
+#include <fcppt/math/matrix/object_impl.hpp>
 #include <fcppt/math/matrix/has_dim.hpp>
 #include <fcppt/math/matrix/inverse.hpp>
 #include <fcppt/math/matrix/vector.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
-#include <fcppt/math/vector/basic_impl.hpp>
+#include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/math/vector/has_dim.hpp>
 #include <fcppt/math/vector/narrow_cast.hpp>
 #include <fcppt/math/vector/structure_cast.hpp>
@@ -63,12 +63,12 @@ typename
 boost::enable_if
 <
 	boost::is_floating_point<T>,
-	fcppt::math::vector::basic<T,N,S1>
+	fcppt::math::vector::object<T,N,S1>
 >::type
 unproject(
-	fcppt::math::vector::basic<T,N,S1> const &viewport_coordinates,
-	fcppt::math::matrix::basic<T,M1,M2,S2> const &inverse_mvp,
-	fcppt::math::box::basic<T,2> const &viewport)
+	fcppt::math::vector::object<T,N,S1> const &viewport_coordinates,
+	fcppt::math::matrix::object<T,M1,M2,S2> const &inverse_mvp,
+	fcppt::math::box::object<T,2> const &viewport)
 {
 	typedef typename
 	fcppt::math::vector::static_
@@ -103,7 +103,7 @@ unproject(
 	result[3] = static_cast<T>(1)/result[3];
 
 	return
-		fcppt::math::vector::basic<T,N,S1>(
+		fcppt::math::vector::object<T,N,S1>(
 			static_cast<T>(result[3] * result[0]),
 			static_cast<T>(result[3] * result[1]),
 			static_cast<T>(result[3] * result[2]));

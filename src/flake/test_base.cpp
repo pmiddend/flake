@@ -43,8 +43,7 @@
 #include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/to_std_string.hpp>
-#include <fcppt/chrono/milliseconds.hpp>
-#include <fcppt/container/bitfield/basic_impl.hpp>
+#include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/io/cerr.hpp>
 #include <fcppt/log/headers.hpp>
@@ -177,8 +176,8 @@ flake::test_base::test_base(
 					sge::parse::json::string_to_path(
 						FCPPT_TEXT("tests/notification-font-size")))),
 			flake::notifications::time_to_live(
-				fcppt::chrono::milliseconds(
-					sge::parse::json::find_and_convert_member<fcppt::chrono::milliseconds::rep>(
+				boost::chrono::milliseconds(
+					sge::parse::json::find_and_convert_member<boost::chrono::milliseconds::rep>(
 						this->configuration(),
 						sge::parse::json::string_to_path(
 							FCPPT_TEXT("tests/notification-ttl-ms"))))))),
