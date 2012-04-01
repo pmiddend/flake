@@ -2,6 +2,8 @@
 #include <flake/planar/monitor/texture.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <sge/camera/base.hpp>
+#include <sge/camera/matrix_conversion/world_projection.hpp>
+#include <sge/camera/coordinate_system/object.hpp>
 #include <sge/input/cursor/button_event.hpp>
 #include <sge/input/cursor/move_event.hpp>
 #include <sge/input/cursor/object.hpp>
@@ -114,7 +116,7 @@ flake::planar::cursor_splatter::cursor_splatter(
 	monitor::texture &_monitor_texture,
 	flakelib::splatter::object &_splatter,
 	sge::renderer::device &_renderer,
-	sge::camera::base &_camera,
+	sge::camera::base const &_camera,
 	sge::input::cursor::object &_cursor,
 	cl_float const _splat_value,
 	flakelib::splatter::pen::planar const &_pen)
@@ -299,6 +301,8 @@ flake::planar::cursor_splatter::unproject_cursor_position(
 				unproject(
 					floating_point_cursor_position_leftbottom,
 					fcppt::math::matrix::inverse(
-						camera_.mvp()),
+						sge::camera::matrix_conversion::world_projection(
+							camera_.coordinate_system(),
+							camera_.projection_matrix())),
 					current_floating_point_viewport));
 }

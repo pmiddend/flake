@@ -23,6 +23,7 @@
 #include <rucksack/widget/enumeration.hpp>
 #include <rucksack/widget/viewport_adaptor.hpp>
 #include <sge/camera/ortho_freelook/object.hpp>
+#include <sge/camera/ortho_freelook/projection_rectangle_from_viewport.hpp>
 #include <sge/image2d/file_ptr.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
@@ -68,8 +69,6 @@ private:
 	flakelib::planar::float_buffer_lock boundary_buffer_;
 	flakelib::planar::unique_float2_buffer_lock velocity_buffer_;
 	flakelib::planar::unique_float_buffer_lock smoke_density_buffer_;
-	flakelib::planar::unique_float_buffer_lock vorticity_buffer_;
-	flakelib::planar::unique_float2_buffer_lock vorticity_gradient_buffer_;
 
 	// Monitors
 	flake::planar::monitor::parent monitor_parent_;
@@ -77,12 +76,15 @@ private:
 	flake::planar::monitor::planar_arrows velocity_arrows_;
 	flake::planar::monitor::texture smoke_density_texture_;
 	flake::planar::monitor::texture vorticity_texture_;
+	flake::planar::monitor::texture divergence_texture_;
+	flake::planar::monitor::texture pressure_texture_;
 	flake::planar::monitor::planar_arrows vorticity_gradient_arrows_;
 	rucksack::widget::viewport_adaptor rucksack_viewport_adaptor_;
 	rucksack::widget::enumeration rucksack_enumeration_;
 
 	// Other stuff
 	sge::camera::ortho_freelook::object freelook_camera_;
+	sge::camera::ortho_freelook::projection_rectangle_from_viewport projection_rectangle_from_viewport_;
 	flake::planar::cursor_splatter cursor_splatter_;
 
 	// Timer
@@ -93,9 +95,6 @@ private:
 
 	void
 	update();
-
-	void
-	viewport_callback();
 
 	void
 	calculate_with_stams_method(

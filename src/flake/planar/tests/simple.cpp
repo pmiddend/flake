@@ -1,3 +1,5 @@
+#include <sge/camera/coordinate_system/object.hpp>
+#include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/media_path.hpp>
 #include <flake/media_path_from_string.hpp>
@@ -118,16 +120,6 @@ flake::planar::tests::simple::simple(
 			fcppt::ref(
 				this->buffer_pool()),
 			boundary_buffer_.value().size())),
-	vorticity_buffer_(
-		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
-			fcppt::ref(
-				this->buffer_pool()),
-			boundary_buffer_.value().size())),
-	vorticity_gradient_buffer_(
-		fcppt::make_unique_ptr<flakelib::planar::float2_buffer_lock>(
-			fcppt::ref(
-				this->buffer_pool()),
-			boundary_buffer_.value().size())),
 	monitor_parent_(
 		this->renderer(),
 		this->opencl_system().command_queue(),
@@ -202,6 +194,42 @@ flake::planar::tests::simple::simple(
 					boundary_image_file_->view()))),
 		monitor::scaling_factor(
 			1.0f)),
+	divergence_texture_(
+		monitor_parent_,
+		monitor::name(
+			FCPPT_TEXT("divergence")),
+		monitor::grid_dimensions(
+			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("tests/planar/simple/texture-grid-scale"))) *
+			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
+				sge::image2d::view::size(
+					boundary_image_file_->view()))),
+		monitor::texture_size(
+			fcppt::math::dim::structure_cast<monitor::dim>(
+				sge::image2d::view::size(
+					boundary_image_file_->view()))),
+		monitor::scaling_factor(
+			1.0f)),
+	pressure_texture_(
+		monitor_parent_,
+		monitor::name(
+			FCPPT_TEXT("pressure")),
+		monitor::grid_dimensions(
+			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("tests/planar/simple/texture-grid-scale"))) *
+			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
+				sge::image2d::view::size(
+					boundary_image_file_->view()))),
+		monitor::texture_size(
+			fcppt::math::dim::structure_cast<monitor::dim>(
+				sge::image2d::view::size(
+					boundary_image_file_->view()))),
+		monitor::scaling_factor(
+			1.0f)),
 	vorticity_gradient_arrows_(
 		monitor_parent_,
 		monitor::name(
@@ -241,7 +269,17 @@ flake::planar::tests::simple::simple(
 	freelook_camera_(
 		sge::camera::ortho_freelook::parameters(
 			this->mouse(),
-			this->keyboard())),
+			this->keyboard(),
+			sge::renderer::projection::near(
+				0.0f),
+			sge::renderer::projection::far(
+				10.0f),
+			sge::camera::ortho_freelook::is_active(
+				true))),
+	projection_rectangle_from_viewport_(
+		freelook_camera_,
+		this->renderer(),
+		this->viewport_manager()),
 	cursor_splatter_(
 		smoke_density_texture_,
 		splatter_,
@@ -286,6 +324,12 @@ flake::planar::tests::simple::simple(
 	rucksack_enumeration_.push_back_child(
 		vorticity_gradient_arrows_.widget());
 
+	rucksack_enumeration_.push_back_child(
+		divergence_texture_.widget());
+
+	rucksack_enumeration_.push_back_child(
+		pressure_texture_.widget());
+
 	flakelib::cl::planar_image_view_to_float_buffer(
 		this->opencl_system().command_queue(),
 		boundary_image_file_->view(),
@@ -329,7 +373,9 @@ flake::planar::tests::simple::render()
 
 	monitor_parent_.render(
 		monitor::optional_projection(
-			freelook_camera_.mvp()));
+			sge::camera::matrix_conversion::world_projection(
+				freelook_camera_.coordinate_system(),
+				freelook_camera_.projection_matrix())));
 
 	test_base::render();
 }
@@ -368,36 +414,47 @@ flake::planar::tests::simple::update()
 				delta);
 
 		// Force application
-		/*
 		outflow_boundaries_.update(
 			velocity_buffer_->value());
-			*/
 
 		wind_source_.update(
 			velocity_buffer_->value());
 
-		vorticity_buffer_ =
+		flakelib::planar::unique_float_buffer_lock vorticity_buffer(
 			vorticity_.apply_vorticity(
 				flakelib::planar::boundary_buffer_view(
 					boundary_buffer_.value()),
 				flakelib::planar::simulation::stam::velocity(
-					velocity_buffer_->value()));
+					velocity_buffer_->value())));
 
-		vorticity_gradient_buffer_ =
+		flakelib::planar::unique_float2_buffer_lock vorticity_gradient_buffer(
 			vorticity_.confinement_data(
-				vorticity_buffer_->value(),
+				vorticity_buffer->value(),
 				delta,
 				flakelib::planar::simulation::stam::vorticity_strength(
-					1.0f));
+					0.1f)));
 
 		velocity_buffer_ =
 			vorticity_.apply_confinement(
-				vorticity_buffer_->value(),
+				vorticity_buffer->value(),
 				flakelib::planar::simulation::stam::velocity(
 					velocity_buffer_->value()),
 				delta,
 				flakelib::planar::simulation::stam::vorticity_strength(
 					1.0f));
+
+		monitor_planar_converter_.to_arrow_vb(
+			vorticity_gradient_buffer->value(),
+			vorticity_gradient_arrows_.cl_buffer(),
+			vorticity_gradient_arrows_.grid_scale(),
+			vorticity_gradient_arrows_.arrow_scale());
+
+
+		monitor_planar_converter_.scalar_to_texture(
+			vorticity_buffer->value(),
+			vorticity_texture_.cl_texture(),
+			monitor::scaling_factor(
+				0.50f));
 
 		// Projection
 		flakelib::planar::unique_float_buffer_lock divergence =
@@ -405,6 +462,12 @@ flake::planar::tests::simple::update()
 				flakelib::planar::boundary_buffer_view(
 					boundary_buffer_.value()),
 				velocity_buffer_->value());
+
+		monitor_planar_converter_.scalar_to_texture(
+			divergence->value(),
+			divergence_texture_.cl_texture(),
+			monitor::scaling_factor(
+				0.10f));
 
 		flakelib::planar::unique_float_buffer_lock initial_guess_buffer_lock(
 			fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
@@ -426,6 +489,12 @@ flake::planar::tests::simple::update()
 					boundary_buffer_.value()),
 				flakelib::planar::simulation::stam::rhs_buffer_view(
 					divergence->value()));
+
+		monitor_planar_converter_.scalar_to_texture(
+			pressure->value(),
+			pressure_texture_.cl_texture(),
+			monitor::scaling_factor(
+				0.10f));
 
 		subtract_pressure_gradient_.update(
 			flakelib::planar::velocity_buffer_view(
@@ -455,31 +524,12 @@ flake::planar::tests::simple::update()
 		velocity_arrows_.grid_scale(),
 		velocity_arrows_.arrow_scale());
 
-	monitor_planar_converter_.to_arrow_vb(
-		vorticity_gradient_buffer_->value(),
-		vorticity_gradient_arrows_.cl_buffer(),
-		vorticity_gradient_arrows_.grid_scale(),
-		vorticity_gradient_arrows_.arrow_scale());
-
 	monitor_planar_converter_.scalar_to_texture(
-		smoke_density_buffer_->value(),
+	smoke_density_buffer_->value(),
 		smoke_density_texture_.cl_texture(),
 		monitor::scaling_factor(
 			1.0f));
 
-	monitor_planar_converter_.scalar_to_texture(
-		vorticity_buffer_->value(),
-		vorticity_texture_.cl_texture(),
-		monitor::scaling_factor(
-			0.01f));
-}
-
-void
-flake::planar::tests::simple::viewport_callback()
-{
-	freelook_camera_.projection_rect(
-		fcppt::math::box::structure_cast<sge::renderer::projection::rect>(
-			this->renderer().onscreen_target().viewport().get()));
 }
 
 void

@@ -35,7 +35,7 @@ public:
 		monitor::texture &,
 		flakelib::splatter::object &,
 		sge::renderer::device &,
-		sge::camera::base &,
+		sge::camera::base const &,
 		sge::input::cursor::object &,
 		cl_float,
 		flakelib::splatter::pen::planar const &);
@@ -49,7 +49,7 @@ private:
 	monitor::texture &monitor_texture_;
 	flakelib::splatter::object &splatter_;
 	sge::renderer::device &renderer_;
-	sge::camera::base &camera_;
+	sge::camera::base const &camera_;
 	fcppt::optional<flakelib::planar::float_view> optional_target_;
 	cl_float const splat_value_;
 	flakelib::splatter::pen::planar const pen_;

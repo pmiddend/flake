@@ -20,6 +20,8 @@
 #include <sge/renderer/no_multi_sampling.hpp>
 #include <sge/renderer/parameters.hpp>
 #include <sge/renderer/scoped_block.hpp>
+#include <sge/renderer/active_target.hpp>
+#include <sge/renderer/target_base.hpp>
 #include <sge/systems/font.hpp>
 #include <sge/systems/image2d.hpp>
 #include <sge/systems/input.hpp>
@@ -68,10 +70,13 @@ flake::test_base::run()
 
 		this->update();
 
-		sge::renderer::scoped_block scoped_render_block(
-			systems_->renderer());
+		if(sge::renderer::active_target(this->renderer()).viewport().get().content())
+		{
+			sge::renderer::scoped_block scoped_render_block(
+				systems_->renderer());
 
-		this->render();
+			this->render();
+		}
 	}
 
 	return

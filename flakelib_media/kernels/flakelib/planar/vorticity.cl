@@ -135,6 +135,7 @@ FLAKELIB_KERNEL_NAME(gradient_and_cross)(
 		vorticity_strength *
 		min(
 			(float2)(1.0f,1.0f),
+			//normalized_gradient.yx);
 			normalized_gradient.yx);
 }
 
@@ -205,7 +206,8 @@ FLAKELIB_KERNEL_NAME(confinement_data)(
 			gradient / gradient_magnitude;
 
 	output[current_index] =
-		normalized_gradient;
+		//normalized_gradient;
+		gradient.yx;
 		/*
 		dt *
 		vorticity[current_index] *
