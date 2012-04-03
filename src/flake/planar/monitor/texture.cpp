@@ -54,14 +54,16 @@ font_axis_policy(
 				rucksack::minimum_size(
 					static_cast<rucksack::scalar>(
 						size.w())),
-				rucksack::preferred_size(),
+				rucksack::preferred_size(
+					rucksack::optional_scalar()),
 				rucksack::is_expanding(
 					false)),
 			rucksack::axis_policy(
 				rucksack::minimum_size(
 					static_cast<rucksack::scalar>(
 						size.h())),
-				rucksack::preferred_size(),
+				rucksack::preferred_size(
+					rucksack::optional_scalar()),
 				rucksack::is_expanding(
 					false)),
 			rucksack::aspect(
@@ -126,14 +128,16 @@ flake::planar::monitor::texture::texture(
 				rucksack::minimum_size(
 					static_cast<rucksack::scalar>(
 						_texture_size.get().w())),
-				rucksack::preferred_size(),
+				rucksack::preferred_size(
+					rucksack::optional_scalar()),
 				rucksack::is_expanding(
 					false)),
 			rucksack::axis_policy(
 				rucksack::minimum_size(
 					static_cast<rucksack::scalar>(
 						_texture_size.get().h())),
-				rucksack::preferred_size(),
+				rucksack::preferred_size(
+					rucksack::optional_scalar()),
 				rucksack::is_expanding(
 					false)),
 			rucksack::aspect(

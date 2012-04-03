@@ -3,7 +3,10 @@
 
 #include <flakelib/symbol.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/config/external_begin.hpp>
 #include <boost/chrono.hpp>
+#include <fcppt/config/external_end.hpp>
+
 
 namespace flakelib
 {

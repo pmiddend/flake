@@ -68,14 +68,16 @@ font_axis_policy(
 				rucksack::minimum_size(
 					static_cast<rucksack::scalar>(
 						size.w())),
-				rucksack::preferred_size(),
+				rucksack::preferred_size(
+					rucksack::optional_scalar()),
 				rucksack::is_expanding(
 					false)),
 			rucksack::axis_policy(
 				rucksack::minimum_size(
 					static_cast<rucksack::scalar>(
 						size.h())),
-				rucksack::preferred_size(),
+				rucksack::preferred_size(
+					rucksack::optional_scalar()),
 				rucksack::is_expanding(
 					false)),
 			rucksack::aspect(
@@ -137,7 +139,8 @@ flake::planar::monitor::planar_arrows::planar_arrows(
 						grid_scale_.get() *
 						static_cast<monitor::scalar>(
 							dimensions_.w()))),
-				rucksack::preferred_size(),
+				rucksack::preferred_size(
+					rucksack::optional_scalar()),
 				rucksack::is_expanding(
 					false)),
 			rucksack::axis_policy(
@@ -146,7 +149,8 @@ flake::planar::monitor::planar_arrows::planar_arrows(
 						grid_scale_.get() *
 						static_cast<monitor::scalar>(
 							dimensions_.h()))),
-				rucksack::preferred_size(),
+				rucksack::preferred_size(
+					rucksack::optional_scalar()),
 				rucksack::is_expanding(
 					false)),
 			rucksack::aspect(

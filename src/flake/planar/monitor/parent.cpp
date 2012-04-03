@@ -24,8 +24,8 @@
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_container.hpp>
-#include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/comparison.hpp>
+#include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
 
 

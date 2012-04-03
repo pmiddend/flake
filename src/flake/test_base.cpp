@@ -17,10 +17,10 @@
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/parse_string_exn.hpp>
 #include <sge/parse/json/string_to_path.hpp>
+#include <sge/renderer/active_target.hpp>
 #include <sge/renderer/no_multi_sampling.hpp>
 #include <sge/renderer/parameters.hpp>
 #include <sge/renderer/scoped_block.hpp>
-#include <sge/renderer/active_target.hpp>
 #include <sge/renderer/target_base.hpp>
 #include <sge/systems/font.hpp>
 #include <sge/systems/image2d.hpp>

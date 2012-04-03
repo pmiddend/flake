@@ -2,8 +2,8 @@
 #include <flake/planar/monitor/texture.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <sge/camera/base.hpp>
-#include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
+#include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/input/cursor/button_event.hpp>
 #include <sge/input/cursor/move_event.hpp>
 #include <sge/input/cursor/object.hpp>
@@ -14,14 +14,14 @@
 #include <fcppt/math/box/contains_point.hpp>
 #include <fcppt/math/box/rect.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
-#include <fcppt/math/matrix/object_impl.hpp>
 #include <fcppt/math/matrix/has_dim.hpp>
 #include <fcppt/math/matrix/inverse.hpp>
+#include <fcppt/math/matrix/object_impl.hpp>
 #include <fcppt/math/matrix/vector.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
-#include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/math/vector/has_dim.hpp>
 #include <fcppt/math/vector/narrow_cast.hpp>
+#include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/math/vector/structure_cast.hpp>
 #include <fcppt/tr1/functional.hpp>
 #include <fcppt/config/external_begin.hpp>

@@ -1,5 +1,3 @@
-#include <sge/camera/coordinate_system/object.hpp>
-#include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/media_path.hpp>
 #include <flake/media_path_from_string.hpp>
@@ -9,6 +7,8 @@
 #include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
 #include <flakelib/splatter/pen/object_impl.hpp>
 #include <flakelib/splatter/rectangle/object.hpp>
+#include <sge/camera/coordinate_system/object.hpp>
+#include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/camera/ortho_freelook/parameters.hpp>
 #include <sge/font/system.hpp>
 #include <sge/image/colors.hpp>

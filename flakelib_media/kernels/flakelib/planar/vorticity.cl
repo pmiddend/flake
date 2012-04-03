@@ -55,8 +55,8 @@ FLAKELIB_KERNEL_NAME(apply_vorticity)(
 			(1.0f - boundary[bottom_index]) * velocity[bottom_index];
 
 	output[current_index] =
-//		0.5f * ((right.y - left.y) - (top.x - bottom.x));
-		0.5f * ((right.y - left.y) - (bottom.x - top.x));
+		0.5f * ((right.y - left.y) - (top.x - bottom.x));
+//		0.5f * ((right.y - left.y) - (bottom.x - top.x));
 }
 
 kernel void
@@ -111,7 +111,8 @@ FLAKELIB_KERNEL_NAME(gradient_and_cross)(
 		0.5f *
 		(float2)(
 			right-left,
-			bottom-top);
+//			bottom-top);
+			top-bottom);
 
 	float const gradient_magnitude =
 		fast_length(gradient);
@@ -190,7 +191,8 @@ FLAKELIB_KERNEL_NAME(confinement_data)(
 		0.5f *
 		(float2)(
 			right-left,
-			bottom-top);
+//			bottom-top);
+			top-bottom);
 
 	float const gradient_magnitude =
 		fast_length(gradient);
