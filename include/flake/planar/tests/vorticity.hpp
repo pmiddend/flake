@@ -20,6 +20,7 @@
 #include <flakelib/planar/simulation/stam/wind_source.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
+#include <flakelib/utility/mix_buffers.hpp>
 #include <rucksack/widget/enumeration.hpp>
 #include <rucksack/widget/viewport_adaptor.hpp>
 #include <sge/camera/ortho_freelook/object.hpp>
@@ -56,6 +57,7 @@ public:
 private:
 	// Programs
 	flakelib::utility::fill_buffer fill_buffer_;
+	flakelib::utility::mix_buffers mix_buffers_;
 	flakelib::splatter::object splatter_;
 	flakelib::planar::simulation::stam::wind_source wind_source_;
 	flakelib::planar::simulation::stam::outflow_boundaries outflow_boundaries_;
@@ -69,6 +71,7 @@ private:
 	flakelib::planar::float_buffer_lock boundary_buffer_;
 	flakelib::planar::unique_float2_buffer_lock velocity_buffer_;
 	flakelib::planar::unique_float_buffer_lock smoke_density_buffer_;
+	flakelib::planar::unique_float_buffer_lock smoke_density_source_buffer_;
 
 	// Monitors
 	flake::planar::monitor::parent monitor_parent_;

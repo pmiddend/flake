@@ -10,8 +10,8 @@
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/camera/ortho_freelook/parameters.hpp>
-#include <sge/font/system.hpp>
 #include <sge/font/metrics.hpp>
+#include <sge/font/system.hpp>
 #include <sge/image/colors.hpp>
 #include <sge/image/view/const_object.hpp>
 #include <sge/image2d/file.hpp>
@@ -67,6 +67,8 @@ flake::planar::tests::vorticity::vorticity(
 		sge::systems::cursor_option_field::null()),
 	fill_buffer_(
 		this->program_context()),
+	mix_buffers_(
+		this->program_context()),
 	splatter_(
 		this->program_context()),
 	wind_source_(
@@ -117,6 +119,11 @@ flake::planar::tests::vorticity::vorticity(
 				this->buffer_pool()),
 			boundary_buffer_.value().size())),
 	smoke_density_buffer_(
+		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
+			fcppt::ref(
+				this->buffer_pool()),
+			boundary_buffer_.value().size())),
+	smoke_density_source_buffer_(
 		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
 			fcppt::ref(
 				this->buffer_pool()),
@@ -348,6 +355,15 @@ flake::planar::tests::vorticity::vorticity(
 			smoke_density_buffer_->value().buffer()),
 		static_cast<cl_float>(
 			0));
+
+	fill_buffer_.apply(
+		flakelib::buffer::linear_view<cl_float>(
+			smoke_density_source_buffer_->value().buffer()),
+		static_cast<cl_float>(
+			0));
+
+	cursor_splatter_.right_mouse_target(
+		smoke_density_source_buffer_->value());
 }
 
 awl::main::exit_code const
@@ -524,8 +540,18 @@ flake::planar::tests::vorticity::update()
 				smoke_density_buffer_->value(),
 				delta);
 
-		cursor_splatter_.target(
+		// Left mouse splats directly
+		cursor_splatter_.left_mouse_target(
 			smoke_density_buffer_->value());
+
+		cursor_splatter_.update();
+
+		// Right mouse splats to sources surface, which we now add
+		mix_buffers_.add_from_to(
+			flakelib::buffer::linear_view<cl_float>(
+				smoke_density_source_buffer_->value().buffer()),
+			flakelib::buffer::linear_view<cl_float>(
+				smoke_density_buffer_->value().buffer()));
 	}
 
 	monitor_planar_converter_.to_arrow_vb(

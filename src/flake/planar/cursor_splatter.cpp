@@ -129,7 +129,8 @@ flake::planar::cursor_splatter::cursor_splatter(
 		_renderer),
 	camera_(
 		_camera),
-	optional_target_(),
+	optional_left_mouse_target_(),
+	optional_right_mouse_target_(),
 	splat_value_(
 		_splat_value),
 	pen_(
@@ -146,18 +147,44 @@ flake::planar::cursor_splatter::cursor_splatter(
 				&cursor_splatter::move_callback,
 				this,
 				std::tr1::placeholders::_1))),
-	button_pushed_down_(
-		false)
+	left_button_pushed_down_(
+		false),
+	right_button_pushed_down_(
+		false),
+	last_cursor_position_()
 {
 }
 
 void
-flake::planar::cursor_splatter::target(
+flake::planar::cursor_splatter::left_mouse_target(
 	flakelib::planar::float_view const &_f)
 {
-	optional_target_ =
+	optional_left_mouse_target_ =
 		fcppt::optional<flakelib::planar::float_view>(
 			_f);
+}
+
+void
+flake::planar::cursor_splatter::right_mouse_target(
+	flakelib::planar::float_view const &_f)
+{
+	optional_right_mouse_target_ =
+		fcppt::optional<flakelib::planar::float_view>(
+			_f);
+}
+
+void
+flake::planar::cursor_splatter::update()
+{
+	if(left_button_pushed_down_ && optional_left_mouse_target_)
+		this->splat_at_cursor_position(
+			*optional_left_mouse_target_,
+			last_cursor_position_);
+
+	if(right_button_pushed_down_ && optional_right_mouse_target_)
+		this->splat_at_cursor_position(
+			*optional_right_mouse_target_,
+			last_cursor_position_);
 }
 
 flake::planar::cursor_splatter::~cursor_splatter()
@@ -168,32 +195,33 @@ void
 flake::planar::cursor_splatter::button_callback(
 	sge::input::cursor::button_event const &e)
 {
-	if(e.button_code() != sge::input::cursor::button_code::left)
-		return;
+	if(e.button_code() == sge::input::cursor::button_code::left)
+	{
+		left_button_pushed_down_ =
+			e.pressed();
+	}
 
-	button_pushed_down_ =
-		e.pressed();
+	if(e.button_code() == sge::input::cursor::button_code::right)
+	{
+		right_button_pushed_down_ =
+			e.pressed();
+	}
 }
 
 void
 flake::planar::cursor_splatter::move_callback(
 	sge::input::cursor::move_event const &e)
 {
-	if(!optional_target_)
-		return;
-
-	if(!button_pushed_down_)
-		return;
-
 	if(!e.position())
 		return;
 
-	this->splat_at_cursor_position(
-		*e.position());
+	last_cursor_position_ =
+		*e.position();
 }
 
 void
 flake::planar::cursor_splatter::splat_at_cursor_position(
+	flakelib::planar::float_view const &target,
 	sge::input::cursor::position const &cursor_position_window_coords)
 {
 	sge::renderer::vector2 const unprojected_lefttop(
@@ -244,7 +272,7 @@ flake::planar::cursor_splatter::splat_at_cursor_position(
 		pen_.bounding().size());
 
 	splatter_.splat_planar_float(
-		*optional_target_,
+		target,
 		flakelib::splatter::pen::planar(
 			pen_,
 			new_pen_rectangle),

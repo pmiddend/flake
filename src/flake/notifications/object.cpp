@@ -119,9 +119,9 @@ flake::notifications::object::render()
 
 		sge::image::color::any::object const font_color(
 			sge::image::color::rgba8(
-				(sge::image::color::init::red() %= 1.0)
-				(sge::image::color::init::green() %= 1.0)
-				(sge::image::color::init::blue() %= 1.0)
+				(sge::image::color::init::red() %= 0.0f)
+				(sge::image::color::init::green() %= 0.5411f)
+				(sge::image::color::init::blue() %= 1.0f)
 				(sge::image::color::init::alpha() %= alpha_value)));
 
 		font_drawer_->color(

@@ -162,6 +162,7 @@ set(
 	src/flakelib/splatter/rectangle/object.cpp
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/utility/fill_buffer.cpp
+	src/flakelib/utility/mix_buffers.cpp
 )
 
 set(

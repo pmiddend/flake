@@ -1,6 +1,3 @@
-#include <flakelib/buffer_pool/object.hpp>
-#include <flakelib/cl/program_context.hpp>
-#include <flakelib/cl/compiler_flags.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/test_base.hpp>
 #include <flake/notifications/object.hpp>
@@ -8,11 +5,14 @@
 #include <flakelib/log.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
+#include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/cl/cflags.hpp>
+#include <flakelib/cl/compiler_flags.hpp>
+#include <flakelib/cl/program_context.hpp>
 #include <sge/charconv/create_system.hpp>
 #include <sge/charconv/system.hpp>
-#include <sge/font/system.hpp>
 #include <sge/font/metrics.hpp>
+#include <sge/font/system.hpp>
 #include <sge/log/global_context.hpp>
 #include <sge/media/all_extensions.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
@@ -49,11 +49,11 @@
 #include <fcppt/text.hpp>
 #include <fcppt/to_std_string.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
-#include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/io/cerr.hpp>
 #include <fcppt/log/headers.hpp>
 #include <fcppt/log/location.hpp>
+#include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/tr1/functional.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <exception>

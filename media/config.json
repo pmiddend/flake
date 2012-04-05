@@ -8,7 +8,7 @@
 		"opencl-compiler-flags" : "-cl-mad-enable -cl-fast-relaxed-math -Werror",
 		"planar" :
 		{
-			"simple" :
+			"vorticity" :
 			{
 				"wind-strength" : 10.0,
 				"vorticity-strength" : 0.15,
