@@ -415,10 +415,6 @@ flake::planar::tests::simple::update()
 				velocity_buffer_->value(),
 				delta);
 
-		// Outflow boundaries
-		outflow_boundaries_.update(
-			velocity_buffer_->value());
-
 		// Wind source
 		wind_source_.update(
 			velocity_buffer_->value());
@@ -454,7 +450,7 @@ flake::planar::tests::simple::update()
 						sge::parse::json::string_to_path(
 							FCPPT_TEXT("tests/planar/simple/vorticity-strength")))));
 
-		// Outflow boundaries again
+		// Outflow boundaries
 		outflow_boundaries_.update(
 			velocity_buffer_->value());
 

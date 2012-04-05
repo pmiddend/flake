@@ -18,6 +18,15 @@ FLAKELIB_KERNEL_NAME(apply_vorticity)(
 	int2 const position =
 		flakelib_planar_current_position();
 
+	if(position.x <= 2 || position.y <= 2 || position.x >= buffer_pitch-3 || position.y >= buffer_pitch-3)
+	{
+		output[flakelib_planar_at(
+					buffer_pitch,
+					position)] =
+			0.0f;
+		return;
+	}
+
 	int const
 		current_index =
 			flakelib_planar_at(
@@ -44,19 +53,38 @@ FLAKELIB_KERNEL_NAME(apply_vorticity)(
 				flakelib_planar_global_size(),
 				position);
 
+	// The mix here hopefully enforces that the boundaries are ignored. The
+	// velocity at the boundary is set to zero, which under normal
+	// circumstances contributes to the vorticity.
 	float2
 		left =
 			//(1.0f - boundary[left_index]) * velocity[left_index],
-			velocity[left_index],
+			//velocity[left_index],
+			mix(
+				velocity[left_index],
+				velocity[right_index],
+				boundary[left_index]),
 		right =
+			mix(
+				velocity[right_index],
+				velocity[left_index],
+				boundary[right_index]),
 			//(1.0f - boundary[right_index]) * velocity[right_index],
-			 velocity[right_index],
+			//velocity[right_index],
 		top =
+			mix(
+				velocity[top_index],
+				velocity[bottom_index],
+				boundary[top_index]),
 			//(1.0f - boundary[top_index]) * velocity[top_index],
-			 velocity[top_index],
+			//velocity[top_index],
 		bottom =
+			mix(
+				velocity[bottom_index],
+				velocity[top_index],
+				boundary[bottom_index]);
 			//(1.0f - boundary[bottom_index]) * velocity[bottom_index];
-			 velocity[bottom_index];
+			// velocity[bottom_index];
 
 	output[current_index] =
 //		0.5f * ((right.y - left.y) - (top.x - bottom.x));
@@ -76,6 +104,8 @@ FLAKELIB_KERNEL_NAME(gradient_and_cross)(
 		flakelib_planar_current_position();
 
 	/*
+	if(position.x <= 2 || position.y <= 2 || position.x >= buffer_pitch-3 || position.y >= buffer_pitch-3)
+	*/
 	if(position.x == 0 || position.y == 0 || position.x == buffer_pitch-1 || position.y == buffer_pitch-1)
 	{
 		output[flakelib_planar_at(
@@ -87,7 +117,6 @@ FLAKELIB_KERNEL_NAME(gradient_and_cross)(
 					position)];
 		return;
 	}
-	*/
 
 	int const
 		current_index =
@@ -110,8 +139,8 @@ FLAKELIB_KERNEL_NAME(gradient_and_cross)(
 				flakelib_planar_global_size(),
 				position),
 		bottom_index =
-			flakelib_planar_bottom_of(
-				buffer_pitch,
+		flakelib_planar_bottom_of(
+			buffer_pitch,
 				flakelib_planar_global_size(),
 				position);
 

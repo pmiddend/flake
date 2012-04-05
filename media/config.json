@@ -11,7 +11,7 @@
 			"simple" :
 			{
 				"wind-strength" : 10.0,
-				"vorticity-strength" : 0.25,
+				"vorticity-strength" : 0.15,
 				"jacobi-iterations" : 50,
 				"monitor-font-size" : 15,
 				"master-and-slave-padding" : 3,
