@@ -174,17 +174,20 @@ flake::planar::cursor_splatter::right_mouse_target(
 }
 
 void
-flake::planar::cursor_splatter::update()
+flake::planar::cursor_splatter::update(
+	flakelib::duration const &_delta)
 {
 	if(left_button_pushed_down_ && optional_left_mouse_target_)
 		this->splat_at_cursor_position(
 			*optional_left_mouse_target_,
-			last_cursor_position_);
+			last_cursor_position_,
+			_delta);
 
 	if(right_button_pushed_down_ && optional_right_mouse_target_)
 		this->splat_at_cursor_position(
 			*optional_right_mouse_target_,
-			last_cursor_position_);
+			last_cursor_position_,
+			_delta);
 }
 
 flake::planar::cursor_splatter::~cursor_splatter()
@@ -222,7 +225,8 @@ flake::planar::cursor_splatter::move_callback(
 void
 flake::planar::cursor_splatter::splat_at_cursor_position(
 	flakelib::planar::float_view const &target,
-	sge::input::cursor::position const &cursor_position_window_coords)
+	sge::input::cursor::position const &cursor_position_window_coords,
+	flakelib::duration const &_delta)
 {
 	sge::renderer::vector2 const unprojected_lefttop(
 		this->unproject_cursor_position(
@@ -276,7 +280,7 @@ flake::planar::cursor_splatter::splat_at_cursor_position(
 		flakelib::splatter::pen::planar(
 			pen_,
 			new_pen_rectangle),
-		splat_value_);
+		_delta.count() * splat_value_);
 }
 
 sge::renderer::vector2 const

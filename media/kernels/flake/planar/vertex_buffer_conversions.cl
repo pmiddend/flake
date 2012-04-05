@@ -68,20 +68,21 @@ kernel void
 FLAKELIB_KERNEL_NAME(scalar_to_texture)(
 	global float const *FLAKELIB_KERNEL_ARGUMENT(input),
 	global write_only image2d_t FLAKELIB_KERNEL_ARGUMENT(output),
-	float const FLAKELIB_KERNEL_ARGUMENT(scaling))
+	float const FLAKELIB_KERNEL_ARGUMENT(scaling),
+	float const FLAKELIB_KERNEL_ARGUMENT(addition))
 {
 	int2 const position =
 		flakelib_planar_current_position();
 
-	float const input_value = input[get_image_width(output) * position.y + position.x];
-
 	float const
+		input_value =
+			input[get_image_width(output) * position.y + position.x],
+		modified_value =
+			addition + scaling * input_value,
 		positive_part =
-			scaling *
-			max(0.0f,input_value),
+			max(0.0f,modified_value),
 		negative_part =
-			scaling *
-			fabs(min(0.0f,input_value));
+			fabs(min(0.0f,modified_value));
 
 	write_imagef(
 		output,

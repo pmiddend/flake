@@ -83,7 +83,8 @@ void
 flake::planar::monitor::planar_converter::scalar_to_texture(
 	flakelib::planar::float_view const &_planar_buffer,
 	sge::opencl::memory_object::image::planar &_texture,
-	monitor::scaling_factor const &_scaling)
+	monitor::scaling_factor const &_scaling,
+	monitor::constant_addition const &_constant_addition)
 {
 	FCPPT_ASSERT_PRE(
 		_planar_buffer.size() == _texture.size());
@@ -99,6 +100,10 @@ flake::planar::monitor::planar_converter::scalar_to_texture(
 	scalar_to_texture_kernel_->numerical_argument(
 		"scaling",
 		_scaling.get());
+
+	scalar_to_texture_kernel_->numerical_argument(
+		"addition",
+		_constant_addition.get());
 
 	sge::opencl::memory_object::base_ref_sequence mem_objects;
 	mem_objects.push_back(

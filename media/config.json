@@ -20,7 +20,24 @@
 				"velocity-grid-scale" : 2.0,
 				"vorticity-gradient-arrow-scale" : 1.0,
 				"vorticity-gradient-grid-scale" : 2.0,
+				"smoke-density-splat-per-second" : 0.2,
 				"texture-grid-scale" : 1
+			},
+			"buoyancy" :
+			{
+				"vorticity-strength" : 0.15,
+				"jacobi-iterations" : 50,
+				"monitor-font-size" : 15,
+				"master-and-slave-padding" : 3,
+				"boundary" : "256/black.png",
+				"velocity-arrow-scale" : 1.0,
+				"velocity-grid-scale" : 2.0,
+				"texture-grid-scale" : 1,
+				"buissnesq-density-strength" : 0.5,
+				"buissnesq-temperature-strength" : 0.5,
+				"buissnesq-ambient-temperature" : 20.0,
+				"smoke-density-splat-per-second" : 0.2,
+				"temperature-degrees-splat-per-second" : 1.0
 			}
 		}
 	}

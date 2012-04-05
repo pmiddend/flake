@@ -150,6 +150,7 @@ set(
 	src/flakelib/log_parameters.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
+	src/flakelib/planar/simulation/stam/buissnesq/object.cpp
 	src/flakelib/planar/simulation/stam/divergence.cpp
 	src/flakelib/planar/simulation/stam/jacobi.cpp
 	src/flakelib/planar/simulation/stam/outflow_boundaries.cpp
@@ -330,3 +331,27 @@ install(
 	DESTINATION
 	${INSTALL_BINARY_DIR})
 # vorticity end
+
+# buoyancy begin
+awl_utils_add_portable_executable(
+	tests_buoyancy
+	"custom_main"
+	src/flake/planar/tests/buoyancy.cpp)
+
+target_link_libraries(
+	tests_buoyancy
+	flakelib
+	flake_helper_library
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
+	${Awl_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Rucksack_LIBRARIES}
+	${Boost_LIBRARIES})
+
+install(
+	TARGETS
+	tests_buoyancy
+	DESTINATION
+	${INSTALL_BINARY_DIR})
+# buoyancy end

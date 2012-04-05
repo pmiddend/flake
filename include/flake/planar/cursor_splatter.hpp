@@ -5,6 +5,7 @@
 #include <flakelib/buffer/planar_view_impl.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/planar/float_view.hpp>
+#include <flakelib/duration.hpp>
 #include <flakelib/splatter/object_fwd.hpp>
 #include <flakelib/splatter/pen/object_impl.hpp>
 #include <flakelib/splatter/pen/planar.hpp>
@@ -51,7 +52,8 @@ public:
 		flakelib::planar::float_view const &);
 
 	void
-	update();
+	update(
+		flakelib::duration const &);
 
 	~cursor_splatter();
 private:
@@ -79,7 +81,8 @@ private:
 	void
 	splat_at_cursor_position(
 		flakelib::planar::float_view const &,
-		sge::input::cursor::position const &);
+		sge::input::cursor::position const &,
+		flakelib::duration const &);
 
 	sge::renderer::vector2 const
 	unproject_cursor_position(

@@ -2,6 +2,7 @@
 #define FLAKE_PLANAR_MONITOR_PLANAR_CONVERTER_HPP_INCLUDED
 
 #include <flake/planar/monitor/arrow_scale.hpp>
+#include <flake/planar/monitor/constant_addition.hpp>
 #include <flake/planar/monitor/grid_scale.hpp>
 #include <flake/planar/monitor/scaling_factor.hpp>
 #include <flakelib/buffer/planar_view_fwd.hpp>
@@ -43,7 +44,8 @@ public:
 	scalar_to_texture(
 		flakelib::planar::float_view const &,
 		sge::opencl::memory_object::image::planar &,
-		monitor::scaling_factor const &);
+		monitor::scaling_factor const &,
+		monitor::constant_addition const &);
 
 	~planar_converter();
 private:
