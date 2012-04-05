@@ -11,6 +11,7 @@
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/camera/ortho_freelook/parameters.hpp>
 #include <sge/font/system.hpp>
+#include <sge/font/metrics.hpp>
 #include <sge/image/colors.hpp>
 #include <sge/image/view/const_object.hpp>
 #include <sge/image2d/file.hpp>
@@ -123,13 +124,14 @@ flake::planar::tests::simple::simple(
 	monitor_parent_(
 		this->renderer(),
 		this->opencl_system().command_queue(),
-		this->font_system().create_font(
-			flake::media_path_from_string(
-				FCPPT_TEXT("fonts/main.ttf")),
-			sge::parse::json::find_and_convert_member<sge::font::size_type>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/simple/monitor-font-size")))),
+		sge::font::metrics_shared_ptr(
+			this->font_system().create_font(
+				flake::media_path_from_string(
+					FCPPT_TEXT("fonts/main.ttf")),
+				sge::parse::json::find_and_convert_member<sge::font::size_type>(
+					this->configuration(),
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("tests/planar/simple/monitor-font-size"))))),
 		monitor::font_color(
 			sge::image::colors::black())),
 	monitor_planar_converter_(
@@ -413,13 +415,15 @@ flake::planar::tests::simple::update()
 				velocity_buffer_->value(),
 				delta);
 
-		// Force application
+		// Outflow boundaries
 		outflow_boundaries_.update(
 			velocity_buffer_->value());
 
+		// Wind source
 		wind_source_.update(
 			velocity_buffer_->value());
 
+		// Calculate vorticity
 		flakelib::planar::unique_float_buffer_lock vorticity_buffer(
 			vorticity_.apply_vorticity(
 				flakelib::planar::boundary_buffer_view(
@@ -432,8 +436,12 @@ flake::planar::tests::simple::update()
 				vorticity_buffer->value(),
 				delta,
 				flakelib::planar::simulation::stam::vorticity_strength(
-					0.1f)));
+					sge::parse::json::find_and_convert_member<cl_float>(
+						this->configuration(),
+						sge::parse::json::string_to_path(
+							FCPPT_TEXT("tests/planar/simple/vorticity-strength"))))));
 
+		// Apply vorticity
 		velocity_buffer_ =
 			vorticity_.apply_confinement(
 				vorticity_buffer->value(),
@@ -441,14 +449,20 @@ flake::planar::tests::simple::update()
 					velocity_buffer_->value()),
 				delta,
 				flakelib::planar::simulation::stam::vorticity_strength(
-					1.0f));
+					sge::parse::json::find_and_convert_member<cl_float>(
+						this->configuration(),
+						sge::parse::json::string_to_path(
+							FCPPT_TEXT("tests/planar/simple/vorticity-strength")))));
+
+		// Outflow boundaries again
+		outflow_boundaries_.update(
+			velocity_buffer_->value());
 
 		monitor_planar_converter_.to_arrow_vb(
 			vorticity_gradient_buffer->value(),
 			vorticity_gradient_arrows_.cl_buffer(),
 			vorticity_gradient_arrows_.grid_scale(),
 			vorticity_gradient_arrows_.arrow_scale());
-
 
 		monitor_planar_converter_.scalar_to_texture(
 			vorticity_buffer->value(),
@@ -467,7 +481,7 @@ flake::planar::tests::simple::update()
 			divergence->value(),
 			divergence_texture_.cl_texture(),
 			monitor::scaling_factor(
-				0.10f));
+				0.50f));
 
 		flakelib::planar::unique_float_buffer_lock initial_guess_buffer_lock(
 			fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(

@@ -12,7 +12,7 @@
 #include <flake/planar/monitor/scaling_factor.hpp>
 #include <flake/planar/monitor/dummy_sprite/collection.hpp>
 #include <flake/planar/monitor/dummy_sprite/system.hpp>
-#include <sge/font/metrics_ptr.hpp>
+#include <sge/font/metrics_shared_ptr.hpp>
 #include <sge/image/color/any/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
@@ -56,7 +56,7 @@ public:
 	parent(
 		sge::renderer::device &,
 		sge::opencl::command_queue::object &,
-		sge::font::metrics_ptr,
+		sge::font::metrics_shared_ptr,
 		monitor::font_color const &);
 
 	sge::renderer::vertex_declaration const &
@@ -93,7 +93,7 @@ private:
 
 	sge::renderer::device &renderer_;
 	sge::opencl::command_queue::object &command_queue_;
-	sge::font::metrics_ptr font_metrics_;
+	sge::font::metrics_shared_ptr font_metrics_;
 	flake::sprite_drawer_3d font_drawer_;
 	sge::renderer::vertex_declaration_ptr vd_;
 	sge::shader::object arrow_shader_;

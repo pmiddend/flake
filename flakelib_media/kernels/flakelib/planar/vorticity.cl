@@ -46,17 +46,21 @@ FLAKELIB_KERNEL_NAME(apply_vorticity)(
 
 	float2
 		left =
-			(1.0f - boundary[left_index]) * velocity[left_index],
+			//(1.0f - boundary[left_index]) * velocity[left_index],
+			velocity[left_index],
 		right =
-			(1.0f - boundary[right_index]) * velocity[right_index],
+			//(1.0f - boundary[right_index]) * velocity[right_index],
+			 velocity[right_index],
 		top =
-			(1.0f - boundary[top_index]) * velocity[top_index],
+			//(1.0f - boundary[top_index]) * velocity[top_index],
+			 velocity[top_index],
 		bottom =
-			(1.0f - boundary[bottom_index]) * velocity[bottom_index];
+			//(1.0f - boundary[bottom_index]) * velocity[bottom_index];
+			 velocity[bottom_index];
 
 	output[current_index] =
-		0.5f * ((right.y - left.y) - (top.x - bottom.x));
-//		0.5f * ((right.y - left.y) - (bottom.x - top.x));
+//		0.5f * ((right.y - left.y) - (top.x - bottom.x));
+		0.5f * ((right.y - left.y) - (bottom.x - top.x));
 }
 
 kernel void
@@ -70,6 +74,20 @@ FLAKELIB_KERNEL_NAME(gradient_and_cross)(
 {
 	int2 const position =
 		flakelib_planar_current_position();
+
+	/*
+	if(position.x == 0 || position.y == 0 || position.x == buffer_pitch-1 || position.y == buffer_pitch-1)
+	{
+		output[flakelib_planar_at(
+					buffer_pitch,
+					position)] =
+			velocity[
+				flakelib_planar_at(
+					buffer_pitch,
+					position)];
+		return;
+	}
+	*/
 
 	int const
 		current_index =
@@ -111,8 +129,8 @@ FLAKELIB_KERNEL_NAME(gradient_and_cross)(
 		0.5f *
 		(float2)(
 			right-left,
-//			bottom-top);
-			top-bottom);
+			bottom-top);
+//			top-bottom);
 
 	float const gradient_magnitude =
 		fast_length(gradient);
@@ -136,8 +154,7 @@ FLAKELIB_KERNEL_NAME(gradient_and_cross)(
 		vorticity_strength *
 		min(
 			(float2)(1.0f,1.0f),
-			//normalized_gradient.yx);
-			normalized_gradient.yx);
+			(float2)(normalized_gradient.y,-normalized_gradient.x));
 }
 
 kernel void
@@ -191,8 +208,8 @@ FLAKELIB_KERNEL_NAME(confinement_data)(
 		0.5f *
 		(float2)(
 			right-left,
-//			bottom-top);
-			top-bottom);
+			bottom-top);
+//			top-bottom);
 
 	float const gradient_magnitude =
 		fast_length(gradient);
@@ -209,7 +226,8 @@ FLAKELIB_KERNEL_NAME(confinement_data)(
 
 	output[current_index] =
 		//normalized_gradient;
-		gradient.yx;
+		vorticity[current_index] *
+		(float2)(normalized_gradient.y,-normalized_gradient.x);
 		/*
 		dt *
 		vorticity[current_index] *

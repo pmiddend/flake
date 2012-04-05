@@ -73,16 +73,22 @@ FLAKELIB_KERNEL_NAME(scalar_to_texture)(
 	int2 const position =
 		flakelib_planar_current_position();
 
-	float const rgb =
-		scaling *
-		input[get_image_width(output) * position.y + position.x];
+	float const input_value = input[get_image_width(output) * position.y + position.x];
+
+	float const
+		positive_part =
+			scaling *
+			max(0.0f,input_value),
+		negative_part =
+			scaling *
+			fabs(min(0.0f,input_value));
 
 	write_imagef(
 		output,
 		position,
 		(float4)(
-			rgb,
-			rgb,
-			rgb,
+			positive_part,
+			negative_part,
+			0.0f,
 			1.0f));
 }

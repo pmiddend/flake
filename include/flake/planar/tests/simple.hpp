@@ -24,7 +24,7 @@
 #include <rucksack/widget/viewport_adaptor.hpp>
 #include <sge/camera/ortho_freelook/object.hpp>
 #include <sge/camera/ortho_freelook/projection_rectangle_from_viewport.hpp>
-#include <sge/image2d/file_ptr.hpp>
+#include <sge/image2d/file_unique_ptr.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
 #include <awl/main/exit_code.hpp>
@@ -65,7 +65,7 @@ private:
 	flakelib::planar::simulation::stam::subtract_pressure_gradient subtract_pressure_gradient_;
 	flakelib::planar::simulation::stam::vorticity vorticity_;
 	// Buffers
-	sge::image2d::file_ptr boundary_image_file_;
+	sge::image2d::file_unique_ptr boundary_image_file_;
 	flakelib::planar::float_buffer_lock boundary_buffer_;
 	flakelib::planar::unique_float2_buffer_lock velocity_buffer_;
 	flakelib::planar::unique_float_buffer_lock smoke_density_buffer_;

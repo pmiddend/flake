@@ -10,6 +10,7 @@
 #include <sge/charconv/create_system.hpp>
 #include <sge/charconv/system.hpp>
 #include <sge/font/system.hpp>
+#include <sge/font/metrics.hpp>
 #include <sge/log/global_context.hpp>
 #include <sge/media/all_extensions.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
@@ -173,13 +174,14 @@ flake::test_base::test_base(
 		fcppt::make_unique_ptr<flake::notifications::object>(
 			fcppt::ref(
 				this->renderer()),
-			this->font_system().create_font(
-				flake::media_path_from_string(
-					FCPPT_TEXT("fonts/notifications.ttf")),
-				sge::parse::json::find_and_convert_member<sge::font::size_type>(
-					this->configuration(),
-					sge::parse::json::string_to_path(
-						FCPPT_TEXT("tests/notification-font-size")))),
+			sge::font::metrics_shared_ptr(
+				this->font_system().create_font(
+					flake::media_path_from_string(
+						FCPPT_TEXT("fonts/notifications.ttf")),
+					sge::parse::json::find_and_convert_member<sge::font::size_type>(
+						this->configuration(),
+						sge::parse::json::string_to_path(
+							FCPPT_TEXT("tests/notification-font-size"))))),
 			flake::notifications::time_to_live(
 				boost::chrono::milliseconds(
 					sge::parse::json::find_and_convert_member<boost::chrono::milliseconds::rep>(

@@ -92,7 +92,7 @@ flake::planar::monitor::texture::texture(
 			sge::renderer::texture::planar_parameters(
 				fcppt::math::dim::structure_cast<sge::renderer::dim2>(
 					_grid_dimensions.get()),
-				sge::image::color::format::r32f,
+				sge::image::color::format::rgba32f,
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags_field(
 					sge::renderer::resource_flags::none),

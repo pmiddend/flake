@@ -21,7 +21,7 @@
 
 flake::notifications::object::object(
 	sge::renderer::device &_renderer,
-	sge::font::metrics_ptr const _metrics,
+	sge::font::metrics_shared_ptr const _metrics,
 	notifications::time_to_live const &_time_to_live)
 :
 	time_to_live_(

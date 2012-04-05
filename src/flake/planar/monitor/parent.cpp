@@ -32,7 +32,7 @@
 flake::planar::monitor::parent::parent(
 	sge::renderer::device &_renderer,
 	sge::opencl::command_queue::object &_command_queue,
-	sge::font::metrics_ptr const _font_metrics,
+	sge::font::metrics_shared_ptr const _font_metrics,
 	monitor::font_color const &_font_color)
 :
 	renderer_(
