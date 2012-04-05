@@ -306,14 +306,14 @@ add_library(
 	STATIC
 	${FLAKE_FILES})
 
-# simple begin
+# vorticity begin
 awl_utils_add_portable_executable(
-	tests_simple
+	tests_vorticity
 	"custom_main"
-	src/flake/planar/tests/simple.cpp)
+	src/flake/planar/tests/vorticity.cpp)
 
 target_link_libraries(
-	tests_simple
+	tests_vorticity
 	flakelib
 	flake_helper_library
 	${Fcppt_core_LIBRARIES}
@@ -325,7 +325,7 @@ target_link_libraries(
 
 install(
 	TARGETS
-	tests_simple
+	tests_vorticity
 	DESTINATION
 	${INSTALL_BINARY_DIR})
-# simple end
+# vorticity end

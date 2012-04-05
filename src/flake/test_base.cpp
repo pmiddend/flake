@@ -1,7 +1,9 @@
+#include <flakelib/buffer_pool/object.hpp>
+#include <flakelib/cl/program_context.hpp>
+#include <flakelib/cl/compiler_flags.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/test_base.hpp>
 #include <flake/notifications/object.hpp>
-#include <flake/planar/tests/simple.hpp>
 #include <flake/time_modifier/object.hpp>
 #include <flakelib/log.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
@@ -47,6 +49,7 @@
 #include <fcppt/text.hpp>
 #include <fcppt/to_std_string.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
+#include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/io/cerr.hpp>
 #include <fcppt/log/headers.hpp>

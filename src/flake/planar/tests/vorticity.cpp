@@ -1,7 +1,7 @@
 #include <flake/catch_statements.hpp>
 #include <flake/media_path.hpp>
 #include <flake/media_path_from_string.hpp>
-#include <flake/planar/tests/simple.hpp>
+#include <flake/planar/tests/vorticity.hpp>
 #include <flakelib/media_path.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
@@ -49,7 +49,7 @@ custom_main(
 	awl::main::function_context const &_function_context)
 try
 {
-	flake::planar::tests::simple s(
+	flake::planar::tests::vorticity s(
 		_function_context);
 
 	return
@@ -57,13 +57,13 @@ try
 }
 FLAKE_CATCH_STATEMENTS
 
-flake::planar::tests::simple::simple(
+flake::planar::tests::vorticity::vorticity(
 	awl::main::function_context const &_function_context)
 :
 	flake::test_base(
 		_function_context,
 		sge::window::title(
-			FCPPT_TEXT("Simple 2D Stam simulation")),
+			FCPPT_TEXT("vorticity 2D Stam simulation")),
 		sge::systems::cursor_option_field::null()),
 	fill_buffer_(
 		this->program_context()),
@@ -75,7 +75,7 @@ flake::planar::tests::simple::simple(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/simple/wind-strength"))))),
+					FCPPT_TEXT("tests/planar/vorticity/wind-strength"))))),
 	outflow_boundaries_(
 		this->program_context()),
 	semilagrangian_advection_(
@@ -91,7 +91,7 @@ flake::planar::tests::simple::simple(
 			sge::parse::json::find_and_convert_member<flakelib::planar::simulation::stam::iterations::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/simple/jacobi-iterations"))))),
+					FCPPT_TEXT("tests/planar/vorticity/jacobi-iterations"))))),
 	subtract_pressure_gradient_(
 		this->program_context()),
 	vorticity_(
@@ -105,7 +105,7 @@ flake::planar::tests::simple::simple(
 				sge::parse::json::find_and_convert_member<fcppt::string>(
 					this->configuration(),
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("tests/planar/simple/boundary"))))),
+						FCPPT_TEXT("tests/planar/vorticity/boundary"))))),
 	boundary_buffer_(
 		this->buffer_pool(),
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
@@ -131,7 +131,7 @@ flake::planar::tests::simple::simple(
 				sge::parse::json::find_and_convert_member<sge::font::size_type>(
 					this->configuration(),
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("tests/planar/simple/monitor-font-size"))))),
+						FCPPT_TEXT("tests/planar/vorticity/monitor-font-size"))))),
 		monitor::font_color(
 			sge::image::colors::black())),
 	monitor_planar_converter_(
@@ -148,12 +148,12 @@ flake::planar::tests::simple::simple(
 			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/simple/velocity-arrow-scale")))),
+					FCPPT_TEXT("tests/planar/vorticity/velocity-arrow-scale")))),
 		monitor::grid_scale(
 			sge::parse::json::find_and_convert_member<monitor::grid_scale::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/simple/velocity-grid-scale")))),
+					FCPPT_TEXT("tests/planar/vorticity/velocity-grid-scale")))),
 		sge::renderer::texture::create_planar_from_view(
 			this->renderer(),
 			boundary_image_file_->view(),
@@ -168,7 +168,7 @@ flake::planar::tests::simple::simple(
 			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/simple/texture-grid-scale"))) *
+					FCPPT_TEXT("tests/planar/vorticity/texture-grid-scale"))) *
 			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
@@ -186,7 +186,7 @@ flake::planar::tests::simple::simple(
 			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/simple/texture-grid-scale"))) *
+					FCPPT_TEXT("tests/planar/vorticity/texture-grid-scale"))) *
 			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
@@ -204,7 +204,7 @@ flake::planar::tests::simple::simple(
 			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/simple/texture-grid-scale"))) *
+					FCPPT_TEXT("tests/planar/vorticity/texture-grid-scale"))) *
 			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
@@ -222,7 +222,7 @@ flake::planar::tests::simple::simple(
 			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/simple/texture-grid-scale"))) *
+					FCPPT_TEXT("tests/planar/vorticity/texture-grid-scale"))) *
 			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
@@ -244,12 +244,12 @@ flake::planar::tests::simple::simple(
 			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/simple/vorticity-gradient-arrow-scale")))),
+					FCPPT_TEXT("tests/planar/vorticity/vorticity-gradient-arrow-scale")))),
 		monitor::grid_scale(
 			sge::parse::json::find_and_convert_member<monitor::grid_scale::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/simple/vorticity-gradient-grid-scale")))),
+					FCPPT_TEXT("tests/planar/vorticity/vorticity-gradient-grid-scale")))),
 		sge::renderer::texture::create_planar_from_view(
 			this->renderer(),
 			boundary_image_file_->view(),
@@ -264,7 +264,7 @@ flake::planar::tests::simple::simple(
 			sge::parse::json::find_and_convert_member<rucksack::scalar>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/simple/master-and-slave-padding")))),
+					FCPPT_TEXT("tests/planar/vorticity/master-and-slave-padding")))),
 		rucksack::aspect(
 			1,
 			1)),
@@ -351,18 +351,18 @@ flake::planar::tests::simple::simple(
 }
 
 awl::main::exit_code const
-flake::planar::tests::simple::run()
+flake::planar::tests::vorticity::run()
 {
 	return
 		flake::test_base::run();
 }
 
-flake::planar::tests::simple::~simple()
+flake::planar::tests::vorticity::~vorticity()
 {
 }
 
 void
-flake::planar::tests::simple::render()
+flake::planar::tests::vorticity::render()
 {
 	sge::renderer::state::scoped scoped_state(
 		this->renderer(),
@@ -383,7 +383,7 @@ flake::planar::tests::simple::render()
 }
 
 void
-flake::planar::tests::simple::update()
+flake::planar::tests::vorticity::update()
 {
 	test_base::update();
 
@@ -435,7 +435,7 @@ flake::planar::tests::simple::update()
 					sge::parse::json::find_and_convert_member<cl_float>(
 						this->configuration(),
 						sge::parse::json::string_to_path(
-							FCPPT_TEXT("tests/planar/simple/vorticity-strength"))))));
+							FCPPT_TEXT("tests/planar/vorticity/vorticity-strength"))))));
 
 		// Apply vorticity
 		velocity_buffer_ =
@@ -448,7 +448,7 @@ flake::planar::tests::simple::update()
 					sge::parse::json::find_and_convert_member<cl_float>(
 						this->configuration(),
 						sge::parse::json::string_to_path(
-							FCPPT_TEXT("tests/planar/simple/vorticity-strength")))));
+							FCPPT_TEXT("tests/planar/vorticity/vorticity-strength")))));
 
 		// Outflow boundaries
 		outflow_boundaries_.update(
@@ -543,7 +543,7 @@ flake::planar::tests::simple::update()
 }
 
 void
-flake::planar::tests::simple::calculate_with_stams_method(
+flake::planar::tests::vorticity::calculate_with_stams_method(
 	flakelib::duration const &delta)
 {
 	velocity_buffer_ =

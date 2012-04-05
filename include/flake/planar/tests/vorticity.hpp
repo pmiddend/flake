@@ -1,5 +1,5 @@
-#ifndef FLAKE_PLANAR_TESTS_SIMPLE_HPP_INCLUDED
-#define FLAKE_PLANAR_TESTS_SIMPLE_HPP_INCLUDED
+#ifndef FLAKE_PLANAR_TESTS_VORTICITY_HPP_INCLUDED
+#define FLAKE_PLANAR_TESTS_VORTICITY_HPP_INCLUDED
 
 #include <flake/test_base.hpp>
 #include <flake/planar/cursor_splatter.hpp>
@@ -38,21 +38,21 @@ namespace planar
 {
 namespace tests
 {
-class simple
+class vorticity
 :
 	public flake::test_base
 {
 FCPPT_NONCOPYABLE(
-	simple);
+	vorticity);
 public:
 	explicit
-	simple(
+	vorticity(
 		awl::main::function_context const &);
 
 	awl::main::exit_code const
 	run();
 
-	~simple();
+	~vorticity();
 private:
 	// Programs
 	flakelib::utility::fill_buffer fill_buffer_;
