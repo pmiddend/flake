@@ -10,7 +10,6 @@ namespace time_modifier
 class kernel
 {
 public:
-	explicit
 	kernel();
 
 	void

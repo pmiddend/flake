@@ -34,7 +34,6 @@ FCPPT_NONCOPYABLE(
 	object);
 public:
 	FLAKELIB_SYMBOL
-	explicit
 	object(
 		cl::program_context const &,
 		buissnesq::density_strength const &,

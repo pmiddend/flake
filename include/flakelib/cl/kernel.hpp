@@ -11,6 +11,7 @@
 #include <sge/opencl/memory_object/dim1.hpp>
 #include <sge/opencl/memory_object/dim2.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
+#include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <sge/opencl/program/object_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -28,7 +29,6 @@ FCPPT_NONCOPYABLE(
 	kernel);
 public:
 	FLAKELIB_SYMBOL
-	explicit
 	kernel(
 		sge::opencl::program::object &,
 		sge::opencl::command_queue::object &,
@@ -49,6 +49,12 @@ public:
 
 	FLAKELIB_SYMBOL
 	void
+	planar_image_argument(
+		std::string const &,
+		sge::opencl::memory_object::image::planar &);
+
+	FLAKELIB_SYMBOL
+	void
 	enqueue_automatic(
 		sge::opencl::memory_object::dim1 const &);
 
@@ -61,6 +67,10 @@ public:
 	void
 	enqueue_automatic(
 		sge::opencl::memory_object::dim3 const &);
+
+	FLAKELIB_SYMBOL
+	sge::opencl::command_queue::object &
+	command_queue() const;
 
 	FLAKELIB_SYMBOL
 	~kernel();
@@ -78,6 +88,9 @@ private:
 	sge::opencl::kernel::argument_index const
 	index_for_name(
 		std::string const &);
+
+	void
+	check_unassigned_parameters();
 };
 }
 }

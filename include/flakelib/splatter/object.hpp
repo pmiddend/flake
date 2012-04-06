@@ -9,6 +9,8 @@
 #include <flakelib/planar/float2_view.hpp>
 #include <flakelib/planar/float_view.hpp>
 #include <flakelib/splatter/pen/planar.hpp>
+#include <flakelib/splatter/pen/volume.hpp>
+#include <flakelib/volume/float_view.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <fcppt/noncopyable.hpp>
 
@@ -41,6 +43,13 @@ public:
 		splatter::pen::planar const &,
 		cl::float2 const &);
 
+	FLAKELIB_SYMBOL
+	void
+	splat_volume_float(
+		volume::float_view const &,
+		splatter::pen::volume const &,
+		cl_float);
+
 	/*
 	void
 	splat_float4_sphere(
@@ -65,8 +74,9 @@ public:
 	~object();
 private:
 	flakelib::cl::program program_;
-	flakelib::cl::unique_kernel_ptr splat_float_;
-	flakelib::cl::unique_kernel_ptr splat_float2_;
+	flakelib::cl::unique_kernel_ptr splat_planar_float_;
+	flakelib::cl::unique_kernel_ptr splat_planar_float2_;
+	flakelib::cl::unique_kernel_ptr splat_volume_float_;
 };
 }
 }

@@ -26,7 +26,6 @@ FCPPT_NONCOPYABLE(
 	wind_source);
 public:
 	FLAKELIB_SYMBOL
-	explicit
 	wind_source(
 		cl::program_context const &,
 		stam::wind_strength const &);

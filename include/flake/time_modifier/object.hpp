@@ -18,7 +18,6 @@ class object
 FCPPT_NONCOPYABLE(
 	object);
 public:
-	explicit
 	object(
 		sge::input::keyboard::device &,
 		notifications::object &);

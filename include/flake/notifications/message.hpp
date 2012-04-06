@@ -12,7 +12,6 @@ namespace notifications
 class message
 {
 public:
-	explicit
 	message(
 		notifications::text const &,
 		notifications::time_to_live const &);

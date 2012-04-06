@@ -12,6 +12,7 @@
 #include <sge/renderer/onscreen_target.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/scoped_transform.hpp>
+#include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/planar_parameters.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/sprite/parameters.hpp>
@@ -31,6 +32,7 @@
 #include <iostream>
 #include <limits>
 #include <fcppt/config/external_end.hpp>
+
 
 namespace
 {
@@ -108,7 +110,8 @@ flake::planar::monitor::texture::texture(
 				_texture_size.get())
 			.texture(
 				fcppt::make_shared_ptr<sge::texture::part_raw>(
-					renderer_texture_))
+					fcppt::ref(
+						*renderer_texture_)))
 			.connection(
 				child::parent().sprite_collection().connection(
 					0))),
@@ -170,7 +173,6 @@ void
 flake::planar::monitor::texture::render(
 	monitor::optional_projection const &_projection)
 {
-
 	sge::renderer::scoped_transform world_transform(
 		child::parent().renderer(),
 		sge::renderer::matrix_mode::world,

@@ -40,7 +40,6 @@ public:
 
 	virtual ~test_base() = 0;
 protected:
-	explicit
 	test_base(
 		awl::main::function_context const &,
 		sge::window::title const &,

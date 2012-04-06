@@ -6,6 +6,7 @@
 #include <flake/planar/monitor/grid_dimensions.hpp>
 #include <flake/planar/monitor/grid_scale.hpp>
 #include <flake/planar/monitor/name.hpp>
+#include <flake/planar/monitor/optional_background_texture.hpp>
 #include <flake/planar/monitor/parent_fwd.hpp>
 #include <flake/planar/monitor/rect.hpp>
 #include <flake/planar/monitor/dummy_sprite/object.hpp>
@@ -13,8 +14,7 @@
 #include <rucksack/widget/box/base.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
-#include <sge/renderer/vertex_buffer_ptr.hpp>
-#include <sge/renderer/texture/planar_ptr.hpp>
+#include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
@@ -34,14 +34,13 @@ class planar_arrows
 FCPPT_NONCOPYABLE(
 	planar_arrows);
 public:
-	explicit
 	planar_arrows(
 		monitor::parent &,
 		monitor::name const &,
 		monitor::grid_dimensions const &,
 		monitor::arrow_scale const &,
 		monitor::grid_scale const &,
-		sge::renderer::texture::planar_ptr);
+		monitor::optional_background_texture const &);
 
 	sge::opencl::memory_object::buffer &
 	cl_buffer();
@@ -72,7 +71,7 @@ private:
 	monitor::arrow_scale const arrow_scale_;
 	monitor::grid_scale const grid_scale_;
 	monitor::rect::vector position_;
-	sge::renderer::vertex_buffer_ptr const vb_;
+	sge::renderer::vertex_buffer_scoped_ptr const vb_;
 	sge::opencl::memory_object::buffer cl_vb_;
 	fcppt::scoped_ptr<dummy_sprite::object> sprite_;
 	rucksack::widget::box::base box_parent_;

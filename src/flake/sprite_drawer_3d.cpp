@@ -79,11 +79,13 @@ flake::sprite_drawer_3d::begin_rendering(
 	sge::font::dim const &
 )
 {
+	/*
 	sprites_.clear();
 
 	sprites_.reserve(
 		buffer_chars
 	);
+	*/
 }
 
 void
@@ -93,6 +95,7 @@ flake::sprite_drawer_3d::draw_char(
 	sge::font::const_image_view const &_data
 )
 {
+	/*
 	sge::image2d::dim const dim(
 		sge::image2d::view::size(
 			_data
@@ -117,7 +120,7 @@ flake::sprite_drawer_3d::draw_char(
 						_data
 					)
 				:
-					sge::texture::const_part_ptr()
+					sge::texture::const_part_shared_ptr()
 			)
 			.size(
 				fcppt::math::dim::structure_cast<
@@ -131,11 +134,13 @@ flake::sprite_drawer_3d::draw_char(
 			)
 		)
 	);
+	*/
 }
 
 void
 flake::sprite_drawer_3d::end_rendering()
 {
+	/*
 	sge::sprite::process::with_options
 	<
 		sge::sprite::process::options
@@ -159,6 +164,7 @@ flake::sprite_drawer_3d::end_rendering()
 		),
 		sprite_system_,
 		sge::sprite::compare::default_());
+		*/
 }
 
 void
@@ -174,7 +180,7 @@ flake::sprite_drawer_3d::color(
 		);
 }
 
-sge::texture::const_part_ptr const
+sge::texture::const_part_shared_ptr const
 flake::sprite_drawer_3d::cached_texture(
 	sge::font::text::char_type const _ch,
 	sge::font::const_image_view const &_data
@@ -194,9 +200,10 @@ flake::sprite_drawer_3d::cached_texture(
 			textures_.insert(
 				std::make_pair(
 					_ch,
-					texman_.add(
-						_data
-					)
+					sge::texture::const_part_shared_ptr(
+						texman_.add(
+							_data
+						))
 				)
 			).first->second;
 }

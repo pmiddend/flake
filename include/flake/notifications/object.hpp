@@ -32,7 +32,6 @@ public:
 	// want the notification object to have sole ownership over the
 	// metrics. However, a ref might be inconvenient, too, if we have a
 	// single font just for the notifications.
-	explicit
 	object(
 		sge::renderer::device &,
 		sge::font::metrics_shared_ptr,

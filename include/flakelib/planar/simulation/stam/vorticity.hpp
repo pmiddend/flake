@@ -30,7 +30,6 @@ FCPPT_NONCOPYABLE(
 	vorticity);
 public:
 	FLAKELIB_SYMBOL
-	explicit
 	vorticity(
 		cl::program_context const &,
 		flakelib::buffer_pool::object &);

@@ -18,7 +18,6 @@ public:
 	T
 	value_type;
 
-	explicit
 	planar_view(
 		sge::opencl::memory_object::buffer &,
 		sge::opencl::memory_object::dim2 const &);

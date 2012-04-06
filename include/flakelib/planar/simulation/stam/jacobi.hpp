@@ -29,7 +29,6 @@ FCPPT_NONCOPYABLE(
 	jacobi);
 public:
 	FLAKELIB_SYMBOL
-	explicit
 	jacobi(
 		cl::program_context const &,
 		flakelib::buffer_pool::object &,

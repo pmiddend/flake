@@ -31,7 +31,6 @@ public:
 	// the program to a specific command queue. Since we're simulating with
 	// just one queue everywhere, that's not a problem.
 	FLAKELIB_SYMBOL
-	explicit
 	program(
 		sge::opencl::command_queue::object &,
 		boost::filesystem::path const &,

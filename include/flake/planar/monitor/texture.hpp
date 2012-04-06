@@ -11,6 +11,7 @@
 #include <rucksack/widget/dummy.hpp>
 #include <rucksack/widget/box/base.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
+#include <sge/renderer/texture/planar_unique_ptr.hpp>
 #include <sge/sprite/object.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/math/box/object_impl.hpp>
@@ -29,7 +30,6 @@ class texture
 FCPPT_NONCOPYABLE(
 	texture);
 public:
-	explicit
 	texture(
 		monitor::parent &,
 		monitor::name const &,
@@ -69,7 +69,7 @@ public:
 private:
 	fcppt::string const name_;
 	monitor::scalar const scaling_;
-	sge::renderer::texture::planar_ptr renderer_texture_;
+	sge::renderer::texture::planar_unique_ptr renderer_texture_;
 	sge::opencl::memory_object::image::planar cl_texture_;
 	dummy_sprite::object sprite_;
 	rucksack::widget::box::base box_parent_;

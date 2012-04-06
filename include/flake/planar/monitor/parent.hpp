@@ -21,7 +21,7 @@
 #include <sge/opencl/program/object.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>
-#include <sge/renderer/vertex_declaration_ptr.hpp>
+#include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/shader/object.hpp>
 #include <fcppt/noncopyable.hpp>
 
@@ -52,7 +52,6 @@ class parent
 FCPPT_NONCOPYABLE(
 	parent);
 public:
-	explicit
 	parent(
 		sge::renderer::device &,
 		sge::opencl::command_queue::object &,
@@ -95,7 +94,7 @@ private:
 	sge::opencl::command_queue::object &command_queue_;
 	sge::font::metrics_shared_ptr font_metrics_;
 	flake::sprite_drawer_3d font_drawer_;
-	sge::renderer::vertex_declaration_ptr vd_;
+	sge::renderer::vertex_declaration_scoped_ptr vd_;
 	sge::shader::object arrow_shader_;
 	monitor::dummy_sprite::system sprite_system_;
 	monitor::dummy_sprite::collection sprite_collection_;

@@ -94,7 +94,7 @@ flake::planar::monitor::planar_arrows::planar_arrows(
 	monitor::grid_dimensions const &_dimensions,
 	monitor::arrow_scale const &_arrow_scale,
 	monitor::grid_scale const &_grid_scale,
-	sge::renderer::texture::planar_ptr const _optional_texture)
+	monitor::optional_background_texture const &_optional_texture)
 :
 	monitor::child(
 		_parent),
@@ -172,7 +172,8 @@ flake::planar::monitor::planar_arrows::planar_arrows(
 				dummy_sprite::parameters()
 					.texture(
 						fcppt::make_shared_ptr<sge::texture::part_raw>(
-							_optional_texture))
+							fcppt::ref(
+								*_optional_texture)))
 					.connection(
 						child::parent().sprite_collection().connection(
 							0))));

@@ -26,7 +26,6 @@ FCPPT_NONCOPYABLE(
 	divergence);
 public:
 	FLAKELIB_SYMBOL
-	explicit
 	divergence(
 		cl::program_context const &,
 		flakelib::buffer_pool::object &);

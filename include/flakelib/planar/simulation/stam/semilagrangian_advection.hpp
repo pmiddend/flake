@@ -30,7 +30,6 @@ FCPPT_NONCOPYABLE(
 	semilagrangian_advection);
 public:
 	FLAKELIB_SYMBOL
-	explicit
 	semilagrangian_advection(
 		cl::program_context const &,
 		flakelib::buffer_pool::object &);

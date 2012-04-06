@@ -159,11 +159,13 @@ set(
 	src/flakelib/planar/simulation/stam/vorticity.cpp
 	src/flakelib/planar/simulation/stam/wind_source.cpp
 	src/flakelib/scoped_frame_limiter.cpp
+	src/flakelib/splatter/box/object_fwd.cpp
 	src/flakelib/splatter/object.cpp
 	src/flakelib/splatter/rectangle/object.cpp
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/utility/fill_buffer.cpp
 	src/flakelib/utility/mix_buffers.cpp
+	src/flakelib/volume/conversion/object.cpp
 )
 
 set(
@@ -178,6 +180,7 @@ set(
 	src/flake/planar/monitor/planar_arrows.cpp
 	src/flake/planar/monitor/planar_converter.cpp
 	src/flake/planar/monitor/texture.cpp
+	src/flake/save_l8_texture_to_file.cpp
 	src/flake/sprite_drawer_3d.cpp
 	src/flake/test_base.cpp
 	src/flake/time_modifier/kernel.cpp
@@ -355,3 +358,27 @@ install(
 	DESTINATION
 	${INSTALL_BINARY_DIR})
 # buoyancy end
+
+# volume_splat begin
+awl_utils_add_portable_executable(
+	tests_volume_splat
+	"custom_main"
+	src/flake/volume/tests/volume_splat.cpp)
+
+target_link_libraries(
+	tests_volume_splat
+	flakelib
+	flake_helper_library
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
+	${Awl_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Rucksack_LIBRARIES}
+	${Boost_LIBRARIES})
+
+install(
+	TARGETS
+	tests_volume_splat
+	DESTINATION
+	${INSTALL_BINARY_DIR})
+# volume_splat end

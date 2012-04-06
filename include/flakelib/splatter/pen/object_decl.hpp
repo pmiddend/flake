@@ -22,7 +22,6 @@ public:
 	Bounding
 	bounding_type;
 
-	explicit
 	object(
 		bounding_type const &,
 		pen::is_round const &,
@@ -30,7 +29,6 @@ public:
 		pen::draw_mode::type,
 		pen::blend_factor const &);
 
-	explicit
 	object(
 		object const &,
 		bounding_type const &);

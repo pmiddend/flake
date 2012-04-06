@@ -38,7 +38,8 @@ sge::sprite::config::choices
 		sge::sprite::config::with_texture
 		<
 			sge::sprite::config::texture_level_count<1u>,
-			sge::sprite::config::texture_coordinates::automatic
+			sge::sprite::config::texture_coordinates::automatic,
+			sge::sprite::config::texture_ownership::shared
 		>,
 		sge::sprite::config::intrusive
 	>

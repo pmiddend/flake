@@ -18,7 +18,6 @@ class planar_lock
 FCPPT_NONASSIGNABLE(
 	planar_lock);
 public:
-	explicit
 	planar_lock(
 		buffer_pool::object &,
 		sge::opencl::memory_object::dim2 const &);

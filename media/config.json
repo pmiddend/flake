@@ -39,6 +39,14 @@
 				"smoke-density-splat-per-second" : 0.2,
 				"temperature-degrees-splat-per-second" : 1.0
 			}
+		},
+		"volume" :
+		{
+			"volume-splat" :
+			{
+				"simulation-size" : [64,64,64],
+				"splat-size" : [10,10,10]
+			}
 		}
 	}
 }

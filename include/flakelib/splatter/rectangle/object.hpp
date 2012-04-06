@@ -18,7 +18,6 @@ class object
 {
 public:
 	FLAKELIB_SYMBOL
-	explicit
 	object(
 		rectangle::position const &,
 		rectangle::size const &);

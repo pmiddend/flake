@@ -27,6 +27,7 @@
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/texture/create_planar_from_view.hpp>
+#include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters.hpp>
@@ -128,6 +129,13 @@ flake::planar::tests::vorticity::vorticity(
 			fcppt::ref(
 				this->buffer_pool()),
 			boundary_buffer_.value().size())),
+	boundary_texture_(
+		sge::renderer::texture::create_planar_from_view(
+			this->renderer(),
+			boundary_image_file_->view(),
+			sge::renderer::texture::mipmap::off(),
+			sge::renderer::resource_flags_field(
+				sge::renderer::resource_flags::none))),
 	monitor_parent_(
 		this->renderer(),
 		this->opencl_system().command_queue(),
@@ -161,12 +169,8 @@ flake::planar::tests::vorticity::vorticity(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("tests/planar/vorticity/velocity-grid-scale")))),
-		sge::renderer::texture::create_planar_from_view(
-			this->renderer(),
-			boundary_image_file_->view(),
-			sge::renderer::texture::mipmap::off(),
-			sge::renderer::resource_flags_field(
-				sge::renderer::resource_flags::none))),
+		monitor::optional_background_texture(
+			*boundary_texture_)),
 	smoke_density_texture_(
 		monitor_parent_,
 		monitor::name(
@@ -257,12 +261,8 @@ flake::planar::tests::vorticity::vorticity(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("tests/planar/vorticity/vorticity-gradient-grid-scale")))),
-		sge::renderer::texture::create_planar_from_view(
-			this->renderer(),
-			boundary_image_file_->view(),
-			sge::renderer::texture::mipmap::off(),
-			sge::renderer::resource_flags_field(
-				sge::renderer::resource_flags::none))),
+		monitor::optional_background_texture(
+			*boundary_texture_)),
 	rucksack_viewport_adaptor_(
 		this->viewport_manager(),
 		this->renderer()),

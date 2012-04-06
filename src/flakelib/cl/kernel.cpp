@@ -1,6 +1,7 @@
 #include <flakelib/exception.hpp>
 #include <flakelib/cl/kernel.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
+#include <sge/opencl/memory_object/image/planar.hpp>
 #include <fcppt/from_std_string.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/algorithm/shortest_levenshtein.hpp>
@@ -11,6 +12,7 @@
 #include <algorithm>
 #include <iterator>
 #include <fcppt/config/external_end.hpp>
+
 
 flakelib::cl::kernel::kernel(
 	sge::opencl::program::object &_program,
@@ -76,21 +78,24 @@ flakelib::cl::kernel::buffer_argument(
 }
 
 void
+flakelib::cl::kernel::planar_image_argument(
+	std::string const &_name,
+	sge::opencl::memory_object::image::planar &_image)
+{
+	unassigned_parameters_.erase(
+		_name);
+
+	kernel_.argument(
+		this->index_for_name(
+			_name),
+		_image);
+}
+
+void
 flakelib::cl::kernel::enqueue_automatic(
 	sge::opencl::memory_object::dim1 const &_d)
 {
-	if(!unassigned_parameters_.empty())
-		throw
-			flakelib::exception(
-				FCPPT_TEXT("The following arguments to the kernel\n\n")+
-				fcppt::from_std_string(
-					name_.get())+
-				FCPPT_TEXT("\n\nhave not been assigned:")+
-				fcppt::from_std_string(
-					boost::algorithm::join(
-						unassigned_parameters_,
-						std::string(
-							"\n"))));
+	this->check_unassigned_parameters();
 
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
@@ -103,6 +108,8 @@ void
 flakelib::cl::kernel::enqueue_automatic(
 	sge::opencl::memory_object::dim2 const &_d)
 {
+	this->check_unassigned_parameters();
+
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		kernel_,
@@ -115,6 +122,8 @@ void
 flakelib::cl::kernel::enqueue_automatic(
 	sge::opencl::memory_object::dim3 const &_d)
 {
+	this->check_unassigned_parameters();
+
 	sge::opencl::command_queue::enqueue_kernel(
 		command_queue_,
 		kernel_,
@@ -122,6 +131,12 @@ flakelib::cl::kernel::enqueue_automatic(
 			(_d[0])
 			(_d[1])
 			(_d[2]).container());
+}
+
+sge::opencl::command_queue::object &
+flakelib::cl::kernel::command_queue() const
+{
+	return command_queue_;
 }
 
 flakelib::cl::kernel::~kernel()
@@ -157,4 +172,21 @@ flakelib::cl::kernel::index_for_name(
 				std::distance(
 					kernel_parameters_.begin(),
 					it)));
+}
+
+void
+flakelib::cl::kernel::check_unassigned_parameters()
+{
+	if(!unassigned_parameters_.empty())
+		throw
+			flakelib::exception(
+				FCPPT_TEXT("The following arguments to the kernel\n\n")+
+				fcppt::from_std_string(
+					name_.get())+
+				FCPPT_TEXT("\n\nhave not been assigned:\n\n")+
+				fcppt::from_std_string(
+					boost::algorithm::join(
+						unassigned_parameters_,
+						std::string(
+							"\n"))));
 }

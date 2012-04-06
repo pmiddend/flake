@@ -21,7 +21,6 @@ public:
 	T
 	value_type;
 
-	explicit
 	volume_view(
 		sge::opencl::memory_object::buffer &,
 		sge::opencl::memory_object::dim3 const &);

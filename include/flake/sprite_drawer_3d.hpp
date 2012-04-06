@@ -23,7 +23,7 @@
 #include <sge/sprite/config/unit_type.hpp>
 #include <sge/sprite/config/with_color.hpp>
 #include <sge/sprite/config/with_texture.hpp>
-#include <sge/texture/const_part_ptr.hpp>
+#include <sge/texture/const_part_shared_ptr.hpp>
 #include <sge/texture/manager.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/variant/object_impl.hpp>
@@ -68,7 +68,7 @@ public:
 	color(
 		sge::image::color::any::object const &);
 private:
-	sge::texture::const_part_ptr const
+	sge::texture::const_part_shared_ptr const
 	cached_texture(
 		sge::font::text::char_type,
 		sge::font::const_image_view const &);
@@ -85,7 +85,7 @@ private:
 
 	typedef std::map<
 		sge::font::text::char_type,
-		sge::texture::const_part_ptr
+		sge::texture::const_part_shared_ptr
 	> texture_map;
 
 	texture_map textures_;
@@ -108,7 +108,8 @@ private:
 				sge::sprite::config::texture_level_count<
 					1u
 				>,
-				sge::sprite::config::texture_coordinates::automatic
+				sge::sprite::config::texture_coordinates::automatic,
+				sge::sprite::config::texture_ownership::shared
 			>
 		>
 	> sprite_choices;

@@ -17,7 +17,6 @@ FCPPT_NONASSIGNABLE(
 	program_context);
 public:
 	FLAKELIB_SYMBOL
-	explicit
 	program_context(
 		sge::opencl::command_queue::object &,
 		flakelib::cl::compiler_flags const &);

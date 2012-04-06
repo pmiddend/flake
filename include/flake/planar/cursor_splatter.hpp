@@ -2,10 +2,10 @@
 #define FLAKE_PLANAR_CURSOR_SPLATTER_HPP_INCLUDED
 
 #include <flake/planar/monitor/texture_fwd.hpp>
+#include <flakelib/duration.hpp>
 #include <flakelib/buffer/planar_view_impl.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/planar/float_view.hpp>
-#include <flakelib/duration.hpp>
 #include <flakelib/splatter/object_fwd.hpp>
 #include <flakelib/splatter/pen/object_impl.hpp>
 #include <flakelib/splatter/pen/planar.hpp>
@@ -33,7 +33,6 @@ class cursor_splatter
 FCPPT_NONCOPYABLE(
 	cursor_splatter);
 public:
-	explicit
 	cursor_splatter(
 		monitor::texture &,
 		flakelib::splatter::object &,

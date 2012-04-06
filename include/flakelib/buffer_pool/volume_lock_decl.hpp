@@ -18,7 +18,6 @@ class volume_lock
 FCPPT_NONASSIGNABLE(
 	volume_lock);
 public:
-	explicit
 	volume_lock(
 		buffer_pool::object &,
 		sge::opencl::memory_object::dim3 const &);
