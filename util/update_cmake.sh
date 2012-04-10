@@ -28,6 +28,8 @@ update_cmake_file \
 	-n \
 	src/flake \
 	src/flake/planar \
+	src/flake/volume \
+	src/flake/volume/arrows \
 	src/flake/planar/monitor \
 	src/flake/notifications \
 	src/flake/time_modifier

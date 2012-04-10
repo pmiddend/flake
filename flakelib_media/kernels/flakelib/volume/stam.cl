@@ -1,3 +1,4 @@
+#if 0
 #include "volume/positions.cl"
 
 bool
@@ -519,3 +520,4 @@ gradient_and_subtract(
 
 	output[current_index] = result;
 }
+#endif

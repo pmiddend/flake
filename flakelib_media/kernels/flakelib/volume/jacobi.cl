@@ -1,76 +1,48 @@
+#include <flakelib/kernel_name.cl>
+#include <flakelib/kernel_argument.cl>
+#include <flakelib/volume/global_size.cl>
+#include <flakelib/volume/current_position.cl>
+#include <flakelib/volume/von_neumann/load_neighbor_indices.cl>
+#include <flakelib/volume/von_neumann/mix_with_center_value.cl>
+#include <flakelib/volume/von_neumann/sum.cl>
+
 #define WEIGHTED_JACOBI
 
-#include "volume/positions.cl"
-
 kernel void
-jacobi(
-	/* 0 */global float const *boundary,
-	/* 1 */int const buffer_width,
-	/* 2 */global float const *rhs,
-	/* 3 */global float const *x,
-	/* 4 */global float *output)
+FLAKELIB_KERNEL_NAME(apply)(
+	global float const *FLAKELIB_KERNEL_ARGUMENT(boundary),
+	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch),
+	global float const *FLAKELIB_KERNEL_ARGUMENT(rhs),
+	global float const *FLAKELIB_KERNEL_ARGUMENT(input),
+	global float *FLAKELIB_KERNEL_ARGUMENT(output))
 {
-	int3 const currentpos =
-		(int3)(
-			get_global_id(0),
-			get_global_id(1),
-			get_global_id(2));
+	size_t const current_index =
+		flakelib_volume_at(
+			buffer_pitch,
+			flakelib_volume_global_size(),
+			flakelib_volume_current_position());
 
-	int const
-		current_index =
-			FLAKE_VOLUME_AT(buffer_width,currentpos),
-		left_index =
-			FLAKE_VOLUME_LEFT_OF(buffer_width,currentpos),
-		right_index =
-			FLAKE_VOLUME_RIGHT_OF(buffer_width,currentpos),
-		top_index =
-			FLAKE_VOLUME_TOP_OF(buffer_width,currentpos),
-		bottom_index =
-			FLAKE_VOLUME_BOTTOM_OF(buffer_width,currentpos),
-		back_index =
-			FLAKE_VOLUME_BACK_OF(buffer_width,currentpos),
-		front_index =
-			FLAKE_VOLUME_FRONT_OF(buffer_width,currentpos);
+	flakelib_volume_von_neumann_size_t_neighbors neighborhood =
+		flakelib_volume_von_neumann_load_neighbor_indices(
+			flakelib_volume_current_position(),
+			flakelib_volume_global_size(),
+			buffer_pitch);
 
-	float const
-		center =
-			x[current_index],
-		left =
-			mix(
-				x[left_index],
-				center,
-				boundary[left_index] > 0.2f ? 1.0f : 0.0f),
-		right =
-			mix(
-				x[right_index],
-				center,
-				boundary[right_index] > 0.2f ? 1.0f : 0.0f),
-		top =
-			mix(
-				x[top_index],
-				center,
-				boundary[top_index] > 0.2f ? 1.0f : 0.0f),
-		bottom =
-			mix(
-				x[bottom_index],
-				center,
-				boundary[bottom_index] > 0.2f ? 1.0f : 0.0f),
-		back =
-			mix(
-				x[back_index],
-				center,
-				boundary[back_index] > 0.2f ? 1.0f : 0.0f),
-		front =
-			mix(
-				x[front_index],
-				center,
-				boundary[front_index] > 0.2f ? 1.0f : 0.0f);
+	float const center =
+		input[current_index];
+
+	flakelib_volume_von_neumann_float_neighbors floats =
+		flakelib_volume_von_neumann_mix_with_center_value(
+			&neighborhood,
+			boundary,
+			input,
+			center);
 
 	float const rhs_value =
 		rhs[current_index];
 
 	float const result =
-		(left + right + top + bottom + back + front - rhs_value) / 6.0f;
+		(FLAKELIB_VOLUME_VON_NEUMANN_SUM(floats) - rhs_value) / 6.0f;
 
 	output[current_index] =
 #ifndef WEIGHTED_JACOBI

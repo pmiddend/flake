@@ -1,3 +1,4 @@
+#if 0
 #include "volume/positions.cl"
 
 bool
@@ -145,3 +146,4 @@ apply_sources(
 	if(fast_distance(float_position,circle_center) < circle_radius*circle_radius)
 		density[FLAKE_VOLUME_AT(buffer_width,position)] = density_strength;
 }
+#endif

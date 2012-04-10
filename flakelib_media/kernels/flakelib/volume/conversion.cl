@@ -40,16 +40,19 @@ FLAKELIB_KERNEL_NAME(to_arrow_vb)(
 
 	float4 const origin_vector = (float4)(origin_x,origin_y,origin_z,0.0f);
 
-	output[position_index].start_position =
+	float4 const start_position =
 		origin_vector +
 		grid_scale * (position_float + 0.5f);
+
+	output[position_index].start_position =
+		start_position;
 
 	output[position_index].start_position.w =
 		1.0f;
 
 	output[position_index].end_position =
 		origin_vector +
-		output[position_index].start_position +
+		start_position +
 		arrow_scale *
 		input[
 			position_index];

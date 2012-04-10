@@ -1,3 +1,4 @@
+#if 0
 #include "volume/positions.cl"
 
 kernel void add_sphere(
@@ -45,3 +46,4 @@ kernel void add_cube(
 		:
 			boundary[FLAKE_VOLUME_AT(get_global_size(0),integral_pos)];
 }
+#endif

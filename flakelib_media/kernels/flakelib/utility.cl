@@ -1,3 +1,4 @@
+#if 0
 #include "planar/positions.cl"
 
 kernel void
@@ -106,3 +107,4 @@ planar_vector_magnitude(
 		length(
 			input[position.y * buffer_width + position.x]);
 }
+#endif

@@ -4,10 +4,8 @@
 #include <flakelib/planar/global_size.cl>
 #include <flakelib/planar/interpolate_right_neighborhood.cl>
 #include <flakelib/planar/load_right_neighborhood.cl>
-#include <flakelib/planar/right_neighborhood.cl>
-#include <flakelib/planar/interpolate_right_neighborhood2.cl>
-#include <flakelib/planar/load_right_neighborhood2.cl>
 #include <flakelib/planar/right_neighborhood2.cl>
+#include <flakelib/planar/right_neighborhood.cl>
 #include <flakelib/boundary_is_solid.cl>
 #include <flakelib/kernel_name.cl>
 #include <flakelib/kernel_argument.cl>
@@ -54,11 +52,11 @@ FLAKELIB_KERNEL_NAME(apply_float2)(
 				advected_vector,
 				&floors);
 
-	struct flakelib_planar_right_neighborhood2 ns;
+	flakelib_planar_right_neighborhood2 ns;
 
-	flakelib_planar_load_right_neighborhood2(
+	FLAKELIB_PLANAR_LOAD_RIGHT_NEIGHBORHOOD(
 		input,
-		&ns,
+		ns,
 		buffer_pitch,
 		flakelib_planar_clamp_int2_to_global_rect(
 			convert_int2(
@@ -66,8 +64,8 @@ FLAKELIB_KERNEL_NAME(apply_float2)(
 		flakelib_planar_global_size());
 
 	output[current_index] =
-		flakelib_planar_interpolate_right_neighborhood2(
-			&ns,
+		FLAKELIB_PLANAR_INTERPOLATE_RIGHT_NEIGHBORHOOD(
+			ns,
 			fractions);
 }
 
@@ -112,11 +110,11 @@ FLAKELIB_KERNEL_NAME(apply_float)(
 				advected_vector,
 				&floors);
 
-	struct flakelib_planar_right_neighborhood ns;
+	flakelib_planar_right_neighborhood ns;
 
-	flakelib_planar_load_right_neighborhood(
+	FLAKELIB_PLANAR_LOAD_RIGHT_NEIGHBORHOOD(
 		input,
-		&ns,
+		ns,
 		buffer_pitch,
 		flakelib_planar_clamp_int2_to_global_rect(
 			convert_int2(
@@ -124,7 +122,7 @@ FLAKELIB_KERNEL_NAME(apply_float)(
 		flakelib_planar_global_size());
 
 	output[current_index] =
-		flakelib_planar_interpolate_right_neighborhood(
-			&ns,
+		FLAKELIB_PLANAR_INTERPOLATE_RIGHT_NEIGHBORHOOD(
+			ns,
 			fractions);
 }

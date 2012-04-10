@@ -1,3 +1,4 @@
+#if 0
 #include "volume/positions.cl"
 
 kernel void fill_with_arrows(
@@ -22,3 +23,4 @@ kernel void fill_with_arrows(
 			(float4)(
 				0.0f);
 }
+#endif

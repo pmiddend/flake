@@ -1,4 +1,5 @@
 #include <flake/save_l8_texture_to_file.hpp>
+#include <sge/image/store.hpp>
 #include <sge/image/algorithm/may_overlap.hpp>
 #include <sge/image2d/dim.hpp>
 #include <sge/image2d/l8.hpp>
@@ -6,9 +7,8 @@
 #include <sge/image2d/algorithm/copy_and_convert.hpp>
 #include <sge/image2d/view/object.hpp>
 #include <sge/image2d/view/to_const.hpp>
-#include <sge/image/store.hpp>
-#include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/const_scoped_planar_lock.hpp>
+#include <sge/renderer/texture/planar.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 
 

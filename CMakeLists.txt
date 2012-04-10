@@ -166,6 +166,12 @@ set(
 	src/flakelib/utility/fill_buffer.cpp
 	src/flakelib/utility/mix_buffers.cpp
 	src/flakelib/volume/conversion/object.cpp
+	src/flakelib/volume/simulation/stam/divergence.cpp
+	src/flakelib/volume/simulation/stam/jacobi.cpp
+	src/flakelib/volume/simulation/stam/outflow_boundaries.cpp
+	src/flakelib/volume/simulation/stam/semilagrangian_advection.cpp
+	src/flakelib/volume/simulation/stam/subtract_pressure_gradient.cpp
+	src/flakelib/volume/simulation/stam/wind_source.cpp
 )
 
 set(
@@ -185,6 +191,8 @@ set(
 	src/flake/test_base.cpp
 	src/flake/time_modifier/kernel.cpp
 	src/flake/time_modifier/object.cpp
+	src/flake/volume/arrows/manager.cpp
+	src/flake/volume/arrows/object.cpp
 )
 
 fcppt_utils_add_source_groups(
@@ -359,14 +367,14 @@ install(
 	${INSTALL_BINARY_DIR})
 # buoyancy end
 
-# volume_splat begin
+# flakes begin
 awl_utils_add_portable_executable(
-	tests_volume_splat
+	tests_flakes
 	"custom_main"
-	src/flake/volume/tests/volume_splat.cpp)
+	src/flake/volume/tests/flakes.cpp)
 
 target_link_libraries(
-	tests_volume_splat
+	tests_flakes
 	flakelib
 	flake_helper_library
 	${Fcppt_core_LIBRARIES}
@@ -378,7 +386,7 @@ target_link_libraries(
 
 install(
 	TARGETS
-	tests_volume_splat
+	tests_flakes
 	DESTINATION
 	${INSTALL_BINARY_DIR})
-# volume_splat end
+# flakes end

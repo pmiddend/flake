@@ -1,3 +1,4 @@
+#if 0
 #include "volume/positions.cl"
 
 kernel void
@@ -26,3 +27,4 @@ volume_image_to_planar_texture(
 		(float4)(
 			volume_image[FLAKE_VOLUME_AT(slice_edge_size,volume_pos)]));
 }
+#endif

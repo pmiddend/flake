@@ -42,10 +42,16 @@
 		},
 		"volume" :
 		{
-			"volume-splat" :
+			"flakes" :
 			{
 				"simulation-size" : [64,64,64],
-				"splat-size" : [10,10,10]
+				"arrow-scale" : 1.0,
+				"grid-scale" : 1.0,
+				"wind-strength" : 10.0,
+				"jacobi-iterations" : 40,
+				"near-plane" : 1.0,
+				"far-plane" : 1000.0,
+				"fov" : 60.0
 			}
 		}
 	}

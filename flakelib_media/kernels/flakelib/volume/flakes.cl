@@ -1,3 +1,4 @@
+#if 0
 #include "volume/positions.cl"
 
 sampler_t const clamped_nonnormalized_nearest =
@@ -189,3 +190,4 @@ advect(
 				fractions.y),
 			fractions.z);
 }
+#endif
