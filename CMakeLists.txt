@@ -193,6 +193,7 @@ set(
 	src/flake/time_modifier/object.cpp
 	src/flake/volume/arrows/manager.cpp
 	src/flake/volume/arrows/object.cpp
+	src/flake/volume/flakes/manager.cpp
 )
 
 fcppt_utils_add_source_groups(

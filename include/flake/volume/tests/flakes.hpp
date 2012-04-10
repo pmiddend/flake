@@ -4,6 +4,7 @@
 #include <flake/test_base.hpp>
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/object.hpp>
+#include <flake/volume/flakes/manager.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/volume/grid_size.hpp>
@@ -16,8 +17,8 @@
 #include <flakelib/volume/simulation/stam/semilagrangian_advection.hpp>
 #include <flakelib/volume/simulation/stam/subtract_pressure_gradient.hpp>
 #include <flakelib/volume/simulation/stam/wind_source.hpp>
-#include <sge/camera/first_person/object.hpp>
 #include <sge/camera/perspective_projection_from_viewport.hpp>
+#include <sge/camera/first_person/object.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
@@ -74,6 +75,8 @@ private:
 	flakelib::volume::unique_float_buffer_lock boundary_buffer_;
 	flakelib::volume::unique_float4_buffer_lock velocity_buffer_;
 	flakelib::utility::fill_buffer fill_buffer_;
+
+	flake::volume::flakes::manager flakes_;
 
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;

@@ -51,7 +51,10 @@
 				"jacobi-iterations" : 40,
 				"near-plane" : 1.0,
 				"far-plane" : 1000.0,
-				"fov" : 60.0
+				"fov" : 60.0,
+				"flake-count" : 200,
+				"flake-minimum-size" : 10.0,
+				"flake-maximum-size" : 100.0
 			}
 		}
 	}

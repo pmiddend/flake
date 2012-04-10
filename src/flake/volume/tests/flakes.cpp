@@ -1,4 +1,3 @@
-#include <fcppt/math/deg_to_rad.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/save_l8_texture_to_file.hpp>
 #include <flake/volume/tests/flakes.hpp>
@@ -30,6 +29,7 @@
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
+#include <fcppt/math/deg_to_rad.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -158,6 +158,27 @@ flake::volume::tests::flakes::flakes(
 			simulation_size_.get())),
 	fill_buffer_(
 		this->program_context()),
+	flakes_(
+		this->renderer(),
+		camera_,
+		this->opencl_system().context(),
+		this->image_system(),
+		flake::volume::flakes::count(
+			sge::parse::json::find_and_convert_member<flake::volume::flakes::count::value_type>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("tests/volume/flakes/flake-count")))),
+		flake::volume::flakes::minimum_size(
+			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("tests/volume/flakes/flake-minimum-size")))),
+		flake::volume::flakes::maximum_size(
+			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("tests/volume/flakes/flake-maximum-size")))),
+		simulation_size_),
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			boost::chrono::seconds(1)))
@@ -257,7 +278,10 @@ flake::volume::tests::flakes::render()
 		sge::renderer::clear_flags_field(
 			sge::renderer::clear_flags::back_buffer));
 
-	arrows_manager_.render();
+	flakes_.render();
+	//arrows_manager_.render();
+
+
 
 	test_base::render();
 }

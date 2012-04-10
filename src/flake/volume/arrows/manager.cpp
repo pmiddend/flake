@@ -1,9 +1,3 @@
-#include <fcppt/math/vector/arithmetic.hpp>
-#include <sge/renderer/state/dest_blend_func.hpp>
-#include <sge/renderer/state/source_blend_func.hpp>
-#include <sge/renderer/state/bool.hpp>
-#include <sge/renderer/state/scoped.hpp>
-#include <sge/renderer/state/list.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/vf/format.hpp>
@@ -12,13 +6,19 @@
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
+#include <sge/renderer/vertex_declaration.hpp>
+#include <sge/renderer/state/bool.hpp>
+#include <sge/renderer/state/dest_blend_func.hpp>
+#include <sge/renderer/state/list.hpp>
+#include <sge/renderer/state/scoped.hpp>
+#include <sge/renderer/state/source_blend_func.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/shader/activate_everything.hpp>
 #include <sge/shader/object_parameters.hpp>
 #include <sge/shader/scoped.hpp>
 #include <sge/shader/vf_to_string.hpp>
-#include <sge/renderer/vertex_declaration.hpp>
 #include <fcppt/assign/make_container.hpp>
+#include <fcppt/math/vector/arithmetic.hpp>
 
 
 flake::volume::arrows::manager::manager(

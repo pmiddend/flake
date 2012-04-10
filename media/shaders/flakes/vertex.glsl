@@ -5,25 +5,8 @@ $$$HEADER$$$
 void
 main()
 {
-	float
-		distance_camera_point =
-			distance(
-					position.xyz,
-					camera_position),
-		unnormalized_distance =
-			maximum_distance -
-			min(
-				maximum_distance,
-				distance_camera_point),
-		normalized_distance =
-			unnormalized_distance / maximum_distance,
-		maxed_distance =
-			max(
-				normalized_distance,
-				0.01);
-
 	gl_PointSize =
-		size_multiplier * maxed_distance * point_size;
+		100.0f;
 
 	gl_Position =
 		mvp *
