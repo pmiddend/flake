@@ -50,7 +50,7 @@ flake::time_modifier::object::key_callback(
 
 	switch(e.key_code())
 	{
-		case sge::input::keyboard::key_code::space:
+		case sge::input::keyboard::key_code::p:
 			notifications_.add_message(
 				notifications::text(
 					FCPPT_TEXT("toggle pause")));

@@ -272,7 +272,7 @@ flake::volume::tests::flakes::render()
 	sge::renderer::state::scoped scoped_state(
 		this->renderer(),
 		sge::renderer::state::list
-			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::grey()));
+			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::black()));
 
 	this->renderer().clear(
 		sge::renderer::clear_flags_field(
