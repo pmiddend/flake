@@ -194,6 +194,8 @@ set(
 	src/flake/volume/arrows/manager.cpp
 	src/flake/volume/arrows/object.cpp
 	src/flake/volume/flakes/manager.cpp
+	src/flake/volume/model/manager.cpp
+	src/flake/volume/model/object.cpp
 )
 
 fcppt_utils_add_source_groups(

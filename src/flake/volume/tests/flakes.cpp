@@ -17,6 +17,7 @@
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/state/color.hpp>
+#include <sge/renderer/state/float.hpp>
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/texture/capabilities_field.hpp>
@@ -75,7 +76,7 @@ flake::volume::tests::flakes::flakes(
 			sge::camera::first_person::is_active(
 				true),
 			sge::camera::first_person::movement_speed(
-				4.0f),
+				1.0f),
 			sge::camera::coordinate_system::identity())),
 	perspective_projection_from_viewport_(
 		camera_,
@@ -179,6 +180,24 @@ flake::volume::tests::flakes::flakes(
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("tests/volume/flakes/flake-maximum-size")))),
 		simulation_size_),
+	models_(
+		this->renderer(),
+		this->image_system(),
+		camera_,
+		flake::volume::model::sun_direction(
+			sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("tests/volume/flakes/sun-direction"))))),
+	test_model_(
+		models_,
+		flake::volume::model::identifier(
+			FCPPT_TEXT("cube")),
+		flake::volume::model::position(
+			sge::renderer::vector3(
+				0.0f,
+				0.0f,
+				0.0f))),
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			boost::chrono::seconds(1)))
@@ -272,15 +291,16 @@ flake::volume::tests::flakes::render()
 	sge::renderer::state::scoped scoped_state(
 		this->renderer(),
 		sge::renderer::state::list
-			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::black()));
+			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::black())
+			(sge::renderer::state::float_::depth_buffer_clear_val = 1.0f));
 
 	this->renderer().clear(
 		sge::renderer::clear_flags_field(
-			sge::renderer::clear_flags::back_buffer));
+			sge::renderer::clear_flags::back_buffer) | sge::renderer::clear_flags::depth_buffer);
 
-	flakes_.render();
+	models_.render();
+	//flakes_.render();
 	//arrows_manager_.render();
-
 
 
 	test_base::render();

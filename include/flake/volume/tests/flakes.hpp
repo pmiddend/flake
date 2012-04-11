@@ -5,6 +5,7 @@
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/object.hpp>
 #include <flake/volume/flakes/manager.hpp>
+#include <flake/volume/model/manager.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/volume/grid_size.hpp>
@@ -77,6 +78,8 @@ private:
 	flakelib::utility::fill_buffer fill_buffer_;
 
 	flake::volume::flakes::manager flakes_;
+	flake::volume::model::manager models_;
+	flake::volume::model::object test_model_;
 
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;

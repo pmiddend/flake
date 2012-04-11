@@ -48,6 +48,10 @@ private:
 	sge::shader::object shader_;
 	sge::camera::base &camera_;
 	child_sequence children_;
+
+	void
+	add_child(
+		arrows::object &);
 };
 }
 }

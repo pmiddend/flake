@@ -54,7 +54,8 @@
 				"fov" : 60.0,
 				"flake-count" : 200,
 				"flake-minimum-size" : 10.0,
-				"flake-maximum-size" : 100.0
+				"flake-maximum-size" : 100.0,
+				"sun-direction" : [0.8804509,0.17609018,0.440225453]
 			}
 		}
 	}

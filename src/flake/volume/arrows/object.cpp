@@ -47,7 +47,7 @@ flake::volume::arrows::object::object(
 		*vb_,
 		sge::opencl::memory_object::renderer_buffer_lock_mode::write_only)
 {
-	_arrows_manager.children_.push_back(
+	_arrows_manager.add_child(
 		*this);
 }
 

@@ -102,3 +102,11 @@ flake::volume::arrows::manager::render()
 flake::volume::arrows::manager::~manager()
 {
 }
+
+void
+flake::volume::arrows::manager::add_child(
+	arrows::object &_arrows)
+{
+	children_.push_back(
+		_arrows);
+}

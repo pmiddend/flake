@@ -10,6 +10,7 @@
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_lock.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
+#include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/state/bool.hpp>
 #include <sge/renderer/state/depth_func.hpp>
 #include <sge/renderer/state/dest_blend_func.hpp>
@@ -17,14 +18,13 @@
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/state/source_blend_func.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
+#include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/renderer/vf/iterator.hpp>
 #include <sge/renderer/vf/vertex.hpp>
 #include <sge/renderer/vf/view.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
-#include <sge/renderer/vertex_declaration.hpp>
-#include <sge/renderer/texture/planar.hpp>
 #include <sge/shader/activate_everything.hpp>
 #include <sge/shader/object_parameters.hpp>
 #include <sge/shader/scoped.hpp>
