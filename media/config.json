@@ -45,6 +45,18 @@
 				"paused" : false
 			}
 		},
+		"marching-cubes" :
+		{
+			"simulation-size" : [64,64,64],
+			"near-plane" : 0.1,
+			"far-plane" : 1000.0,
+			"fov" : 60.0,
+			"features" :
+			{
+				"paused" : false,
+				"wireframe" : true
+			}
+		},
 		"flakes" :
 		{
 			"simulation-size" : [64,64,64],

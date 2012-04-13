@@ -1,5 +1,5 @@
-#ifndef FLAKE_VOLUME_vf_FROM_OBJ_MAP_HPP_INCLUDED
-#define FLAKE_VOLUME_vf_FROM_OBJ_MAP_HPP_INCLUDED
+#ifndef FLAKE_VOLUME_MODEL_VF_FROM_OBJ_MAP_HPP_INCLUDED
+#define FLAKE_VOLUME_MODEL_VF_FROM_OBJ_MAP_HPP_INCLUDED
 
 #include <flake/volume/model/vf/format_part.hpp>
 #include <sge/model/obj/vb_converter/convert.hpp>

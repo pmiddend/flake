@@ -1,5 +1,5 @@
-#ifndef FLAKE_VOLUME_model_VF_FORMAT_PART_HPP_INCLUDED
-#define FLAKE_VOLUME_model_VF_FORMAT_PART_HPP_INCLUDED
+#ifndef FLAKE_VOLUME_MODEL_VF_FORMAT_PART_HPP_INCLUDED
+#define FLAKE_VOLUME_MODEL_VF_FORMAT_PART_HPP_INCLUDED
 
 #include <flake/volume/model/vf/normal.hpp>
 #include <flake/volume/model/vf/position.hpp>

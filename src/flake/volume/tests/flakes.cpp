@@ -1,4 +1,3 @@
-#include <fcppt/assign/make_container.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/volume/tests/flakes.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
@@ -8,9 +7,6 @@
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/image/colors.hpp>
-#include <sge/input/keyboard/device.hpp>
-#include <sge/input/keyboard/key_event.hpp>
-#include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
@@ -24,6 +20,7 @@
 #include <sge/timer/parameters.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
+#include <fcppt/assign/make_container.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/deg_to_rad.hpp>
 #include <fcppt/math/dim/object_impl.hpp>

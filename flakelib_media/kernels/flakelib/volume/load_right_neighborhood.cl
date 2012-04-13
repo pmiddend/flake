@@ -8,8 +8,8 @@
 
 #define FLAKELIB_VOLUME_LOAD_RIGHT_NEIGHBORHOOD(input,neighborhood,buffer_pitch,position,rect)\
 	{\
-		int4 const flakelib_volume_load_right_neighborhood_position = (position);\
-		int4 const flakelib_volume_load_right_neighborhood_rect = (rect);\
+		int4 const flakelib_volume_load_right_neighborhood_position = convert_int4(position);\
+		int4 const flakelib_volume_load_right_neighborhood_rect = convert_int4(rect);\
 		(neighborhood).at =\
 			(input)[\
 				flakelib_volume_at(\
