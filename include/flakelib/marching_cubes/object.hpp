@@ -2,6 +2,7 @@
 #define FLAKELIB_MARCHING_CUBES_OBJECT_HPP_INCLUDED
 
 #include <flakelib/marching_cubes/scan.hpp>
+#include <flakelib/marching_cubes/iso_level.hpp>
 #include <flakelib/volume/float_view.hpp>
 #include <flakelib/volume/grid_size.hpp>
 #include <flakelib/symbol.hpp>
@@ -32,7 +33,8 @@ public:
 		sge::renderer::device &,
 		sge::camera::base &,
 		flakelib::cl::program_context const &,
-		flakelib::volume::grid_size const &);
+		flakelib::volume::grid_size const &,
+		marching_cubes::iso_level const &);
 
 	FLAKELIB_SYMBOL
 	void
@@ -50,6 +52,7 @@ private:
 	sge::camera::base &camera_;
 	sge::opencl::command_queue::object &command_queue_;
 	flakelib::volume::grid_size grid_size_;
+	marching_cubes::iso_level iso_level_;
 	sge::renderer::vertex_declaration_scoped_ptr vertex_declaration_;
 	sge::shader::object shader_;
 	sge::renderer::vertex_buffer_unique_ptr positions_buffer_;

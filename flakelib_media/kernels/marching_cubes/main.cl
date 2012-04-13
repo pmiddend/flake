@@ -158,8 +158,7 @@ generateTriangles2(__global float4 *pos, __global float4 *norm, __global uint *c
 
     float4 p;
     p.x = gridPos.x;
-    p.y = 64.0f - gridPos.y;
-    //p.y = gridPos.y;
+    p.y = gridPos.y;
     p.z = gridPos.z;
     p.w = 1.0f;
     /*

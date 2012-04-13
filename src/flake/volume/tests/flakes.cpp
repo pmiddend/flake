@@ -205,7 +205,12 @@ flake::volume::tests::flakes::flakes(
 		this->program_context(),
 		flakes_.cl_positions(),
 		volume::flakes::snow_density_view(
-			snow_density_buffer_->value())),
+			snow_density_buffer_->value()),
+		volume::flakes::collision_increment(
+			sge::parse::json::find_and_convert_member<cl_float>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("collision-increment"))))),
 	models_(
 		this->renderer(),
 		this->image_system(),
@@ -228,7 +233,12 @@ flake::volume::tests::flakes::flakes(
 		this->renderer(),
 		camera_,
 		this->program_context(),
-		simulation_size_),
+		simulation_size_,
+		flakelib::marching_cubes::iso_level(
+			sge::parse::json::find_and_convert_member<cl_float>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("iso-level"))))),
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			boost::chrono::seconds(1))),

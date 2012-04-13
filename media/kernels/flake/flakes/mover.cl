@@ -38,6 +38,7 @@ FLAKELIB_KERNEL_NAME(apply)(
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(positions),
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(velocity),
 	float const FLAKELIB_KERNEL_ARGUMENT(time_delta),
+	float const FLAKELIB_KERNEL_ARGUMENT(collision_increment),
 	int const FLAKELIB_KERNEL_ARGUMENT(bounding_volume_width),
 	int const FLAKELIB_KERNEL_ARGUMENT(bounding_volume_height),
 	int const FLAKELIB_KERNEL_ARGUMENT(bounding_volume_depth),
@@ -67,9 +68,20 @@ FLAKELIB_KERNEL_NAME(apply)(
 		// Special case: We're leaving it at the bottom
 		if(lefttopback_position.y < 0)
 		{
+			size_t const projected_position_index =
+				flakelib_volume_at(
+					buffer_pitch,
+					bounding_rect,
+					(int4)(
+						lefttopback_position.x,
+						0,
+						lefttopback_position.z,
+						0));
+
+
 			// Project coordinate to the ground, update the snow depth
-			snow_density[flakelib_volume_at(buffer_pitch,bounding_rect,lefttopback_position)] +=
-				0.001f;
+			snow_density[projected_position_index] +=
+				collision_increment;
 		}
 
 		positions[get_global_id(0)] =
@@ -88,6 +100,11 @@ FLAKELIB_KERNEL_NAME(apply)(
 		// We've hit a boundary
 		if(flakelib_boundary_is_solid(boundary,current_position_index))
 		{
+			/*
+			snow_density[current_position_index] +=
+				collision_increment;
+				*/
+
 			positions[get_global_id(0)] =
 				generate_randomized_position(
 					bounding_rect,

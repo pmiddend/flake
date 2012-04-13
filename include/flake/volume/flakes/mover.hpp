@@ -3,6 +3,7 @@
 
 #include <flake/volume/flakes/position_view.hpp>
 #include <flake/volume/flakes/snow_density_view.hpp>
+#include <flake/volume/flakes/collision_increment.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/cl/program.hpp>
@@ -28,7 +29,8 @@ public:
 	mover(
 		flakelib::cl::program_context const &,
 		flakes::position_view const &,
-		flakes::snow_density_view const &);
+		flakes::snow_density_view const &,
+		flakes::collision_increment const &);
 
 	void
 	update(

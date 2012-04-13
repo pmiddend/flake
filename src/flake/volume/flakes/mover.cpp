@@ -12,7 +12,8 @@
 flake::volume::flakes::mover::mover(
 	flakelib::cl::program_context const &_program_context,
 	flakes::position_view const &_positions,
-	flakes::snow_density_view const &_snow_density)
+	flakes::snow_density_view const &_snow_density,
+	flakes::collision_increment const &_collision_increment)
 :
 	program_(
 		_program_context.command_queue(),
@@ -35,6 +36,10 @@ flake::volume::flakes::mover::mover(
 	kernel_->buffer_argument(
 		"snow_density",
 		_snow_density.get().buffer());
+
+	kernel_->numerical_argument(
+		"collision_increment",
+		_collision_increment.get());
 }
 
 void

@@ -114,7 +114,12 @@ flake::volume::tests::marching_cubes::marching_cubes(
 		this->renderer(),
 		camera_,
 		this->program_context(),
-		simulation_size_),
+		simulation_size_,
+		flakelib::marching_cubes::iso_level(
+			sge::parse::json::find_and_convert_member<cl_float>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("iso-level"))))),
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			boost::chrono::seconds(1)))

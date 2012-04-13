@@ -58,7 +58,8 @@ flakelib::marching_cubes::object::object(
 	sge::renderer::device &_renderer,
 	sge::camera::base &_camera,
 	flakelib::cl::program_context const &_program_context,
-	flakelib::volume::grid_size const &_grid_size)
+	flakelib::volume::grid_size const &_grid_size,
+	marching_cubes::iso_level const &_iso_level)
 :
 	renderer_(
 		_renderer),
@@ -68,6 +69,8 @@ flakelib::marching_cubes::object::object(
 		_program_context.command_queue()),
 	grid_size_(
 		_grid_size),
+	iso_level_(
+		_iso_level),
 	vertex_declaration_(
 		_renderer.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format<vf::format>())),
@@ -266,8 +269,6 @@ flakelib::marching_cubes::object::update(
 		static_cast<cl_uint>(
 			grid_size_.get().content());
 
-	cl_float const isoValue = 0.2f;
-
 	sge::opencl::memory_object::size_type const threads =
 		128u;
 
@@ -299,7 +300,7 @@ flakelib::marching_cubes::object::update(
 		gridSizeMask,
 		numVoxels,
 		voxelSize,
-		isoValue);
+		iso_level_.get());
 
 	std::size_t const first_scan_result =
 		scan_.scanExclusiveLarge(
@@ -445,7 +446,7 @@ flakelib::marching_cubes::object::update(
 		gridSizeShift,
 		gridSizeMask,
 		voxelSize,
-		isoValue,
+		iso_level_.get(),
 		activeVoxels);
 }
 
