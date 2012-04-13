@@ -1,3 +1,4 @@
+#include <fcppt/math/vector/arithmetic.hpp>
 #include <fcppt/math/vector/output.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flake/media_path_from_string.hpp>
@@ -158,6 +159,10 @@ flake::volume::flakes::manager::render()
 				camera_.coordinate_system(),
 				camera_.projection_matrix()),
 			sge::shader::matrix_flags::projection));
+
+	shader_.update_uniform(
+		"camera_position",
+		-camera_.coordinate_system().position().get());
 
 	sge::renderer::scoped_vertex_buffer scoped_positions_vb(
 		renderer_,
