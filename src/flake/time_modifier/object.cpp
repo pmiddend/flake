@@ -8,9 +8,11 @@
 
 flake::time_modifier::object::object(
 	sge::input::keyboard::device &_keyboard,
-	notifications::object &_notifications)
+	notifications::object &_notifications,
+	bool const _is_paused)
 :
-	kernel_(),
+	kernel_(
+		_is_paused),
 	key_connection_(
 		_keyboard.key_callback(
 			std::tr1::bind(

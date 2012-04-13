@@ -20,7 +20,8 @@ FCPPT_NONCOPYABLE(
 public:
 	object(
 		sge::input::keyboard::device &,
-		notifications::object &);
+		notifications::object &,
+		bool is_paused);
 
 	time_modifier::multiplier const
 	current_multiplier();

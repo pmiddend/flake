@@ -190,7 +190,9 @@ set(
 	src/flake/planar/monitor/texture.cpp
 	src/flake/save_l8_texture_to_file.cpp
 	src/flake/sprite_drawer_3d.cpp
-	src/flake/test_base.cpp
+	src/flake/test/base.cpp
+	src/flake/test/feature.cpp
+	src/flake/test/update_features_from_json.cpp
 	src/flake/time_modifier/kernel.cpp
 	src/flake/time_modifier/object.cpp
 	src/flake/volume/arrows/manager.cpp

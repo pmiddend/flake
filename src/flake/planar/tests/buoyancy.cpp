@@ -61,16 +61,19 @@ FLAKE_CATCH_STATEMENTS
 flake::planar::tests::buoyancy::buoyancy(
 	awl::main::function_context const &_function_context)
 :
-	flake::test_base(
+	flake::test::base(
 		_function_context,
 		sge::window::title(
 			FCPPT_TEXT("buoyancy 2D Stam simulation")),
+		flake::test::json_identifier(
+			FCPPT_TEXT("planar-buoyancy")),
+		flake::test::feature_sequence(),
 		sge::systems::cursor_option_field::null()),
 	buissnesq_ambient_temperature_(
 		sge::parse::json::find_and_convert_member<cl_float>(
 			this->configuration(),
 			sge::parse::json::string_to_path(
-				FCPPT_TEXT("tests/planar/buoyancy/buissnesq-ambient-temperature")))),
+				FCPPT_TEXT("buissnesq-ambient-temperature")))),
 	fill_buffer_(
 		this->program_context()),
 	mix_buffers_(
@@ -92,7 +95,7 @@ flake::planar::tests::buoyancy::buoyancy(
 			sge::parse::json::find_and_convert_member<flakelib::planar::simulation::stam::iterations::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/buoyancy/jacobi-iterations"))))),
+					FCPPT_TEXT("jacobi-iterations"))))),
 	subtract_pressure_gradient_(
 		this->program_context()),
 	vorticity_(
@@ -104,12 +107,12 @@ flake::planar::tests::buoyancy::buoyancy(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/buoyancy/buissnesq-density-strength")))),
+					FCPPT_TEXT("buissnesq-density-strength")))),
 		flakelib::planar::simulation::stam::buissnesq::temperature_strength(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/buoyancy/buissnesq-temperature-strength")))),
+					FCPPT_TEXT("buissnesq-temperature-strength")))),
 		buissnesq_ambient_temperature_),
 	boundary_image_file_(
 		this->image_system().load(
@@ -119,7 +122,7 @@ flake::planar::tests::buoyancy::buoyancy(
 				sge::parse::json::find_and_convert_member<fcppt::string>(
 					this->configuration(),
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("tests/planar/buoyancy/boundary"))))),
+						FCPPT_TEXT("boundary"))))),
 	boundary_buffer_(
 		this->buffer_pool(),
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
@@ -167,7 +170,7 @@ flake::planar::tests::buoyancy::buoyancy(
 				sge::parse::json::find_and_convert_member<sge::font::size_type>(
 					this->configuration(),
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("tests/planar/buoyancy/monitor-font-size"))))),
+						FCPPT_TEXT("monitor-font-size"))))),
 		monitor::font_color(
 			sge::image::colors::black())),
 	monitor_planar_converter_(
@@ -184,12 +187,12 @@ flake::planar::tests::buoyancy::buoyancy(
 			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/buoyancy/velocity-arrow-scale")))),
+					FCPPT_TEXT("velocity-arrow-scale")))),
 		monitor::grid_scale(
 			sge::parse::json::find_and_convert_member<monitor::grid_scale::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/buoyancy/velocity-grid-scale")))),
+					FCPPT_TEXT("velocity-grid-scale")))),
 		monitor::optional_background_texture(
 			*boundary_texture_)),
 	smoke_density_texture_(
@@ -200,7 +203,7 @@ flake::planar::tests::buoyancy::buoyancy(
 			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/buoyancy/texture-grid-scale"))) *
+					FCPPT_TEXT("texture-grid-scale"))) *
 			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
@@ -218,7 +221,7 @@ flake::planar::tests::buoyancy::buoyancy(
 			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/buoyancy/texture-grid-scale"))) *
+					FCPPT_TEXT("texture-grid-scale"))) *
 			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
@@ -236,7 +239,7 @@ flake::planar::tests::buoyancy::buoyancy(
 			sge::parse::json::find_and_convert_member<rucksack::scalar>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/buoyancy/master-and-slave-padding")))),
+					FCPPT_TEXT("master-and-slave-padding")))),
 		rucksack::aspect(
 			1,
 			1)),
@@ -263,7 +266,7 @@ flake::planar::tests::buoyancy::buoyancy(
 		sge::parse::json::find_and_convert_member<cl_float>(
 			this->configuration(),
 			sge::parse::json::string_to_path(
-				FCPPT_TEXT("tests/planar/buoyancy/smoke-density-splat-per-second"))),
+				FCPPT_TEXT("smoke-density-splat-per-second"))),
 		flakelib::splatter::pen::planar(
 			flakelib::splatter::rectangle::object(
 				flakelib::splatter::rectangle::position(
@@ -290,7 +293,7 @@ flake::planar::tests::buoyancy::buoyancy(
 		sge::parse::json::find_and_convert_member<cl_float>(
 			this->configuration(),
 			sge::parse::json::string_to_path(
-				FCPPT_TEXT("tests/planar/buoyancy/temperature-degrees-splat-per-second"))),
+				FCPPT_TEXT("temperature-degrees-splat-per-second"))),
 		flakelib::splatter::pen::planar(
 			flakelib::splatter::rectangle::object(
 				flakelib::splatter::rectangle::position(
@@ -369,7 +372,7 @@ awl::main::exit_code const
 flake::planar::tests::buoyancy::run()
 {
 	return
-		flake::test_base::run();
+		flake::test::base::run();
 }
 
 flake::planar::tests::buoyancy::~buoyancy()
@@ -394,13 +397,13 @@ flake::planar::tests::buoyancy::render()
 				freelook_camera_.coordinate_system(),
 				freelook_camera_.projection_matrix())));
 
-	test_base::render();
+	test::base::render();
 }
 
 void
 flake::planar::tests::buoyancy::update()
 {
-	test_base::update();
+	test::base::update();
 
 	monitor_parent_.update();
 
@@ -449,7 +452,7 @@ flake::planar::tests::buoyancy::update()
 					sge::parse::json::find_and_convert_member<cl_float>(
 						this->configuration(),
 						sge::parse::json::string_to_path(
-							FCPPT_TEXT("tests/planar/buoyancy/vorticity-strength")))));
+							FCPPT_TEXT("vorticity-strength")))));
 
 		buissnesq_buoyancy_.update(
 			flakelib::planar::simulation::stam::velocity(

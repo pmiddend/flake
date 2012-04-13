@@ -1,11 +1,12 @@
 #include <flake/time_modifier/kernel.hpp>
 
-flake::time_modifier::kernel::kernel()
+flake::time_modifier::kernel::kernel(
+	bool const _is_paused)
 :
 	current_multiplier_(
 		1),
 	is_paused_(
-		false)
+		_is_paused)
 {
 }
 

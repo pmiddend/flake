@@ -6,63 +6,70 @@
 		"window-size" : [1280,1024],
 		"desired-fps" : 60,
 		"opencl-compiler-flags" : "-cl-mad-enable -cl-fast-relaxed-math -Werror",
-		"planar" :
+		"planar-vorticity" :
 		{
-			"vorticity" :
+			"wind-strength" : 10.0,
+			"vorticity-strength" : 0.15,
+			"jacobi-iterations" : 50,
+			"monitor-font-size" : 15,
+			"master-and-slave-padding" : 3,
+			"boundary" : "256/zagged.png",
+			"velocity-arrow-scale" : 1.0,
+			"velocity-grid-scale" : 2.0,
+			"vorticity-gradient-arrow-scale" : 1.0,
+			"vorticity-gradient-grid-scale" : 2.0,
+			"smoke-density-splat-per-second" : 0.2,
+			"texture-grid-scale" : 1,
+			"features" :
 			{
-				"wind-strength" : 10.0,
-				"vorticity-strength" : 0.15,
-				"jacobi-iterations" : 50,
-				"monitor-font-size" : 15,
-				"master-and-slave-padding" : 3,
-				"boundary" : "256/zagged.png",
-				"velocity-arrow-scale" : 1.0,
-				"velocity-grid-scale" : 2.0,
-				"vorticity-gradient-arrow-scale" : 1.0,
-				"vorticity-gradient-grid-scale" : 2.0,
-				"smoke-density-splat-per-second" : 0.2,
-				"texture-grid-scale" : 1
-			},
-			"buoyancy" :
-			{
-				"vorticity-strength" : 0.15,
-				"jacobi-iterations" : 50,
-				"monitor-font-size" : 15,
-				"master-and-slave-padding" : 3,
-				"boundary" : "256/black.png",
-				"velocity-arrow-scale" : 1.0,
-				"velocity-grid-scale" : 2.0,
-				"texture-grid-scale" : 1,
-				"buissnesq-density-strength" : 0.5,
-				"buissnesq-temperature-strength" : 0.5,
-				"buissnesq-ambient-temperature" : 20.0,
-				"smoke-density-splat-per-second" : 0.2,
-				"temperature-degrees-splat-per-second" : 1.0
+				"paused" : false
 			}
 		},
-		"volume" :
+		"planar-buoyancy" :
 		{
-			"flakes" :
+			"vorticity-strength" : 0.15,
+			"jacobi-iterations" : 50,
+			"monitor-font-size" : 15,
+			"master-and-slave-padding" : 3,
+			"boundary" : "256/black.png",
+			"velocity-arrow-scale" : 1.0,
+			"velocity-grid-scale" : 2.0,
+			"texture-grid-scale" : 1,
+			"buissnesq-density-strength" : 0.5,
+			"buissnesq-temperature-strength" : 0.5,
+			"buissnesq-ambient-temperature" : 20.0,
+			"smoke-density-splat-per-second" : 0.2,
+			"temperature-degrees-splat-per-second" : 1.0,
+			"features" :
 			{
-				"simulation-size" : [64,64,64],
-				"arrow-scale" : 1.0,
-				"grid-scale" : 1.0,
-				"wind-strength" : 1.0,
-				"jacobi-iterations" : 40,
-				"near-plane" : 1.0,
-				"far-plane" : 1000.0,
-				"fov" : 60.0,
-				"flake-count" : 200,
-				"flake-minimum-size" : 10.0,
-				"flake-maximum-size" : 100.0,
-				"sun-direction" : [0.8804509,0.17609018,0.440225453],
-				"obstacles" :
-				[
-					{
-						"left-bottom-back-position" : [10,10,10],
-						"bounding-box-size" : [10,10,10]
-					}
-				]
+				"paused" : false
+			}
+		},
+		"flakes" :
+		{
+			"simulation-size" : [64,64,64],
+			"arrow-scale" : 1.0,
+			"grid-scale" : 1.0,
+			"wind-strength" : 1.0,
+			"jacobi-iterations" : 40,
+			"near-plane" : 1.0,
+			"far-plane" : 1000.0,
+			"fov" : 60.0,
+			"flake-count" : 200,
+			"flake-minimum-size" : 10.0,
+			"flake-maximum-size" : 100.0,
+			"sun-direction" : [0.8804509,0.17609018,0.440225453],
+			"obstacles" :
+			[
+				{
+					"left-bottom-back-position" : [10,10,10],
+					"bounding-box-size" : [10,10,10]
+				}
+			],
+			"features" :
+			{
+				"paused" : false,
+				"arrows" : true
 			}
 		}
 	}

@@ -10,7 +10,9 @@ namespace time_modifier
 class kernel
 {
 public:
-	kernel();
+	explicit
+	kernel(
+		bool is_paused);
 
 	void
 	faster();

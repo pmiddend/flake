@@ -1,12 +1,12 @@
 #ifndef FLAKE_PLANAR_TESTS_BUOYANCY_HPP_INCLUDED
 #define FLAKE_PLANAR_TESTS_BUOYANCY_HPP_INCLUDED
 
-#include <flake/test_base.hpp>
 #include <flake/planar/cursor_splatter.hpp>
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/planar_arrows.hpp>
 #include <flake/planar/monitor/planar_converter.hpp>
 #include <flake/planar/monitor/texture.hpp>
+#include <flake/test/base.hpp>
 #include <flakelib/buffer_pool/planar_lock_impl.hpp>
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/planar/float_buffer_lock.hpp>
@@ -44,7 +44,7 @@ namespace tests
 {
 class buoyancy
 :
-	public flake::test_base
+	public flake::test::base
 {
 FCPPT_NONCOPYABLE(
 	buoyancy);

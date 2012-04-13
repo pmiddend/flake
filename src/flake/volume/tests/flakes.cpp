@@ -1,14 +1,10 @@
+#include <fcppt/assign/make_container.hpp>
 #include <flake/catch_statements.hpp>
-#include <flake/save_l8_texture_to_file.hpp>
 #include <flake/volume/tests/flakes.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
-#include <flakelib/splatter/box/object.hpp>
-#include <flakelib/splatter/pen/object_impl.hpp>
-#include <flakelib/splatter/pen/volume.hpp>
 #include <flakelib/volume/retrieve_zero_float4_buffer.hpp>
 #include <flakelib/volume/retrieve_zero_float_buffer.hpp>
-#include <flakelib/volume/conversion/planar_size_from_volume_size.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/image/colors.hpp>
@@ -24,11 +20,6 @@
 #include <sge/renderer/state/float.hpp>
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>
-#include <sge/renderer/texture/capabilities_field.hpp>
-#include <sge/renderer/texture/planar.hpp>
-#include <sge/renderer/texture/planar_parameters.hpp>
-#include <sge/renderer/texture/planar_scoped_ptr.hpp>
-#include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters.hpp>
 #include <fcppt/make_unique_ptr.hpp>
@@ -37,7 +28,6 @@
 #include <fcppt/math/deg_to_rad.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
-#include <fcppt/signal/connection.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/chrono.hpp>
 #include <fcppt/config/external_end.hpp>
@@ -63,17 +53,25 @@ FLAKE_CATCH_STATEMENTS
 flake::volume::tests::flakes::flakes(
 	awl::main::function_context const &_function_context)
 :
-	flake::test_base(
+	flake::test::base(
 		_function_context,
 		sge::window::title(
 			FCPPT_TEXT("Flakes test")),
+		flake::test::json_identifier(
+			FCPPT_TEXT("flakes")),
+		fcppt::assign::make_container<test::feature_sequence>(
+			test::feature(
+				test::json_identifier(
+					FCPPT_TEXT("arrows")),
+				test::optional_key_code(
+					sge::input::keyboard::key_code::f1))),
 		sge::systems::cursor_option_field(
 			sge::systems::cursor_option::exclusive)),
 	simulation_size_(
 		sge::parse::json::find_and_convert_member<sge::opencl::memory_object::dim3>(
 			this->configuration(),
 			sge::parse::json::string_to_path(
-				FCPPT_TEXT("tests/volume/flakes/simulation-size")))),
+				FCPPT_TEXT("simulation-size")))),
 	camera_(
 		sge::camera::first_person::parameters(
 			this->keyboard(),
@@ -91,24 +89,18 @@ flake::volume::tests::flakes::flakes(
 			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/volume/flakes/near-plane")))),
+					FCPPT_TEXT("near-plane")))),
 		sge::renderer::projection::far(
 			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/volume/flakes/far-plane")))),
+					FCPPT_TEXT("far-plane")))),
 		sge::renderer::projection::fov(
 			fcppt::math::deg_to_rad(
 				sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
 					this->configuration(),
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("tests/volume/flakes/fov")))))),
-	key_callback_connection_(
-		this->keyboard().key_callback(
-			std::tr1::bind(
-				&flakes::key_callback,
-				this,
-				std::tr1::placeholders::_1))),
+						FCPPT_TEXT("fov")))))),
 	fill_buffer_(
 		this->program_context()),
 	splatter_(
@@ -126,24 +118,22 @@ flake::volume::tests::flakes::flakes(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/volume/flakes/arrow-scale")))),
+					FCPPT_TEXT("arrow-scale")))),
 		flakelib::volume::conversion::grid_scale(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/volume/flakes/grid-scale")))),
+					FCPPT_TEXT("grid-scale")))),
 		flakelib::volume::conversion::origin(
 			sge::renderer::vector3::null()),
 		simulation_size_),
-	draw_arrows_(
-		true),
 	wind_source_(
 		this->program_context(),
 		flakelib::volume::simulation::stam::wind_strength(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/volume/flakes/wind-strength"))))),
+					FCPPT_TEXT("wind-strength"))))),
 	outflow_boundaries_(
 		this->program_context()),
 	semilagrangian_advection_(
@@ -159,7 +149,7 @@ flake::volume::tests::flakes::flakes(
 			sge::parse::json::find_and_convert_member<flakelib::volume::simulation::stam::iterations::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/volume/flakes/jacobi-iterations"))))),
+					FCPPT_TEXT("jacobi-iterations"))))),
 	subtract_pressure_gradient_(
 		this->program_context()),
 	boundary_buffer_(
@@ -181,17 +171,17 @@ flake::volume::tests::flakes::flakes(
 			sge::parse::json::find_and_convert_member<flake::volume::flakes::count::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/volume/flakes/flake-count")))),
+					FCPPT_TEXT("flake-count")))),
 		flake::volume::flakes::minimum_size(
 			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/volume/flakes/flake-minimum-size")))),
+					FCPPT_TEXT("flake-minimum-size")))),
 		flake::volume::flakes::maximum_size(
 			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/volume/flakes/flake-maximum-size")))),
+					FCPPT_TEXT("flake-maximum-size")))),
 		simulation_size_),
 	models_(
 		this->renderer(),
@@ -201,13 +191,13 @@ flake::volume::tests::flakes::flakes(
 			sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/volume/flakes/sun-direction"))))),
+					FCPPT_TEXT("sun-direction"))))),
 	obstacles_(
 		models_,
 		sge::parse::json::find_and_convert_member<sge::parse::json::array>(
 			this->configuration(),
 			sge::parse::json::string_to_path(
-				FCPPT_TEXT("tests/volume/flakes/obstacles"))),
+				FCPPT_TEXT("obstacles"))),
 		flakelib::volume::boundary_buffer_view(
 			boundary_buffer_->value()),
 		splatter_),
@@ -221,7 +211,7 @@ awl::main::exit_code const
 flake::volume::tests::flakes::run()
 {
 	return
-		flake::test_base::run();
+		flake::test::base::run();
 }
 
 flake::volume::tests::flakes::~flakes()
@@ -244,17 +234,20 @@ flake::volume::tests::flakes::render()
 	models_.render();
 	//flakes_.render();
 
-	if(draw_arrows_)
+	if(
+		this->feature_active(
+			test::json_identifier(
+				FCPPT_TEXT("arrows"))))
 		arrows_manager_.render();
 
 
-	test_base::render();
+	test::base::render();
 }
 
 void
 flake::volume::tests::flakes::update()
 {
-	test_base::update();
+	test::base::update();
 
 	flakelib::duration const
 		raw_delta =
@@ -331,40 +324,4 @@ flake::volume::tests::flakes::update()
 	velocity_arrows_.update(
 		flakelib::volume::velocity_buffer_view(
 			velocity_buffer_->value()));
-}
-
-namespace
-{
-fcppt::string const
-bool_to_string(
-	bool const b)
-{
-	return
-		b
-		?
-			fcppt::string(FCPPT_TEXT("on"))
-		:
-			fcppt::string(FCPPT_TEXT("off"));
-}
-}
-
-void
-flake::volume::tests::flakes::key_callback(
-	sge::input::keyboard::key_event const &e)
-{
-	if(!e.pressed())
-		return;
-
-	switch(e.key_code())
-	{
-		case sge::input::keyboard::key_code::f1:
-			draw_arrows_ = !draw_arrows_;
-			this->post_notification(
-				notifications::text(
-					FCPPT_TEXT("Arrows ")+
-					bool_to_string(
-						draw_arrows_)));
-			break;
-		default: break;
-	}
 }

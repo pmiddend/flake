@@ -1,7 +1,7 @@
 #ifndef FLAKE_VOLUME_TESTS_FLAKES_HPP_INCLUDED
 #define FLAKE_VOLUME_TESTS_FLAKES_HPP_INCLUDED
 
-#include <flake/test_base.hpp>
+#include <flake/test/base.hpp>
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/object.hpp>
 #include <flake/volume/flakes/manager.hpp>
@@ -40,7 +40,7 @@ namespace tests
 {
 class flakes
 :
-	public flake::test_base
+	public flake::test::base
 {
 FCPPT_NONCOPYABLE(
 	flakes);
@@ -58,7 +58,6 @@ private:
 
 	sge::camera::first_person::object camera_;
 	sge::camera::perspective_projection_from_viewport perspective_projection_from_viewport_;
-	fcppt::signal::scoped_connection key_callback_connection_;
 
 
 	flakelib::utility::fill_buffer fill_buffer_;
@@ -66,7 +65,6 @@ private:
 	flakelib::volume::conversion::object conversion_object_;
 	flake::volume::arrows::manager arrows_manager_;
 	flake::volume::arrows::object velocity_arrows_;
-	bool draw_arrows_;
 
 	// Simulation
 	flakelib::volume::simulation::stam::wind_source wind_source_;
@@ -92,10 +90,6 @@ private:
 
 	void
 	update();
-
-	void
-	key_callback(
-		sge::input::keyboard::key_event const &);
 };
 }
 }

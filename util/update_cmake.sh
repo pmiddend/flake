@@ -28,6 +28,7 @@ update_cmake_file \
 	-n \
 	src/flake \
 	src/flake/planar \
+	src/flake/test \
 	src/flake/volume \
 	src/flake/volume/arrows \
 	src/flake/volume/flakes \

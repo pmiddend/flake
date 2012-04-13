@@ -61,10 +61,13 @@ FLAKE_CATCH_STATEMENTS
 flake::planar::tests::vorticity::vorticity(
 	awl::main::function_context const &_function_context)
 :
-	flake::test_base(
+	flake::test::base(
 		_function_context,
 		sge::window::title(
 			FCPPT_TEXT("vorticity 2D Stam simulation")),
+		flake::test::json_identifier(
+			FCPPT_TEXT("planar-vorticity")),
+		flake::test::feature_sequence(),
 		sge::systems::cursor_option_field::null()),
 	fill_buffer_(
 		this->program_context()),
@@ -78,7 +81,7 @@ flake::planar::tests::vorticity::vorticity(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/vorticity/wind-strength"))))),
+					FCPPT_TEXT("wind-strength"))))),
 	outflow_boundaries_(
 		this->program_context()),
 	semilagrangian_advection_(
@@ -94,7 +97,7 @@ flake::planar::tests::vorticity::vorticity(
 			sge::parse::json::find_and_convert_member<flakelib::planar::simulation::stam::iterations::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/vorticity/jacobi-iterations"))))),
+					FCPPT_TEXT("jacobi-iterations"))))),
 	subtract_pressure_gradient_(
 		this->program_context()),
 	vorticity_(
@@ -108,7 +111,7 @@ flake::planar::tests::vorticity::vorticity(
 				sge::parse::json::find_and_convert_member<fcppt::string>(
 					this->configuration(),
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("tests/planar/vorticity/boundary"))))),
+						FCPPT_TEXT("boundary"))))),
 	boundary_buffer_(
 		this->buffer_pool(),
 		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
@@ -146,7 +149,7 @@ flake::planar::tests::vorticity::vorticity(
 				sge::parse::json::find_and_convert_member<sge::font::size_type>(
 					this->configuration(),
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("tests/planar/vorticity/monitor-font-size"))))),
+						FCPPT_TEXT("monitor-font-size"))))),
 		monitor::font_color(
 			sge::image::colors::black())),
 	monitor_planar_converter_(
@@ -163,12 +166,12 @@ flake::planar::tests::vorticity::vorticity(
 			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/vorticity/velocity-arrow-scale")))),
+					FCPPT_TEXT("velocity-arrow-scale")))),
 		monitor::grid_scale(
 			sge::parse::json::find_and_convert_member<monitor::grid_scale::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/vorticity/velocity-grid-scale")))),
+					FCPPT_TEXT("velocity-grid-scale")))),
 		monitor::optional_background_texture(
 			*boundary_texture_)),
 	smoke_density_texture_(
@@ -179,7 +182,7 @@ flake::planar::tests::vorticity::vorticity(
 			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/vorticity/texture-grid-scale"))) *
+					FCPPT_TEXT("texture-grid-scale"))) *
 			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
@@ -197,7 +200,7 @@ flake::planar::tests::vorticity::vorticity(
 			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/vorticity/texture-grid-scale"))) *
+					FCPPT_TEXT("texture-grid-scale"))) *
 			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
@@ -215,7 +218,7 @@ flake::planar::tests::vorticity::vorticity(
 			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/vorticity/texture-grid-scale"))) *
+					FCPPT_TEXT("texture-grid-scale"))) *
 			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
@@ -233,7 +236,7 @@ flake::planar::tests::vorticity::vorticity(
 			sge::parse::json::find_and_convert_member<monitor::grid_dimensions::value_type::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/vorticity/texture-grid-scale"))) *
+					FCPPT_TEXT("texture-grid-scale"))) *
 			fcppt::math::dim::structure_cast<monitor::grid_dimensions::value_type>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
@@ -255,12 +258,12 @@ flake::planar::tests::vorticity::vorticity(
 			sge::parse::json::find_and_convert_member<monitor::arrow_scale::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/vorticity/vorticity-gradient-arrow-scale")))),
+					FCPPT_TEXT("vorticity-gradient-arrow-scale")))),
 		monitor::grid_scale(
 			sge::parse::json::find_and_convert_member<monitor::grid_scale::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/vorticity/vorticity-gradient-grid-scale")))),
+					FCPPT_TEXT("vorticity-gradient-grid-scale")))),
 		monitor::optional_background_texture(
 			*boundary_texture_)),
 	rucksack_viewport_adaptor_(
@@ -271,7 +274,7 @@ flake::planar::tests::vorticity::vorticity(
 			sge::parse::json::find_and_convert_member<rucksack::scalar>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("tests/planar/vorticity/master-and-slave-padding")))),
+					FCPPT_TEXT("master-and-slave-padding")))),
 		rucksack::aspect(
 			1,
 			1)),
@@ -298,7 +301,7 @@ flake::planar::tests::vorticity::vorticity(
 		sge::parse::json::find_and_convert_member<cl_float>(
 			this->configuration(),
 			sge::parse::json::string_to_path(
-				FCPPT_TEXT("tests/planar/buoyancy/smoke-density-splat-per-second"))),
+				FCPPT_TEXT("smoke-density-splat-per-second"))),
 		flakelib::splatter::pen::planar(
 			flakelib::splatter::rectangle::object(
 				flakelib::splatter::rectangle::position(
@@ -372,7 +375,7 @@ awl::main::exit_code const
 flake::planar::tests::vorticity::run()
 {
 	return
-		flake::test_base::run();
+		flake::test::base::run();
 }
 
 flake::planar::tests::vorticity::~vorticity()
@@ -397,13 +400,13 @@ flake::planar::tests::vorticity::render()
 				freelook_camera_.coordinate_system(),
 				freelook_camera_.projection_matrix())));
 
-	test_base::render();
+	test::base::render();
 }
 
 void
 flake::planar::tests::vorticity::update()
 {
-	test_base::update();
+	test::base::update();
 
 	monitor_parent_.update();
 
@@ -453,7 +456,7 @@ flake::planar::tests::vorticity::update()
 					sge::parse::json::find_and_convert_member<cl_float>(
 						this->configuration(),
 						sge::parse::json::string_to_path(
-							FCPPT_TEXT("tests/planar/vorticity/vorticity-strength"))))));
+							FCPPT_TEXT("vorticity-strength"))))));
 
 		// Apply vorticity
 		velocity_buffer_ =
@@ -466,7 +469,7 @@ flake::planar::tests::vorticity::update()
 					sge::parse::json::find_and_convert_member<cl_float>(
 						this->configuration(),
 						sge::parse::json::string_to_path(
-							FCPPT_TEXT("tests/planar/vorticity/vorticity-strength")))));
+							FCPPT_TEXT("vorticity-strength")))));
 
 		// Outflow boundaries
 		outflow_boundaries_.update(
