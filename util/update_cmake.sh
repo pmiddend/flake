@@ -32,6 +32,7 @@ update_cmake_file \
 	src/flake/volume/arrows \
 	src/flake/volume/flakes \
 	src/flake/volume/model \
+	src/flake/volume/obstacles \
 	src/flake/planar/monitor \
 	src/flake/notifications \
 	src/flake/time_modifier

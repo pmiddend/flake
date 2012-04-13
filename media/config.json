@@ -47,7 +47,7 @@
 				"simulation-size" : [64,64,64],
 				"arrow-scale" : 1.0,
 				"grid-scale" : 1.0,
-				"wind-strength" : 10.0,
+				"wind-strength" : 1.0,
 				"jacobi-iterations" : 40,
 				"near-plane" : 1.0,
 				"far-plane" : 1000.0,
@@ -55,7 +55,14 @@
 				"flake-count" : 200,
 				"flake-minimum-size" : 10.0,
 				"flake-maximum-size" : 100.0,
-				"sun-direction" : [0.8804509,0.17609018,0.440225453]
+				"sun-direction" : [0.8804509,0.17609018,0.440225453],
+				"obstacles" :
+				[
+					{
+						"left-bottom-back-position" : [10,10,10],
+						"bounding-box-size" : [10,10,10]
+					}
+				]
 			}
 		}
 	}

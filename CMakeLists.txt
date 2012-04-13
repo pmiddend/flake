@@ -166,6 +166,8 @@ set(
 	src/flakelib/utility/fill_buffer.cpp
 	src/flakelib/utility/mix_buffers.cpp
 	src/flakelib/volume/conversion/object.cpp
+	src/flakelib/volume/retrieve_zero_float4_buffer.cpp
+	src/flakelib/volume/retrieve_zero_float_buffer.cpp
 	src/flakelib/volume/simulation/stam/divergence.cpp
 	src/flakelib/volume/simulation/stam/jacobi.cpp
 	src/flakelib/volume/simulation/stam/outflow_boundaries.cpp
@@ -196,6 +198,7 @@ set(
 	src/flake/volume/flakes/manager.cpp
 	src/flake/volume/model/manager.cpp
 	src/flake/volume/model/object.cpp
+	src/flake/volume/obstacles/manager.cpp
 )
 
 fcppt_utils_add_source_groups(

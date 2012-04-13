@@ -6,6 +6,7 @@
 #include <flake/volume/arrows/object.hpp>
 #include <flake/volume/flakes/manager.hpp>
 #include <flake/volume/model/manager.hpp>
+#include <flake/volume/obstacles/manager.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/volume/grid_size.hpp>
@@ -20,6 +21,7 @@
 #include <flakelib/volume/simulation/stam/wind_source.hpp>
 #include <sge/camera/perspective_projection_from_viewport.hpp>
 #include <sge/camera/first_person/object.hpp>
+#include <sge/input/keyboard/key_event_fwd.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
@@ -27,6 +29,7 @@
 #include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
+#include <fcppt/signal/scoped_connection.hpp>
 
 
 namespace flake
@@ -51,18 +54,19 @@ public:
 
 	~flakes();
 private:
-	// Data
 	flakelib::volume::grid_size const simulation_size_;
 
-	// Camera
 	sge::camera::first_person::object camera_;
 	sge::camera::perspective_projection_from_viewport perspective_projection_from_viewport_;
+	fcppt::signal::scoped_connection key_callback_connection_;
 
-	// Other stuff
+
+	flakelib::utility::fill_buffer fill_buffer_;
 	flakelib::splatter::object splatter_;
 	flakelib::volume::conversion::object conversion_object_;
 	flake::volume::arrows::manager arrows_manager_;
 	flake::volume::arrows::object velocity_arrows_;
+	bool draw_arrows_;
 
 	// Simulation
 	flakelib::volume::simulation::stam::wind_source wind_source_;
@@ -75,11 +79,10 @@ private:
 	// Buffers
 	flakelib::volume::unique_float_buffer_lock boundary_buffer_;
 	flakelib::volume::unique_float4_buffer_lock velocity_buffer_;
-	flakelib::utility::fill_buffer fill_buffer_;
 
 	flake::volume::flakes::manager flakes_;
 	flake::volume::model::manager models_;
-	flake::volume::model::object test_model_;
+	flake::volume::obstacles::manager obstacles_;
 
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;
@@ -89,6 +92,10 @@ private:
 
 	void
 	update();
+
+	void
+	key_callback(
+		sge::input::keyboard::key_event const &);
 };
 }
 }

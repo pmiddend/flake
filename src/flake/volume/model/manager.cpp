@@ -12,8 +12,8 @@
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
-#include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
+#include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/state/bool.hpp>
 #include <sge/renderer/state/depth_func.hpp>
 #include <sge/renderer/state/list.hpp>

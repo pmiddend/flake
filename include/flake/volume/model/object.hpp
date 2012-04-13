@@ -5,10 +5,10 @@
 #include <flake/volume/model/manager_fwd.hpp>
 #include <flake/volume/model/position.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/intrusive/list.hpp>
 #include <fcppt/config/external_end.hpp>
-#include <fcppt/math/vector/object_impl.hpp>
 
 
 namespace flake
