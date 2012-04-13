@@ -42,6 +42,7 @@ FLAKELIB_KERNEL_NAME(apply)(
 	int const FLAKELIB_KERNEL_ARGUMENT(bounding_volume_height),
 	int const FLAKELIB_KERNEL_ARGUMENT(bounding_volume_depth),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(boundary),
+	global float *FLAKELIB_KERNEL_ARGUMENT(snow_density),
 	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch))
 {
 	float4 const current_position =
@@ -67,7 +68,8 @@ FLAKELIB_KERNEL_NAME(apply)(
 		if(lefttopback_position.y < 0)
 		{
 			// Project coordinate to the ground, update the snow depth
-			//
+			snow_density[flakelib_volume_at(buffer_pitch,bounding_rect,lefttopback_position)] +=
+				0.001f;
 		}
 
 		positions[get_global_id(0)] =

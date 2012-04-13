@@ -8,6 +8,7 @@
 #include <flake/volume/flakes/mover.hpp>
 #include <flake/volume/model/manager.hpp>
 #include <flake/volume/obstacles/manager.hpp>
+#include <flakelib/marching_cubes/object.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/volume/grid_size.hpp>
@@ -74,15 +75,18 @@ private:
 
 	// Buffers
 	flakelib::volume::unique_float_buffer_lock boundary_buffer_;
+	flakelib::volume::unique_float_buffer_lock snow_density_buffer_;
 	flakelib::volume::unique_float4_buffer_lock velocity_buffer_;
 
 	flake::volume::flakes::manager flakes_;
 	flake::volume::flakes::mover flakes_mover_;
 	flake::volume::model::manager models_;
 	flake::volume::obstacles::manager obstacles_;
+	flakelib::marching_cubes::object marching_cubes_;
 
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;
+	sge::timer::basic<sge::timer::clocks::standard> snow_cover_update_;
 
 	void
 	render();

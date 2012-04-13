@@ -67,21 +67,23 @@
 			"near-plane" : 1.0,
 			"far-plane" : 1000.0,
 			"fov" : 60.0,
-			"flake-count" : 2000,
+			"flake-count" : 20000,
 			"flake-minimum-size" : 10.0,
-			"flake-maximum-size" : 100.0,
+			"flake-maximum-size" : 15.0,
 			"sun-direction" : [0.8804509,0.17609018,0.440225453],
 			"obstacles" :
 			[
 				{
-					"left-bottom-back-position" : [10,10,10],
+					"left-bottom-back-position" : [10,0,10],
 					"bounding-box-size" : [10,10,10]
 				}
 			],
 			"features" :
 			{
 				"paused" : false,
-				"arrows" : true,
+				"arrows" : false,
+				"snowcover" : true,
+				"models" : true,
 				"flakes" : true
 			}
 		}

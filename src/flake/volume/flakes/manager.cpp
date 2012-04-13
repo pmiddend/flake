@@ -303,9 +303,14 @@ flake::volume::flakes::manager::generate_particles(
 			starting_position.y() =
 				second_y_rng();
 
+		sge::renderer::scalar const flake_size =
+			size_rng();
+
+		std::cout << flake_size << "\n";
+
 		(*point_sizes_it++).set<vf::point_size>(
 			vf::point_size::packed_type(
-				size_rng()));
+				flake_size));
 
 		(*positions_it++).set<vf::position>(
 			starting_position);

@@ -1,4 +1,5 @@
 #include <flake/catch_statements.hpp>
+#include <sge/timer/reset_when_expired.hpp>
 #include <flake/volume/tests/flakes.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
@@ -62,6 +63,16 @@ flake::volume::tests::flakes::flakes(
 					FCPPT_TEXT("arrows")),
 				test::optional_key_code(
 					sge::input::keyboard::key_code::f1)))
+			(test::feature(
+				test::json_identifier(
+					FCPPT_TEXT("snowcover")),
+				test::optional_key_code(
+					sge::input::keyboard::key_code::f3)))
+			(test::feature(
+				test::json_identifier(
+					FCPPT_TEXT("models")),
+				test::optional_key_code(
+					sge::input::keyboard::key_code::f4)))
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("flakes")),
@@ -159,6 +170,11 @@ flake::volume::tests::flakes::flakes(
 			this->buffer_pool(),
 			fill_buffer_,
 			simulation_size_.get())),
+	snow_density_buffer_(
+		flakelib::volume::retrieve_zero_float_buffer(
+			this->buffer_pool(),
+			fill_buffer_,
+			simulation_size_.get())),
 	velocity_buffer_(
 		flakelib::volume::retrieve_zero_float4_buffer(
 			this->buffer_pool(),
@@ -187,7 +203,9 @@ flake::volume::tests::flakes::flakes(
 		simulation_size_),
 	flakes_mover_(
 		this->program_context(),
-		flakes_.cl_positions()),
+		flakes_.cl_positions(),
+		volume::flakes::snow_density_view(
+			snow_density_buffer_->value())),
 	models_(
 		this->renderer(),
 		this->image_system(),
@@ -206,7 +224,15 @@ flake::volume::tests::flakes::flakes(
 		flakelib::volume::boundary_buffer_view(
 			boundary_buffer_->value()),
 		splatter_),
+	marching_cubes_(
+		this->renderer(),
+		camera_,
+		this->program_context(),
+		simulation_size_),
 	delta_timer_(
+		sge::timer::parameters<sge::timer::clocks::standard>(
+			boost::chrono::seconds(1))),
+	snow_cover_update_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			boost::chrono::seconds(1)))
 {
@@ -236,7 +262,11 @@ flake::volume::tests::flakes::render()
 		sge::renderer::clear_flags_field(
 			sge::renderer::clear_flags::back_buffer) | sge::renderer::clear_flags::depth_buffer);
 
-	models_.render();
+	if(
+		this->feature_active(
+			test::json_identifier(
+				FCPPT_TEXT("models"))))
+		models_.render();
 
 	if(
 		this->feature_active(
@@ -249,6 +279,12 @@ flake::volume::tests::flakes::render()
 			test::json_identifier(
 				FCPPT_TEXT("arrows"))))
 		arrows_manager_.render();
+
+	if(
+		this->feature_active(
+			test::json_identifier(
+				FCPPT_TEXT("snowcover"))))
+		marching_cubes_.render();
 
 
 	test::base::render();
@@ -335,6 +371,13 @@ flake::volume::tests::flakes::update()
 				velocity_buffer_->value()),
 			flakelib::volume::boundary_buffer_view(
 				boundary_buffer_->value()));
+
+		if(sge::timer::reset_when_expired(snow_cover_update_))
+		{
+			std::cout << "Updating snow cover\n";
+			marching_cubes_.update(
+				snow_density_buffer_->value());
+		}
 	}
 
 

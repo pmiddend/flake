@@ -1,3 +1,4 @@
+#include <sge/renderer/state/cull_mode.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/cl/program_context.hpp>
@@ -464,7 +465,7 @@ flakelib::marching_cubes::object::render()
 		renderer_,
 		sge::renderer::state::list
 			(sge::renderer::state::depth_func::less)
-			);
+			(sge::renderer::state::cull_mode::off));
 
 	sge::renderer::scoped_vertex_declaration scoped_vertex_declaration(
 		renderer_,

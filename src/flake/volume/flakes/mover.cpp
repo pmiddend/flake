@@ -11,7 +11,8 @@
 
 flake::volume::flakes::mover::mover(
 	flakelib::cl::program_context const &_program_context,
-	flakes::position_view const &_positions)
+	flakes::position_view const &_positions,
+	flakes::snow_density_view const &_snow_density)
 :
 	program_(
 		_program_context.command_queue(),
@@ -30,6 +31,10 @@ flake::volume::flakes::mover::mover(
 	kernel_->buffer_argument(
 		"positions",
 		_positions.get().buffer());
+
+	kernel_->buffer_argument(
+		"snow_density",
+		_snow_density.get().buffer());
 }
 
 void

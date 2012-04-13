@@ -137,7 +137,7 @@ void
 generateTriangles2(__global float4 *pos, __global float4 *norm, __global uint *compactedVoxelArray, __global uint *numVertsScanned, 
 	global float const *volume,
                    uint4 gridSize, uint4 gridSizeShift, uint4 gridSizeMask,
-                   float4 voxelSize, float isoValue, uint activeVoxels, uint maxVerts, 
+                   float4 voxelSize2, float isoValue, uint activeVoxels, uint maxVerts, 
                    __read_only image2d_t numVertsTex, __read_only image2d_t triTex)
 {
     uint i = get_global_id(0);
@@ -152,11 +152,23 @@ generateTriangles2(__global float4 *pos, __global float4 *norm, __global uint *c
     // compute position in 3d grid
     int4 gridPos = calcGridPos(voxel, gridSizeShift, gridSizeMask);
 
+    //float4 voxelSize = (float4)(1.0f,1.0f,1.0f,0.0f);
+    //float4 voxelSize = voxelSize2;
+    float4 voxelSize = (float4)(1.0f,1.0f,1.0f,0.0f);
+
+    float4 p;
+    p.x = gridPos.x;
+    p.y = 64.0f - gridPos.y;
+    //p.y = gridPos.y;
+    p.z = gridPos.z;
+    p.w = 1.0f;
+    /*
     float4 p;
     p.x = -1.0f + (gridPos.x * voxelSize.x);
     p.y = -1.0f + (gridPos.y * voxelSize.y);
     p.z = -1.0f + (gridPos.z * voxelSize.z);
     p.w = 1.0f;
+    */
 
     // calculate cell vertex positions
     float4 v[8];
