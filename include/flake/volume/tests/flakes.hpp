@@ -76,6 +76,7 @@ private:
 	// Buffers
 	flakelib::volume::unique_float_buffer_lock boundary_buffer_;
 	flakelib::volume::unique_float_buffer_lock snow_density_buffer_;
+	flakelib::volume::unique_float_buffer_lock activity_buffer_;
 	flakelib::volume::unique_float4_buffer_lock velocity_buffer_;
 
 	flake::volume::flakes::manager flakes_;

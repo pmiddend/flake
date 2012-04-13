@@ -13,31 +13,60 @@ flake::volume::flakes::mover::mover(
 	flakelib::cl::program_context const &_program_context,
 	flakes::position_view const &_positions,
 	flakes::snow_density_view const &_snow_density,
-	flakes::collision_increment const &_collision_increment)
+	flakes::collision_increment const &_collision_increment,
+	flakes::activity_view const &_activity,
+	flakelib::marching_cubes::iso_level const &_iso_level)
 :
 	program_(
 		_program_context.command_queue(),
 		flake::media_path_from_string(
 			FCPPT_TEXT("kernels/flake/flakes/mover.cl")),
 		_program_context.compiler_flags()),
-	kernel_(
+	move_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply"))),
+				"move"))),
+	update_activity_kernel_(
+		program_.create_kernel(
+			sge::opencl::kernel::name(
+				"update_activity"))),
 	positions_(
 		_positions),
+	activity_(
+		_activity),
 	vertex_count_(
 		_positions.get().size().w())
 {
-	kernel_->buffer_argument(
-		"positions",
-		_positions.get().buffer());
+	update_activity_kernel_->numerical_argument(
+		"iso_level",
+		_iso_level.get());
 
-	kernel_->buffer_argument(
+	update_activity_kernel_->buffer_argument(
 		"snow_density",
 		_snow_density.get().buffer());
 
-	kernel_->numerical_argument(
+	update_activity_kernel_->numerical_argument(
+		"buffer_pitch",
+		static_cast<cl_uint>(
+			_snow_density.get().size().w()));
+
+	update_activity_kernel_->buffer_argument(
+		"activity",
+		_activity.get().buffer());
+
+	move_kernel_->buffer_argument(
+		"activity",
+		_activity.get().buffer());
+
+	move_kernel_->buffer_argument(
+		"positions",
+		_positions.get().buffer());
+
+	move_kernel_->buffer_argument(
+		"snow_density",
+		_snow_density.get().buffer());
+
+	move_kernel_->numerical_argument(
 		"collision_increment",
 		_collision_increment.get());
 }
@@ -48,34 +77,43 @@ flake::volume::flakes::mover::update(
 	flakelib::volume::velocity_buffer_view const &_velocity,
 	flakelib::volume::boundary_buffer_view const &_boundary)
 {
-	kernel_->numerical_argument(
-		"time_delta",
-		_delta.count());
-
-	kernel_->buffer_argument(
-		"velocity",
-		_velocity.get().buffer());
-
-	kernel_->buffer_argument(
+	update_activity_kernel_->buffer_argument(
 		"boundary",
 		_boundary.get().buffer());
 
-	kernel_->numerical_argument(
+	update_activity_kernel_->enqueue_automatic(
+		_boundary.get().size());
+
+	move_kernel_->numerical_argument(
+		"time_delta",
+		_delta.count());
+
+	move_kernel_->buffer_argument(
+		"velocity",
+		_velocity.get().buffer());
+
+	/*
+	move_kernel_->buffer_argument(
+		"boundary",
+		_boundary.get().buffer());
+		*/
+
+	move_kernel_->numerical_argument(
 		"bounding_volume_width",
 		static_cast<cl_int>(
 			_boundary.get().size().w()));
 
-	kernel_->numerical_argument(
+	move_kernel_->numerical_argument(
 		"bounding_volume_height",
 		static_cast<cl_int>(
 			_boundary.get().size().h()));
 
-	kernel_->numerical_argument(
+	move_kernel_->numerical_argument(
 		"bounding_volume_depth",
 		static_cast<cl_int>(
 			_boundary.get().size().d()));
 
-	kernel_->numerical_argument(
+	move_kernel_->numerical_argument(
 		"buffer_pitch",
 		static_cast<cl_uint>(
 			_velocity.get().size().w()));
@@ -85,10 +123,10 @@ flake::volume::flakes::mover::update(
 		&positions_.get().buffer());
 
 	sge::opencl::memory_object::scoped_objects scoped_vb(
-		kernel_->command_queue(),
+		move_kernel_->command_queue(),
 		mem_objects);
 
-	kernel_->enqueue_automatic(
+	move_kernel_->enqueue_automatic(
 		sge::opencl::memory_object::dim1(
 			vertex_count_));
 }

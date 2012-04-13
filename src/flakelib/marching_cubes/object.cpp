@@ -223,7 +223,7 @@ flakelib::marching_cubes::object::update(
 		0u
 	};
 
-	std::cout << "Grid size log2: " << gridSizeLog2[0] << ", " << gridSizeLog2[1] << ", " << gridSizeLog2[2] << ", " << gridSizeLog2[3] << "\n";
+	//std::cout << "Grid size log2: " << gridSizeLog2[0] << ", " << gridSizeLog2[1] << ", " << gridSizeLog2[2] << ", " << gridSizeLog2[3] << "\n";
 
 	cl_uint gridSize[4] =
 	{
@@ -236,7 +236,7 @@ flakelib::marching_cubes::object::update(
 		0u
 	};
 
-	std::cout << "Grid size log2: " << gridSize[0] << ", " << gridSize[1] << ", " << gridSize[2] << ", " << gridSize[3] << "\n";
+	//std::cout << "Grid size log2: " << gridSize[0] << ", " << gridSize[1] << ", " << gridSize[2] << ", " << gridSize[3] << "\n";
 
 	cl_uint gridSizeMask[4] =
 	{
@@ -309,7 +309,7 @@ flakelib::marching_cubes::object::update(
 			1,
 			numVoxels);
 
-	std::cout << "First scan resulted in " << first_scan_result << "\n";
+	//std::cout << "First scan resulted in " << first_scan_result << "\n";
 
 	cl_uint activeVoxels = 0;
 	// read back values to calculate total number of non-empty voxels
@@ -342,7 +342,7 @@ flakelib::marching_cubes::object::update(
 
 		activeVoxels = lastElement + lastScanElement;
 
-		std::cout << "Last element: " << lastElement << ", lastScanElement: " << lastScanElement << "\n";
+	//	std::cout << "Last element: " << lastElement << ", lastScanElement: " << lastScanElement << "\n";
 	}
 
     if (activeVoxels==0)
@@ -367,7 +367,7 @@ flakelib::marching_cubes::object::update(
 			1,
 			numVoxels);
 
-	std::cout << "Second scan resulted in " << second_scan_result << "\n";
+	//std::cout << "Second scan resulted in " << second_scan_result << "\n";
 
 
 	// readback total number of vertices
@@ -400,7 +400,7 @@ flakelib::marching_cubes::object::update(
 		totalVerts = lastElement + lastScanElement;
 	}
 
-	std::cout << "Got " << totalVerts << " vertices total\n";
+	std::cout << "Marching cubes: " << totalVerts << " vertices total\n";
 
 	vertex_count_ = totalVerts;
 	this->resize_gl_buffers();

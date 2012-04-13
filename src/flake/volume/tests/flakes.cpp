@@ -175,6 +175,11 @@ flake::volume::tests::flakes::flakes(
 			this->buffer_pool(),
 			fill_buffer_,
 			simulation_size_.get())),
+	activity_buffer_(
+		flakelib::volume::retrieve_zero_float_buffer(
+			this->buffer_pool(),
+			fill_buffer_,
+			simulation_size_.get())),
 	velocity_buffer_(
 		flakelib::volume::retrieve_zero_float4_buffer(
 			this->buffer_pool(),
@@ -210,7 +215,14 @@ flake::volume::tests::flakes::flakes(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("collision-increment"))))),
+					FCPPT_TEXT("collision-increment")))),
+		volume::flakes::activity_view(
+			activity_buffer_->value()),
+		flakelib::marching_cubes::iso_level(
+			sge::parse::json::find_and_convert_member<cl_float>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("iso-level"))))),
 	models_(
 		this->renderer(),
 		this->image_system(),
