@@ -67,7 +67,7 @@
 			"near-plane" : 1.0,
 			"far-plane" : 1000.0,
 			"fov" : 60.0,
-			"flake-count" : 200,
+			"flake-count" : 2000,
 			"flake-minimum-size" : 10.0,
 			"flake-maximum-size" : 100.0,
 			"sun-direction" : [0.8804509,0.17609018,0.440225453],
@@ -81,7 +81,8 @@
 			"features" :
 			{
 				"paused" : false,
-				"arrows" : true
+				"arrows" : true,
+				"flakes" : true
 			}
 		}
 	}

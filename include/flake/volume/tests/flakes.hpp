@@ -5,6 +5,7 @@
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/object.hpp>
 #include <flake/volume/flakes/manager.hpp>
+#include <flake/volume/flakes/mover.hpp>
 #include <flake/volume/model/manager.hpp>
 #include <flake/volume/obstacles/manager.hpp>
 #include <flakelib/splatter/object.hpp>
@@ -55,11 +56,8 @@ public:
 	~flakes();
 private:
 	flakelib::volume::grid_size const simulation_size_;
-
 	sge::camera::first_person::object camera_;
 	sge::camera::perspective_projection_from_viewport perspective_projection_from_viewport_;
-
-
 	flakelib::utility::fill_buffer fill_buffer_;
 	flakelib::splatter::object splatter_;
 	flakelib::volume::conversion::object conversion_object_;
@@ -79,6 +77,7 @@ private:
 	flakelib::volume::unique_float4_buffer_lock velocity_buffer_;
 
 	flake::volume::flakes::manager flakes_;
+	flake::volume::flakes::mover flakes_mover_;
 	flake::volume::model::manager models_;
 	flake::volume::obstacles::manager obstacles_;
 

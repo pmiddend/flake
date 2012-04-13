@@ -142,9 +142,6 @@ flake::volume::tests::marching_cubes::marching_cubes(
 				1.0f)),
 		static_cast<cl_float>(
 			1.0f));
-
-	marching_cubes_.update(
-		boundary_buffer_->value());
 }
 
 awl::main::exit_code const
@@ -193,4 +190,7 @@ flake::volume::tests::marching_cubes::update()
 
 	camera_.update(
 		10.0f * raw_delta);
+
+	marching_cubes_.update(
+		boundary_buffer_->value());
 }

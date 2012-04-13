@@ -4,6 +4,7 @@
 #include <flake/volume/flakes/count.hpp>
 #include <flake/volume/flakes/maximum_size.hpp>
 #include <flake/volume/flakes/minimum_size.hpp>
+#include <flake/volume/flakes/position_view.hpp>
 #include <flakelib/volume/grid_size.hpp>
 #include <sge/camera/base_fwd.hpp>
 #include <sge/image2d/system_fwd.hpp>
@@ -28,7 +29,6 @@ class manager
 FCPPT_NONCOPYABLE(
 	manager);
 public:
-	explicit
 	manager(
 		sge::renderer::device &,
 		sge::camera::base &,
@@ -41,6 +41,9 @@ public:
 
 	void
 	render();
+
+	flakes::position_view const
+	cl_positions();
 
 	~manager();
 private:

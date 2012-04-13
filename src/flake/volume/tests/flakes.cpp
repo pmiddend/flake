@@ -56,12 +56,17 @@ flake::volume::tests::flakes::flakes(
 			FCPPT_TEXT("Flakes test")),
 		flake::test::json_identifier(
 			FCPPT_TEXT("flakes")),
-		fcppt::assign::make_container<test::feature_sequence>(
-			test::feature(
+		fcppt::assign::make_container<test::feature_sequence>
+			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("arrows")),
 				test::optional_key_code(
-					sge::input::keyboard::key_code::f1))),
+					sge::input::keyboard::key_code::f1)))
+			(test::feature(
+				test::json_identifier(
+					FCPPT_TEXT("flakes")),
+				test::optional_key_code(
+					sge::input::keyboard::key_code::f2))),
 		sge::systems::cursor_option_field(
 			sge::systems::cursor_option::exclusive)),
 	simulation_size_(
@@ -180,6 +185,9 @@ flake::volume::tests::flakes::flakes(
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("flake-maximum-size")))),
 		simulation_size_),
+	flakes_mover_(
+		this->program_context(),
+		flakes_.cl_positions()),
 	models_(
 		this->renderer(),
 		this->image_system(),
@@ -229,7 +237,12 @@ flake::volume::tests::flakes::render()
 			sge::renderer::clear_flags::back_buffer) | sge::renderer::clear_flags::depth_buffer);
 
 	models_.render();
-	//flakes_.render();
+
+	if(
+		this->feature_active(
+			test::json_identifier(
+				FCPPT_TEXT("flakes"))))
+		flakes_.render();
 
 	if(
 		this->feature_active(
@@ -315,6 +328,13 @@ flake::volume::tests::flakes::update()
 				boundary_buffer_->value()),
 			flakelib::volume::simulation::stam::pressure_buffer_view(
 				pressure->value()));
+
+		flakes_mover_.update(
+			10.0f * delta,
+			flakelib::volume::velocity_buffer_view(
+				velocity_buffer_->value()),
+			flakelib::volume::boundary_buffer_view(
+				boundary_buffer_->value()));
 	}
 
 

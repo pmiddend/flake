@@ -53,9 +53,6 @@
 #include <boost/filesystem/operations.hpp>
 #include <fcppt/config/external_end.hpp>
 
-
-#define NTHREADS 32
-
 flakelib::marching_cubes::object::object(
 	sge::renderer::device &_renderer,
 	sge::camera::base &_camera,
@@ -105,30 +102,8 @@ flakelib::marching_cubes::object::object(
 					FCPPT_TEXT("shaders/marching_cubes/fragment.glsl")))
 			.name(
 				FCPPT_TEXT("Marching cubes"))),
-	positions_buffer_(
-		/*
-		renderer_.create_vertex_buffer(
-			*vertex_declaration_,
-			sge::renderer::vf::dynamic::make_part_index
-			<
-				vf::format,
-				vf::position_part
-			>(),
-			sge::renderer::vertex_count(
-				_flake_count.get()),
-			sge::renderer::resource_flags::none)*/),
-	normals_buffer_(
-		/*
-		renderer_.create_vertex_buffer(
-			*vertex_declaration_,
-			sge::renderer::vf::dynamic::make_part_index
-			<
-				vf::format,
-				vf::normal_part
-			>(),
-			sge::renderer::vertex_count(
-				_flake_count.get()),
-			sge::renderer::resource_flags::none)*/),
+	positions_buffer_(),
+	normals_buffer_(),
 	positions_buffer_cl_(),
 	normals_buffer_cl_(),
 	vertex_count_(
@@ -438,10 +413,14 @@ flakelib::marching_cubes::object::update(
 		command_queue_,
 		mem_objects);
 
+	sge::opencl::memory_object::size_type const nthreads =
+		32;
+
 	sge::opencl::memory_object::dim3 grid2(
-		(int)std::ceil(activeVoxels / (float)NTHREADS),
-		1,
-		1);
+		static_cast<sge::opencl::memory_object::size_type>(
+			(int)std::ceil(activeVoxels / (float)nthreads)),
+		1u,
+		1u);
 
 	while(grid2.w() > 65535)
 	{
@@ -450,11 +429,23 @@ flakelib::marching_cubes::object::update(
 	}
 
 
-    launch_generateTriangles2(grid2, sge::opencl::memory_object::dim3(NTHREADS,1,1), positions_buffer_cl_->impl(), normals_buffer_cl_->impl(),
-                                            voxel_array_.impl(),
-                                            voxel_verts_scan_.impl(), _view.buffer().impl(),
-                                            gridSize, gridSizeShift, gridSizeMask,
-                                            voxelSize, isoValue, activeVoxels);
+	launch_generateTriangles2(
+		grid2,
+		sge::opencl::memory_object::dim3(
+		    nthreads,
+		    1,
+		    1),
+		positions_buffer_cl_->impl(),
+		normals_buffer_cl_->impl(),
+		voxel_array_.impl(),
+		voxel_verts_scan_.impl(),
+		_view.buffer().impl(),
+		gridSize,
+		gridSizeShift,
+		gridSizeMask,
+		voxelSize,
+		isoValue,
+		activeVoxels);
 }
 
 void
@@ -626,7 +617,9 @@ flakelib::marching_cubes::object::launch_generateTriangles2(
     FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
     ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 10, sizeof(uint), &activeVoxels);
     FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    cl_uint cl_vertex_count = vertex_count_;
+    cl_uint const cl_vertex_count =
+    	static_cast<cl_uint>(
+		vertex_count_);
     ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 11, sizeof(uint), &cl_vertex_count);
     FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
 
@@ -646,6 +639,15 @@ flakelib::marching_cubes::object::resize_gl_buffers()
 	if(!vertex_count_)
 		return;
 
+	if(positions_buffer_ && vertex_count_ < positions_buffer_->size().get())
+		return;
+
+	sge::renderer::vertex_count const real_vertex_count(
+		static_cast<sge::renderer::size_type>(
+			static_cast<double>(
+				vertex_count_) *
+			1.5));
+
 	positions_buffer_ =
 		renderer_.create_vertex_buffer(
 			*vertex_declaration_,
@@ -654,8 +656,7 @@ flakelib::marching_cubes::object::resize_gl_buffers()
 				vf::format,
 				vf::position_part
 			>(),
-			sge::renderer::vertex_count(
-				vertex_count_),
+			real_vertex_count,
 			sge::renderer::resource_flags::none);
 
 	normals_buffer_ =
@@ -666,8 +667,7 @@ flakelib::marching_cubes::object::resize_gl_buffers()
 				vf::format,
 				vf::normal_part
 			>(),
-			sge::renderer::vertex_count(
-				vertex_count_),
+			real_vertex_count,
 			sge::renderer::resource_flags::none);
 
 	positions_buffer_cl_.take(

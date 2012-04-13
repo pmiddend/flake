@@ -1,3 +1,5 @@
+#include <fcppt/math/vector/output.hpp>
+#include <flakelib/buffer/linear_view_impl.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/volume/flakes/manager.hpp>
 #include <flake/volume/flakes/vf/format.hpp>
@@ -89,6 +91,11 @@ flake::volume::flakes::manager::manager(
 					sge::shader::variable_type::uniform,
 					sge::renderer::vector3()))
 				(sge::shader::variable(
+					"maximum_distance",
+					sge::shader::variable_type::uniform,
+					static_cast<sge::renderer::scalar>(
+						_grid_size.get().w())))
+				(sge::shader::variable(
 					"mvp",
 					sge::shader::variable_type::uniform,
 					sge::shader::matrix(
@@ -176,6 +183,15 @@ flake::volume::flakes::manager::render()
 		sge::renderer::vertex_count(
 			positions_buffer_->size()),
 		sge::renderer::nonindexed_primitive_type::point);
+}
+
+flake::volume::flakes::position_view const
+flake::volume::flakes::manager::cl_positions()
+{
+	return
+		flake::volume::flakes::position_view(
+			flake::volume::flakes::position_view::value_type(
+				*cl_positions_buffer_));
 }
 
 flake::volume::flakes::manager::~manager()
