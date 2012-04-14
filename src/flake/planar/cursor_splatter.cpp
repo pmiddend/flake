@@ -23,6 +23,7 @@
 #include <fcppt/math/vector/narrow_cast.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/math/vector/structure_cast.hpp>
+#include <fcppt/signal/connection.hpp>
 #include <fcppt/tr1/functional.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/type_traits/is_floating_point.hpp>

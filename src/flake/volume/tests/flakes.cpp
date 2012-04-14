@@ -1,5 +1,4 @@
 #include <flake/catch_statements.hpp>
-#include <sge/timer/reset_when_expired.hpp>
 #include <flake/volume/tests/flakes.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
@@ -19,6 +18,7 @@
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters.hpp>
+#include <sge/timer/reset_when_expired.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/assign/make_container.hpp>
@@ -26,6 +26,7 @@
 #include <fcppt/math/deg_to_rad.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
+#include <fcppt/tr1/functional.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/chrono.hpp>
 #include <fcppt/config/external_end.hpp>
@@ -146,7 +147,7 @@ flake::volume::tests::flakes::flakes(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("wind-strength"))))),
+					FCPPT_TEXT("wind-strength-start"))))),
 	outflow_boundaries_(
 		this->program_context()),
 	semilagrangian_advection_(
@@ -251,6 +252,26 @@ flake::volume::tests::flakes::flakes(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("iso-level"))))),
+	wind_strength_modulator_(
+		std::tr1::bind(
+			&flakelib::volume::simulation::stam::wind_source::wind_strength,
+			&wind_source_,
+			std::tr1::placeholders::_1),
+		flakelib::value_modulator::minimum(
+			sge::parse::json::find_and_convert_member<cl_float>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("wind-strength-minimum")))),
+		flakelib::value_modulator::maximum(
+			sge::parse::json::find_and_convert_member<cl_float>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("wind-strength-maximum")))),
+		flakelib::value_modulator::frequency(
+			sge::parse::json::find_and_convert_member<cl_float>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("wind-strength-frequency-seconds"))))),
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			boost::chrono::seconds(1))),
@@ -396,10 +417,18 @@ flake::volume::tests::flakes::update()
 
 		if(sge::timer::reset_when_expired(snow_cover_update_))
 		{
-			std::cout << "Updating snow cover\n";
-			marching_cubes_.update(
-				snow_density_buffer_->value());
+			flakelib::marching_cubes::vertex_count const resulted_vertices(
+				marching_cubes_.update(
+					snow_density_buffer_->value()));
+
+			if(!resulted_vertices.get())
+				std::cout << "No snow cover vertices yet...\n";
+			else
+				std::cout << resulted_vertices.get() << " snow cover vertices\n";
 		}
+
+		wind_strength_modulator_.update(
+			raw_delta);
 	}
 
 

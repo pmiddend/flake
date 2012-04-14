@@ -5,6 +5,9 @@
 #include <flake/planar/monitor/parent_fwd.hpp>
 #include <rucksack/widget/base_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/preprocessor/disable_gcc_warning.hpp>
+#include <fcppt/preprocessor/pop_warning.hpp>
+#include <fcppt/preprocessor/push_warning.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/intrusive/list.hpp>
 #include <fcppt/config/external_end.hpp>
@@ -16,6 +19,9 @@ namespace planar
 {
 namespace monitor
 {
+FCPPT_PP_PUSH_WARNING
+FCPPT_PP_DISABLE_GCC_WARNING(-Weffc++)
+
 class child
 :
 	public
@@ -51,6 +57,8 @@ protected:
 	monitor::parent &
 	parent() const;
 };
+
+FCPPT_PP_POP_WARNING
 }
 }
 }

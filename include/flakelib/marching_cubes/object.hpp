@@ -1,11 +1,12 @@
 #ifndef FLAKELIB_MARCHING_CUBES_OBJECT_HPP_INCLUDED
 #define FLAKELIB_MARCHING_CUBES_OBJECT_HPP_INCLUDED
 
-#include <flakelib/marching_cubes/scan.hpp>
+#include <flakelib/symbol.hpp>
 #include <flakelib/marching_cubes/iso_level.hpp>
+#include <flakelib/marching_cubes/vertex_count.hpp>
+#include <flakelib/marching_cubes/scan.hpp>
 #include <flakelib/volume/float_view.hpp>
 #include <flakelib/volume/grid_size.hpp>
-#include <flakelib/symbol.hpp>
 #include <sge/camera/base_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/kernel/object.hpp>
@@ -37,7 +38,7 @@ public:
 		marching_cubes::iso_level const &);
 
 	FLAKELIB_SYMBOL
-	void
+	marching_cubes::vertex_count const
 	update(
 		flakelib::volume::float_view const &);
 

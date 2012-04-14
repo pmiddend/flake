@@ -4,7 +4,9 @@
 #include <sge/input/keyboard/key_event.hpp>
 #include <fcppt/insert_to_fcppt_string.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/signal/connection.hpp>
 #include <fcppt/tr1/functional.hpp>
+
 
 flake::time_modifier::object::object(
 	sge::input::keyboard::device &_keyboard,

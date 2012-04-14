@@ -1,11 +1,10 @@
-#include <flakelib/duration.hpp>
-#include <sge/renderer/state/draw_mode.hpp>
-#include <flakelib/splatter/pen/object.hpp>
-#include <flakelib/splatter/box/object.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/volume/tests/marching_cubes.hpp>
+#include <flakelib/duration.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
+#include <flakelib/splatter/box/object.hpp>
+#include <flakelib/splatter/pen/object.hpp>
 #include <flakelib/volume/retrieve_zero_float_buffer.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
@@ -16,6 +15,7 @@
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/state/color.hpp>
+#include <sge/renderer/state/draw_mode.hpp>
 #include <sge/renderer/state/float.hpp>
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>

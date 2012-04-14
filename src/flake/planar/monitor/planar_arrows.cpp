@@ -106,6 +106,7 @@ flake::planar::monitor::planar_arrows::planar_arrows(
 		_arrow_scale),
 	grid_scale_(
 		_grid_scale),
+	position_(),
 	vb_(
 		child::parent().renderer().create_vertex_buffer(
 			child::parent().vertex_declaration(),

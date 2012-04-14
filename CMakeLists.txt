@@ -167,6 +167,7 @@ set(
 	src/flakelib/utf8_file_to_fcppt_string.cpp
 	src/flakelib/utility/fill_buffer.cpp
 	src/flakelib/utility/mix_buffers.cpp
+	src/flakelib/value_modulator/object.cpp
 	src/flakelib/volume/conversion/object.cpp
 	src/flakelib/volume/retrieve_zero_float4_buffer.cpp
 	src/flakelib/volume/retrieve_zero_float_buffer.cpp

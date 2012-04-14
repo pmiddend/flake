@@ -14,7 +14,7 @@ namespace
 //All three kernels run 512 threads per workgroup
 //Must be a power of two
 const cl_uint WORKGROUP_SIZE = 256u;
-const char *compileOptions = "-D WORKGROUP_SIZE=256";
+//const char *compileOptions = "-D WORKGROUP_SIZE=256";
 
 ////////////////////////////////////////////////////////////////////////////////
 // Common definitions

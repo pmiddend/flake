@@ -11,6 +11,7 @@
 #include <flakelib/marching_cubes/object.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
+#include <flakelib/value_modulator/object.hpp>
 #include <flakelib/volume/grid_size.hpp>
 #include <flakelib/volume/unique_float4_buffer_lock.hpp>
 #include <flakelib/volume/unique_float_buffer_lock.hpp>
@@ -84,6 +85,7 @@ private:
 	flake::volume::model::manager models_;
 	flake::volume::obstacles::manager obstacles_;
 	flakelib::marching_cubes::object marching_cubes_;
+	flakelib::value_modulator::object wind_strength_modulator_;
 
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;

@@ -58,6 +58,7 @@
 #include <fcppt/log/headers.hpp>
 #include <fcppt/log/location.hpp>
 #include <fcppt/math/box/object_impl.hpp>
+#include <fcppt/signal/connection.hpp>
 #include <fcppt/tr1/functional.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <exception>

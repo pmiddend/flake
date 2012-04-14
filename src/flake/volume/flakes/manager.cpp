@@ -1,10 +1,8 @@
-#include <fcppt/math/vector/arithmetic.hpp>
-#include <fcppt/math/vector/output.hpp>
-#include <flakelib/buffer/linear_view_impl.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/volume/flakes/manager.hpp>
 #include <flake/volume/flakes/vf/format.hpp>
 #include <flake/volume/flakes/vf/position_part.hpp>
+#include <flakelib/buffer/linear_view_impl.hpp>
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
@@ -36,6 +34,8 @@
 #include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assign/make_container.hpp>
+#include <fcppt/math/vector/arithmetic.hpp>
+#include <fcppt/math/vector/output.hpp>
 #include <fcppt/random/variate.hpp>
 #include <fcppt/random/distribution/uniform_real.hpp>
 #include <fcppt/random/generator/minstd_rand.hpp>
@@ -310,8 +310,6 @@ flake::volume::flakes::manager::generate_particles(
 
 		sge::renderer::scalar const flake_size =
 			size_rng();
-
-		std::cout << flake_size << "\n";
 
 		(*point_sizes_it++).set<vf::point_size>(
 			vf::point_size::packed_type(

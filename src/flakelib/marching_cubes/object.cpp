@@ -1,4 +1,3 @@
-#include <sge/renderer/state/cull_mode.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/volume_view.hpp>
 #include <flakelib/cl/program_context.hpp>
@@ -25,6 +24,7 @@
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/state/bool.hpp>
+#include <sge/renderer/state/cull_mode.hpp>
 #include <sge/renderer/state/depth_func.hpp>
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>
@@ -53,6 +53,7 @@
 #include <fcppt/config/external_begin.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <fcppt/config/external_end.hpp>
+
 
 flakelib::marching_cubes::object::object(
 	sge::renderer::device &_renderer,
@@ -118,6 +119,10 @@ flakelib::marching_cubes::object::object(
 		sge::opencl::memory_object::create_image_format(
 			CL_R,
 			CL_UNSIGNED_INT8)),
+	triangle_table_error_code_(
+		0),
+	num_vert_table_error_code_(
+		0),
 	triangle_table_(
 		clCreateImage2D(
 			_program_context.command_queue().context().impl(),
@@ -202,7 +207,7 @@ flakelib::marching_cubes::object::object(
 		num_vert_table_error_code_ == CL_SUCCESS);
 }
 
-void
+flakelib::marching_cubes::vertex_count const
 flakelib::marching_cubes::object::update(
 	flakelib::volume::float_view const &_view)
 {
@@ -302,7 +307,7 @@ flakelib::marching_cubes::object::update(
 		voxelSize,
 		iso_level_.get());
 
-	std::size_t const first_scan_result =
+	//std::size_t const first_scan_result =
 		scan_.scanExclusiveLarge(
 			voxel_occupied_scan_.impl(),
 			voxel_occupied_.impl(),
@@ -346,7 +351,9 @@ flakelib::marching_cubes::object::update(
 	}
 
     if (activeVoxels==0)
-        return;
+        return
+		marching_cubes::vertex_count(
+			0u);
 
     // compact voxel index array
     launch_compactVoxels(
@@ -360,7 +367,7 @@ flakelib::marching_cubes::object::update(
 	    voxel_occupied_scan_.impl(),
 	    numVoxels);
 
-	std::size_t const second_scan_result =
+	//std::size_t const second_scan_result =
 		scan_.scanExclusiveLarge(
 			voxel_verts_scan_.impl(),
 			voxel_verts_.impl(),
@@ -400,8 +407,6 @@ flakelib::marching_cubes::object::update(
 		totalVerts = lastElement + lastScanElement;
 	}
 
-	std::cout << "Marching cubes: " << totalVerts << " vertices total\n";
-
 	vertex_count_ = totalVerts;
 	this->resize_gl_buffers();
 
@@ -420,7 +425,7 @@ flakelib::marching_cubes::object::update(
 
 	sge::opencl::memory_object::dim3 grid2(
 		static_cast<sge::opencl::memory_object::size_type>(
-			(int)std::ceil(activeVoxels / (float)nthreads)),
+			std::ceil(static_cast<cl_float>(activeVoxels) / static_cast<cl_float>(nthreads))),
 		1u,
 		1u);
 
@@ -448,6 +453,10 @@ flakelib::marching_cubes::object::update(
 		voxelSize,
 		iso_level_.get(),
 		activeVoxels);
+
+	return
+		marching_cubes::vertex_count(
+			vertex_count_);
 }
 
 void

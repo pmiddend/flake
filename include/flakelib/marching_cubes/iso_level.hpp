@@ -1,8 +1,9 @@
 #ifndef FLAKELIB_MARCHING_CUBES_ISO_LEVEL_HPP_INCLUDED
 #define FLAKELIB_MARCHING_CUBES_ISO_LEVEL_HPP_INCLUDED
 
-#include <fcppt/strong_typedef.hpp>
 #include <sge/opencl/clinclude.hpp>
+#include <fcppt/strong_typedef.hpp>
+
 
 namespace flakelib
 {
