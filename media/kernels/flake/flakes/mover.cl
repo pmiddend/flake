@@ -13,13 +13,9 @@
 #include <flakelib/volume/current_position.cl>
 #include <flakelib/volume/global_size.cl>
 #include <flakelib/boundary_is_solid.cl>
-
-float
-float_rng(
-	float const f)
-{
-	return (as_float(as_int(f) & 0x007fffff | 0x40000000) - 3.0f + 1.0f)/2.0f;
-}
+#include <flakelib/random_float_value.cl>
+#include <flakelib/normalize_from_range.cl>
+#include <flakelib/scale_normalized_value.cl>
 
 float4 const
 generate_randomized_position(
@@ -29,22 +25,97 @@ generate_randomized_position(
 	float4 result;
 
 	result.x =
-		float_rng((f.x + f.z) / f.y);
+		flakelib_random_float_value((f.x + f.z) / f.y);
 	result.z =
-		float_rng(f.x / f.z + f.y);
+		flakelib_random_float_value(f.x / f.z + f.y);
 
 	result.y =
-		// 1/5.0f + float_rng(f.x - f.z - f.y) / 2.0f;
-		(result.x + (1.0f - result.x) * float_rng(f.x - f.z - f.y))/2.0f;
+		// 1/5.0f + flakelib_random_float_value(f.x - f.z - f.y) / 2.0f;
+		(result.x + (1.0f - result.x) * flakelib_random_float_value(f.x - f.z - f.y))/2.0f;
 
 	return
 		result * convert_float4(bounding_rect);
 }
 
+float
+flake_initial_velocity_magnitude(
+	float const normalized_size)
+{
+	float const
+		velocity_minimum = 0.5f,
+		velocity_maximum = 2.0f;
+
+	return
+		FLAKELIB_SCALE_NORMALIZED_VALUE(
+			normalized_size,
+			velocity_minimum,
+			velocity_maximum);
+}
+
+float4
+flake_initial_velocity(
+	float const normalized_size)
+{
+	return
+		(float4)(
+			0.0f,
+			-flake_initial_velocity_magnitude(
+				normalized_size),
+			0.0f,
+			0.0f);
+}
+
+kernel void
+FLAKELIB_KERNEL_NAME(initialize_velocities)(
+	global float const *FLAKELIB_KERNEL_ARGUMENT(sizes),
+	global float4 *FLAKELIB_KERNEL_ARGUMENT(velocities),
+	float const FLAKELIB_KERNEL_ARGUMENT(minimum_size),
+	float const FLAKELIB_KERNEL_ARGUMENT(maximum_size))
+{
+	velocities[get_global_id(0)] =
+		flake_initial_velocity(
+			FLAKELIB_NORMALIZE_FROM_RANGE(
+				sizes[get_global_id(0)],
+				minimum_size,
+				maximum_size));
+}
+
+float4
+gravity_force(
+	float const gravity_magnitude,
+	float const normalized_size)
+{
+	return
+		(float4)(
+			0.0f,
+			-FLAKELIB_SCALE_NORMALIZED_VALUE(
+				1.0f - normalized_size,
+				0.5f,
+				1.5f) *
+			gravity_magnitude,
+			0.0f,
+			0.0f);
+}
+
+float4
+drag_force(
+	float const normalized_size,
+	float4 const fluid_velocity)
+{
+	float const umax =
+		flake_initial_velocity_magnitude(
+			normalized_size);
+
+	return
+		fluid_velocity * fluid_velocity / (umax*umax);
+}
+
 kernel void
 FLAKELIB_KERNEL_NAME(move)(
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(positions),
-	global float4 *FLAKELIB_KERNEL_ARGUMENT(velocity),
+	global float4 *FLAKELIB_KERNEL_ARGUMENT(velocities),
+	global float *FLAKELIB_KERNEL_ARGUMENT(sizes),
+	global float4 *FLAKELIB_KERNEL_ARGUMENT(fluid_velocity),
 	float const FLAKELIB_KERNEL_ARGUMENT(time_delta),
 	float const FLAKELIB_KERNEL_ARGUMENT(collision_increment),
 	int const FLAKELIB_KERNEL_ARGUMENT(bounding_volume_width),
@@ -52,10 +123,20 @@ FLAKELIB_KERNEL_NAME(move)(
 	int const FLAKELIB_KERNEL_ARGUMENT(bounding_volume_depth),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(activity),
 	global float *FLAKELIB_KERNEL_ARGUMENT(snow_density),
-	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch))
+	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch),
+	float const FLAKELIB_KERNEL_ARGUMENT(gravity_magnitude),
+	float const FLAKELIB_KERNEL_ARGUMENT(minimum_size),
+	float const FLAKELIB_KERNEL_ARGUMENT(maximum_size))
 {
 	float4 const current_position =
 		positions[get_global_id(0)];
+
+	float const normalized_size =
+		FLAKELIB_NORMALIZE_FROM_RANGE(
+			sizes[get_global_id(0)],
+			minimum_size,
+			maximum_size);
+
 
 	int4 const bounding_rect =
 		(int4)(
@@ -107,6 +188,10 @@ FLAKELIB_KERNEL_NAME(move)(
 			generate_randomized_position(
 				bounding_rect,
 				positions[get_global_id(0)]);
+
+		velocities[get_global_id(0)] =
+			flake_initial_velocity(
+				normalized_size);
 	}
 	else
 	{
@@ -127,12 +212,16 @@ FLAKELIB_KERNEL_NAME(move)(
 				generate_randomized_position(
 					bounding_rect,
 					positions[get_global_id(0)]);
+
+			velocities[get_global_id(0)] =
+				flake_initial_velocity(
+					normalized_size);
 			return;
 		}
 
 		flakelib_volume_right_neighborhood4 neighbors;
 		FLAKELIB_VOLUME_LOAD_RIGHT_NEIGHBORHOOD(
-			velocity,
+			fluid_velocity,
 			neighbors,
 			buffer_pitch,
 			lefttopback_position,
@@ -143,15 +232,27 @@ FLAKELIB_KERNEL_NAME(move)(
 			fractions =
 				fract(
 					current_position,
-					&floors);
+					&floors),
+			current_fluid_velocity =
+				FLAKELIB_VOLUME_INTERPOLATE_RIGHT_NEIGHBORHOOD(
+					neighbors,
+					fractions);
 
-		positions[get_global_id(0)] =
-			current_position +
-			time_delta * (float4)(0.0,-1.0,0.0,0.0) +
+		velocities[get_global_id(0)] +=
 			time_delta *
-			FLAKELIB_VOLUME_INTERPOLATE_RIGHT_NEIGHBORHOOD(
-				neighbors,
-				fractions);
+			(
+			 /*
+				gravity_force(
+					gravity_magnitude,
+					normalized_size) +*/
+				drag_force(
+					normalized_size,
+					current_fluid_velocity)
+			);
+
+		positions[get_global_id(0)] +=
+			time_delta *
+			velocities[get_global_id(0)];
 	}
 }
 
@@ -196,7 +297,10 @@ FLAKELIB_KERNEL_NAME(update_activity)(
 			floats);
 
 	if(sum > 0.2f)
+	{
 		activity[current_index] = 1.0f;
+		return;
+	}
 
 #define FLAKE_FLAKES_MOVER_LOAD_DENSITY_OPERATION(source,target)\
 	target = snow_density[source]

@@ -1,8 +1,9 @@
 #ifndef FLAKELIB_MARCHING_CUBES_VERTEX_COUNT_HPP_INCLUDED
 #define FLAKELIB_MARCHING_CUBES_VERTEX_COUNT_HPP_INCLUDED
 
-#include <fcppt/strong_typedef.hpp>
 #include <sge/renderer/vertex_count.hpp>
+#include <fcppt/strong_typedef.hpp>
+
 
 namespace flakelib
 {

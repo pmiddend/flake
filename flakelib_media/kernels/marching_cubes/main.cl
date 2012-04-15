@@ -134,11 +134,21 @@ float4 calcNormal(float4 v0, float4 v1, float4 v2)
 // version that calculates flat surface normal for each triangle
 __kernel
 void
-generateTriangles2(__global float4 *pos, __global float4 *norm, __global uint *compactedVoxelArray, __global uint *numVertsScanned, 
+generateTriangles2(
+	__global float4 *pos, 
+	__global float4 *norm, 
+	__global uint *compactedVoxelArray, 
+	__global uint *numVertsScanned, 
 	global float const *volume,
-                   uint4 gridSize, uint4 gridSizeShift, uint4 gridSizeMask,
-                   float4 voxelSize2, float isoValue, uint activeVoxels, uint maxVerts, 
-                   __read_only image2d_t numVertsTex, __read_only image2d_t triTex)
+	uint4 gridSize, 
+	uint4 gridSizeShift, 
+	uint4 gridSizeMask,
+	float4 voxelSize2, 
+	float isoValue, 
+	uint activeVoxels, 
+	uint maxVerts, 
+	__read_only image2d_t numVertsTex, 
+	__read_only image2d_t triTex)
 {
     uint i = get_global_id(0);
     uint tid = get_local_id(0);

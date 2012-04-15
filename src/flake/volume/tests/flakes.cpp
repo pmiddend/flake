@@ -1,3 +1,4 @@
+#include <sge/renderer/state/draw_mode.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/volume/tests/flakes.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
@@ -74,6 +75,11 @@ flake::volume::tests::flakes::flakes(
 					FCPPT_TEXT("models")),
 				test::optional_key_code(
 					sge::input::keyboard::key_code::f4)))
+			(test::feature(
+				test::json_identifier(
+					FCPPT_TEXT("wireframe")),
+				test::optional_key_code(
+					sge::input::keyboard::key_code::f5)))
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("flakes")),
@@ -209,7 +215,9 @@ flake::volume::tests::flakes::flakes(
 		simulation_size_),
 	flakes_mover_(
 		this->program_context(),
+		this->buffer_pool(),
 		flakes_.cl_positions(),
+		flakes_.cl_point_sizes(),
 		volume::flakes::snow_density_view(
 			snow_density_buffer_->value()),
 		volume::flakes::collision_increment(
@@ -219,6 +227,13 @@ flake::volume::tests::flakes::flakes(
 					FCPPT_TEXT("collision-increment")))),
 		volume::flakes::activity_view(
 			activity_buffer_->value()),
+		flakes_.minimum_size(),
+		flakes_.maximum_size(),
+		volume::flakes::gravity_magnitude(
+			sge::parse::json::find_and_convert_member<cl_float>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("gravity-magnitude")))),
 		flakelib::marching_cubes::iso_level(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
@@ -299,7 +314,12 @@ flake::volume::tests::flakes::render()
 		this->renderer(),
 		sge::renderer::state::list
 			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::black())
-			(sge::renderer::state::float_::depth_buffer_clear_val = 1.0f));
+			(sge::renderer::state::float_::depth_buffer_clear_val = 1.0f)
+			(this->feature_active(test::json_identifier(FCPPT_TEXT("wireframe")))
+			?
+			 	sge::renderer::state::draw_mode::line
+			:
+			 	sge::renderer::state::draw_mode::fill));
 
 	this->renderer().clear(
 		sge::renderer::clear_flags_field(

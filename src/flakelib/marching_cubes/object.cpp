@@ -508,9 +508,8 @@ flakelib::marching_cubes::object::render()
 			renderer_,
 			*normals_buffer_);
 
-	/*
 	FCPPT_ASSERT_PRE(
-		vertex_count_ % 3 == 0);*/
+		vertex_count_ % 3 == 0);
 
 	renderer_.render_nonindexed(
 		sge::renderer::first_vertex(
@@ -538,31 +537,31 @@ flakelib::marching_cubes::object::launch_classifyVoxel(
 	cl_float voxelSize[4],
 	float isoValue)
 {
-  cl_int ciErrNum;
-    ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 0, sizeof(cl_mem), &voxelVerts);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 1, sizeof(cl_mem), &voxelOccupied);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 2, sizeof(cl_mem), &volume);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 3, 4 * sizeof(cl_uint), gridSize);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 4, 4 * sizeof(cl_uint), gridSizeShift);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 5, 4 * sizeof(cl_uint), gridSizeMask);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 6, sizeof(uint), &numVoxels);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 7, 4 * sizeof(cl_float), voxelSize);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 8, sizeof(float), &isoValue);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 9, sizeof(cl_mem), &num_vert_table_);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	cl_int ciErrNum;
+	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 0, sizeof(cl_mem), &voxelVerts);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 1, sizeof(cl_mem), &voxelOccupied);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 2, sizeof(cl_mem), &volume);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 3, 4 * sizeof(cl_uint), gridSize);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 4, 4 * sizeof(cl_uint), gridSizeShift);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 5, 4 * sizeof(cl_uint), gridSizeMask);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 6, sizeof(uint), &numVoxels);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 7, 4 * sizeof(cl_float), voxelSize);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 8, sizeof(float), &isoValue);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 9, sizeof(cl_mem), &num_vert_table_);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
 
-    grid.w() *= threads.w();
-    ciErrNum = clEnqueueNDRangeKernel(command_queue_.impl(), classifyVoxelKernel.impl(), 1, NULL, (size_t*)grid.data(), (size_t*) threads.data(), 0, 0, 0);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	grid.w() *= threads.w();
+	ciErrNum = clEnqueueNDRangeKernel(command_queue_.impl(), classifyVoxelKernel.impl(), 1, NULL, (size_t*)grid.data(), (size_t*) threads.data(), 0, 0, 0);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
 }
 
 void
@@ -575,18 +574,18 @@ flakelib::marching_cubes::object::launch_compactVoxels(
 	uint numVoxels)
 {
 	cl_int ciErrNum;
-    ciErrNum = clSetKernelArg(compactVoxelsKernel.impl(), 0, sizeof(cl_mem), &compVoxelArray);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(compactVoxelsKernel.impl(), 1, sizeof(cl_mem), &voxelOccupied);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(compactVoxelsKernel.impl(), 2, sizeof(cl_mem), &voxelOccupiedScan);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(compactVoxelsKernel.impl(), 3, sizeof(cl_uint), &numVoxels);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(compactVoxelsKernel.impl(), 0, sizeof(cl_mem), &compVoxelArray);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(compactVoxelsKernel.impl(), 1, sizeof(cl_mem), &voxelOccupied);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(compactVoxelsKernel.impl(), 2, sizeof(cl_mem), &voxelOccupiedScan);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(compactVoxelsKernel.impl(), 3, sizeof(cl_uint), &numVoxels);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
 
-    grid.w() *= threads.w();
-    ciErrNum = clEnqueueNDRangeKernel(command_queue_.impl(), compactVoxelsKernel.impl(), 1, NULL, (size_t*) grid.data(), (size_t*) threads.data(), 0, 0, 0);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	grid.w() *= threads.w();
+	ciErrNum = clEnqueueNDRangeKernel(command_queue_.impl(), compactVoxelsKernel.impl(), 1, NULL, (size_t*) grid.data(), (size_t*) threads.data(), 0, 0, 0);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
 }
 
 void
@@ -606,42 +605,42 @@ flakelib::marching_cubes::object::launch_generateTriangles2(
 	uint activeVoxels)
 {
 	cl_int ciErrNum;
-    ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 0, sizeof(cl_mem), &pos);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 1, sizeof(cl_mem), &norm);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 2, sizeof(cl_mem), &compactedVoxelArray);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 3, sizeof(cl_mem), &numVertsScanned);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 4, sizeof(cl_mem), &volume);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 5, 4 * sizeof(cl_uint), gridSize);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 6, 4 * sizeof(cl_uint), gridSizeShift);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 7, 4 * sizeof(cl_uint), gridSizeMask);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 8, 4 * sizeof(cl_float), voxelSize);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 9, sizeof(float), &isoValue);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 10, sizeof(uint), &activeVoxels);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    cl_uint const cl_vertex_count =
-    	static_cast<cl_uint>(
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 0, sizeof(cl_mem), &pos);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 1, sizeof(cl_mem), &norm);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 2, sizeof(cl_mem), &compactedVoxelArray);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 3, sizeof(cl_mem), &numVertsScanned);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 4, sizeof(cl_mem), &volume);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 5, 4 * sizeof(cl_uint), gridSize);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 6, 4 * sizeof(cl_uint), gridSizeShift);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 7, 4 * sizeof(cl_uint), gridSizeMask);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 8, 4 * sizeof(cl_float), voxelSize);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 9, sizeof(float), &isoValue);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 10, sizeof(uint), &activeVoxels);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	cl_uint const cl_vertex_count =
+	static_cast<cl_uint>(
 		vertex_count_);
-    ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 11, sizeof(uint), &cl_vertex_count);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 11, sizeof(uint), &cl_vertex_count);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
 
-    ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 12, sizeof(cl_mem), &num_vert_table_);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-    ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 13, sizeof(cl_mem), &triangle_table_);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 12, sizeof(cl_mem), &num_vert_table_);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 13, sizeof(cl_mem), &triangle_table_);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
 
-    grid.w() *= threads.w();
-    ciErrNum = clEnqueueNDRangeKernel(command_queue_.impl(), generateTriangles2Kernel.impl(), 1, NULL, (size_t*) grid.data(), (size_t*) threads.data(), 0, 0, 0);
-    FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	grid.w() *= threads.w();
+	ciErrNum = clEnqueueNDRangeKernel(command_queue_.impl(), generateTriangles2Kernel.impl(), 1, NULL, (size_t*) grid.data(), (size_t*) threads.data(), 0, 0, 0);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
 }
 
 void

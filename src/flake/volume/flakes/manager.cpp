@@ -48,14 +48,18 @@ flake::volume::flakes::manager::manager(
 	sge::opencl::context::object &_context,
 	sge::image2d::system &_image_system,
 	flakes::count const &_flake_count,
-	flakes::minimum_size const &_flake_minimum_size,
-	flakes::maximum_size const &_flake_maximum_size,
+	flakes::minimum_size const &_minimum_size,
+	flakes::maximum_size const &_maximum_size,
 	flakelib::volume::grid_size const &_grid_size)
 :
 	renderer_(
 		_renderer),
 	camera_(
 		_camera),
+	minimum_size_(
+		_minimum_size),
+	maximum_size_(
+		_maximum_size),
 	vertex_declaration_(
 		renderer_.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format<vf::format>())),
@@ -124,9 +128,7 @@ flake::volume::flakes::manager::manager(
 	cl_point_sizes_buffer_()
 {
 	this->generate_particles(
-		_grid_size,
-		_flake_minimum_size,
-		_flake_maximum_size);
+		_grid_size);
 
 	cl_positions_buffer_.take(
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
@@ -199,15 +201,36 @@ flake::volume::flakes::manager::cl_positions()
 				*cl_positions_buffer_));
 }
 
+flake::volume::flakes::point_size_view const
+flake::volume::flakes::manager::cl_point_sizes()
+{
+	return
+		flake::volume::flakes::point_size_view(
+			flake::volume::flakes::point_size_view::value_type(
+				*cl_point_sizes_buffer_));
+}
+
+flake::volume::flakes::minimum_size const &
+flake::volume::flakes::manager::minimum_size() const
+{
+	return
+		minimum_size_;
+}
+
+flake::volume::flakes::maximum_size const &
+flake::volume::flakes::manager::maximum_size() const
+{
+	return
+		maximum_size_;
+}
+
 flake::volume::flakes::manager::~manager()
 {
 }
 
 void
 flake::volume::flakes::manager::generate_particles(
-	flakelib::volume::grid_size const &_grid_size,
-	flakes::minimum_size const &_minimum_size,
-	flakes::maximum_size const &_maximum_size)
+	flakelib::volume::grid_size const &_grid_size)
 {
 	sge::renderer::scoped_vertex_lock const positions_vblock(
 		*positions_buffer_,
@@ -253,9 +276,9 @@ flake::volume::flakes::manager::generate_particles(
 			number_generator,
 			renderer_scalar_distribution(
 				renderer_scalar_distribution::min(
-					_minimum_size.get()),
+					minimum_size_.get()),
 				renderer_scalar_distribution::sup(
-					_maximum_size.get()))),
+					maximum_size_.get()))),
 		x_rng(
 			number_generator,
 			renderer_scalar_distribution(

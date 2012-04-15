@@ -3,8 +3,8 @@
 
 #include <flakelib/symbol.hpp>
 #include <flakelib/marching_cubes/iso_level.hpp>
-#include <flakelib/marching_cubes/vertex_count.hpp>
 #include <flakelib/marching_cubes/scan.hpp>
+#include <flakelib/marching_cubes/vertex_count.hpp>
 #include <flakelib/volume/float_view.hpp>
 #include <flakelib/volume/grid_size.hpp>
 #include <sge/camera/base_fwd.hpp>

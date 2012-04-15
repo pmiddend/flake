@@ -6,15 +6,22 @@
 #include <flakelib/cl/program_context.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/scoped_objects.hpp>
+#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/ref.hpp>
 #include <fcppt/math/dim/output.hpp>
 
 
 flake::volume::flakes::mover::mover(
 	flakelib::cl::program_context const &_program_context,
+	flakelib::buffer_pool::object &_buffer_pool,
 	flakes::position_view const &_positions,
+	flakes::point_size_view const &_point_sizes,
 	flakes::snow_density_view const &_snow_density,
 	flakes::collision_increment const &_collision_increment,
 	flakes::activity_view const &_activity,
+	flakes::minimum_size const &_minimum_size,
+	flakes::maximum_size const &_maximum_size,
+	flakes::gravity_magnitude const &_gravity_magnitude,
 	flakelib::marching_cubes::iso_level const &_iso_level)
 :
 	program_(
@@ -22,6 +29,10 @@ flake::volume::flakes::mover::mover(
 		flake::media_path_from_string(
 			FCPPT_TEXT("kernels/flake/flakes/mover.cl")),
 		_program_context.compiler_flags()),
+	initialize_velocities_kernel_(
+		program_.create_kernel(
+			sge::opencl::kernel::name(
+				"initialize_velocities"))),
 	move_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
@@ -32,11 +43,23 @@ flake::volume::flakes::mover::mover(
 				"update_activity"))),
 	positions_(
 		_positions),
+	point_sizes_(
+		_point_sizes),
 	activity_(
 		_activity),
+	velocities_(
+		fcppt::make_unique_ptr<linear_float4_lock>(
+			fcppt::ref(
+				_buffer_pool),
+			sge::opencl::memory_object::dim1(
+				_positions.get().size().w()))),
 	vertex_count_(
 		_positions.get().size().w())
 {
+	this->initialize_velocities(
+		_minimum_size,
+		_maximum_size);
+
 	update_activity_kernel_->numerical_argument(
 		"iso_level",
 		_iso_level.get());
@@ -54,9 +77,29 @@ flake::volume::flakes::mover::mover(
 		"activity",
 		_activity.get().buffer());
 
+	move_kernel_->numerical_argument(
+		"minimum_size",
+		_minimum_size.get());
+
+	move_kernel_->buffer_argument(
+		"velocities",
+		velocities_->value().buffer());
+
+	move_kernel_->numerical_argument(
+		"maximum_size",
+		_maximum_size.get());
+
+	move_kernel_->numerical_argument(
+		"gravity_magnitude",
+		_gravity_magnitude.get());
+
 	move_kernel_->buffer_argument(
 		"activity",
 		_activity.get().buffer());
+
+	move_kernel_->buffer_argument(
+		"sizes",
+		_point_sizes.get().buffer());
 
 	move_kernel_->buffer_argument(
 		"positions",
@@ -77,26 +120,16 @@ flake::volume::flakes::mover::update(
 	flakelib::volume::velocity_buffer_view const &_velocity,
 	flakelib::volume::boundary_buffer_view const &_boundary)
 {
-	update_activity_kernel_->buffer_argument(
-		"boundary",
-		_boundary.get().buffer());
-
-	update_activity_kernel_->enqueue_automatic(
-		_boundary.get().size());
+	this->update_activity(
+		_boundary);
 
 	move_kernel_->numerical_argument(
 		"time_delta",
 		_delta.count());
 
 	move_kernel_->buffer_argument(
-		"velocity",
+		"fluid_velocity",
 		_velocity.get().buffer());
-
-	/*
-	move_kernel_->buffer_argument(
-		"boundary",
-		_boundary.get().buffer());
-		*/
 
 	move_kernel_->numerical_argument(
 		"bounding_volume_width",
@@ -121,6 +154,8 @@ flake::volume::flakes::mover::update(
 	sge::opencl::memory_object::base_ref_sequence mem_objects;
 	mem_objects.push_back(
 		&positions_.get().buffer());
+	mem_objects.push_back(
+		&point_sizes_.get().buffer());
 
 	sge::opencl::memory_object::scoped_objects scoped_vb(
 		move_kernel_->command_queue(),
@@ -133,4 +168,49 @@ flake::volume::flakes::mover::update(
 
 flake::volume::flakes::mover::~mover()
 {
+}
+
+void
+flake::volume::flakes::mover::initialize_velocities(
+	flakes::minimum_size const &_minimum_size,
+	flakes::maximum_size const &_maximum_size)
+{
+	sge::opencl::memory_object::base_ref_sequence mem_objects;
+	mem_objects.push_back(
+		&point_sizes_.get().buffer());
+
+	sge::opencl::memory_object::scoped_objects scoped_vb(
+		move_kernel_->command_queue(),
+		mem_objects);
+
+	initialize_velocities_kernel_->numerical_argument(
+		"minimum_size",
+		_minimum_size.get());
+
+	initialize_velocities_kernel_->numerical_argument(
+		"maximum_size",
+		_maximum_size.get());
+
+	initialize_velocities_kernel_->buffer_argument(
+		"velocities",
+		velocities_->value().buffer());
+
+	initialize_velocities_kernel_->buffer_argument(
+		"sizes",
+		point_sizes_.get().buffer());
+
+	initialize_velocities_kernel_->enqueue_automatic(
+		velocities_->value().size());
+}
+
+void
+flake::volume::flakes::mover::update_activity(
+	flakelib::volume::boundary_buffer_view const &_boundary)
+{
+	update_activity_kernel_->buffer_argument(
+		"boundary",
+		_boundary.get().buffer());
+
+	update_activity_kernel_->enqueue_automatic(
+		_boundary.get().size());
 }
