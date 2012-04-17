@@ -12,9 +12,9 @@
 // #include "defines.h"
 // #include "tables.h"
 
-#include <flakelib/volume/load_right_neighborhood.cl>
-#include <flakelib/volume/right_neighborhood4.cl>
-#include <flakelib/volume/right_neighborhood.cl>
+#include <flakelib/volume/right_neighbors/load.cl>
+#include <flakelib/volume/right_neighbors/float4.cl>
+#include <flakelib/volume/right_neighbors/float.cl>
 
 // The number of threads to use for triangle generation (limited by shared memory size)
 #define NTHREADS 32
@@ -48,8 +48,8 @@ classifyVoxel(__global uint* voxelVerts, __global uint *voxelOccupied, global fl
 
     int4 gridPos = calcGridPos(i, gridSizeShift, gridSizeMask);
 
-    flakelib_volume_right_neighborhood right_neighbors;
-    FLAKELIB_VOLUME_LOAD_RIGHT_NEIGHBORHOOD(
+    flakelib_volume_right_neighbors_float right_neighbors;
+    FLAKELIB_VOLUME_RIGHT_NEIGHBORS_LOAD(
 	    volume,
 	    right_neighbors,
 	    gridSize.x,
@@ -228,8 +228,8 @@ generateTriangles2(
 	v[6] = p + (float4)(voxelSize.x, voxelSize.y, voxelSize.z,0);
 	v[7] = p + (float4)(0, voxelSize.y, voxelSize.z,0);
 
-	flakelib_volume_right_neighborhood right_neighbors;
-	FLAKELIB_VOLUME_LOAD_RIGHT_NEIGHBORHOOD(
+	flakelib_volume_right_neighbors_float right_neighbors;
+	FLAKELIB_VOLUME_RIGHT_NEIGHBORS_LOAD(
 	    volume,
 	    right_neighbors,
 	    gridSize.x,
@@ -249,8 +249,8 @@ generateTriangles2(
 	field[7] = right_neighbors.backbottom;
 
 	// Gradient begin
-	flakelib_volume_right_neighborhood4 right_gradient_neighbors;
-	FLAKELIB_VOLUME_LOAD_RIGHT_NEIGHBORHOOD(
+	flakelib_volume_right_neighbors_float4 right_gradient_neighbors;
+	FLAKELIB_VOLUME_RIGHT_NEIGHBORS_LOAD(
 	    gradient,
 	    right_gradient_neighbors,
 	    gridSize.x,

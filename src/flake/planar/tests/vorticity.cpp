@@ -152,7 +152,7 @@ flake::planar::tests::vorticity::vorticity(
 						FCPPT_TEXT("monitor-font-size"))))),
 		monitor::font_color(
 			sge::image::colors::black())),
-	monitor_planar_converter_(
+	planar_converter_(
 		this->program_context()),
 	velocity_arrows_(
 		monitor_parent_,
@@ -475,18 +475,20 @@ flake::planar::tests::vorticity::update()
 		outflow_boundaries_.update(
 			velocity_buffer_->value());
 
-		monitor_planar_converter_.to_arrow_vb(
+		planar_converter_.to_arrow_vb(
 			vorticity_gradient_buffer->value(),
 			vorticity_gradient_arrows_.cl_buffer(),
-			vorticity_gradient_arrows_.grid_scale(),
-			vorticity_gradient_arrows_.arrow_scale());
+			conversion::grid_scale(
+				vorticity_gradient_arrows_.grid_scale().get()),
+			conversion::arrow_scale(
+				vorticity_gradient_arrows_.arrow_scale().get()));
 
-		monitor_planar_converter_.scalar_to_texture(
+		planar_converter_.scalar_to_texture(
 			vorticity_buffer->value(),
 			vorticity_texture_.cl_texture(),
-			monitor::scaling_factor(
+			conversion::scaling_factor(
 				0.50f),
-			monitor::constant_addition(
+			conversion::constant_addition(
 				0.0f));
 
 		// Projection
@@ -496,12 +498,12 @@ flake::planar::tests::vorticity::update()
 					boundary_buffer_.value()),
 				velocity_buffer_->value());
 
-		monitor_planar_converter_.scalar_to_texture(
+		planar_converter_.scalar_to_texture(
 			divergence->value(),
 			divergence_texture_.cl_texture(),
-			monitor::scaling_factor(
+			conversion::scaling_factor(
 				0.50f),
-			monitor::constant_addition(
+			conversion::constant_addition(
 				0.0f));
 
 		flakelib::planar::unique_float_buffer_lock initial_guess_buffer_lock(
@@ -525,12 +527,12 @@ flake::planar::tests::vorticity::update()
 				flakelib::planar::simulation::stam::rhs_buffer_view(
 					divergence->value()));
 
-		monitor_planar_converter_.scalar_to_texture(
+		planar_converter_.scalar_to_texture(
 			pressure->value(),
 			pressure_texture_.cl_texture(),
-			monitor::scaling_factor(
+			conversion::scaling_factor(
 				0.10f),
-			monitor::constant_addition(
+			conversion::constant_addition(
 				0.0f));
 
 		subtract_pressure_gradient_.update(
@@ -566,18 +568,20 @@ flake::planar::tests::vorticity::update()
 				smoke_density_buffer_->value().buffer()));
 	}
 
-	monitor_planar_converter_.to_arrow_vb(
+	planar_converter_.to_arrow_vb(
 		velocity_buffer_->value(),
 		velocity_arrows_.cl_buffer(),
-		velocity_arrows_.grid_scale(),
-		velocity_arrows_.arrow_scale());
+		conversion::grid_scale(
+			velocity_arrows_.grid_scale().get()),
+		conversion::arrow_scale(
+			velocity_arrows_.arrow_scale().get()));
 
-	monitor_planar_converter_.scalar_to_texture(
+	planar_converter_.scalar_to_texture(
 		smoke_density_buffer_->value(),
 		smoke_density_texture_.cl_texture(),
-		monitor::scaling_factor(
+		conversion::scaling_factor(
 			1.0f),
-		monitor::constant_addition(
+		conversion::constant_addition(
 			0.0f));
 
 

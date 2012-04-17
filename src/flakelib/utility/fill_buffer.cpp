@@ -1,5 +1,6 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
+#include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <sge/opencl/clinclude.hpp>

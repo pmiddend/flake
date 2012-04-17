@@ -187,11 +187,11 @@ set(
 	src/flake/media_path_from_string.cpp
 	src/flake/notifications/message.cpp
 	src/flake/notifications/object.cpp
+	src/flake/planar/conversion/object.cpp
 	src/flake/planar/cursor_splatter.cpp
+	src/flake/planar/monitor/arrows.cpp
 	src/flake/planar/monitor/child.cpp
 	src/flake/planar/monitor/parent.cpp
-	src/flake/planar/monitor/planar_arrows.cpp
-	src/flake/planar/monitor/planar_converter.cpp
 	src/flake/planar/monitor/texture.cpp
 	src/flake/save_l8_texture_to_file.cpp
 	src/flake/sprite_drawer_3d.cpp

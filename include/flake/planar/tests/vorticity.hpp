@@ -3,8 +3,8 @@
 
 #include <flake/planar/cursor_splatter.hpp>
 #include <flake/planar/monitor/parent.hpp>
-#include <flake/planar/monitor/planar_arrows.hpp>
-#include <flake/planar/monitor/planar_converter.hpp>
+#include <flake/planar/monitor/arrows.hpp>
+#include <flake/planar/conversion/object.hpp>
 #include <flake/planar/monitor/texture.hpp>
 #include <flake/test/base.hpp>
 #include <flakelib/buffer_pool/planar_lock_impl.hpp>
@@ -77,13 +77,13 @@ private:
 	// Monitors
 	sge::renderer::texture::planar_scoped_ptr boundary_texture_;
 	flake::planar::monitor::parent monitor_parent_;
-	flake::planar::monitor::planar_converter monitor_planar_converter_;
-	flake::planar::monitor::planar_arrows velocity_arrows_;
+	flake::planar::conversion::object planar_converter_;
+	flake::planar::monitor::arrows velocity_arrows_;
 	flake::planar::monitor::texture smoke_density_texture_;
 	flake::planar::monitor::texture vorticity_texture_;
 	flake::planar::monitor::texture divergence_texture_;
 	flake::planar::monitor::texture pressure_texture_;
-	flake::planar::monitor::planar_arrows vorticity_gradient_arrows_;
+	flake::planar::monitor::arrows vorticity_gradient_arrows_;
 	rucksack::widget::viewport_adaptor rucksack_viewport_adaptor_;
 	rucksack::widget::enumeration rucksack_enumeration_;
 

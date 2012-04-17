@@ -2,6 +2,7 @@
 #include <flakelib/buffer/planar_view_impl.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/buffer_pool/planar_lock_impl.hpp>
+#include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/planar/simulation/stam/semilagrangian_advection.hpp>
 #include <sge/opencl/clinclude.hpp>

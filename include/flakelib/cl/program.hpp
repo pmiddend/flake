@@ -4,7 +4,7 @@
 #include <flakelib/symbol.hpp>
 #include <flakelib/cl/compiler_flags.hpp>
 #include <flakelib/cl/kernel_parameters.hpp>
-#include <flakelib/cl/unique_kernel_ptr.hpp>
+#include <flakelib/cl/kernel_unique_ptr.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/name.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
@@ -37,7 +37,7 @@ public:
 		flakelib::cl::compiler_flags const &);
 
 	FLAKELIB_SYMBOL
-	cl::unique_kernel_ptr
+	cl::kernel_unique_ptr
 	create_kernel(
 		sge::opencl::kernel::name const &);
 

@@ -1,11 +1,13 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
+#include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/utility/mix_buffers.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/dim/comparison.hpp>
+
 
 flakelib::utility::mix_buffers::mix_buffers(
 	cl::program_context const &_program_context)

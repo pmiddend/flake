@@ -2,10 +2,10 @@
 #include <flakelib/volume/clamp_int4_to_global_rect.cl>
 #include <flakelib/volume/current_position.cl>
 #include <flakelib/volume/global_size.cl>
-#include <flakelib/volume/interpolate_right_neighborhood.cl>
-#include <flakelib/volume/load_right_neighborhood.cl>
-#include <flakelib/volume/right_neighborhood4.cl>
-#include <flakelib/volume/right_neighborhood.cl>
+#include <flakelib/volume/right_neighbors/interpolate.cl>
+#include <flakelib/volume/right_neighbors/load.cl>
+#include <flakelib/volume/right_neighbors/float4.cl>
+#include <flakelib/volume/right_neighbors/float.cl>
 #include <flakelib/boundary_is_solid.cl>
 #include <flakelib/kernel_name.cl>
 #include <flakelib/kernel_argument.cl>
@@ -56,9 +56,9 @@ FLAKELIB_KERNEL_NAME(apply_float4)(
 				advected_vector,
 				&floors);
 
-	flakelib_volume_right_neighborhood4 ns;
+	flakelib_volume_right_neighbors_float4 ns;
 
-	FLAKELIB_VOLUME_LOAD_RIGHT_NEIGHBORHOOD(
+	FLAKELIB_VOLUME_RIGHT_NEIGHBORS_LOAD(
 		input,
 		ns,
 		buffer_pitch,
@@ -68,7 +68,7 @@ FLAKELIB_KERNEL_NAME(apply_float4)(
 		flakelib_volume_global_size());
 
 	output[current_index] =
-		FLAKELIB_VOLUME_INTERPOLATE_RIGHT_NEIGHBORHOOD(
+		FLAKELIB_VOLUME_RIGHT_NEIGHBORS_INTERPOLATE(
 			ns,
 			fractions);
 }
@@ -115,9 +115,9 @@ FLAKELIB_KERNEL_NAME(apply_float)(
 				advected_vector,
 				&floors);
 
-	flakelib_volume_right_neighborhood ns;
+	flakelib_volume_right_neighbors_float ns;
 
-	FLAKELIB_VOLUME_LOAD_RIGHT_NEIGHBORHOOD(
+	FLAKELIB_VOLUME_RIGHT_NEIGHBORS_LOAD(
 		input,
 		ns,
 		buffer_pitch,
@@ -127,7 +127,7 @@ FLAKELIB_KERNEL_NAME(apply_float)(
 		flakelib_volume_global_size());
 
 	output[current_index] =
-		FLAKELIB_VOLUME_INTERPOLATE_RIGHT_NEIGHBORHOOD(
+		FLAKELIB_VOLUME_RIGHT_NEIGHBORS_INTERPOLATE(
 			ns,
 			fractions);
 }

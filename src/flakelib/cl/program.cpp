@@ -20,6 +20,7 @@
 #include <fcppt/config/external_begin.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/range/adaptor/map.hpp>
 #include <fstream>
 #include <set>
 #include <utility>
@@ -83,7 +84,7 @@ flakelib::cl::program::program(
 			<< FCPPT_TEXT("Program successfully parsed!"));
 }
 
-flakelib::cl::unique_kernel_ptr
+flakelib::cl::kernel_unique_ptr
 flakelib::cl::program::create_kernel(
 	sge::opencl::kernel::name const &_kernel_name)
 {
@@ -99,12 +100,10 @@ flakelib::cl::program::create_kernel(
 				fcppt::from_std_string(
 					_kernel_name.get())+
 				FCPPT_TEXT("\" not found, did you mean \"")+
-				/*
 				fcppt::algorithm::shortest_levenshtein(
 					flakelib::map_key_sequence(
 						kernel_name_to_parameters_),
-					_kernel_name)+
-					*/
+					_kernel_name.get())+
 				FCPPT_TEXT("\"?"));
 	}
 
@@ -224,11 +223,11 @@ flakelib::cl::program::fill_kernel_name_to_parameters(
 					FCPPT_TEXT("Couldn't find a closing brace for opening brace"));
 		}
 
-		std::string const kernel_name =
+		std::string const kernel_name(
 			content.substr(
 				after_opening_brace,
 				static_cast<std::string::size_type>(
-					on_closing_brace - after_opening_brace));
+					on_closing_brace - after_opening_brace)));
 
 		FCPPT_LOG_DEBUG(
 			flakelib::log(),

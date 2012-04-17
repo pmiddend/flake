@@ -25,7 +25,7 @@ boost::iterator_range
 		>,
 		typename Map::const_iterator
 	>
->
+> const
 map_key_sequence(
 	Map const &m)
 {

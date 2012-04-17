@@ -1,5 +1,5 @@
+#include <flake/planar/monitor/arrows.hpp>
 #include <flake/planar/monitor/parent.hpp>
-#include <flake/planar/monitor/planar_arrows.hpp>
 #include <flake/planar/monitor/dummy_sprite/parameters.hpp>
 #include <rucksack/axis_policy2.hpp>
 #include <sge/font/text/draw.hpp>
@@ -88,7 +88,7 @@ font_axis_policy(
 
 FCPPT_PP_PUSH_WARNING
 FCPPT_PP_DISABLE_VC_WARNING(4355)
-flake::planar::monitor::planar_arrows::planar_arrows(
+flake::planar::monitor::arrows::arrows(
 	monitor::parent &_parent,
 	monitor::name const &_name,
 	monitor::grid_dimensions const &_dimensions,
@@ -183,31 +183,31 @@ flake::planar::monitor::planar_arrows::planar_arrows(
 FCPPT_PP_POP_WARNING
 
 sge::opencl::memory_object::buffer &
-flake::planar::monitor::planar_arrows::cl_buffer()
+flake::planar::monitor::arrows::cl_buffer()
 {
 	return cl_vb_;
 }
 
 flake::planar::monitor::arrow_scale const
-flake::planar::monitor::planar_arrows::arrow_scale() const
+flake::planar::monitor::arrows::arrow_scale() const
 {
 	return arrow_scale_;
 }
 
 flake::planar::monitor::grid_scale const
-flake::planar::monitor::planar_arrows::grid_scale() const
+flake::planar::monitor::arrows::grid_scale() const
 {
 	return grid_scale_;
 }
 
 fcppt::string const
-flake::planar::monitor::planar_arrows::name() const
+flake::planar::monitor::arrows::name() const
 {
 	return name_;
 }
 
 void
-flake::planar::monitor::planar_arrows::render(
+flake::planar::monitor::arrows::render(
 	monitor::optional_projection const &_projection)
 {
 	this->render_font(
@@ -218,7 +218,7 @@ flake::planar::monitor::planar_arrows::render(
 }
 
 void
-flake::planar::monitor::planar_arrows::update()
+flake::planar::monitor::arrows::update()
 {
 	if(sprite_)
 	{
@@ -233,17 +233,17 @@ flake::planar::monitor::planar_arrows::update()
 }
 
 rucksack::widget::base &
-flake::planar::monitor::planar_arrows::widget()
+flake::planar::monitor::arrows::widget()
 {
 	return box_parent_;
 }
 
-flake::planar::monitor::planar_arrows::~planar_arrows()
+flake::planar::monitor::arrows::~arrows()
 {
 }
 
 void
-flake::planar::monitor::planar_arrows::render_font(
+flake::planar::monitor::arrows::render_font(
 	monitor::optional_projection const &_projection)
 {
 	sge::renderer::scoped_transform world_transform(
@@ -281,7 +281,7 @@ flake::planar::monitor::planar_arrows::render_font(
 }
 
 void
-flake::planar::monitor::planar_arrows::render_arrows(
+flake::planar::monitor::arrows::render_arrows(
 	monitor::optional_projection const &_projection)
 {
 	// Activate the shader and the vertex declaration

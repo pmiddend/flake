@@ -3,7 +3,7 @@
 
 #include <flakelib/symbol.hpp>
 #include <flakelib/buffer/linear_view_fwd.hpp>
-#include <flakelib/cl/kernel.hpp>
+#include <flakelib/cl/kernel_scoped_ptr.hpp>
 #include <flakelib/cl/program.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
@@ -34,7 +34,7 @@ public:
 	~fill_buffer();
 private:
 	cl::program program_;
-	cl::unique_kernel_ptr kernel_;
+	cl::kernel_scoped_ptr kernel_;
 };
 }
 }

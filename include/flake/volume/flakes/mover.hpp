@@ -14,9 +14,9 @@
 #include <flakelib/buffer/volume_view_impl.hpp>
 #include <flakelib/buffer_pool/linear_lock.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
+#include <flakelib/cl/kernel_scoped_ptr.hpp>
 #include <flakelib/cl/program.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
-#include <flakelib/cl/unique_kernel_ptr.hpp>
 #include <flakelib/marching_cubes/iso_level.hpp>
 #include <flakelib/volume/boundary_buffer_view.hpp>
 #include <flakelib/volume/float_view.hpp>
@@ -73,9 +73,9 @@ private:
 	unique_linear_float4_lock;
 
 	flakelib::cl::program program_;
-	flakelib::cl::unique_kernel_ptr initialize_velocities_kernel_;
-	flakelib::cl::unique_kernel_ptr move_kernel_;
-	flakelib::cl::unique_kernel_ptr update_activity_kernel_;
+	flakelib::cl::kernel_scoped_ptr initialize_velocities_kernel_;
+	flakelib::cl::kernel_scoped_ptr move_kernel_;
+	flakelib::cl::kernel_scoped_ptr update_activity_kernel_;
 	flakes::position_view positions_;
 	flakes::point_size_view point_sizes_;
 	flakes::activity_view activity_;

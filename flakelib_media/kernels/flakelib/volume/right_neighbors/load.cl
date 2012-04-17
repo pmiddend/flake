@@ -1,12 +1,12 @@
-#ifndef FLAKELIB_VOLUME_LOAD_RIGHT_NEIGHBORHOOD_CL_INCLUDED
-#define FLAKELIB_VOLUME_LOAD_RIGHT_NEIGHBORHOOD_CL_INCLUDED
+#ifndef FLAKELIB_VOLUME_RIGHT_NEIGHBORS_LOAD_CL_INCLUDED
+#define FLAKELIB_VOLUME_RIGHT_NEIGHBORS_LOAD_CL_INCLUDED
 
 #include <flakelib/volume/at.cl>
 #include <flakelib/volume/right_of.cl>
 #include <flakelib/volume/bottom_of.cl>
 #include <flakelib/volume/right_bottom_of.cl>
 
-#define FLAKELIB_VOLUME_LOAD_RIGHT_NEIGHBORHOOD(input,neighborhood,buffer_pitch,position,rect)\
+#define FLAKELIB_VOLUME_RIGHT_NEIGHBORS_LOAD(input,neighborhood,buffer_pitch,position,rect)\
 	{\
 		int4 const flakelib_volume_load_right_neighborhood_position = convert_int4(position);\
 		int4 const flakelib_volume_load_right_neighborhood_rect = convert_int4(rect);\

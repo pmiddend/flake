@@ -1,5 +1,5 @@
-#ifndef FLAKE_PLANAR_MONITOR_PLANAR_ARROWS_HPP_INCLUDED
-#define FLAKE_PLANAR_MONITOR_PLANAR_ARROWS_HPP_INCLUDED
+#ifndef FLAKE_PLANAR_MONITOR_ARROWS_HPP_INCLUDED
+#define FLAKE_PLANAR_MONITOR_ARROWS_HPP_INCLUDED
 
 #include <flake/planar/monitor/arrow_scale.hpp>
 #include <flake/planar/monitor/child.hpp>
@@ -19,6 +19,7 @@
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
+#include <fcppt/math/box/object_impl.hpp>
 
 
 namespace flake
@@ -27,14 +28,14 @@ namespace planar
 {
 namespace monitor
 {
-class planar_arrows
+class arrows
 :
 	public monitor::child
 {
 FCPPT_NONCOPYABLE(
-	planar_arrows);
+	arrows);
 public:
-	planar_arrows(
+	arrows(
 		monitor::parent &,
 		monitor::name const &,
 		monitor::grid_dimensions const &,
@@ -64,7 +65,7 @@ public:
 	rucksack::widget::base &
 	widget();
 
-	~planar_arrows();
+	~arrows();
 private:
 	fcppt::string const name_;
 	monitor::grid_dimensions::value_type const dimensions_;

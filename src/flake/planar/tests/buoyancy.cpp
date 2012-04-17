@@ -173,7 +173,7 @@ flake::planar::tests::buoyancy::buoyancy(
 						FCPPT_TEXT("monitor-font-size"))))),
 		monitor::font_color(
 			sge::image::colors::black())),
-	monitor_planar_converter_(
+	planar_converter_(
 		this->program_context()),
 	velocity_arrows_(
 		monitor_parent_,
@@ -551,25 +551,27 @@ flake::planar::tests::buoyancy::update()
 				temperature_density_buffer_->value().buffer()));
 	}
 
-	monitor_planar_converter_.to_arrow_vb(
+	planar_converter_.to_arrow_vb(
 		velocity_buffer_->value(),
 		velocity_arrows_.cl_buffer(),
-		velocity_arrows_.grid_scale(),
-		velocity_arrows_.arrow_scale());
+		conversion::grid_scale(
+			velocity_arrows_.grid_scale().get()),
+		conversion::arrow_scale(
+			velocity_arrows_.arrow_scale().get()));
 
-	monitor_planar_converter_.scalar_to_texture(
+	planar_converter_.scalar_to_texture(
 		smoke_density_buffer_->value(),
 		smoke_density_texture_.cl_texture(),
-		monitor::scaling_factor(
+		conversion::scaling_factor(
 			1.0f),
-		monitor::constant_addition(
+		conversion::constant_addition(
 			0.0f));
 
-	monitor_planar_converter_.scalar_to_texture(
+	planar_converter_.scalar_to_texture(
 		temperature_density_buffer_->value(),
 		temperature_density_texture_.cl_texture(),
-		monitor::scaling_factor(
+		conversion::scaling_factor(
 			1.0f),
-		monitor::constant_addition(
+		conversion::constant_addition(
 			-buissnesq_ambient_temperature_.get()));
 }

@@ -1,5 +1,5 @@
+#include <flake/planar/conversion/object.hpp>
 #include <flake/media_path_from_string.hpp>
-#include <flake/planar/monitor/planar_converter.hpp>
 #include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program_context.hpp>
@@ -18,7 +18,7 @@
 #include <fcppt/variant/holds_type.hpp>
 
 
-flake::planar::monitor::planar_converter::planar_converter(
+flake::planar::conversion::object::object(
 	flakelib::cl::program_context const &_program_context)
 :
 	command_queue_(
@@ -40,11 +40,11 @@ flake::planar::monitor::planar_converter::planar_converter(
 }
 
 void
-flake::planar::monitor::planar_converter::to_arrow_vb(
+flake::planar::conversion::object::to_arrow_vb(
 	flakelib::planar::float2_view const &_planar_buffer,
 	sge::opencl::memory_object::buffer &_vb,
-	monitor::grid_scale const &_grid_scale,
-	monitor::arrow_scale const &_arrow_scale)
+	conversion::grid_scale const &_grid_scale,
+	conversion::arrow_scale const &_arrow_scale)
 {
 	to_arrow_vb_kernel_->buffer_argument(
 		"vb",
@@ -80,11 +80,11 @@ flake::planar::monitor::planar_converter::to_arrow_vb(
 }
 
 void
-flake::planar::monitor::planar_converter::scalar_to_texture(
+flake::planar::conversion::object::scalar_to_texture(
 	flakelib::planar::float_view const &_planar_buffer,
 	sge::opencl::memory_object::image::planar &_texture,
-	monitor::scaling_factor const &_scaling,
-	monitor::constant_addition const &_constant_addition)
+	conversion::scaling_factor const &_scaling,
+	conversion::constant_addition const &_constant_addition)
 {
 	FCPPT_ASSERT_PRE(
 		_planar_buffer.size() == _texture.size());
@@ -117,6 +117,6 @@ flake::planar::monitor::planar_converter::scalar_to_texture(
 		_planar_buffer.size());
 }
 
-flake::planar::monitor::planar_converter::~planar_converter()
+flake::planar::conversion::object::~object()
 {
 }
