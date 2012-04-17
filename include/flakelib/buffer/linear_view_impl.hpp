@@ -18,7 +18,7 @@ flakelib::buffer::linear_view<T>::linear_view(
 		_buffer)
 {
 	FCPPT_ASSERT_PRE(
-		static_cast<std::size_t>(buffer_.byte_size()) % sizeof(T) == 0);
+		static_cast<std::size_t>(buffer_.byte_size().get()) % sizeof(T) == 0);
 }
 
 template<typename T>
@@ -34,7 +34,7 @@ flakelib::buffer::linear_view<T>::size() const
 {
 	return
 		sge::opencl::memory_object::dim1(
-			buffer_.byte_size() / sizeof(T));
+			buffer_.byte_size().get() / sizeof(T));
 }
 
 template<typename T>

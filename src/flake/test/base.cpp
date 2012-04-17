@@ -1,3 +1,6 @@
+#include <flake/test/information/manager.hpp>
+#include <sge/image/colors.hpp>
+#include <flake/font_metrics_cache.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/notifications/object.hpp>
 #include <flake/test/base.hpp>
@@ -65,7 +68,20 @@
 #include <iostream>
 #include <ostream>
 #include <fcppt/config/external_end.hpp>
+#include <fcppt/format.hpp>
 
+namespace
+{
+fcppt::string
+byte_size_to_megabytes(
+	sge::opencl::memory_object::byte_size const &b)
+{
+	return
+		(fcppt::format(
+			FCPPT_TEXT("%.2fMiB")) %
+		 (static_cast<float>(b.get()) / 1024.f / 1024.f)).str();
+}
+}
 
 awl::main::exit_code const
 flake::test::base::run()
@@ -192,12 +208,16 @@ flake::test::base::base(
 			std::tr1::bind(
 				&test::base::viewport_callback,
 				this))),
+	font_metrics_cache_(
+		fcppt::make_unique_ptr<flake::font_metrics_cache>(
+			fcppt::ref(
+				systems_->font_system()))),
 	notifications_(
 		fcppt::make_unique_ptr<flake::notifications::object>(
 			fcppt::ref(
 				this->renderer()),
-			sge::font::metrics_shared_ptr(
-				this->font_system().create_font(
+			fcppt::ref(
+				font_metrics_cache_->get(
 					flake::media_path_from_string(
 						FCPPT_TEXT("fonts/notifications.ttf")),
 					sge::parse::json::find_and_convert_member<sge::font::size_type>(
@@ -210,6 +230,28 @@ flake::test::base::base(
 						*configuration_,
 						sge::parse::json::string_to_path(
 							FCPPT_TEXT("tests/notification-ttl-ms"))))))),
+	information_manager_(
+		fcppt::make_unique_ptr<flake::test::information::manager>(
+			fcppt::ref(
+				font_metrics_cache_->get(
+						flake::media_path_from_string(
+							FCPPT_TEXT("fonts/notifications.ttf")),
+						sge::parse::json::find_and_convert_member<sge::font::size_type>(
+							*configuration_,
+							sge::parse::json::string_to_path(
+								FCPPT_TEXT("tests/information-font-size"))))),
+			fcppt::ref(
+				this->renderer()),
+			sge::image::colors::white())),
+	memory_consumption_information_(
+		*information_manager_,
+		information::identifier(
+			FCPPT_TEXT("CL memory")),
+		std::tr1::bind(
+			&byte_size_to_megabytes,
+			std::tr1::bind(
+				&flakelib::buffer_pool::object::memory_consumption,
+				buffer_pool_.get()))),
 	time_modifier_(
 		fcppt::make_unique_ptr<time_modifier::object>(
 			fcppt::ref(
@@ -244,6 +286,7 @@ void
 flake::test::base::render()
 {
 	notifications_->render();
+	information_manager_->render();
 }
 
 sge::parse::json::object const &
@@ -351,6 +394,13 @@ flake::test::base::feature_active(
 
 	FCPPT_ASSERT_UNREACHABLE_MESSAGE(
 		FCPPT_TEXT("Feature with unknown identifier"));
+}
+
+flake::test::information::manager &
+flake::test::base::information_manager()
+{
+	return
+		*information_manager_;
 }
 
 void

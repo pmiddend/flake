@@ -310,6 +310,8 @@ FLAKELIB_KERNEL_NAME(update_activity)(
 		neighborhood,
 		floats);
 
-	if(floats.left > iso_level || floats.right > iso_level || floats.top > iso_level || floats.bottom > iso_level || floats.front > iso_level || floats.back > iso_level)
+	float const is_active_because_of_snow_density = 1.0f;
+
+	if(floats.left > is_active_because_of_snow_density || floats.right > is_active_because_of_snow_density || floats.top > is_active_because_of_snow_density || floats.bottom > is_active_because_of_snow_density || floats.front > is_active_because_of_snow_density || floats.back > is_active_because_of_snow_density)
 		activity[current_index] = 1.0f;
 }

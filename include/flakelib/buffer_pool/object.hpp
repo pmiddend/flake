@@ -36,6 +36,10 @@ public:
 		sge::opencl::memory_object::buffer &);
 
 	FLAKELIB_SYMBOL
+	sge::opencl::memory_object::byte_size const
+	memory_consumption() const;
+
+	FLAKELIB_SYMBOL
 	~object();
 private:
 	typedef
@@ -49,6 +53,7 @@ private:
 	sge::opencl::context::object &context_;
 	pool_container pool_;
 	locked_buffers locked_buffers_;
+	sge::opencl::memory_object::byte_size memory_consumption_;
 };
 }
 }

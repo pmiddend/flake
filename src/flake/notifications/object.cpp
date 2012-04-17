@@ -21,7 +21,7 @@
 
 flake::notifications::object::object(
 	sge::renderer::device &_renderer,
-	sge::font::metrics_shared_ptr const _metrics,
+	sge::font::metrics &_metrics,
 	notifications::time_to_live const &_time_to_live)
 :
 	time_to_live_(
@@ -128,18 +128,18 @@ flake::notifications::object::render()
 			font_color);
 
 		sge::font::text::draw(
-			*font_metrics_,
+			font_metrics_,
 			*font_drawer_,
 			sge::font::text::from_fcppt_string(
 				it->text().get()),
 			current_font_rect,
-			sge::font::text::align_h::left,
+			sge::font::text::align_h::right,
 			sge::font::text::align_v::top,
 			sge::font::text::flags::none);
 
 		current_font_rect.top(
 			current_font_rect.top() +
-			font_metrics_->line_height());
+			font_metrics_.line_height());
 	}
 }
 

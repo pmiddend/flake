@@ -181,6 +181,7 @@ set(
 
 set(
 	FLAKE_FILES
+	src/flake/font_metrics_cache.cpp
 	src/flake/media_path.cpp
 	src/flake/media_path_from_string.cpp
 	src/flake/notifications/message.cpp
@@ -196,6 +197,8 @@ set(
 	src/flake/test/base.cpp
 	src/flake/test/feature.cpp
 	src/flake/test/update_features_from_json.cpp
+	src/flake/test/information/object.cpp
+	src/flake/test/information/manager.cpp
 	src/flake/time_modifier/kernel.cpp
 	src/flake/time_modifier/object.cpp
 	src/flake/volume/arrows/manager.cpp

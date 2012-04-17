@@ -4,7 +4,7 @@
 #include <flake/notifications/message.hpp>
 #include <flake/notifications/text.hpp>
 #include <flake/notifications/time_to_live.hpp>
-#include <sge/font/metrics_shared_ptr.hpp>
+#include <sge/font/metrics_fwd.hpp>
 #include <sge/font/text/drawer_3d_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/timer/basic_impl.hpp>
@@ -34,7 +34,7 @@ public:
 	// single font just for the notifications.
 	object(
 		sge::renderer::device &,
-		sge::font::metrics_shared_ptr,
+		sge::font::metrics &,
 		notifications::time_to_live const &);
 
 	void
@@ -55,7 +55,7 @@ private:
 
 	notifications::time_to_live const time_to_live_;
 	sge::renderer::device &renderer_;
-	sge::font::metrics_shared_ptr font_metrics_;
+	sge::font::metrics &font_metrics_;
 	fcppt::scoped_ptr<sge::font::text::drawer_3d> font_drawer_;
 	message_sequence messages_;
 	sge::timer::basic<sge::timer::clocks::standard> second_timer_;

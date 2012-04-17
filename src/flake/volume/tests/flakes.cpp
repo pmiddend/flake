@@ -1,6 +1,6 @@
-#include <sge/renderer/state/draw_mode.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/volume/tests/flakes.hpp>
+#include <flake/test/information/string_conversion_adapter.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <flakelib/volume/retrieve_zero_float4_buffer.hpp>
@@ -14,6 +14,7 @@
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/state/color.hpp>
+#include <sge/renderer/state/draw_mode.hpp>
 #include <sge/renderer/state/float.hpp>
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>
@@ -292,7 +293,17 @@ flake::volume::tests::flakes::flakes(
 			boost::chrono::seconds(1))),
 	snow_cover_update_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
-			boost::chrono::seconds(1)))
+			boost::chrono::seconds(1))),
+	snow_cover_vertices_(
+		0u),
+	snow_cover_vertices_information_(
+		this->information_manager(),
+		test::information::identifier(
+			FCPPT_TEXT("snow vertices")),
+		flake::test::information::string_conversion_adapter<flakelib::marching_cubes::vertex_count>(
+			std::tr1::bind(
+				&flakes::snow_cover_vertices_,
+				this)))
 {
 }
 
@@ -437,14 +448,9 @@ flake::volume::tests::flakes::update()
 
 		if(sge::timer::reset_when_expired(snow_cover_update_))
 		{
-			flakelib::marching_cubes::vertex_count const resulted_vertices(
+			snow_cover_vertices_ =
 				marching_cubes_.update(
-					snow_density_buffer_->value()));
-
-			if(!resulted_vertices.get())
-				std::cout << "No snow cover vertices yet...\n";
-			else
-				std::cout << resulted_vertices.get() << " snow cover vertices\n";
+					snow_density_buffer_->value());
 		}
 
 		wind_strength_modulator_.update(

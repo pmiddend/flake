@@ -5,10 +5,12 @@
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/object.hpp>
 #include <flake/volume/flakes/manager.hpp>
+#include <flake/test/information/object.hpp>
 #include <flake/volume/flakes/mover.hpp>
 #include <flake/volume/model/manager.hpp>
 #include <flake/volume/obstacles/manager.hpp>
 #include <flakelib/marching_cubes/object.hpp>
+#include <flakelib/marching_cubes/vertex_count.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/value_modulator/object.hpp>
@@ -90,6 +92,8 @@ private:
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;
 	sge::timer::basic<sge::timer::clocks::standard> snow_cover_update_;
+	flakelib::marching_cubes::vertex_count snow_cover_vertices_;
+	flake::test::information::object snow_cover_vertices_information_;
 
 	void
 	render();

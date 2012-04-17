@@ -3,6 +3,7 @@
 	{
 		"notification-font-size" : 25,
 		"notification-ttl-ms" : 2000,
+		"information-font-size" : 15,
 		"window-size" : [1280,1024],
 		"desired-fps" : 60,
 		"opencl-compiler-flags" : "-cl-mad-enable -cl-fast-relaxed-math -Werror",

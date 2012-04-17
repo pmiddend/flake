@@ -3,9 +3,9 @@
 
 #include <flake/volume/flakes/activity_view.hpp>
 #include <flake/volume/flakes/collision_increment.hpp>
+#include <flake/volume/flakes/gravity_magnitude.hpp>
 #include <flake/volume/flakes/maximum_size.hpp>
 #include <flake/volume/flakes/minimum_size.hpp>
-#include <flake/volume/flakes/gravity_magnitude.hpp>
 #include <flake/volume/flakes/point_size_view.hpp>
 #include <flake/volume/flakes/position_view.hpp>
 #include <flake/volume/flakes/snow_density_view.hpp>

@@ -6,14 +6,15 @@
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/container/ptr/push_back_unique_ptr.hpp>
 
-
 flakelib::buffer_pool::object::object(
 	sge::opencl::context::object &_context)
 :
 	context_(
 		_context),
 	pool_(),
-	locked_buffers_()
+	locked_buffers_(),
+	memory_consumption_(
+		0u)
 {
 }
 
@@ -32,7 +33,7 @@ flakelib::buffer_pool::object::get_and_lock(
 			continue;
 
 		// Buffer isn't the right size?
-		if(it->byte_size() != _byte_size.get())
+		if(it->byte_size() != _byte_size)
 			continue;
 
 		// We found one (that was already created), so put it in
@@ -71,6 +72,22 @@ flakelib::buffer_pool::object::unlock(
 
 	FCPPT_ASSERT_PRE(
 		deleted_elements);
+}
+
+sge::opencl::memory_object::byte_size const
+flakelib::buffer_pool::object::memory_consumption() const
+{
+	sge::opencl::memory_object::byte_size result(
+		0u);
+
+	for(
+		pool_container::const_iterator it =
+			pool_.begin();
+		it != pool_.end();
+		++it)
+		result += it->byte_size();
+	return
+		result;
 }
 
 flakelib::buffer_pool::object::~object()
