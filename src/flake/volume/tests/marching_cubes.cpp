@@ -110,9 +110,13 @@ flake::volume::tests::marching_cubes::marching_cubes(
 			this->buffer_pool(),
 			fill_buffer_,
 			simulation_size_.get())),
+	gradient_(
+		this->program_context(),
+		this->buffer_pool()),
 	marching_cubes_(
 		this->renderer(),
 		camera_,
+		gradient_,
 		this->program_context(),
 		simulation_size_,
 		flakelib::marching_cubes::iso_level(

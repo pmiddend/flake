@@ -1,10 +1,9 @@
-#include <flake/test/information/manager.hpp>
-#include <sge/image/colors.hpp>
 #include <flake/font_metrics_cache.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/notifications/object.hpp>
 #include <flake/test/base.hpp>
 #include <flake/test/update_features_from_json.hpp>
+#include <flake/test/information/manager.hpp>
 #include <flake/time_modifier/object.hpp>
 #include <flakelib/log.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
@@ -17,6 +16,7 @@
 #include <sge/charconv/system.hpp>
 #include <sge/font/metrics.hpp>
 #include <sge/font/system.hpp>
+#include <sge/image/colors.hpp>
 #include <sge/input/keyboard/device.hpp>
 #include <sge/input/keyboard/key_event.hpp>
 #include <sge/log/global_context.hpp>
@@ -50,6 +50,7 @@
 #include <awl/main/function_context.hpp>
 #include <fcppt/cref.hpp>
 #include <fcppt/exception.hpp>
+#include <fcppt/format.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
@@ -68,7 +69,7 @@
 #include <iostream>
 #include <ostream>
 #include <fcppt/config/external_end.hpp>
-#include <fcppt/format.hpp>
+
 
 namespace
 {

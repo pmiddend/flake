@@ -2,10 +2,10 @@
 #define FLAKE_VOLUME_TESTS_FLAKES_HPP_INCLUDED
 
 #include <flake/test/base.hpp>
+#include <flake/test/information/object.hpp>
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/object.hpp>
 #include <flake/volume/flakes/manager.hpp>
-#include <flake/test/information/object.hpp>
 #include <flake/volume/flakes/mover.hpp>
 #include <flake/volume/model/manager.hpp>
 #include <flake/volume/obstacles/manager.hpp>
@@ -14,6 +14,7 @@
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/value_modulator/object.hpp>
+#include <flakelib/volume/gradient.hpp>
 #include <flakelib/volume/grid_size.hpp>
 #include <flakelib/volume/unique_float4_buffer_lock.hpp>
 #include <flakelib/volume/unique_float_buffer_lock.hpp>
@@ -86,6 +87,7 @@ private:
 	flake::volume::flakes::mover flakes_mover_;
 	flake::volume::model::manager models_;
 	flake::volume::obstacles::manager obstacles_;
+	flakelib::volume::gradient gradient_;
 	flakelib::marching_cubes::object marching_cubes_;
 	flakelib::value_modulator::object wind_strength_modulator_;
 

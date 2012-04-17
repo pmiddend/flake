@@ -1,6 +1,6 @@
 #include <flake/catch_statements.hpp>
-#include <flake/volume/tests/flakes.hpp>
 #include <flake/test/information/string_conversion_adapter.hpp>
+#include <flake/volume/tests/flakes.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <flakelib/volume/retrieve_zero_float4_buffer.hpp>
@@ -258,9 +258,13 @@ flake::volume::tests::flakes::flakes(
 		flakelib::volume::boundary_buffer_view(
 			boundary_buffer_->value()),
 		splatter_),
+	gradient_(
+		this->program_context(),
+		this->buffer_pool()),
 	marching_cubes_(
 		this->renderer(),
 		camera_,
+		gradient_,
 		this->program_context(),
 		simulation_size_,
 		flakelib::marching_cubes::iso_level(

@@ -7,6 +7,7 @@
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/volume/grid_size.hpp>
 #include <flakelib/volume/unique_float_buffer_lock.hpp>
+#include <flakelib/volume/gradient.hpp>
 #include <sge/camera/perspective_projection_from_viewport.hpp>
 #include <sge/camera/first_person/object.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>
@@ -51,6 +52,7 @@ private:
 
 	flakelib::volume::unique_float_buffer_lock boundary_buffer_;
 
+	flakelib::volume::gradient gradient_;
 	flakelib::marching_cubes::object marching_cubes_;
 
 	// Timer

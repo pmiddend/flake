@@ -1,11 +1,13 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/volume_view.hpp>
+#include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/marching_cubes/num_vert_table.hpp>
 #include <flakelib/marching_cubes/object.hpp>
 #include <flakelib/marching_cubes/scan.hpp>
 #include <flakelib/marching_cubes/triangle_table.hpp>
 #include <flakelib/marching_cubes/vf/format.hpp>
+#include <flakelib/volume/gradient.hpp>
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world.hpp>
@@ -58,6 +60,7 @@
 flakelib::marching_cubes::object::object(
 	sge::renderer::device &_renderer,
 	sge::camera::base &_camera,
+	flakelib::volume::gradient &_gradient,
 	flakelib::cl::program_context const &_program_context,
 	flakelib::volume::grid_size const &_grid_size,
 	marching_cubes::iso_level const &_iso_level)
@@ -66,6 +69,8 @@ flakelib::marching_cubes::object::object(
 		_renderer),
 	camera_(
 		_camera),
+	gradient_(
+		_gradient),
 	command_queue_(
 		_program_context.command_queue()),
 	grid_size_(
@@ -435,8 +440,8 @@ flakelib::marching_cubes::object::update(
 		grid2.h()*=2;
 	}
 
-
 	launch_generateTriangles2(
+		_view,
 		grid2,
 		sge::opencl::memory_object::dim3(
 		    nthreads,
@@ -590,6 +595,7 @@ flakelib::marching_cubes::object::launch_compactVoxels(
 
 void
 flakelib::marching_cubes::object::launch_generateTriangles2(
+	flakelib::volume::float_view const &_view,
 	sge::opencl::memory_object::dim3 grid,
 	sge::opencl::memory_object::dim3 threads,
 	cl_mem pos,
@@ -604,6 +610,10 @@ flakelib::marching_cubes::object::launch_generateTriangles2(
 	float isoValue,
 	uint activeVoxels)
 {
+	flakelib::volume::unique_float4_buffer_lock gradient(
+		gradient_.update(
+			_view));
+
 	cl_int ciErrNum;
 	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 0, sizeof(cl_mem), &pos);
 	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
@@ -636,6 +646,9 @@ flakelib::marching_cubes::object::launch_generateTriangles2(
 	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 12, sizeof(cl_mem), &num_vert_table_);
 	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
 	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 13, sizeof(cl_mem), &triangle_table_);
+	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	cl_mem gradient_buffer = gradient->value().buffer().impl();
+	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 14, sizeof(cl_mem), &gradient_buffer);
 	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
 
 	grid.w() *= threads.w();

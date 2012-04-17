@@ -169,6 +169,7 @@ set(
 	src/flakelib/utility/mix_buffers.cpp
 	src/flakelib/value_modulator/object.cpp
 	src/flakelib/volume/conversion/object.cpp
+	src/flakelib/volume/gradient.cpp
 	src/flakelib/volume/retrieve_zero_float4_buffer.cpp
 	src/flakelib/volume/retrieve_zero_float_buffer.cpp
 	src/flakelib/volume/simulation/stam/divergence.cpp
@@ -196,9 +197,9 @@ set(
 	src/flake/sprite_drawer_3d.cpp
 	src/flake/test/base.cpp
 	src/flake/test/feature.cpp
-	src/flake/test/update_features_from_json.cpp
-	src/flake/test/information/object.cpp
 	src/flake/test/information/manager.cpp
+	src/flake/test/information/object.cpp
+	src/flake/test/update_features_from_json.cpp
 	src/flake/time_modifier/kernel.cpp
 	src/flake/time_modifier/object.cpp
 	src/flake/volume/arrows/manager.cpp

@@ -1,6 +1,6 @@
 #include <flake/font_metrics_cache.hpp>
-#include <sge/font/system.hpp>
 #include <sge/font/metrics.hpp>
+#include <sge/font/system.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/container/ptr/insert_unique_ptr_map.hpp>
 

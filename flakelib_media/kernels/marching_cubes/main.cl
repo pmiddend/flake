@@ -13,6 +13,7 @@
 // #include "tables.h"
 
 #include <flakelib/volume/load_right_neighborhood.cl>
+#include <flakelib/volume/right_neighborhood4.cl>
 #include <flakelib/volume/right_neighborhood.cl>
 
 // The number of threads to use for triangle generation (limited by shared memory size)
@@ -102,23 +103,69 @@ compactVoxels(__global uint *compactedVoxelArray, __global uint *voxelOccupied, 
 
 
 
+/*
 // compute interpolated vertex along an edge
 float4 vertexInterp(float isolevel, float4 p0, float4 p1, float f0, float f1)
 {
-    float t = (isolevel - f0) / (f1 - f0);
-	return mix(p0, p1, t);
-} 
+	if(fabs(f1 - f0) < 0.0001f)
+		return p0;
+
+	float const t =
+		(isolevel - f0) /
+		(f1 - f0);
+
+	return
+		mix(
+			p0,
+			p1,
+			t);
+}
 
 // compute interpolated vertex position and normal along an edge
 void vertexInterp2(float isolevel, float4 p0, float4 p1, float4 f0, float4 f1, float4* p, float4* n)
 {
-    float t = (isolevel - f0.w) / (f1.w - f0.w);
+	float t = (isolevel - f0.w) / (f1.w - f0.w);
 	*p = mix(p0, p1, t);
-    (*n).x = mix(f0.x, f1.x, t);
-    (*n).y = mix(f0.y, f1.y, t);
-    (*n).z = mix(f0.z, f1.z, t);
-//    n = normalize(n);
-} 
+	(*n).x = mix(f0.x, f1.x, t);
+	(*n).y = mix(f0.y, f1.y, t);
+	(*n).z = mix(f0.z, f1.z, t);
+//	n = normalize(n);
+}
+*/
+void
+vertexAndNormalInterp(
+	float isolevel,
+	float4 p0,
+	float4 p1,
+	float f0,
+	float f1,
+	float4 n0,
+	float4 n1,
+	local float4 *p,
+	local float4 *n)
+{
+	if(fabs(f1 - f0) < 0.0001f)
+	{
+		*p = p0;
+		*n = n0;
+	}
+
+	float const t =
+		(isolevel - f0) /
+		(f1 - f0);
+
+	*p =
+		mix(
+			p0,
+			p1,
+			t);
+
+	*n =
+		mix(
+			n0,
+			n1,
+			t);
+}
 
 
 
@@ -135,139 +182,162 @@ float4 calcNormal(float4 v0, float4 v1, float4 v2)
 __kernel
 void
 generateTriangles2(
-	__global float4 *pos, 
-	__global float4 *norm, 
-	__global uint *compactedVoxelArray, 
-	__global uint *numVertsScanned, 
+	__global float4 *pos,
+	__global float4 *norm,
+	__global uint *compactedVoxelArray,
+	__global uint *numVertsScanned,
 	global float const *volume,
-	uint4 gridSize, 
-	uint4 gridSizeShift, 
+	uint4 gridSize,
+	uint4 gridSizeShift,
 	uint4 gridSizeMask,
-	float4 voxelSize2, 
-	float isoValue, 
-	uint activeVoxels, 
-	uint maxVerts, 
-	__read_only image2d_t numVertsTex, 
-	__read_only image2d_t triTex)
+	float4 voxelSize2,
+	float isoValue,
+	uint activeVoxels,
+	uint maxVerts,
+	__read_only image2d_t numVertsTex,
+	__read_only image2d_t triTex,
+	global float4 const *gradient)
 {
-    uint i = get_global_id(0);
-    uint tid = get_local_id(0);
+	uint i = get_global_id(0);
+	uint tid = get_local_id(0);
 
-    if (i > activeVoxels - 1) {
-        i = activeVoxels - 1;
-    }
+	if (i > activeVoxels - 1)
+		i = activeVoxels - 1;
 
-    uint voxel = compactedVoxelArray[i];
+	uint voxel = compactedVoxelArray[i];
 
-    // compute position in 3d grid
-    int4 gridPos = calcGridPos(voxel, gridSizeShift, gridSizeMask);
+	// compute position in 3d grid
+	int4 gridPos = calcGridPos(voxel, gridSizeShift, gridSizeMask);
 
-    //float4 voxelSize = (float4)(1.0f,1.0f,1.0f,0.0f);
-    //float4 voxelSize = voxelSize2;
-    float4 voxelSize = (float4)(1.0f,1.0f,1.0f,0.0f);
+	float4 voxelSize = (float4)(1.0f,1.0f,1.0f,0.0f);
 
-    float4 p;
-    p.x = gridPos.x;
-    p.y = gridPos.y;
-    p.z = gridPos.z;
-    p.w = 1.0f;
-    /*
-    float4 p;
-    p.x = -1.0f + (gridPos.x * voxelSize.x);
-    p.y = -1.0f + (gridPos.y * voxelSize.y);
-    p.z = -1.0f + (gridPos.z * voxelSize.z);
-    p.w = 1.0f;
-    */
+	float4 p;
+	p.x = gridPos.x;
+	p.y = gridPos.y;
+	p.z = gridPos.z;
+	p.w = 1.0f;
 
-    // calculate cell vertex positions
-    float4 v[8];
-    v[0] = p;
-    v[1] = p + (float4)(voxelSize.x, 0, 0,0);
-    v[2] = p + (float4)(voxelSize.x, voxelSize.y, 0,0);
-    v[3] = p + (float4)(0, voxelSize.y, 0,0);
-    v[4] = p + (float4)(0, 0, voxelSize.z,0);
-    v[5] = p + (float4)(voxelSize.x, 0, voxelSize.z,0);
-    v[6] = p + (float4)(voxelSize.x, voxelSize.y, voxelSize.z,0);
-    v[7] = p + (float4)(0, voxelSize.y, voxelSize.z,0);
+	// calculate cell vertex positions
+	float4 v[8];
+	v[0] = p;
+	v[1] = p + (float4)(voxelSize.x, 0, 0,0);
+	v[2] = p + (float4)(voxelSize.x, voxelSize.y, 0,0);
+	v[3] = p + (float4)(0, voxelSize.y, 0,0);
+	v[4] = p + (float4)(0, 0, voxelSize.z,0);
+	v[5] = p + (float4)(voxelSize.x, 0, voxelSize.z,0);
+	v[6] = p + (float4)(voxelSize.x, voxelSize.y, voxelSize.z,0);
+	v[7] = p + (float4)(0, voxelSize.y, voxelSize.z,0);
 
-    flakelib_volume_right_neighborhood right_neighbors;
-    FLAKELIB_VOLUME_LOAD_RIGHT_NEIGHBORHOOD(
+	flakelib_volume_right_neighborhood right_neighbors;
+	FLAKELIB_VOLUME_LOAD_RIGHT_NEIGHBORHOOD(
 	    volume,
 	    right_neighbors,
 	    gridSize.x,
 	    gridPos,
 	    gridSize);
 
-    // read field values at neighbouring grid vertices
-    float field[8];
+	// read field values at neighbouring grid vertices
+	float field[8];
 
-    field[0] = right_neighbors.at;
-    field[1] = right_neighbors.right;
-    field[2] = right_neighbors.rightbottom;
-    field[3] = right_neighbors.bottom;
-    field[4] = right_neighbors.back;
-    field[5] = right_neighbors.backright;
-    field[6] = right_neighbors.backrightbottom;
-    field[7] = right_neighbors.backbottom;
+	field[0] = right_neighbors.at;
+	field[1] = right_neighbors.right;
+	field[2] = right_neighbors.rightbottom;
+	field[3] = right_neighbors.bottom;
+	field[4] = right_neighbors.back;
+	field[5] = right_neighbors.backright;
+	field[6] = right_neighbors.backrightbottom;
+	field[7] = right_neighbors.backbottom;
 
-    // recalculate flag
-    int cubeindex;
-	cubeindex =  (field[0] < isoValue); 
-	cubeindex += (field[1] < isoValue)*2; 
-	cubeindex += (field[2] < isoValue)*4; 
-	cubeindex += (field[3] < isoValue)*8; 
-	cubeindex += (field[4] < isoValue)*16; 
-	cubeindex += (field[5] < isoValue)*32; 
-	cubeindex += (field[6] < isoValue)*64; 
+	// Gradient begin
+	flakelib_volume_right_neighborhood4 right_gradient_neighbors;
+	FLAKELIB_VOLUME_LOAD_RIGHT_NEIGHBORHOOD(
+	    gradient,
+	    right_gradient_neighbors,
+	    gridSize.x,
+	    gridPos,
+	    gridSize);
+
+	float4 gradient_field[8];
+
+	gradient_field[0] = right_gradient_neighbors.at;
+	gradient_field[1] = right_gradient_neighbors.right;
+	gradient_field[2] = right_gradient_neighbors.rightbottom;
+	gradient_field[3] = right_gradient_neighbors.bottom;
+	gradient_field[4] = right_gradient_neighbors.back;
+	gradient_field[5] = right_gradient_neighbors.backright;
+	gradient_field[6] = right_gradient_neighbors.backrightbottom;
+	gradient_field[7] = right_gradient_neighbors.backbottom;
+	// Gradient end
+
+	// Calculate which combination of "vertices are below/upwards isoLevel" we have
+	int cubeindex;
+	cubeindex =  (field[0] < isoValue);
+	cubeindex += (field[1] < isoValue)*2;
+	cubeindex += (field[2] < isoValue)*4;
+	cubeindex += (field[3] < isoValue)*8;
+	cubeindex += (field[4] < isoValue)*16;
+	cubeindex += (field[5] < isoValue)*32;
+	cubeindex += (field[6] < isoValue)*64;
 	cubeindex += (field[7] < isoValue)*128;
 
-	// find the vertices where the surface intersects the cube 
+	// find the vertices where the surface intersects the cube
 	__local float4 vertlist[16*NTHREADS];
+	__local float4 normlist[16*NTHREADS];
 
-	vertlist[tid] = vertexInterp(isoValue, v[0], v[1], field[0], field[1]);
-    vertlist[NTHREADS+tid] = vertexInterp(isoValue, v[1], v[2], field[1], field[2]);
-    vertlist[(NTHREADS*2)+tid] = vertexInterp(isoValue, v[2], v[3], field[2], field[3]);
-    vertlist[(NTHREADS*3)+tid] = vertexInterp(isoValue, v[3], v[0], field[3], field[0]);
-	vertlist[(NTHREADS*4)+tid] = vertexInterp(isoValue, v[4], v[5], field[4], field[5]);
-    vertlist[(NTHREADS*5)+tid] = vertexInterp(isoValue, v[5], v[6], field[5], field[6]);
-    vertlist[(NTHREADS*6)+tid] = vertexInterp(isoValue, v[6], v[7], field[6], field[7]);
-    vertlist[(NTHREADS*7)+tid] = vertexInterp(isoValue, v[7], v[4], field[7], field[4]);
-	vertlist[(NTHREADS*8)+tid] = vertexInterp(isoValue, v[0], v[4], field[0], field[4]);
-    vertlist[(NTHREADS*9)+tid] = vertexInterp(isoValue, v[1], v[5], field[1], field[5]);
-    vertlist[(NTHREADS*10)+tid] = vertexInterp(isoValue, v[2], v[6], field[2], field[6]);
-    vertlist[(NTHREADS*11)+tid] = vertexInterp(isoValue, v[3], v[7], field[3], field[7]);
-    barrier(CLK_LOCAL_MEM_FENCE);
+	// v[0] to v[7] contains the current grid cell's vertices. We use the
+	// isoValue at each vertex as a weighting factor.
+	vertexAndNormalInterp(isoValue, v[0], v[1], field[0], field[1],gradient_field[0],gradient_field[1],&vertlist[tid],&normlist[tid]);
+	vertexAndNormalInterp(isoValue, v[1], v[2], field[1], field[2],gradient_field[1],gradient_field[2],&vertlist[NTHREADS+tid],&normlist[NTHREADS+tid]);
+	vertexAndNormalInterp(isoValue, v[2], v[3], field[2], field[3],gradient_field[2],gradient_field[3],&vertlist[(NTHREADS*2)+tid],&normlist[(NTHREADS*2)+tid]);
+	vertexAndNormalInterp(isoValue, v[3], v[0], field[3], field[0],gradient_field[3],gradient_field[0],&vertlist[(NTHREADS*3)+tid],&normlist[(NTHREADS*3)+tid]);
+	vertexAndNormalInterp(isoValue, v[4], v[5], field[4], field[5],gradient_field[4],gradient_field[5],&vertlist[(NTHREADS*4)+tid],&normlist[(NTHREADS*4)+tid]);
+	vertexAndNormalInterp(isoValue, v[5], v[6], field[5], field[6],gradient_field[5],gradient_field[6],&vertlist[(NTHREADS*5)+tid],&normlist[(NTHREADS*5)+tid]);
+	vertexAndNormalInterp(isoValue, v[6], v[7], field[6], field[7],gradient_field[6],gradient_field[7],&vertlist[(NTHREADS*6)+tid],&normlist[(NTHREADS*6)+tid]);
+	vertexAndNormalInterp(isoValue, v[7], v[4], field[7], field[4],gradient_field[7],gradient_field[4],&vertlist[(NTHREADS*7)+tid],&normlist[(NTHREADS*7)+tid]);
+	vertexAndNormalInterp(isoValue, v[0], v[4], field[0], field[4],gradient_field[0],gradient_field[4],&vertlist[(NTHREADS*8)+tid],&normlist[(NTHREADS*8)+tid]);
+	vertexAndNormalInterp(isoValue, v[1], v[5], field[1], field[5],gradient_field[1],gradient_field[5],&vertlist[(NTHREADS*9)+tid],&normlist[(NTHREADS*9)+tid]);
+	vertexAndNormalInterp(isoValue, v[2], v[6], field[2], field[6],gradient_field[2],gradient_field[6],&vertlist[(NTHREADS*10)+tid],&normlist[(NTHREADS*10)+tid]);
+	vertexAndNormalInterp(isoValue, v[3], v[7], field[3], field[7],gradient_field[3],gradient_field[7],&vertlist[(NTHREADS*11)+tid],&normlist[(NTHREADS*11)+tid]);
 
-    // output triangle vertices
-    uint numVerts = read_imageui(numVertsTex, tableSampler, (int2)(cubeindex,0)).x;
+	barrier(CLK_LOCAL_MEM_FENCE);
 
-    for(int i=0; i<numVerts; i+=3) {
-        uint index = numVertsScanned[voxel] + i;
+	// How many vertices do we have for this cube...
+	uint numVerts = read_imageui(numVertsTex, tableSampler, (int2)(cubeindex,0)).x;
 
-        float4 v[3];
-        uint edge;
-        edge = read_imageui(triTex, tableSampler, (int2)(i,cubeindex)).x;
-        v[0] = vertlist[(edge*NTHREADS)+tid];
+	// Create numVerts/3 triangles...
+	for(int i=0; i < numVerts; i+=3)
+	{
+		uint index = numVertsScanned[voxel] + i;
 
-        edge = read_imageui(triTex, tableSampler, (int2)(i+1,cubeindex)).x;
-        v[1] = vertlist[(edge*NTHREADS)+tid];
+		float4 v[3];
+		float4 n[3];
+		uint edge;
+		edge = read_imageui(triTex, tableSampler, (int2)(i,cubeindex)).x;
+		v[0] = vertlist[(edge*NTHREADS)+tid];
+		n[0] = normlist[(edge*NTHREADS)+tid];
 
-        edge = read_imageui(triTex, tableSampler, (int2)(i+2,cubeindex)).x;
-        v[2] = vertlist[(edge*NTHREADS)+tid];
+		edge = read_imageui(triTex, tableSampler, (int2)(i+1,cubeindex)).x;
+		v[1] = vertlist[(edge*NTHREADS)+tid];
+		n[1] = normlist[(edge*NTHREADS)+tid];
 
-        // calculate triangle surface normal
-        float4 n = calcNormal(v[0], v[1], v[2]);
+		edge = read_imageui(triTex, tableSampler, (int2)(i+2,cubeindex)).x;
+		v[2] = vertlist[(edge*NTHREADS)+tid];
+		n[2] = normlist[(edge*NTHREADS)+tid];
 
-        if (index < (maxVerts - 3)) {
-            pos[index] = v[0];
-            norm[index] = n;
+		// calculate triangle surface normal
+		//float4 n = calcNormal(v[0], v[1], v[2]);
 
-            pos[index+1] = v[1];
-            norm[index+1] = n;
+		if (index < (maxVerts - 3))
+		{
+			pos[index] = v[0];
+			norm[index] = n[0];
 
-            pos[index+2] = v[2];
-            norm[index+2] = n;
-        }
-    }
+			pos[index+1] = v[1];
+			norm[index+1] = n[1];
+
+			pos[index+2] = v[2];
+			norm[index+2] = n[2];
+		}
+	}
 }
 

@@ -6,6 +6,7 @@
 #include <flakelib/marching_cubes/scan.hpp>
 #include <flakelib/marching_cubes/vertex_count.hpp>
 #include <flakelib/volume/float_view.hpp>
+#include <flakelib/volume/gradient.hpp>
 #include <flakelib/volume/grid_size.hpp>
 #include <sge/camera/base_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
@@ -33,6 +34,7 @@ public:
 	object(
 		sge::renderer::device &,
 		sge::camera::base &,
+		flakelib::volume::gradient &,
 		flakelib::cl::program_context const &,
 		flakelib::volume::grid_size const &,
 		marching_cubes::iso_level const &);
@@ -51,6 +53,7 @@ public:
 private:
 	sge::renderer::device &renderer_;
 	sge::camera::base &camera_;
+	flakelib::volume::gradient &gradient_;
 	sge::opencl::command_queue::object &command_queue_;
 	flakelib::volume::grid_size grid_size_;
 	marching_cubes::iso_level iso_level_;
@@ -105,6 +108,7 @@ private:
 
 	void
 	launch_generateTriangles2(
+		flakelib::volume::float_view const &,
 		sge::opencl::memory_object::dim3 grid,
 		sge::opencl::memory_object::dim3 threads,
 		cl_mem pos,

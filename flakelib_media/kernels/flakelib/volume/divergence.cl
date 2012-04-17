@@ -35,7 +35,7 @@ FLAKELIB_KERNEL_NAME(apply)(
 		flakelib_volume_at(
 			buffer_pitch,
 			flakelib_volume_global_size(),
-			flakelib_volume_current_position())] = 
+			flakelib_volume_current_position())] =
 		flakelib_volume_von_neumann_divergence(
 			&floats);
 }
