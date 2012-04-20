@@ -10,7 +10,7 @@
 #include <flakelib/volume/von_neumann/gradient.cl>
 
 kernel void
-FLAKELIB_KERNEL_NAME(apply)(
+FLAKELIB_KERNEL_NAME(subtract_pressure_gradient_apply)(
 	global float const *FLAKELIB_KERNEL_ARGUMENT(pressure),
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(velocity),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(boundary),

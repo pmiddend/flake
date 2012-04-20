@@ -158,7 +158,8 @@ flake::test::base::base(
 										FCPPT_TEXT("tests/window-size"))))).dont_show())
 						(sge::systems::renderer(
 							sge::renderer::parameters(
-								sge::renderer::visual_depth::depth32,
+								sge::renderer::windowed(
+									sge::renderer::bit_depth::depth32),
 								sge::renderer::depth_stencil_buffer::d24,
 								sge::renderer::vsync::on,
 								sge::renderer::no_multi_sampling),

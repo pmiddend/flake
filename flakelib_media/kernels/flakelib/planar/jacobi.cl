@@ -9,7 +9,7 @@
 #include <flakelib/kernel_argument.cl>
 
 kernel void
-FLAKELIB_KERNEL_NAME(apply)(
+FLAKELIB_KERNEL_NAME(jacobi_apply)(
 	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(rhs),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(boundary),

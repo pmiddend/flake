@@ -21,7 +21,8 @@ flake::test::information::manager::manager(
 		_font_metrics),
 	font_drawer_(
 		_renderer,
-		_color)
+		_color),
+	children_()
 {
 }
 

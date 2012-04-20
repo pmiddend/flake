@@ -9,7 +9,7 @@
 #include <flakelib/volume/von_neumann/divergence.cl>
 
 kernel void
-FLAKELIB_KERNEL_NAME(apply)(
+FLAKELIB_KERNEL_NAME(divergence_apply)(
 	global float4 const *FLAKELIB_KERNEL_ARGUMENT(input),
 	global float *FLAKELIB_KERNEL_ARGUMENT(output),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(boundary),

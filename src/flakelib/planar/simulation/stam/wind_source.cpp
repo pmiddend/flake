@@ -18,7 +18,7 @@ flakelib::planar::simulation::stam::wind_source::wind_source(
 	kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply")))
+				"wind_source_apply")))
 {
 	this->wind_strength(
 		_wind_strength.get());

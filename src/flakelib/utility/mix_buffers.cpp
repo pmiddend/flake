@@ -20,7 +20,7 @@ flakelib::utility::mix_buffers::mix_buffers(
 	add_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply_add")))
+				"mix_buffers_apply_add")))
 {
 }
 

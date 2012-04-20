@@ -83,6 +83,11 @@ flake::volume::tests::flakes::flakes(
 					sge::input::keyboard::key_code::f5)))
 			(test::feature(
 				test::json_identifier(
+					FCPPT_TEXT("marchingcubes")),
+				test::optional_key_code(
+					sge::input::keyboard::key_code::f6)))
+			(test::feature(
+				test::json_identifier(
 					FCPPT_TEXT("flakes")),
 				test::optional_key_code(
 					sge::input::keyboard::key_code::f2))),
@@ -450,7 +455,7 @@ flake::volume::tests::flakes::update()
 			flakelib::volume::boundary_buffer_view(
 				boundary_buffer_->value()));
 
-		if(sge::timer::reset_when_expired(snow_cover_update_))
+		if(sge::timer::reset_when_expired(snow_cover_update_) && this->feature_active(test::json_identifier(FCPPT_TEXT("marchingcubes"))))
 		{
 			snow_cover_vertices_ =
 				marching_cubes_.update(
@@ -461,8 +466,11 @@ flake::volume::tests::flakes::update()
 			raw_delta);
 	}
 
-
-	velocity_arrows_.update(
-		flakelib::volume::velocity_buffer_view(
-			velocity_buffer_->value()));
+	if(
+		this->feature_active(
+			test::json_identifier(
+				FCPPT_TEXT("arrows"))))
+		velocity_arrows_.update(
+			flakelib::volume::velocity_buffer_view(
+				velocity_buffer_->value()));
 }

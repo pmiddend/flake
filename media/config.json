@@ -61,7 +61,7 @@
 		},
 		"flakes" :
 		{
-			"simulation-size" : [64,64,64],
+			"simulation-size" : [128,128,128],
 			"arrow-scale" : 1.0,
 			"grid-scale" : 1.0,
 			"wind-strength-start" : 1.0,
@@ -90,6 +90,7 @@
 			{
 				"paused" : false,
 				"arrows" : false,
+				"marchingcubes" : false,
 				"wireframe" : false,
 				"snowcover" : true,
 				"models" : true,

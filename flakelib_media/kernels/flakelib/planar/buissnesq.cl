@@ -2,7 +2,7 @@
 #include <flakelib/kernel_argument.cl>
 
 kernel void
-FLAKELIB_KERNEL_NAME(apply)(
+FLAKELIB_KERNEL_NAME(buissnesq_apply)(
 	float const FLAKELIB_KERNEL_ARGUMENT(temperature_strength),
 	float const FLAKELIB_KERNEL_ARGUMENT(density_strength),
 	float const FLAKELIB_KERNEL_ARGUMENT(ambient_temperature),

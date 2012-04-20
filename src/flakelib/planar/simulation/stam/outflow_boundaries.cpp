@@ -18,7 +18,7 @@ flakelib::planar::simulation::stam::outflow_boundaries::outflow_boundaries(
 	kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply")))
+				"outflow_boundaries_apply")))
 {
 }
 

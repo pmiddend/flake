@@ -29,7 +29,7 @@ flakelib::volume::gradient::gradient(
 	kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply")))
+				"gradient_apply")))
 {
 }
 

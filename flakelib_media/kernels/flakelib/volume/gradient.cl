@@ -7,7 +7,7 @@
 #include <flakelib/volume/von_neumann/load_neighbors.cl>
 
 kernel void
-FLAKELIB_KERNEL_NAME(apply)(
+FLAKELIB_KERNEL_NAME(gradient_apply)(
 	global float const *FLAKELIB_KERNEL_ARGUMENT(input),
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(output),
 	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch))

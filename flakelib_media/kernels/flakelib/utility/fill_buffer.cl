@@ -2,7 +2,7 @@
 #include <flakelib/kernel_argument.cl>
 
 kernel void
-FLAKELIB_KERNEL_NAME(apply)(
+FLAKELIB_KERNEL_NAME(fill_buffer_apply)(
 	global float *FLAKELIB_KERNEL_ARGUMENT(input),
 	float const FLAKELIB_KERNEL_ARGUMENT(value))
 {

@@ -28,11 +28,11 @@ flakelib::volume::simulation::stam::semilagrangian_advection::semilagrangian_adv
 	volume_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply_float4"))),
+				"semilagrangian_advection_apply_float4"))),
 	scalar_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply_float")))
+				"semilagrangian_advection_apply_float")))
 {
 }
 

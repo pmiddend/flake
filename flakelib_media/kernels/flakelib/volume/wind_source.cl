@@ -2,7 +2,7 @@
 #include <flakelib/kernel_argument.cl>
 #include <flakelib/volume/at.cl>
 
-kernel void FLAKELIB_KERNEL_NAME(apply)(
+kernel void FLAKELIB_KERNEL_NAME(wind_source_apply)(
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(input),
 	int const FLAKELIB_KERNEL_ARGUMENT(buffer_width),
 	uint const FLAKELIB_KERNEL_ARGUMENT(line_pitch),

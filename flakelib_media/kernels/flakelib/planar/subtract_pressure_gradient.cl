@@ -10,7 +10,7 @@
 #include <flakelib/planar/bottom_of.cl>
 
 kernel void
-FLAKELIB_KERNEL_NAME(apply)(
+FLAKELIB_KERNEL_NAME(subtract_pressure_gradient_apply)(
 	global float const *FLAKELIB_KERNEL_ARGUMENT(pressure),
 	global float2 *FLAKELIB_KERNEL_ARGUMENT(velocity),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(boundary),

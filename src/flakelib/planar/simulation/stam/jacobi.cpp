@@ -33,7 +33,7 @@ flakelib::planar::simulation::stam::jacobi::jacobi(
 	kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply"))),
+				"jacobi_apply"))),
 	iterations_(
 		_iterations.get() % 2u == 0u
 		?

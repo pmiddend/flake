@@ -22,7 +22,7 @@ flakelib::planar::simulation::stam::buissnesq::object::object(
 	kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply")))
+				"buissnesq_apply")))
 {
 	kernel_->numerical_argument(
 		"density_strength",

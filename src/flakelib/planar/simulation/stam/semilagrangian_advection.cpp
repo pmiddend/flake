@@ -28,11 +28,11 @@ flakelib::planar::simulation::stam::semilagrangian_advection::semilagrangian_adv
 	planar_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply_float2"))),
+				"semilagrangian_advection_apply_float2"))),
 	scalar_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply_float")))
+				"semilagrangian_advection_apply_float")))
 {
 }
 

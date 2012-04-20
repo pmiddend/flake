@@ -10,7 +10,7 @@
 
 
 kernel void
-FLAKELIB_KERNEL_NAME(apply)(
+FLAKELIB_KERNEL_NAME(wind_source_apply)(
 	float const FLAKELIB_KERNEL_ARGUMENT(wind_strength),
 	global float2 *FLAKELIB_KERNEL_ARGUMENT(input),
 	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch))

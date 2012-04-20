@@ -12,7 +12,7 @@
 \brief Calculates the divergence, assuming the boundary elements have zero velocity
 */
 kernel void
-FLAKELIB_KERNEL_NAME(apply)(
+FLAKELIB_KERNEL_NAME(divergence_apply)(
 	global float2 const *FLAKELIB_KERNEL_ARGUMENT(input),
 	global float *FLAKELIB_KERNEL_ARGUMENT(output),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(boundary),

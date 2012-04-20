@@ -20,7 +20,7 @@ flakelib::volume::simulation::stam::subtract_pressure_gradient::subtract_pressur
 	kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply")))
+				"subtract_pressure_gradient_apply")))
 {
 }
 

@@ -9,7 +9,7 @@
 #define WEIGHTED_JACOBI
 
 kernel void
-FLAKELIB_KERNEL_NAME(apply)(
+FLAKELIB_KERNEL_NAME(jacobi_apply)(
 	global float const *FLAKELIB_KERNEL_ARGUMENT(boundary),
 	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(rhs),

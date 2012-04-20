@@ -9,7 +9,7 @@
 #include <flakelib/planar/current_position.cl>
 
 kernel void
-FLAKELIB_KERNEL_NAME(apply_vorticity)(
+FLAKELIB_KERNEL_NAME(vorticity_apply)(
 	global float const *FLAKELIB_KERNEL_ARGUMENT(boundary),
 	global float2 const *FLAKELIB_KERNEL_ARGUMENT(velocity),
 	global float *FLAKELIB_KERNEL_ARGUMENT(output),
@@ -92,7 +92,7 @@ FLAKELIB_KERNEL_NAME(apply_vorticity)(
 }
 
 kernel void
-FLAKELIB_KERNEL_NAME(gradient_and_cross)(
+FLAKELIB_KERNEL_NAME(vorticity_gradient_and_cross)(
 	float const FLAKELIB_KERNEL_ARGUMENT(vorticity_strength),
 	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(vorticity),
@@ -187,7 +187,7 @@ FLAKELIB_KERNEL_NAME(gradient_and_cross)(
 }
 
 kernel void
-FLAKELIB_KERNEL_NAME(confinement_data)(
+FLAKELIB_KERNEL_NAME(vorticity_confinement_data)(
 	float const FLAKELIB_KERNEL_ARGUMENT(vorticity_strength),
 	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(vorticity),

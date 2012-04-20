@@ -29,15 +29,15 @@ flakelib::planar::simulation::stam::vorticity::vorticity(
 	vorticity_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply_vorticity"))),
+				"vorticity_apply"))),
 	confinement_data_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"confinement_data"))),
+				"vorticity_confinement_data"))),
 	confinement_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"gradient_and_cross")))
+				"vorticity_gradient_and_cross")))
 {
 }
 

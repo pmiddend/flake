@@ -18,7 +18,7 @@ flakelib::utility::fill_buffer::fill_buffer(
 	kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply")))
+				"fill_buffer_apply")))
 {
 }
 

@@ -29,7 +29,7 @@ flakelib::planar::simulation::stam::divergence::divergence(
 	kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
-				"apply")))
+				"divergence_apply")))
 {
 }
 
