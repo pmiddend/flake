@@ -1,5 +1,6 @@
 #include <flakelib/kernel_name.cl>
 #include <flakelib/kernel_argument.cl>
+#include <flakelib/boundary_is_solid.cl>
 #include <flakelib/volume/global_size.cl>
 #include <flakelib/volume/current_position.cl>
 #include <flakelib/volume/at.cl>
@@ -15,6 +16,12 @@ FLAKELIB_KERNEL_NAME(divergence_apply)(
 	global float const *FLAKELIB_KERNEL_ARGUMENT(boundary),
 	uint const FLAKELIB_KERNEL_ARGUMENT(buffer_pitch))
 {
+	size_t const current_index =
+		flakelib_volume_at(
+			buffer_pitch,
+			flakelib_volume_global_size(),
+			flakelib_volume_current_position());
+
 	flakelib_volume_von_neumann_size_t_neighbors neighborhood =
 		flakelib_volume_von_neumann_load_neighbor_indices(
 			flakelib_volume_current_position(),
@@ -32,10 +39,7 @@ FLAKELIB_KERNEL_NAME(divergence_apply)(
 		floats);
 
 	output[
-		flakelib_volume_at(
-			buffer_pitch,
-			flakelib_volume_global_size(),
-			flakelib_volume_current_position())] =
+		current_index] =
 		flakelib_volume_von_neumann_divergence(
 			&floats);
 }

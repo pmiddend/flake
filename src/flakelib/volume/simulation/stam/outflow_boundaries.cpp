@@ -46,7 +46,9 @@ flakelib::volume::simulation::stam::outflow_boundaries::update(
 			_view.size().w()));
 
 	kernel_->enqueue_automatic(
-		_view.size());
+		sge::opencl::memory_object::dim2(
+			_view.size().w(),
+			_view.size().h()));
 }
 
 flakelib::volume::simulation::stam::outflow_boundaries::~outflow_boundaries()

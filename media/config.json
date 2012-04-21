@@ -96,6 +96,13 @@
 				"models" : true,
 				"flakes" : true
 			}
+		},
+		"solipsistic" :
+		{
+			"simulation-size" : [128,128,128],
+			"wind-strength-start" : 1.0,
+			"jacobi-iterations" : 40,
+			"iterations" : 10
 		}
 	}
 }

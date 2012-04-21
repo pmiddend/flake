@@ -399,7 +399,6 @@ target_link_libraries(
 	${Fcppt_filesystem_LIBRARIES}
 	${Awl_LIBRARIES}
 	${SGE_LIBRARIES}
-	${Rucksack_LIBRARIES}
 	${Boost_LIBRARIES})
 
 install(
@@ -423,7 +422,6 @@ target_link_libraries(
 	${Fcppt_filesystem_LIBRARIES}
 	${Awl_LIBRARIES}
 	${SGE_LIBRARIES}
-	${Rucksack_LIBRARIES}
 	${Boost_LIBRARIES})
 
 install(
@@ -432,3 +430,26 @@ install(
 	DESTINATION
 	${INSTALL_BINARY_DIR})
 # marching_cubes end
+
+# solipsistic begin
+awl_utils_add_portable_executable(
+	tests_solipsistic
+	"custom_main"
+	src/flake/volume/tests/solipsistic.cpp)
+
+target_link_libraries(
+	tests_solipsistic
+	flakelib
+	flake_helper_library
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
+	${Awl_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Boost_LIBRARIES})
+
+install(
+	TARGETS
+	tests_solipsistic
+	DESTINATION
+	${INSTALL_BINARY_DIR})
+# solipsistic end
