@@ -68,7 +68,7 @@
 			"wind-strength-minimum" : 2.0,
 			"wind-strength-maximum" : 3.0,
 			"wind-strength-frequency-seconds" : 1.0,
-			"jacobi-iterations" : 40,
+			"jacobi-iterations" : 20,
 			"near-plane" : 1.0,
 			"far-plane" : 1000.0,
 			"fov" : 60.0,

@@ -64,7 +64,7 @@ try
 FLAKE_CATCH_STATEMENTS
 
 flake::volume::tests::solipsistic::solipsistic(
-	awl::main::function_context const &_function_context)
+	awl::main::function_context const &)
 :
 	opencl_system_(
 		sge::opencl::single_device_system::parameters()

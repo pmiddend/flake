@@ -100,10 +100,11 @@ flakelib::cl::program::create_kernel(
 				fcppt::from_std_string(
 					_kernel_name.get())+
 				FCPPT_TEXT("\" not found, did you mean \"")+
-				fcppt::algorithm::shortest_levenshtein(
-					flakelib::map_key_sequence(
-						kernel_name_to_parameters_),
-					_kernel_name.get())+
+				fcppt::from_std_string(
+					fcppt::algorithm::shortest_levenshtein(
+						flakelib::map_key_sequence(
+							kernel_name_to_parameters_),
+						_kernel_name.get()))+
 				FCPPT_TEXT("\"?"));
 	}
 
