@@ -9,6 +9,7 @@
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
+#include <sge/renderer/scoped_vertex_declaration_and_buffers.hpp>
 #include <sge/renderer/scoped_vertex_lock.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
@@ -30,6 +31,7 @@
 #include <sge/shader/object_parameters.hpp>
 #include <sge/shader/scoped.hpp>
 #include <sge/shader/vf_to_string.hpp>
+#include <fcppt/cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
@@ -37,6 +39,7 @@
 #include <fcppt/math/vector/arithmetic.hpp>
 #include <fcppt/math/vector/output.hpp>
 #include <fcppt/random/variate.hpp>
+#include <fcppt/random/distribution/uniform_int.hpp>
 #include <fcppt/random/distribution/uniform_real.hpp>
 #include <fcppt/random/generator/minstd_rand.hpp>
 #include <fcppt/random/generator/seed_from_chrono.hpp>
@@ -50,6 +53,9 @@ flake::volume::flakes::manager::manager(
 	flakes::count const &_flake_count,
 	flakes::minimum_size const &_minimum_size,
 	flakes::maximum_size const &_maximum_size,
+	flakes::texture const &_texture,
+	flakes::texture_tile_size const &_tile_size,
+	flakes::texture_tile_count const &_tile_count,
 	flakelib::volume::grid_size const &_grid_size)
 :
 	renderer_(
@@ -85,6 +91,19 @@ flake::volume::flakes::manager::manager(
 			sge::renderer::vertex_count(
 				_flake_count.get()),
 			sge::renderer::resource_flags::none)),
+	texcoords_buffer_(
+		renderer_.create_vertex_buffer(
+			*vertex_declaration_,
+			sge::renderer::vf::dynamic::make_part_index
+			<
+				vf::format,
+				vf::texcoord_part
+			>(),
+			sge::renderer::vertex_count(
+				_flake_count.get()),
+			sge::renderer::resource_flags::none)),
+	tile_size_(
+		_tile_size),
 	shader_(
 		sge::shader::object_parameters(
 			renderer_,
@@ -95,6 +114,10 @@ flake::volume::flakes::manager::manager(
 					"camera_position",
 					sge::shader::variable_type::uniform,
 					sge::renderer::vector3()))
+				(sge::shader::variable(
+					"tile_size",
+					sge::shader::variable_type::uniform,
+					tile_size_.get()))
 				(sge::shader::variable(
 					"maximum_distance",
 					sge::shader::variable_type::uniform,
@@ -111,7 +134,9 @@ flake::volume::flakes::manager::manager(
 					"tex",
 					sge::renderer::texture::planar_shared_ptr(
 						sge::renderer::texture::create_planar_from_path(
-							flake::media_path_from_string(FCPPT_TEXT("textures/flake.png")),
+							flake::media_path_from_string(
+								FCPPT_TEXT("textures/")+
+								_texture.get()),
 							renderer_,
 							_image_system,
 							sge::renderer::texture::mipmap::off(),
@@ -128,7 +153,8 @@ flake::volume::flakes::manager::manager(
 	cl_point_sizes_buffer_()
 {
 	this->generate_particles(
-		_grid_size);
+		_grid_size,
+		_tile_count);
 
 	cl_positions_buffer_.take(
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
@@ -166,13 +192,16 @@ flake::volume::flakes::manager::render()
 		"camera_position",
 		-camera_.coordinate_system().position().get());
 
-	sge::renderer::scoped_vertex_buffer scoped_positions_vb(
+	sge::renderer::scoped_vertex_declaration_and_buffers scoped_vf(
 		renderer_,
-		*positions_buffer_);
-
-	sge::renderer::scoped_vertex_buffer scoped_point_sizes_vb(
-		renderer_,
-		*point_sizes_buffer_);
+		*vertex_declaration_,
+		fcppt::assign::make_container<sge::renderer::const_vertex_buffer_ref_container>
+			(fcppt::cref(
+				*positions_buffer_))
+			(fcppt::cref(
+				*point_sizes_buffer_))
+			(fcppt::cref(
+				*texcoords_buffer_)));
 
 	sge::renderer::state::scoped scoped_state(
 		renderer_,
@@ -230,7 +259,8 @@ flake::volume::flakes::manager::~manager()
 
 void
 flake::volume::flakes::manager::generate_particles(
-	flakelib::volume::grid_size const &_grid_size)
+	flakelib::volume::grid_size const &_grid_size,
+	flakes::texture_tile_count const &_number_of_textures)
 {
 	sge::renderer::scoped_vertex_lock const positions_vblock(
 		*positions_buffer_,
@@ -240,11 +270,18 @@ flake::volume::flakes::manager::generate_particles(
 		*point_sizes_buffer_,
 		sge::renderer::lock_mode::writeonly);
 
+	sge::renderer::scoped_vertex_lock const texcoords_vblock(
+		*texcoords_buffer_,
+		sge::renderer::lock_mode::writeonly);
+
 	sge::renderer::vf::view<vf::position_part> const positions(
 		positions_vblock.value());
 
 	sge::renderer::vf::view<vf::point_size_part> const point_sizes(
 		point_sizes_vblock.value());
+
+	sge::renderer::vf::view<vf::texcoord_part> const texcoords(
+		texcoords_vblock.value());
 
 	sge::renderer::vf::view<vf::position_part>::iterator positions_it(
 		positions.begin());
@@ -252,12 +289,19 @@ flake::volume::flakes::manager::generate_particles(
 	sge::renderer::vf::view<vf::point_size_part>::iterator point_sizes_it(
 		point_sizes.begin());
 
+	sge::renderer::vf::view<vf::texcoord_part>::iterator texcoords_it(
+		texcoords.begin());
+
 	typedef
 	fcppt::random::generator::minstd_rand
 	generator_type;
 
 	generator_type number_generator(
 		fcppt::random::generator::seed_from_chrono<generator_type::seed>());
+
+	typedef
+	fcppt::random::distribution::uniform_int<unsigned>
+	uniform_unsigned_distribution;
 
 	typedef
 	fcppt::random::distribution::uniform_real<sge::renderer::scalar>
@@ -270,6 +314,22 @@ flake::volume::flakes::manager::generate_particles(
 		renderer_scalar_distribution
 	>
 	renderer_scalar_variate;
+
+	typedef
+	fcppt::random::variate
+	<
+		generator_type,
+		uniform_unsigned_distribution
+	>
+	unsigned_variate;
+
+	unsigned_variate part_rng(
+		number_generator,
+		uniform_unsigned_distribution(
+			uniform_unsigned_distribution::min(
+				0u),
+			uniform_unsigned_distribution::max(
+				_number_of_textures.get()-1u)));
 
 	renderer_scalar_variate
 		size_rng(
@@ -340,5 +400,14 @@ flake::volume::flakes::manager::generate_particles(
 
 		(*positions_it++).set<vf::position>(
 			starting_position);
+
+		sge::renderer::vector2 const new_texcoord(
+			static_cast<sge::renderer::scalar>(
+				part_rng()) *
+			tile_size_.get(),
+			0.0f);
+
+		(*texcoords_it++).set<vf::texcoord>(
+			new_texcoord);
 	}
 }

@@ -2,6 +2,8 @@
 
 $$$HEADER$$$
 
+out vec2 texcoord_interp;
+
 void
 main()
 {
@@ -28,4 +30,6 @@ main()
 	gl_Position =
 		mvp *
 		vec4(position.xyz,1.0);
+
+	texcoord_interp = texcoord;
 }

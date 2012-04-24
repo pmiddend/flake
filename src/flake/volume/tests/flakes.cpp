@@ -207,17 +207,32 @@ flake::volume::tests::flakes::flakes(
 			sge::parse::json::find_and_convert_member<flake::volume::flakes::count::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("flake-count")))),
+					FCPPT_TEXT("flakes/count")))),
 		flake::volume::flakes::minimum_size(
 			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("flake-minimum-size")))),
+					FCPPT_TEXT("flakes/minimum-size")))),
 		flake::volume::flakes::maximum_size(
 			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("flake-maximum-size")))),
+					FCPPT_TEXT("flakes/maximum-size")))),
+		flake::volume::flakes::texture(
+			sge::parse::json::find_and_convert_member<fcppt::string>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("flakes/texture")))),
+		flake::volume::flakes::texture_tile_size(
+			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("flakes/texture-tile-size")))),
+		flake::volume::flakes::texture_tile_count(
+			sge::parse::json::find_and_convert_member<flake::volume::flakes::texture_tile_count::value_type>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("flakes/texture-tile-count")))),
 		simulation_size_),
 	flakes_mover_(
 		this->program_context(),

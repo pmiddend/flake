@@ -3,6 +3,7 @@
 $$$HEADER$$$
 
 out vec4 frag_color;
+in vec2 texcoord_interp;
 
 void
 main()
@@ -10,7 +11,8 @@ main()
 	vec4 texture_value =
 		texture(
 			tex,
-			gl_PointCoord);
+			texcoord_interp + gl_PointCoord * vec2(tile_size,1.0));
+
 	frag_color =
 		vec4(
 			texture_value.xyz,

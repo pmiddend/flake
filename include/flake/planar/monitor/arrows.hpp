@@ -17,9 +17,9 @@
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
+#include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
-#include <fcppt/math/box/object_impl.hpp>
 
 
 namespace flake

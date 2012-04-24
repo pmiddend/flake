@@ -2,9 +2,9 @@
 #define FLAKE_PLANAR_TESTS_BUOYANCY_HPP_INCLUDED
 
 #include <flake/planar/cursor_splatter.hpp>
-#include <flake/planar/monitor/parent.hpp>
-#include <flake/planar/monitor/arrows.hpp>
 #include <flake/planar/conversion/object.hpp>
+#include <flake/planar/monitor/arrows.hpp>
+#include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/texture.hpp>
 #include <flake/test/base.hpp>
 #include <flakelib/buffer_pool/planar_lock_impl.hpp>
