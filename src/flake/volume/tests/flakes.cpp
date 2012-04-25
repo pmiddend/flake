@@ -1,3 +1,5 @@
+#include <sge/renderer/clear/parameters.hpp>
+#include <sge/renderer/onscreen_target.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/test/information/string_conversion_adapter.hpp>
 #include <flake/volume/tests/flakes.hpp>
@@ -348,17 +350,19 @@ flake::volume::tests::flakes::render()
 	sge::renderer::state::scoped scoped_state(
 		this->renderer(),
 		sge::renderer::state::list
-			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::black())
-			(sge::renderer::state::float_::depth_buffer_clear_val = 1.0f)
 			(this->feature_active(test::json_identifier(FCPPT_TEXT("wireframe")))
 			?
 			 	sge::renderer::state::draw_mode::line
 			:
 			 	sge::renderer::state::draw_mode::fill));
 
-	this->renderer().clear(
-		sge::renderer::clear_flags_field(
-			sge::renderer::clear_flags::back_buffer) | sge::renderer::clear_flags::depth_buffer);
+	this->renderer().onscreen_target().clear(
+		sge::renderer::clear::parameters()
+			.back_buffer(
+				sge::image::colors::black())
+			.depth_buffer(
+				sge::renderer::clear::depth_buffer_value(
+					1.0f)));
 
 	if(
 		this->feature_active(
@@ -486,6 +490,5 @@ flake::volume::tests::flakes::update()
 			test::json_identifier(
 				FCPPT_TEXT("arrows"))))
 		velocity_arrows_.update(
-			flakelib::volume::velocity_buffer_view(
-				velocity_buffer_->value()));
+			velocity_buffer_->value());
 }

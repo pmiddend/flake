@@ -3,7 +3,7 @@
 
 #include <flake/volume/arrows/manager_fwd.hpp>
 #include <flakelib/volume/grid_size.hpp>
-#include <flakelib/volume/velocity_buffer_view.hpp>
+#include <flakelib/volume/float4_view.hpp>
 #include <flakelib/volume/conversion/arrow_scale.hpp>
 #include <flakelib/volume/conversion/grid_scale.hpp>
 #include <flakelib/volume/conversion/object_fwd.hpp>
@@ -54,7 +54,7 @@ public:
 
 	void
 	update(
-		flakelib::volume::velocity_buffer_view const &);
+		flakelib::volume::float4_view const &);
 
 	void
 	render();

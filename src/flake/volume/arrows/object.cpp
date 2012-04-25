@@ -53,10 +53,10 @@ flake::volume::arrows::object::object(
 
 void
 flake::volume::arrows::object::update(
-	flakelib::volume::velocity_buffer_view const &_velocity)
+	flakelib::volume::float4_view const &_arrows)
 {
 	conversion_.to_arrow_vb(
-		_velocity.get(),
+		_arrows,
 		gl_buffer_,
 		arrow_scale_,
 		origin_,

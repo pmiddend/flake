@@ -1,3 +1,5 @@
+#include <sge/renderer/onscreen_target.hpp>
+#include <sge/renderer/clear/parameters.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/media_path.hpp>
 #include <flake/media_path_from_string.hpp>
@@ -23,9 +25,6 @@
 #include <sge/parse/json/string_to_path.hpp>
 #include <sge/renderer/onscreen_target.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
-#include <sge/renderer/state/color.hpp>
-#include <sge/renderer/state/list.hpp>
-#include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/texture/create_planar_from_view.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
@@ -382,14 +381,10 @@ flake::planar::tests::buoyancy::~buoyancy()
 void
 flake::planar::tests::buoyancy::render()
 {
-	sge::renderer::state::scoped scoped_state(
-		this->renderer(),
-		sge::renderer::state::list
-			(sge::renderer::state::color::back_buffer_clear_color = sge::image::colors::grey()));
-
-	this->renderer().clear(
-		sge::renderer::clear_flags_field(
-			sge::renderer::clear_flags::back_buffer));
+	this->renderer().onscreen_target().clear(
+		sge::renderer::clear::parameters()
+			.back_buffer(
+				sge::image::colors::grey()));
 
 	monitor_parent_.render(
 		monitor::optional_projection(
