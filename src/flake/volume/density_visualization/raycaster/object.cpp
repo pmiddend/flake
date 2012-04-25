@@ -1,3 +1,6 @@
+#include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/box/contains_point.hpp>
+#include <sge/renderer/state/cull_mode.hpp>
 #include <sge/renderer/texture/address_mode2.hpp>
 #include <sge/renderer/texture/set_address_mode2.hpp>
 #include <sge/image2d/view/object.hpp>
@@ -71,6 +74,8 @@ flake::volume::density_visualization::raycaster::object::object(
 		_image_system),
 	conversion_(
 		_conversion),
+	grid_size_(
+		_grid_size),
 	debug_output_(
 		_debug_output),
 	scaling_factor_(
@@ -126,6 +131,10 @@ flake::volume::density_visualization::raycaster::object::object(
 					sge::shader::variable_type::constant,
 					static_cast<sge::renderer::glsl::uniform::int_type>(
 						texture_->size().w() / _grid_size.get().w())))
+				(sge::shader::variable(
+					"camera_is_inside_cube",
+					sge::shader::variable_type::uniform,
+					sge::renderer::scalar()))
 				(sge::shader::variable(
 					"slice_width",
 					sge::shader::variable_type::constant,
@@ -277,11 +286,24 @@ flake::volume::density_visualization::raycaster::object::render()
 		"camera_position",
 		-camera_.coordinate_system().position().get());
 
+	shader_.update_uniform(
+		"camera_is_inside_cube",
+		this->camera_is_inside_cube()
+		?
+			static_cast<sge::renderer::scalar>(1.0f)
+		:
+			static_cast<sge::renderer::scalar>(0.0f));
+
 	sge::renderer::state::scoped scoped_state(
 		renderer_,
 		sge::renderer::state::list
 			(sge::renderer::state::bool_::enable_alpha_blending = true)
 			(sge::renderer::state::source_blend_func::src_alpha)
+			(
+			 this->camera_is_inside_cube()
+			 ?
+				 sge::renderer::state::cull_mode::counter_clockwise
+			 : sge::renderer::state::cull_mode::clockwise)
 			(sge::renderer::state::dest_blend_func::inv_src_alpha));
 
 	sge::renderer::texture::filter::scoped scoped_texture_filter(
@@ -311,4 +333,19 @@ flake::volume::density_visualization::raycaster::object::render()
 
 flake::volume::density_visualization::raycaster::object::~object()
 {
+}
+
+bool
+flake::volume::density_visualization::raycaster::object::camera_is_inside_cube() const
+{
+	return
+		fcppt::math::box::contains_point(
+			fcppt::math::box::object<sge::renderer::scalar,3>(
+				sge::renderer::vector3::null(),
+				fcppt::math::dim::structure_cast
+				<
+					fcppt::math::dim::static_<sge::renderer::scalar,3>::type
+				>(
+					grid_size_.get())),
+			-camera_.coordinate_system().position().get());
 }

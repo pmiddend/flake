@@ -56,6 +56,7 @@ private:
 	sge::camera::base const &camera_;
 	sge::image2d::system &image_system_;
 	flakelib::volume::conversion::object &conversion_;
+	flakelib::volume::grid_size grid_size_;
 	flake::volume::density_visualization::raycaster::debug_output const debug_output_;
 	flakelib::volume::conversion::scaling_factor const scaling_factor_;
 	flakelib::volume::conversion::constant_addition const constant_addition_;
@@ -64,6 +65,9 @@ private:
 	sge::renderer::texture::planar_shared_ptr texture_;
 	sge::opencl::memory_object::image::planar cl_texture_;
 	sge::shader::object shader_;
+
+	bool
+	camera_is_inside_cube() const;
 };
 }
 }

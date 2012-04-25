@@ -79,7 +79,11 @@ main()
 	// scaling density for uniform cloud data
 	//float density = stepsize * opacity;
 
-	vec3 position = position_interp;
+	vec3 position =
+		mix(
+			position_interp,
+			camera_position,
+			camera_is_inside_cube);
 
 	float dst = 0.0;
 
@@ -118,4 +122,6 @@ main()
 	}
 
 	frag_color = vec4(1.0,1.0,1.0,dst);
+	//frag_color = vec4(1.0,1.0,1.0,1.0);
+	//frag_color = vec4(position_interp.xyz/slice_width,1.0);
 }
