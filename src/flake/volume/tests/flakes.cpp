@@ -1,5 +1,3 @@
-#include <sge/renderer/clear/parameters.hpp>
-#include <sge/renderer/onscreen_target.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/test/information/string_conversion_adapter.hpp>
 #include <flake/volume/tests/flakes.hpp>
@@ -14,7 +12,9 @@
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
 #include <sge/renderer/device.hpp>
+#include <sge/renderer/onscreen_target.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/clear/parameters.hpp>
 #include <sge/renderer/state/color.hpp>
 #include <sge/renderer/state/draw_mode.hpp>
 #include <sge/renderer/state/float.hpp>

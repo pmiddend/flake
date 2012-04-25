@@ -1,6 +1,4 @@
 #include <flake/catch_statements.hpp>
-#include <sge/renderer/onscreen_target.hpp>
-#include <sge/renderer/clear/parameters.hpp>
 #include <flake/media_path.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/planar/tests/vorticity.hpp>
@@ -25,6 +23,7 @@
 #include <sge/parse/json/string_to_path.hpp>
 #include <sge/renderer/onscreen_target.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/clear/parameters.hpp>
 #include <sge/renderer/texture/create_planar_from_view.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>

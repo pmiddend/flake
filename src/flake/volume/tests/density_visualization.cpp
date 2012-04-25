@@ -1,5 +1,5 @@
 #include <flake/catch_statements.hpp>
-#include <flake/volume/tests/marching_cubes.hpp>
+#include <flake/volume/tests/density_visualization.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
@@ -44,7 +44,7 @@ custom_main(
 	awl::main::function_context const &_function_context)
 try
 {
-	flake::volume::tests::marching_cubes s(
+	flake::volume::tests::density_visualization s(
 		_function_context);
 
 	return
@@ -52,21 +52,23 @@ try
 }
 FLAKE_CATCH_STATEMENTS
 
-flake::volume::tests::marching_cubes::marching_cubes(
+flake::volume::tests::density_visualization::density_visualization(
 	awl::main::function_context const &_function_context)
 :
 	flake::test::base(
 		_function_context,
 		sge::window::title(
-			FCPPT_TEXT("marching_cubes test")),
+			FCPPT_TEXT("density_visualization test")),
 		flake::test::json_identifier(
-			FCPPT_TEXT("marching-cubes")),
+			FCPPT_TEXT("density-visualization")),
+		test::feature_sequence(),
+		/*
 		fcppt::assign::make_container<test::feature_sequence>(
 			 flake::test::feature(
 			 	flake::test::json_identifier(
 					FCPPT_TEXT("wireframe")),
 				flake::test::optional_key_code(
-					sge::input::keyboard::key_code::f2))),
+					sge::input::keyboard::key_code::f2)))*/
 		sge::systems::cursor_option_field(
 			sge::systems::cursor_option::exclusive)),
 	simulation_size_(
@@ -107,47 +109,48 @@ flake::volume::tests::marching_cubes::marching_cubes(
 		this->program_context()),
 	splatter_(
 		this->program_context()),
-	boundary_buffer_(
+	density_buffer_(
 		flakelib::volume::retrieve_zero_float_buffer(
 			this->buffer_pool(),
 			fill_buffer_,
 			simulation_size_.get())),
-	gradient_(
-		this->program_context(),
-		this->buffer_pool()),
-	marching_cubes_(
+	conversion_(
+		this->program_context()),
+	raycaster_(
 		this->renderer(),
+		this->opencl_system().context(),
 		camera_,
-		gradient_,
-		this->program_context(),
+		this->image_system(),
+		conversion_,
+		flakelib::volume::conversion::scaling_factor(
+			1.0f),
+		flakelib::volume::conversion::constant_addition(
+			0.0f),
 		simulation_size_,
-		flakelib::marching_cubes::iso_level(
-			sge::parse::json::find_and_convert_member<cl_float>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("iso-level"))))),
+		flake::volume::density_visualization::raycaster::debug_output(
+			false)),
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			boost::chrono::seconds(1)))
 {
 	splatter_.splat_volume_float(
-		boundary_buffer_->value(),
+		density_buffer_->value(),
 		flakelib::splatter::pen::volume(
 			flakelib::splatter::box::object(
 				flakelib::splatter::box::position(
 					flakelib::splatter::box::position::value_type(
-						10,
-						10,
-						10)),
+						1,
+						1,
+						1)),
 				flakelib::splatter::box::size(
 					flakelib::splatter::box::size::value_type(
 						20,
 						20,
 						20))),
 			flakelib::splatter::pen::is_round(
-				true),
+				false),
 			flakelib::splatter::pen::is_smooth(
-				true),
+				false),
 			flakelib::splatter::pen::draw_mode::mix,
 			flakelib::splatter::pen::blend_factor(
 				1.0f)),
@@ -156,43 +159,31 @@ flake::volume::tests::marching_cubes::marching_cubes(
 }
 
 awl::main::exit_code const
-flake::volume::tests::marching_cubes::run()
+flake::volume::tests::density_visualization::run()
 {
 	return
 		flake::test::base::run();
 }
 
-flake::volume::tests::marching_cubes::~marching_cubes()
+flake::volume::tests::density_visualization::~density_visualization()
 {
 }
 
 void
-flake::volume::tests::marching_cubes::render()
+flake::volume::tests::density_visualization::render()
 {
-	sge::renderer::state::scoped scoped_state(
-		this->renderer(),
-		sge::renderer::state::list
-			(this->feature_active(test::json_identifier(FCPPT_TEXT("wireframe")))
-			?
-				 sge::renderer::state::draw_mode::line
-			:
-				sge::renderer::state::draw_mode::fill));
-
 	this->renderer().onscreen_target().clear(
 		sge::renderer::clear::parameters()
 			.back_buffer(
-				sge::image::colors::black())
-			.depth_buffer(
-				sge::renderer::clear::depth_buffer_value(
-					1.0f)));
+				sge::image::colors::black()));
 
-	marching_cubes_.render();
+	raycaster_.render();
 
 	test::base::render();
 }
 
 void
-flake::volume::tests::marching_cubes::update()
+flake::volume::tests::density_visualization::update()
 {
 	test::base::update();
 
@@ -208,6 +199,6 @@ flake::volume::tests::marching_cubes::update()
 	camera_.update(
 		10.0f * raw_delta);
 
-	marching_cubes_.update(
-		boundary_buffer_->value());
+	raycaster_.update(
+		density_buffer_->value());
 }

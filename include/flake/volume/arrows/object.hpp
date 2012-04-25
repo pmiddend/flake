@@ -2,8 +2,8 @@
 #define FLAKE_VOLUME_ARROWS_OBJECT_HPP_INCLUDED
 
 #include <flake/volume/arrows/manager_fwd.hpp>
-#include <flakelib/volume/grid_size.hpp>
 #include <flakelib/volume/float4_view.hpp>
+#include <flakelib/volume/grid_size.hpp>
 #include <flakelib/volume/conversion/arrow_scale.hpp>
 #include <flakelib/volume/conversion/grid_scale.hpp>
 #include <flakelib/volume/conversion/object_fwd.hpp>

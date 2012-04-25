@@ -204,6 +204,7 @@ set(
 	src/flake/time_modifier/object.cpp
 	src/flake/volume/arrows/manager.cpp
 	src/flake/volume/arrows/object.cpp
+	src/flake/volume/density_visualization/raycaster/object.cpp
 	src/flake/volume/flakes/manager.cpp
 	src/flake/volume/flakes/mover.cpp
 	src/flake/volume/model/manager.cpp
@@ -430,6 +431,29 @@ install(
 	DESTINATION
 	${INSTALL_BINARY_DIR})
 # marching_cubes end
+
+# density_visualization begin
+awl_utils_add_portable_executable(
+	tests_density_visualization
+	"custom_main"
+	src/flake/volume/tests/density_visualization.cpp)
+
+target_link_libraries(
+	tests_density_visualization
+	flakelib
+	flake_helper_library
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
+	${Awl_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Boost_LIBRARIES})
+
+install(
+	TARGETS
+	tests_density_visualization
+	DESTINATION
+	${INSTALL_BINARY_DIR})
+# density_visualization end
 
 # solipsistic begin
 awl_utils_add_portable_executable(
