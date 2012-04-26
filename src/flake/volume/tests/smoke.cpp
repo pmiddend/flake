@@ -1,8 +1,10 @@
 #include <flake/catch_statements.hpp>
 #include <flake/test/information/string_conversion_adapter.hpp>
-#include <flake/volume/tests/flakes.hpp>
+#include <flake/volume/tests/smoke.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
+#include <flakelib/splatter/box/object.hpp>
+#include <flakelib/splatter/pen/object.hpp>
 #include <flakelib/volume/retrieve_filled_float_buffer.hpp>
 #include <flakelib/volume/retrieve_zero_float4_buffer.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
@@ -45,7 +47,7 @@ custom_main(
 	awl::main::function_context const &_function_context)
 try
 {
-	flake::volume::tests::flakes s(
+	flake::volume::tests::smoke s(
 		_function_context);
 
 	return
@@ -53,15 +55,15 @@ try
 }
 FLAKE_CATCH_STATEMENTS
 
-flake::volume::tests::flakes::flakes(
+flake::volume::tests::smoke::smoke(
 	awl::main::function_context const &_function_context)
 :
 	flake::test::base(
 		_function_context,
 		sge::window::title(
-			FCPPT_TEXT("Flakes test")),
+			FCPPT_TEXT("smoke test")),
 		flake::test::json_identifier(
-			FCPPT_TEXT("flakes")),
+			FCPPT_TEXT("smoke")),
 		fcppt::assign::make_container<test::feature_sequence>
 			(test::feature(
 				test::json_identifier(
@@ -70,29 +72,29 @@ flake::volume::tests::flakes::flakes(
 					sge::input::keyboard::key_code::f1)))
 			(test::feature(
 				test::json_identifier(
-					FCPPT_TEXT("snowcover")),
-				test::optional_key_code(
-					sge::input::keyboard::key_code::f3)))
-			(test::feature(
-				test::json_identifier(
 					FCPPT_TEXT("models")),
 				test::optional_key_code(
-					sge::input::keyboard::key_code::f4)))
+					sge::input::keyboard::key_code::f2)))
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("wireframe")),
 				test::optional_key_code(
+					sge::input::keyboard::key_code::f3)))
+			(test::feature(
+				test::json_identifier(
+					FCPPT_TEXT("windsource")),
+				test::optional_key_code(
 					sge::input::keyboard::key_code::f5)))
 			(test::feature(
 				test::json_identifier(
-					FCPPT_TEXT("marchingcubes")),
+					FCPPT_TEXT("temperaturevisual")),
 				test::optional_key_code(
 					sge::input::keyboard::key_code::f6)))
 			(test::feature(
 				test::json_identifier(
-					FCPPT_TEXT("flakes")),
+					FCPPT_TEXT("smoke")),
 				test::optional_key_code(
-					sge::input::keyboard::key_code::f2))),
+					sge::input::keyboard::key_code::f4))),
 		sge::systems::cursor_option_field(
 			sge::systems::cursor_option::exclusive)),
 	simulation_size_(
@@ -100,6 +102,16 @@ flake::volume::tests::flakes::flakes(
 			this->configuration(),
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("simulation-size")))),
+	buissnesq_ambient_temperature_(
+		sge::parse::json::find_and_convert_member<cl_float>(
+			this->configuration(),
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("buissnesq/ambient-temperature")))),
+	splat_temperature_(
+		sge::parse::json::find_and_convert_member<cl_float>(
+			this->configuration(),
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("buissnesq/splat-temperature")))),
 	camera_(
 		sge::camera::first_person::parameters(
 			this->keyboard(),
@@ -107,7 +119,10 @@ flake::volume::tests::flakes::flakes(
 			sge::camera::first_person::is_active(
 				true),
 			sge::camera::first_person::movement_speed(
-				1.0f),
+				sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
+					this->configuration(),
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("camera-movement-speed")))),
 			sge::camera::coordinate_system::identity())),
 	perspective_projection_from_viewport_(
 		camera_,
@@ -180,91 +195,42 @@ flake::volume::tests::flakes::flakes(
 					FCPPT_TEXT("jacobi-iterations"))))),
 	subtract_pressure_gradient_(
 		this->program_context()),
+	buissnesq_(
+		this->program_context(),
+		flakelib::volume::simulation::stam::buissnesq::density_strength(
+			sge::parse::json::find_and_convert_member<cl_float>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("buissnesq/density-strength")))),
+		flakelib::volume::simulation::stam::buissnesq::temperature_strength(
+			sge::parse::json::find_and_convert_member<cl_float>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("buissnesq/temperature-strength")))),
+		buissnesq_ambient_temperature_),
 	boundary_buffer_(
 		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
 			fill_buffer_,
 			simulation_size_.get(),
 			0.0f)),
-	snow_density_buffer_(
+	smoke_density_buffer_(
 		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
 			fill_buffer_,
 			simulation_size_.get(),
 			0.0f)),
-	activity_buffer_(
+	temperature_buffer_(
 		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
 			fill_buffer_,
 			simulation_size_.get(),
-			0.0f)),
+			buissnesq_ambient_temperature_.get())),
 	velocity_buffer_(
 		flakelib::volume::retrieve_zero_float4_buffer(
 			this->buffer_pool(),
 			fill_buffer_,
 			simulation_size_.get())),
-	flakes_(
-		this->renderer(),
-		camera_,
-		this->opencl_system().context(),
-		this->image_system(),
-		flake::volume::flakes::count(
-			sge::parse::json::find_and_convert_member<flake::volume::flakes::count::value_type>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("flakes/count")))),
-		flake::volume::flakes::minimum_size(
-			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("flakes/minimum-size")))),
-		flake::volume::flakes::maximum_size(
-			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("flakes/maximum-size")))),
-		flake::volume::flakes::texture(
-			sge::parse::json::find_and_convert_member<fcppt::string>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("flakes/texture")))),
-		flake::volume::flakes::texture_tile_size(
-			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("flakes/texture-tile-size")))),
-		flake::volume::flakes::texture_tile_count(
-			sge::parse::json::find_and_convert_member<flake::volume::flakes::texture_tile_count::value_type>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("flakes/texture-tile-count")))),
-		simulation_size_),
-	flakes_mover_(
-		this->program_context(),
-		this->buffer_pool(),
-		flakes_.cl_positions(),
-		flakes_.cl_point_sizes(),
-		volume::flakes::snow_density_view(
-			snow_density_buffer_->value()),
-		volume::flakes::collision_increment(
-			sge::parse::json::find_and_convert_member<cl_float>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("collision-increment")))),
-		volume::flakes::activity_view(
-			activity_buffer_->value()),
-		flakes_.minimum_size(),
-		flakes_.maximum_size(),
-		volume::flakes::gravity_magnitude(
-			sge::parse::json::find_and_convert_member<cl_float>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("gravity-magnitude")))),
-		flakelib::marching_cubes::iso_level(
-			sge::parse::json::find_and_convert_member<cl_float>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("iso-level"))))),
 	models_(
 		this->renderer(),
 		this->image_system(),
@@ -283,20 +249,6 @@ flake::volume::tests::flakes::flakes(
 		flakelib::volume::boundary_buffer_view(
 			boundary_buffer_->value()),
 		splatter_),
-	gradient_(
-		this->program_context(),
-		this->buffer_pool()),
-	marching_cubes_(
-		this->renderer(),
-		camera_,
-		gradient_,
-		this->program_context(),
-		simulation_size_,
-		flakelib::marching_cubes::iso_level(
-			sge::parse::json::find_and_convert_member<cl_float>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("iso-level"))))),
 	wind_strength_modulator_(
 		std::tr1::bind(
 			&flakelib::volume::simulation::stam::wind_source::wind_strength,
@@ -317,38 +269,39 @@ flake::volume::tests::flakes::flakes(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("wind-strength-frequency-seconds"))))),
+	raycaster_(
+		this->renderer(),
+		this->opencl_system().context(),
+		camera_,
+		this->image_system(),
+		conversion_object_,
+		simulation_size_,
+		flake::volume::density_visualization::raycaster::step_size(
+			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("raycast-step-size")))),
+		flake::volume::density_visualization::raycaster::debug_output(
+			false)),
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
-			boost::chrono::seconds(1))),
-	snow_cover_update_(
-		sge::timer::parameters<sge::timer::clocks::standard>(
-			boost::chrono::seconds(1))),
-	snow_cover_vertices_(
-		0u),
-	snow_cover_vertices_information_(
-		this->information_manager(),
-		test::information::identifier(
-			FCPPT_TEXT("snow vertices")),
-		flake::test::information::string_conversion_adapter<flakelib::marching_cubes::vertex_count>(
-			std::tr1::bind(
-				&flakes::snow_cover_vertices_,
-				this)))
+			boost::chrono::seconds(1)))
 {
 }
 
 awl::main::exit_code const
-flake::volume::tests::flakes::run()
+flake::volume::tests::smoke::run()
 {
 	return
 		flake::test::base::run();
 }
 
-flake::volume::tests::flakes::~flakes()
+flake::volume::tests::smoke::~smoke()
 {
 }
 
 void
-flake::volume::tests::flakes::render()
+flake::volume::tests::smoke::render()
 {
 	sge::renderer::state::scoped scoped_state(
 		this->renderer(),
@@ -376,8 +329,8 @@ flake::volume::tests::flakes::render()
 	if(
 		this->feature_active(
 			test::json_identifier(
-				FCPPT_TEXT("flakes"))))
-		flakes_.render();
+				FCPPT_TEXT("smoke"))))
+		raycaster_.render();
 
 	if(
 		this->feature_active(
@@ -385,18 +338,11 @@ flake::volume::tests::flakes::render()
 				FCPPT_TEXT("arrows"))))
 		arrows_manager_.render();
 
-	if(
-		this->feature_active(
-			test::json_identifier(
-				FCPPT_TEXT("snowcover"))))
-		marching_cubes_.render();
-
-
 	test::base::render();
 }
 
 void
-flake::volume::tests::flakes::update()
+flake::volume::tests::smoke::update()
 {
 	test::base::update();
 
@@ -410,7 +356,7 @@ flake::volume::tests::flakes::update()
 			raw_delta;
 
 	camera_.update(
-		10.0f * raw_delta);
+		raw_delta);
 
 	if(this->current_multiplier().get())
 	{
@@ -427,8 +373,18 @@ flake::volume::tests::flakes::update()
 				delta);
 
 		// Wind source
-		wind_source_.update(
-			velocity_buffer_->value());
+		if(this->feature_active(test::json_identifier(FCPPT_TEXT("windsource"))))
+			wind_source_.update(
+				velocity_buffer_->value());
+
+		buissnesq_.update(
+			flakelib::volume::simulation::stam::velocity(
+				velocity_buffer_->value()),
+			flakelib::volume::simulation::stam::buissnesq::density_view(
+				smoke_density_buffer_->value()),
+			flakelib::volume::simulation::stam::buissnesq::temperature_view(
+				temperature_buffer_->value()),
+			delta);
 
 		// Outflow boundaries
 		outflow_boundaries_.update(
@@ -470,23 +426,85 @@ flake::volume::tests::flakes::update()
 			flakelib::volume::simulation::stam::pressure_buffer_view(
 				pressure->value()));
 
-		flakes_mover_.update(
-			10.0f * delta,
-			flakelib::volume::velocity_buffer_view(
-				velocity_buffer_->value()),
-			flakelib::volume::boundary_buffer_view(
-				boundary_buffer_->value()));
+		smoke_density_buffer_ =
+			semilagrangian_advection_.update_float(
+				flakelib::volume::boundary_buffer_view(
+					boundary_buffer_->value()),
+				flakelib::volume::simulation::stam::velocity(
+					velocity_buffer_->value()),
+				smoke_density_buffer_->value(),
+				delta);
 
-		if(sge::timer::reset_when_expired(snow_cover_update_) && this->feature_active(test::json_identifier(FCPPT_TEXT("marchingcubes"))))
-		{
-			snow_cover_vertices_ =
-				marching_cubes_.update(
-					snow_density_buffer_->value());
-		}
+		temperature_buffer_ =
+			semilagrangian_advection_.update_float(
+				flakelib::volume::boundary_buffer_view(
+					boundary_buffer_->value()),
+				flakelib::volume::simulation::stam::velocity(
+					velocity_buffer_->value()),
+				temperature_buffer_->value(),
+				delta);
 
 		wind_strength_modulator_.update(
 			raw_delta);
 	}
+
+	if(this->feature_active(test::json_identifier(FCPPT_TEXT("temperaturevisual"))))
+	{
+		raycaster_.update(
+			temperature_buffer_->value(),
+			flakelib::volume::conversion::scaling_factor(
+				1.0f),
+			flakelib::volume::conversion::constant_addition(
+				-buissnesq_ambient_temperature_.get()));
+	}
+	else
+	{
+		raycaster_.update(
+			smoke_density_buffer_->value(),
+			flakelib::volume::conversion::scaling_factor(
+				1.0f),
+			flakelib::volume::conversion::constant_addition(
+				0.0f));
+	}
+
+	flakelib::splatter::box::object const splat_zone(
+		flakelib::splatter::box::position(
+			flakelib::splatter::box::position::value_type(
+				30,
+				5,
+				30)),
+		flakelib::splatter::box::size(
+			flakelib::splatter::box::size::value_type(
+				10,
+				10,
+				10)));
+
+	splatter_.splat_volume_float(
+		smoke_density_buffer_->value(),
+		flakelib::splatter::pen::volume(
+			splat_zone,
+			flakelib::splatter::pen::is_round(
+				true),
+			flakelib::splatter::pen::is_smooth(
+				true),
+			flakelib::splatter::pen::draw_mode::mix,
+			flakelib::splatter::pen::blend_factor(
+				1.0f)),
+		static_cast<cl_float>(
+			1.0f));
+
+	splatter_.splat_volume_float(
+		temperature_buffer_->value(),
+		flakelib::splatter::pen::volume(
+			splat_zone,
+			flakelib::splatter::pen::is_round(
+				true),
+			flakelib::splatter::pen::is_smooth(
+				true),
+			flakelib::splatter::pen::draw_mode::mix,
+			flakelib::splatter::pen::blend_factor(
+				1.0f)),
+		splat_temperature_);
 
 	if(
 		this->feature_active(

@@ -1,25 +1,24 @@
-#ifndef FLAKELIB_PLANAR_SIMULATION_STAM_BUISSNESQ_OBJECT_HPP_INCLUDED
-#define FLAKELIB_PLANAR_SIMULATION_STAM_BUISSNESQ_OBJECT_HPP_INCLUDED
+#ifndef FLAKELIB_VOLUME_SIMULATION_STAM_BUISSNESQ_OBJECT_HPP_INCLUDED
+#define FLAKELIB_VOLUME_SIMULATION_STAM_BUISSNESQ_OBJECT_HPP_INCLUDED
 
 #include <flakelib/duration.hpp>
 #include <flakelib/symbol.hpp>
 #include <flakelib/cl/kernel_scoped_ptr.hpp>
 #include <flakelib/cl/program.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
-#include <flakelib/planar/float2_view.hpp>
-#include <flakelib/planar/simulation/stam/velocity.hpp>
-#include <flakelib/planar/simulation/stam/buissnesq/ambient_temperature.hpp>
-#include <flakelib/planar/simulation/stam/buissnesq/density_strength.hpp>
-#include <flakelib/planar/simulation/stam/buissnesq/density_view.hpp>
-#include <flakelib/planar/simulation/stam/buissnesq/temperature_strength.hpp>
-#include <flakelib/planar/simulation/stam/buissnesq/temperature_view.hpp>
-#include <sge/opencl/clinclude.hpp>
+#include <flakelib/volume/boundary_buffer_view.hpp>
+#include <flakelib/volume/simulation/stam/velocity.hpp>
+#include <flakelib/volume/simulation/stam/buissnesq/ambient_temperature.hpp>
+#include <flakelib/volume/simulation/stam/buissnesq/density_strength.hpp>
+#include <flakelib/volume/simulation/stam/buissnesq/density_view.hpp>
+#include <flakelib/volume/simulation/stam/buissnesq/temperature_strength.hpp>
+#include <flakelib/volume/simulation/stam/buissnesq/temperature_view.hpp>
 #include <fcppt/noncopyable.hpp>
 
 
 namespace flakelib
 {
-namespace planar
+namespace volume
 {
 namespace simulation
 {
@@ -33,6 +32,7 @@ FCPPT_NONCOPYABLE(
 	object);
 public:
 	FLAKELIB_SYMBOL
+	explicit
 	object(
 		cl::program_context const &,
 		buissnesq::density_strength const &,

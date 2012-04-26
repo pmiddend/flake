@@ -5,7 +5,7 @@
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <flakelib/splatter/box/object.hpp>
 #include <flakelib/splatter/pen/object.hpp>
-#include <flakelib/volume/retrieve_zero_float_buffer.hpp>
+#include <flakelib/volume/retrieve_filled_float_buffer.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/image/colors.hpp>
@@ -108,10 +108,11 @@ flake::volume::tests::marching_cubes::marching_cubes(
 	splatter_(
 		this->program_context()),
 	boundary_buffer_(
-		flakelib::volume::retrieve_zero_float_buffer(
+		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
 			fill_buffer_,
-			simulation_size_.get())),
+			simulation_size_.get(),
+			0.0f)),
 	gradient_(
 		this->program_context(),
 		this->buffer_pool()),

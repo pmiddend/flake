@@ -7,8 +7,8 @@
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <flakelib/cl/cflags.hpp>
+#include <flakelib/volume/retrieve_filled_float_buffer.hpp>
 #include <flakelib/volume/retrieve_zero_float4_buffer.hpp>
-#include <flakelib/volume/retrieve_zero_float_buffer.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/charconv/create_system.hpp>
@@ -127,10 +127,11 @@ flake::volume::tests::solipsistic::solipsistic(
 	subtract_pressure_gradient_(
 		program_context_),
 	boundary_buffer_(
-		flakelib::volume::retrieve_zero_float_buffer(
+		flakelib::volume::retrieve_filled_float_buffer(
 			buffer_pool_,
 			fill_buffer_,
-			simulation_size_.get())),
+			simulation_size_.get(),
+			0.0f)),
 	velocity_buffer_(
 		flakelib::volume::retrieve_zero_float4_buffer(
 			buffer_pool_,

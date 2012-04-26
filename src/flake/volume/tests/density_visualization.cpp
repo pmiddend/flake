@@ -5,7 +5,7 @@
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <flakelib/splatter/box/object.hpp>
 #include <flakelib/splatter/pen/object.hpp>
-#include <flakelib/volume/retrieve_zero_float_buffer.hpp>
+#include <flakelib/volume/retrieve_filled_float_buffer.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/image/colors.hpp>
@@ -110,10 +110,11 @@ flake::volume::tests::density_visualization::density_visualization(
 	splatter_(
 		this->program_context()),
 	density_buffer_(
-		flakelib::volume::retrieve_zero_float_buffer(
+		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
 			fill_buffer_,
-			simulation_size_.get())),
+			simulation_size_.get(),
+			0.0f)),
 	conversion_(
 		this->program_context()),
 	raycaster_(
@@ -122,11 +123,12 @@ flake::volume::tests::density_visualization::density_visualization(
 		camera_,
 		this->image_system(),
 		conversion_,
-		flakelib::volume::conversion::scaling_factor(
-			1.0f),
-		flakelib::volume::conversion::constant_addition(
-			0.0f),
 		simulation_size_,
+		flake::volume::density_visualization::raycaster::step_size(
+			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("raycast-step-size")))),
 		flake::volume::density_visualization::raycaster::debug_output(
 			false)),
 	delta_timer_(
@@ -200,5 +202,9 @@ flake::volume::tests::density_visualization::update()
 		10.0f * raw_delta);
 
 	raycaster_.update(
-		density_buffer_->value());
+		density_buffer_->value(),
+		flakelib::volume::conversion::scaling_factor(
+			1.0f),
+		flakelib::volume::conversion::constant_addition(
+			0.0f));
 }

@@ -1,25 +1,3 @@
-#include <fcppt/math/dim/structure_cast.hpp>
-#include <fcppt/math/box/contains_point.hpp>
-#include <sge/renderer/state/cull_mode.hpp>
-#include <sge/renderer/texture/address_mode2.hpp>
-#include <sge/renderer/texture/set_address_mode2.hpp>
-#include <sge/image2d/view/object.hpp>
-#include <sge/renderer/texture/filter/scoped.hpp>
-#include <sge/renderer/texture/filter/point.hpp>
-#include <sge/image2d/view/const_object.hpp>
-#include <sge/image2d/view/to_const.hpp>
-#include <sge/image/store.hpp>
-#include <sge/image2d/l8.hpp>
-#include <sge/renderer/texture/scoped_planar_lock.hpp>
-#include <sge/image2d/algorithm/copy_and_convert.hpp>
-#include <sge/image2d/save_from_view.hpp>
-#include <sge/renderer/texture/const_scoped_planar_lock.hpp>
-#include <fcppt/math/vector/arithmetic.hpp>
-#include <sge/renderer/state/dest_blend_func.hpp>
-#include <sge/renderer/state/source_blend_func.hpp>
-#include <sge/renderer/state/list.hpp>
-#include <sge/renderer/state/bool.hpp>
-#include <sge/renderer/state/scoped.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/volume/density_visualization/raycaster/object.hpp>
 #include <flake/volume/density_visualization/raycaster/vf/format.hpp>
@@ -29,14 +7,34 @@
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
+#include <sge/image/store.hpp>
+#include <sge/image2d/l8.hpp>
+#include <sge/image2d/save_from_view.hpp>
+#include <sge/image2d/algorithm/copy_and_convert.hpp>
+#include <sge/image2d/view/const_object.hpp>
+#include <sge/image2d/view/object.hpp>
+#include <sge/image2d/view/to_const.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_lock.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
+#include <sge/renderer/state/bool.hpp>
+#include <sge/renderer/state/cull_mode.hpp>
+#include <sge/renderer/state/dest_blend_func.hpp>
+#include <sge/renderer/state/list.hpp>
+#include <sge/renderer/state/scoped.hpp>
+#include <sge/renderer/state/source_blend_func.hpp>
+#include <sge/renderer/texture/address_mode2.hpp>
+#include <sge/renderer/texture/const_scoped_planar_lock.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/planar_parameters.hpp>
+#include <sge/renderer/texture/scoped_planar_lock.hpp>
+#include <sge/renderer/texture/set_address_mode2.hpp>
+#include <sge/renderer/texture/filter/point.hpp>
+#include <sge/renderer/texture/filter/linear.hpp>
+#include <sge/renderer/texture/filter/scoped.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/renderer/vf/vertex.hpp>
 #include <sge/renderer/vf/view.hpp>
@@ -48,8 +46,10 @@
 #include <sge/shader/vf_to_string.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
+#include <fcppt/math/box/contains_point.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/vector/arithmetic.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <algorithm>
 #include <fcppt/config/external_end.hpp>
@@ -61,9 +61,8 @@ flake::volume::density_visualization::raycaster::object::object(
 	sge::camera::base const &_camera,
 	sge::image2d::system &_image_system,
 	flakelib::volume::conversion::object &_conversion,
-	flakelib::volume::conversion::scaling_factor const &_scaling_factor,
-	flakelib::volume::conversion::constant_addition const &_constant_addition,
 	flakelib::volume::grid_size const &_grid_size,
+	flake::volume::density_visualization::raycaster::step_size const &_step_size,
 	flake::volume::density_visualization::raycaster::debug_output const &_debug_output)
 :
 	renderer_(
@@ -78,10 +77,6 @@ flake::volume::density_visualization::raycaster::object::object(
 		_grid_size),
 	debug_output_(
 		_debug_output),
-	scaling_factor_(
-		_scaling_factor),
-	constant_addition_(
-		_constant_addition),
 	vertex_declaration_(
 		_renderer.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format<vf::format>())),
@@ -126,6 +121,10 @@ flake::volume::density_visualization::raycaster::object::object(
 					sge::shader::matrix(
 						sge::renderer::matrix4::identity(),
 						sge::shader::matrix_flags::projection)))
+				(sge::shader::variable(
+					"step_size",
+					sge::shader::variable_type::constant,
+					_step_size.get()))
 				(sge::shader::variable(
 					"elements_per_row",
 					sge::shader::variable_type::constant,
@@ -230,13 +229,15 @@ flake::volume::density_visualization::raycaster::object::object(
 
 void
 flake::volume::density_visualization::raycaster::object::update(
-	flakelib::volume::float_view const &_view)
+	flakelib::volume::float_view const &_view,
+	flakelib::volume::conversion::scaling_factor const &_scaling_factor,
+	flakelib::volume::conversion::constant_addition const &_constant_addition)
 {
 	conversion_.float_view_to_flat_volume_texture(
 		_view,
 		cl_texture_,
-		scaling_factor_,
-		constant_addition_);
+		_scaling_factor,
+		_constant_addition);
 
 	if(!debug_output_.get())
 		return;
@@ -310,7 +311,8 @@ flake::volume::density_visualization::raycaster::object::render()
 		renderer_,
 		sge::renderer::texture::stage(
 			0u),
-		sge::renderer::texture::filter::point());
+//		sge::renderer::texture::filter::point());
+		sge::renderer::texture::filter::linear());
 
 	sge::renderer::texture::set_address_mode2(
 		renderer_,

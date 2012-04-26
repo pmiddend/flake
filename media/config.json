@@ -119,12 +119,54 @@
 		"density-visualization" :
 		{
 			"simulation-size" : [64,64,64],
+			"raycast-step-size" : 0.5,
 			"near-plane" : 0.1,
 			"far-plane" : 1000.0,
 			"fov" : 60.0,
 			"features" :
 			{
 				"paused" : false
+			}
+		},
+		"smoke" :
+		{
+			"simulation-size" : [64,64,64],
+			"arrow-scale" : 1.0,
+			"grid-scale" : 1.0,
+			"wind-strength-start" : 1.0,
+			"wind-strength-minimum" : 2.0,
+			"wind-strength-maximum" : 3.0,
+			"wind-strength-frequency-seconds" : 1.0,
+			"camera-movement-speed" : 10.0,
+			"raycast-step-size" : 0.25,
+			"buissnesq" :
+			{
+				"density-strength" : 0.5,
+				"temperature-strength" : 0.5,
+				"ambient-temperature" : 20.0,
+				"splat-temperature" : 30.0
+			},
+			"jacobi-iterations" : 40,
+			"near-plane" : 1.0,
+			"far-plane" : 1000.0,
+			"fov" : 60.0,
+			"sun-direction" : [0.8804509,0.17609018,0.440225453],
+			"obstacles" :
+			[
+				{
+					"left-bottom-back-position" : [30,30,30],
+					"bounding-box-size" : [10,10,10]
+				}
+			],
+			"features" :
+			{
+				"arrows" : false,
+				"paused" : false,
+				"wireframe" : false,
+				"windsource" : false,
+				"temperaturevisual" : false,
+				"smoke" : true,
+				"models" : true
 			}
 		}
 	}

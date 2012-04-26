@@ -64,10 +64,8 @@ interpolated_tex_value(
 void
 main()
 {
-	const float stepsize = 0.5;
-
 	// Hauptdiagonale des Würfels ist die längste mögliche Strecke
-	const int maximum_steps = int(sqrt(3.0*float(slice_width)*float(slice_width))/stepsize);
+	const int maximum_steps = int(sqrt(3.0*float(slice_width)*float(slice_width))/step_size);
 
 	// höhere Werte ~= höhere Dichte
 	const float opacity = 0.5;
@@ -77,7 +75,7 @@ main()
 			position_interp - camera_position);
 
 	// scaling density for uniform cloud data
-	//float density = stepsize * opacity;
+	const float density = step_size * opacity;
 
 	vec3 position =
 		mix(
@@ -96,11 +94,11 @@ main()
 
 		dst +=
 			(1.0 - dst) *
-	//		density *
+			density *
 			interpolated;
 
 		position +=
-			direction * stepsize;
+			direction * step_size;
 
 		// ray termination - threshold
 		if(dst > 0.90)

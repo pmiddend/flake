@@ -170,8 +170,9 @@ set(
 	src/flakelib/value_modulator/object.cpp
 	src/flakelib/volume/conversion/object.cpp
 	src/flakelib/volume/gradient.cpp
+	src/flakelib/volume/retrieve_filled_float_buffer.cpp
 	src/flakelib/volume/retrieve_zero_float4_buffer.cpp
-	src/flakelib/volume/retrieve_zero_float_buffer.cpp
+	src/flakelib/volume/simulation/stam/buissnesq/object.cpp
 	src/flakelib/volume/simulation/stam/divergence.cpp
 	src/flakelib/volume/simulation/stam/jacobi.cpp
 	src/flakelib/volume/simulation/stam/outflow_boundaries.cpp
@@ -454,6 +455,29 @@ install(
 	DESTINATION
 	${INSTALL_BINARY_DIR})
 # density_visualization end
+
+# smoke begin
+awl_utils_add_portable_executable(
+	tests_smoke
+	"custom_main"
+	src/flake/volume/tests/smoke.cpp)
+
+target_link_libraries(
+	tests_smoke
+	flakelib
+	flake_helper_library
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
+	${Awl_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Boost_LIBRARIES})
+
+install(
+	TARGETS
+	tests_smoke
+	DESTINATION
+	${INSTALL_BINARY_DIR})
+# smoke end
 
 # solipsistic begin
 awl_utils_add_portable_executable(
