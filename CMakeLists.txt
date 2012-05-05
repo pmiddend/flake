@@ -84,6 +84,7 @@ find_package(
 	sprite
 	camera
 	texture
+	image3d
 	modelobj
 	console
 	font
@@ -143,11 +144,13 @@ set(
 	src/flakelib/cl/planar_image_view_to_float_buffer.cpp
 	src/flakelib/cl/program.cpp
 	src/flakelib/cl/program_context.cpp
+	src/flakelib/console_percent_bar.cpp
 	src/flakelib/exception.cpp
 	src/flakelib/log.cpp
 	src/flakelib/log_context.cpp
 	src/flakelib/log_location.cpp
 	src/flakelib/log_parameters.cpp
+	src/flakelib/marching_cubes/manager.cpp
 	src/flakelib/marching_cubes/object.cpp
 	src/flakelib/marching_cubes/scan.cpp
 	src/flakelib/media_path.cpp
@@ -169,6 +172,7 @@ set(
 	src/flakelib/utility/mix_buffers.cpp
 	src/flakelib/value_modulator/object.cpp
 	src/flakelib/volume/conversion/object.cpp
+	src/flakelib/volume/create_snow_volume_texture.cpp
 	src/flakelib/volume/gradient.cpp
 	src/flakelib/volume/retrieve_filled_float_buffer.cpp
 	src/flakelib/volume/retrieve_zero_float4_buffer.cpp
@@ -178,7 +182,9 @@ set(
 	src/flakelib/volume/simulation/stam/outflow_boundaries.cpp
 	src/flakelib/volume/simulation/stam/semilagrangian_advection.cpp
 	src/flakelib/volume/simulation/stam/subtract_pressure_gradient.cpp
+	src/flakelib/volume/simulation/stam/vorticity.cpp
 	src/flakelib/volume/simulation/stam/wind_source.cpp
+	src/flakelib/volume/voxelize/from_raw_file.cpp
 )
 
 set(
@@ -295,6 +301,13 @@ function(
 			"FLAKELIB_STATIC_LINK"
 		)
 	endif()
+
+	if(UNIX)
+		target_link_libraries(
+			${TARGETNAME}
+			ncurses)
+	endif()
+
 
 	# This is, of course, extremely overlinked
 	target_link_libraries(

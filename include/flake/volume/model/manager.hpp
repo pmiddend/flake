@@ -30,7 +30,6 @@ class manager
 FCPPT_NONCOPYABLE(
 	manager);
 public:
-	explicit
 	manager(
 		sge::renderer::device &,
 		sge::image2d::system &,

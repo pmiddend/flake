@@ -1,3 +1,14 @@
+#include <sge/renderer/texture/volume.hpp>
+#include <sge/renderer/texture/address_mode3.hpp>
+#include <sge/shader/update_single_uniform.hpp>
+#include <flake/media_path_from_string.hpp>
+#include <flakelib/volume/create_snow_volume_texture.hpp>
+#include <sge/renderer/texture/set_address_mode3.hpp>
+#include <sge/camera/matrix_conversion/world_projection.hpp>
+#include <fcppt/assign/make_container.hpp>
+#include <flakelib/marching_cubes/vf/format.hpp>
+#include <sge/shader/vf_to_string.hpp>
+#include <sge/shader/object_parameters.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/test/information/string_conversion_adapter.hpp>
 #include <flake/volume/tests/flakes.hpp>
@@ -286,11 +297,58 @@ flake::volume::tests::flakes::flakes(
 	gradient_(
 		this->program_context(),
 		this->buffer_pool()),
-	marching_cubes_(
+	marching_cubes_manager_(
 		this->renderer(),
-		camera_,
 		gradient_,
-		this->program_context(),
+		this->program_context()),
+	snow_surface_shader_(
+		sge::shader::object_parameters(
+			this->renderer(),
+			marching_cubes_manager_.vertex_declaration(),
+			sge::shader::vf_to_string<flakelib::marching_cubes::vf::format>(),
+			fcppt::assign::make_container<sge::shader::variable_sequence>
+				(sge::shader::variable(
+					"mvp",
+					sge::shader::variable_type::uniform,
+					sge::shader::matrix(
+						sge::renderer::matrix4::identity(),
+						sge::shader::matrix_flags::projection)))
+				(sge::shader::variable(
+					"texture_repeats",
+					sge::shader::variable_type::constant,
+					sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
+						this->configuration(),
+						sge::parse::json::string_to_path(
+							FCPPT_TEXT("snow-texture-repeats")))))
+				(sge::shader::variable(
+					"sun_direction",
+					sge::shader::variable_type::constant,
+					sge::renderer::vector3(
+						0.8804509f,
+						0.17609018f,
+						0.440225453f))),
+			fcppt::assign::make_container<sge::shader::sampler_sequence>
+				(sge::shader::sampler(
+					"snow_volume_texture",
+					sge::shader::texture_variant(
+						sge::renderer::texture::volume_shared_ptr(
+							flakelib::volume::create_snow_volume_texture(
+								this->renderer(),
+								sge::parse::json::find_and_convert_member<sge::renderer::dim3>(
+									this->configuration(),
+									sge::parse::json::string_to_path(
+										FCPPT_TEXT("snow-texture-size")))))))))
+			.vertex_shader(
+				flake::media_path_from_string(
+					FCPPT_TEXT("shaders/marching_cubes/vertex.glsl")))
+			.fragment_shader(
+				flake::media_path_from_string(
+					FCPPT_TEXT("shaders/marching_cubes/fragment.glsl")))
+			.name(
+				FCPPT_TEXT("Marching cubes"))),
+	marching_cubes_(
+		marching_cubes_manager_,
+		snow_surface_shader_,
 		simulation_size_,
 		flakelib::marching_cubes::iso_level(
 			sge::parse::json::find_and_convert_member<cl_float>(
@@ -389,7 +447,25 @@ flake::volume::tests::flakes::render()
 		this->feature_active(
 			test::json_identifier(
 				FCPPT_TEXT("snowcover"))))
-		marching_cubes_.render();
+	{
+		sge::shader::update_single_uniform(
+			snow_surface_shader_,
+			"mvp",
+			sge::shader::matrix(
+				sge::camera::matrix_conversion::world_projection(
+					camera_.coordinate_system(),
+					camera_.projection_matrix()),
+				sge::shader::matrix_flags::projection));
+
+		sge::renderer::texture::set_address_mode3(
+			this->renderer(),
+			sge::renderer::texture::stage(
+				0u),
+			sge::renderer::texture::address_mode3(
+				sge::renderer::texture::address_mode::mirror_repeat));
+
+		marching_cubes_manager_.render();
+	}
 
 
 	test::base::render();

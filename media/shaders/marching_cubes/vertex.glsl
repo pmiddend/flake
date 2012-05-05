@@ -15,11 +15,7 @@ main()
 			1.0);
 
 	position_interp =
-		vec3(
-			world *
-			vec4(
-				position.xyz,
-				1.0));
+		position.xyz;
 
 	normal_interp =
 		normalize(

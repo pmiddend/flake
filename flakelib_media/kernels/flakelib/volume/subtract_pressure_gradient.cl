@@ -7,7 +7,7 @@
 #include <flakelib/volume/von_neumann/size_t_neighbors.cl>
 #include <flakelib/volume/von_neumann/load_neighbor_indices.cl>
 #include <flakelib/volume/von_neumann/mix_with_center_value.cl>
-#include <flakelib/volume/von_neumann/gradient.cl>
+#include <flakelib/volume/von_neumann/float_gradient.cl>
 
 kernel void
 FLAKELIB_KERNEL_NAME(subtract_pressure_gradient_apply)(
@@ -66,7 +66,7 @@ FLAKELIB_KERNEL_NAME(subtract_pressure_gradient_apply)(
 			0.0f);
 
 	float4 const pressure_gradient =
-		flakelib_volume_von_neumann_gradient(
+		flakelib_volume_von_neumann_float_gradient(
 			&pressure_neighbors);
 
 	velocity[current_index] =

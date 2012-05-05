@@ -10,6 +10,7 @@
 #include <flake/volume/model/manager.hpp>
 #include <flake/volume/obstacles/manager.hpp>
 #include <flakelib/marching_cubes/object.hpp>
+#include <flakelib/marching_cubes/manager.hpp>
 #include <flakelib/marching_cubes/vertex_count.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
@@ -31,6 +32,7 @@
 #include <sge/opencl/memory_object/dim3.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
+#include <sge/shader/object.hpp>
 #include <awl/main/exit_code.hpp>
 #include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -88,6 +90,8 @@ private:
 	flake::volume::model::manager models_;
 	flake::volume::obstacles::manager obstacles_;
 	flakelib::volume::gradient gradient_;
+	flakelib::marching_cubes::manager marching_cubes_manager_;
+	sge::shader::object snow_surface_shader_;
 	flakelib::marching_cubes::object marching_cubes_;
 	flakelib::value_modulator::object wind_strength_modulator_;
 

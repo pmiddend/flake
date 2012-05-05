@@ -1,10 +1,10 @@
-#ifndef FLAKELIB_VOLUME_VON_NEUMANN_GRADIENT_CL_INCLUDED
-#define FLAKELIB_VOLUME_VON_NEUMANN_GRADIENT_CL_INCLUDED
+#ifndef FLAKELIB_VOLUME_VON_NEUMANN_FLOAT_GRADIENT_CL_INCLUDED
+#define FLAKELIB_VOLUME_VON_NEUMANN_FLOAT_GRADIENT_CL_INCLUDED
 
 #include <flakelib/volume/von_neumann/float_neighbors.cl>
 
 float4
-flakelib_volume_von_neumann_gradient(
+flakelib_volume_von_neumann_float_gradient(
 	flakelib_volume_von_neumann_float_neighbors *n)
 {
 	return

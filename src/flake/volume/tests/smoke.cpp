@@ -1,4 +1,5 @@
 #include <flake/catch_statements.hpp>
+#include <flake/media_path_from_string.hpp>
 #include <flake/test/information/string_conversion_adapter.hpp>
 #include <flake/volume/tests/smoke.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
@@ -7,6 +8,7 @@
 #include <flakelib/splatter/pen/object.hpp>
 #include <flakelib/volume/retrieve_filled_float_buffer.hpp>
 #include <flakelib/volume/retrieve_zero_float4_buffer.hpp>
+#include <flakelib/volume/voxelize/from_raw_file.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/image/colors.hpp>
@@ -208,6 +210,9 @@ flake::volume::tests::smoke::smoke(
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("buissnesq/temperature-strength")))),
 		buissnesq_ambient_temperature_),
+	vorticity_(
+		this->program_context(),
+		this->buffer_pool()),
 	boundary_buffer_(
 		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
@@ -240,15 +245,18 @@ flake::volume::tests::smoke::smoke(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("sun-direction"))))),
-	obstacles_(
+	model_(
 		models_,
-		sge::parse::json::find_and_convert_member<sge::parse::json::array>(
-			this->configuration(),
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("obstacles"))),
-		flakelib::volume::boundary_buffer_view(
-			boundary_buffer_->value()),
-		splatter_),
+		model::identifier(
+			sge::parse::json::find_and_convert_member<fcppt::string>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("model-name")))),
+		model::position(
+			model::position::value_type(
+				0.0f,
+				0.0f,
+				0.0f))),
 	wind_strength_modulator_(
 		std::tr1::bind(
 			&flakelib::volume::simulation::stam::wind_source::wind_strength,
@@ -287,6 +295,18 @@ flake::volume::tests::smoke::smoke(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			boost::chrono::seconds(1)))
 {
+	/*
+	flakelib::volume::voxelize::from_raw_file(
+		flake::media_path_from_string(
+			FCPPT_TEXT("models/")+
+			sge::parse::json::find_and_convert_member<fcppt::string>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("model-name")))+
+			FCPPT_TEXT(".raw")),
+		boundary_buffer_->value(),
+		this->opencl_system().command_queue());
+		*/
 }
 
 awl::main::exit_code const
@@ -320,11 +340,13 @@ flake::volume::tests::smoke::render()
 				sge::renderer::clear::depth_buffer_value(
 					1.0f)));
 
+	/*
 	if(
 		this->feature_active(
 			test::json_identifier(
 				FCPPT_TEXT("models"))))
 		models_.render();
+		*/
 
 	if(
 		this->feature_active(
@@ -376,6 +398,25 @@ flake::volume::tests::smoke::update()
 		if(this->feature_active(test::json_identifier(FCPPT_TEXT("windsource"))))
 			wind_source_.update(
 				velocity_buffer_->value());
+
+		flakelib::volume::unique_float4_buffer_lock vorticity_buffer(
+			vorticity_.apply_vorticity(
+				flakelib::volume::boundary_buffer_view(
+					boundary_buffer_->value()),
+				flakelib::volume::simulation::stam::velocity(
+					velocity_buffer_->value())));
+
+		velocity_buffer_ =
+			vorticity_.apply_confinement(
+				vorticity_buffer->value(),
+				flakelib::volume::simulation::stam::velocity(
+					velocity_buffer_->value()),
+				delta,
+				flakelib::volume::simulation::stam::vorticity_strength(
+					sge::parse::json::find_and_convert_member<cl_float>(
+						this->configuration(),
+						sge::parse::json::string_to_path(
+							FCPPT_TEXT("vorticity-strength")))));
 
 		buissnesq_.update(
 			flakelib::volume::simulation::stam::velocity(
@@ -450,6 +491,14 @@ flake::volume::tests::smoke::update()
 
 	if(this->feature_active(test::json_identifier(FCPPT_TEXT("temperaturevisual"))))
 	{
+		/*
+		raycaster_.update(
+			boundary_buffer_->value(),
+			flakelib::volume::conversion::scaling_factor(
+				1.0f),
+			flakelib::volume::conversion::constant_addition(
+				0.0f));
+				*/
 		raycaster_.update(
 			temperature_buffer_->value(),
 			flakelib::volume::conversion::scaling_factor(

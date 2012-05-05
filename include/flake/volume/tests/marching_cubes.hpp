@@ -2,6 +2,7 @@
 #define FLAKE_VOLUME_TESTS_MARCHING_CUBES_HPP_INCLUDED
 
 #include <flake/test/base.hpp>
+#include <flakelib/marching_cubes/manager.hpp>
 #include <flakelib/marching_cubes/object.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
@@ -12,6 +13,7 @@
 #include <sge/camera/first_person/object.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
+#include <sge/shader/object.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
 #include <awl/main/exit_code.hpp>
@@ -54,6 +56,8 @@ private:
 	flakelib::volume::unique_float_buffer_lock boundary_buffer_;
 
 	flakelib::volume::gradient gradient_;
+	flakelib::marching_cubes::manager marching_cubes_manager_;
+	sge::shader::object shader_;
 	flakelib::marching_cubes::object marching_cubes_;
 
 	// Timer

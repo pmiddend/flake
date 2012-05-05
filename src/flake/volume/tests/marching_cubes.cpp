@@ -1,13 +1,18 @@
 #include <flake/catch_statements.hpp>
+#include <flake/media_path_from_string.hpp>
 #include <flake/volume/tests/marching_cubes.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
+#include <flakelib/marching_cubes/vf/format.hpp>
 #include <flakelib/splatter/box/object.hpp>
 #include <flakelib/splatter/pen/object.hpp>
+#include <flakelib/volume/create_snow_volume_texture.hpp>
 #include <flakelib/volume/retrieve_filled_float_buffer.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
+#include <sge/camera/matrix_conversion/world.hpp>
+#include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/image/colors.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
@@ -21,6 +26,15 @@
 #include <sge/renderer/state/float.hpp>
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>
+#include <sge/renderer/texture/address_mode3.hpp>
+#include <sge/renderer/texture/set_address_mode3.hpp>
+#include <sge/renderer/texture/volume.hpp>
+#include <sge/renderer/texture/volume_shared_ptr.hpp>
+#include <sge/shader/activate_bare.hpp>
+#include <sge/shader/object_parameters.hpp>
+#include <sge/shader/scoped.hpp>
+#include <sge/shader/update_single_uniform.hpp>
+#include <sge/shader/vf_to_string.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters.hpp>
 #include <fcppt/make_unique_ptr.hpp>
@@ -61,12 +75,17 @@ flake::volume::tests::marching_cubes::marching_cubes(
 			FCPPT_TEXT("marching_cubes test")),
 		flake::test::json_identifier(
 			FCPPT_TEXT("marching-cubes")),
-		fcppt::assign::make_container<test::feature_sequence>(
-			 flake::test::feature(
+		fcppt::assign::make_container<flake::test::feature_sequence>
+			(flake::test::feature(
 			 	flake::test::json_identifier(
 					FCPPT_TEXT("wireframe")),
 				flake::test::optional_key_code(
-					sge::input::keyboard::key_code::f2))),
+					sge::input::keyboard::key_code::f2)))
+			(flake::test::feature(
+			 	flake::test::json_identifier(
+					FCPPT_TEXT("frameupdate")),
+				flake::test::optional_key_code(
+					sge::input::keyboard::key_code::f3))),
 		sge::systems::cursor_option_field(
 			sge::systems::cursor_option::exclusive)),
 	simulation_size_(
@@ -116,11 +135,58 @@ flake::volume::tests::marching_cubes::marching_cubes(
 	gradient_(
 		this->program_context(),
 		this->buffer_pool()),
-	marching_cubes_(
+	marching_cubes_manager_(
 		this->renderer(),
-		camera_,
 		gradient_,
-		this->program_context(),
+		this->program_context()),
+	shader_(
+		sge::shader::object_parameters(
+			this->renderer(),
+			marching_cubes_manager_.vertex_declaration(),
+			sge::shader::vf_to_string<flakelib::marching_cubes::vf::format>(),
+			fcppt::assign::make_container<sge::shader::variable_sequence>
+				(sge::shader::variable(
+					"mvp",
+					sge::shader::variable_type::uniform,
+					sge::shader::matrix(
+						sge::renderer::matrix4::identity(),
+						sge::shader::matrix_flags::projection)))
+				(sge::shader::variable(
+					"texture_repeats",
+					sge::shader::variable_type::constant,
+					sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
+						this->configuration(),
+						sge::parse::json::string_to_path(
+							FCPPT_TEXT("snow-texture-repeats")))))
+				(sge::shader::variable(
+					"sun_direction",
+					sge::shader::variable_type::constant,
+					sge::renderer::vector3(
+						0.8804509f,
+						0.17609018f,
+						0.440225453f))),
+			fcppt::assign::make_container<sge::shader::sampler_sequence>
+				(sge::shader::sampler(
+					"snow_volume_texture",
+					sge::shader::texture_variant(
+						sge::renderer::texture::volume_shared_ptr(
+							flakelib::volume::create_snow_volume_texture(
+								this->renderer(),
+								sge::parse::json::find_and_convert_member<sge::renderer::dim3>(
+									this->configuration(),
+									sge::parse::json::string_to_path(
+										FCPPT_TEXT("snow-texture-size")))))))))
+			.vertex_shader(
+				flake::media_path_from_string(
+					FCPPT_TEXT("shaders/marching_cubes/vertex.glsl")))
+			.fragment_shader(
+				flake::media_path_from_string(
+					FCPPT_TEXT("shaders/marching_cubes/fragment.glsl")))
+			.name(
+				FCPPT_TEXT("Marching cubes"))),
+	marching_cubes_(
+		marching_cubes_manager_,
+		shader_,
 		simulation_size_,
 		flakelib::marching_cubes::iso_level(
 			sge::parse::json::find_and_convert_member<cl_float>(
@@ -154,6 +220,9 @@ flake::volume::tests::marching_cubes::marching_cubes(
 				1.0f)),
 		static_cast<cl_float>(
 			1.0f));
+
+	marching_cubes_.update(
+		boundary_buffer_->value());
 }
 
 awl::main::exit_code const
@@ -187,7 +256,23 @@ flake::volume::tests::marching_cubes::render()
 				sge::renderer::clear::depth_buffer_value(
 					1.0f)));
 
-	marching_cubes_.render();
+	sge::shader::update_single_uniform(
+		shader_,
+		"mvp",
+		sge::shader::matrix(
+			sge::camera::matrix_conversion::world_projection(
+				camera_.coordinate_system(),
+				camera_.projection_matrix()),
+			sge::shader::matrix_flags::projection));
+
+	sge::renderer::texture::set_address_mode3(
+		this->renderer(),
+		sge::renderer::texture::stage(
+			0u),
+		sge::renderer::texture::address_mode3(
+			sge::renderer::texture::address_mode::repeat));
+
+	marching_cubes_manager_.render();
 
 	test::base::render();
 }
@@ -209,6 +294,7 @@ flake::volume::tests::marching_cubes::update()
 	camera_.update(
 		10.0f * raw_delta);
 
-	marching_cubes_.update(
-		boundary_buffer_->value());
+	if(this->feature_active(flake::test::json_identifier(FCPPT_TEXT("frameupdate"))))
+		marching_cubes_.update(
+			boundary_buffer_->value());
 }

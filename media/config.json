@@ -49,6 +49,8 @@
 		"marching-cubes" :
 		{
 			"simulation-size" : [64,64,64],
+			"snow-texture-size" : [64,64,64],
+			"snow-texture-repeats" : 100.0,
 			"near-plane" : 0.1,
 			"iso-level" : 0.2,
 			"far-plane" : 1000.0,
@@ -62,6 +64,8 @@
 		"flakes" :
 		{
 			"simulation-size" : [64,64,64],
+			"snow-texture-size" : [64,64,64],
+			"snow-texture-repeats" : 20.0,
 			"arrow-scale" : 1.0,
 			"grid-scale" : 1.0,
 			"wind-strength-start" : 1.0,
@@ -96,7 +100,7 @@
 			{
 				"paused" : false,
 				"arrows" : false,
-				"marchingcubes" : false,
+				"marchingcubes" : true,
 				"wireframe" : false,
 				"snowcover" : true,
 				"models" : true,
@@ -137,8 +141,17 @@
 			"wind-strength-minimum" : 2.0,
 			"wind-strength-maximum" : 3.0,
 			"wind-strength-frequency-seconds" : 1.0,
+			"obstacles" :
+			[
+				{
+					"left-bottom-back-position" : [30,0,30],
+					"bounding-box-size" : [10,10,10]
+				}
+			],
+			"vorticity-strength" : 1.0,
 			"camera-movement-speed" : 10.0,
-			"raycast-step-size" : 0.25,
+			"raycast-step-size" : 0.5,
+			"model-name" : "avz",
 			"buissnesq" :
 			{
 				"density-strength" : 0.5,
@@ -151,13 +164,6 @@
 			"far-plane" : 1000.0,
 			"fov" : 60.0,
 			"sun-direction" : [0.8804509,0.17609018,0.440225453],
-			"obstacles" :
-			[
-				{
-					"left-bottom-back-position" : [30,30,30],
-					"bounding-box-size" : [10,10,10]
-				}
-			],
 			"features" :
 			{
 				"arrows" : false,

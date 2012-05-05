@@ -2,11 +2,11 @@
 #define FLAKE_VOLUME_TESTS_SMOKE_HPP_INCLUDED
 
 #include <flake/test/base.hpp>
-#include <flake/volume/density_visualization/raycaster/object.hpp>
-#include <flake/volume/model/manager.hpp>
-#include <flake/volume/obstacles/manager.hpp>
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/object.hpp>
+#include <flake/volume/density_visualization/raycaster/object.hpp>
+#include <flake/volume/model/manager.hpp>
+#include <flake/volume/model/object.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/value_modulator/object.hpp>
@@ -19,6 +19,7 @@
 #include <flakelib/volume/simulation/stam/outflow_boundaries.hpp>
 #include <flakelib/volume/simulation/stam/semilagrangian_advection.hpp>
 #include <flakelib/volume/simulation/stam/subtract_pressure_gradient.hpp>
+#include <flakelib/volume/simulation/stam/vorticity.hpp>
 #include <flakelib/volume/simulation/stam/wind_source.hpp>
 #include <flakelib/volume/simulation/stam/buissnesq/object.hpp>
 #include <sge/camera/perspective_projection_from_viewport.hpp>
@@ -72,6 +73,7 @@ private:
 	flakelib::volume::simulation::stam::jacobi jacobi_;
 	flakelib::volume::simulation::stam::subtract_pressure_gradient subtract_pressure_gradient_;
 	flakelib::volume::simulation::stam::buissnesq::object buissnesq_;
+	flakelib::volume::simulation::stam::vorticity vorticity_;
 
 	// Buffers
 	flakelib::volume::unique_float_buffer_lock boundary_buffer_;
@@ -80,7 +82,7 @@ private:
 	flakelib::volume::unique_float4_buffer_lock velocity_buffer_;
 
 	flake::volume::model::manager models_;
-	flake::volume::obstacles::manager obstacles_;
+	flake::volume::model::object model_;
 	flakelib::value_modulator::object wind_strength_modulator_;
 	flake::volume::density_visualization::raycaster::object raycaster_;
 
