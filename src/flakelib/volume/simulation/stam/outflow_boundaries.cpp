@@ -5,7 +5,6 @@
 #include <flakelib/volume/simulation/stam/outflow_boundaries.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/text.hpp>
-#include <fcppt/math/dim/is_quadratic.hpp>
 
 
 flakelib::volume::simulation::stam::outflow_boundaries::outflow_boundaries(
@@ -27,10 +26,6 @@ void
 flakelib::volume::simulation::stam::outflow_boundaries::update(
 	volume::float4_view const &_view)
 {
-	FCPPT_ASSERT_PRE(
-		fcppt::math::dim::is_quadratic(
-			_view.size()));
-
 	kernel_->buffer_argument(
 		"input",
 		_view.buffer());
@@ -39,6 +34,16 @@ flakelib::volume::simulation::stam::outflow_boundaries::update(
 		"buffer_width",
 		static_cast<cl_int>(
 			_view.size().w()));
+
+	kernel_->numerical_argument(
+		"buffer_height",
+		static_cast<cl_int>(
+			_view.size().h()));
+
+	kernel_->numerical_argument(
+		"buffer_depth",
+		static_cast<cl_int>(
+			_view.size().d()));
 
 	kernel_->numerical_argument(
 		"line_pitch",

@@ -5,6 +5,8 @@
 kernel void FLAKELIB_KERNEL_NAME(wind_source_apply)(
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(input),
 	int const FLAKELIB_KERNEL_ARGUMENT(buffer_width),
+	int const FLAKELIB_KERNEL_ARGUMENT(buffer_height),
+	int const FLAKELIB_KERNEL_ARGUMENT(buffer_depth),
 	uint const FLAKELIB_KERNEL_ARGUMENT(line_pitch),
 	float const FLAKELIB_KERNEL_ARGUMENT(wind_strength))
 {
@@ -18,8 +20,8 @@ kernel void FLAKELIB_KERNEL_NAME(wind_source_apply)(
 	int4 const rect_size =
 		(int4)(
 			buffer_width,
-			buffer_width,
-			buffer_width,
+			buffer_height,
+			buffer_depth,
 			0);
 
 	input[

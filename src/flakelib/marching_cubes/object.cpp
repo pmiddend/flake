@@ -1,3 +1,4 @@
+#include <fcppt/assert/pre.hpp>
 #include <flakelib/buffer/volume_view_impl.hpp>
 #include <flakelib/marching_cubes/manager.hpp>
 #include <flakelib/marching_cubes/object.hpp>
@@ -157,18 +158,21 @@ flakelib::marching_cubes::object::update(
 	sge::opencl::memory_object::size_type const threads =
 		128u;
 
+	FCPPT_ASSERT_PRE(
+		grid_size_.get().content() % threads == 0);
+
+	// Example: 128^3 => grid = (16384,0,0) (what about sizes that aren't multiples of "threads")?
 	sge::opencl::memory_object::dim3 grid(
 		grid_size_.get().content() / threads,
 		1u,
 		1u);
 
-	// get around maximum grid size of 65535 in each dimension
+	// Get around maximum grid size of 65535 in each dimension
 	if(grid.w() > 65535u)
 	{
 		grid.h() = grid.w() / 32768u;
 		grid.w() = 32768u;
 	}
-
 
 	// calculate number of vertices need per voxel
 	manager_.launch_classifyVoxel(

@@ -9,8 +9,8 @@
 #include <flake/volume/flakes/mover.hpp>
 #include <flake/volume/model/manager.hpp>
 #include <flake/volume/obstacles/manager.hpp>
-#include <flakelib/marching_cubes/object.hpp>
 #include <flakelib/marching_cubes/manager.hpp>
+#include <flakelib/marching_cubes/object.hpp>
 #include <flakelib/marching_cubes/vertex_count.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
@@ -30,9 +30,9 @@
 #include <sge/camera/first_person/object.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
+#include <sge/shader/object.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
-#include <sge/shader/object.hpp>
 #include <awl/main/exit_code.hpp>
 #include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -83,6 +83,7 @@ private:
 	flakelib::volume::unique_float_buffer_lock boundary_buffer_;
 	flakelib::volume::unique_float_buffer_lock snow_density_buffer_;
 	flakelib::volume::unique_float_buffer_lock activity_buffer_;
+	flakelib::volume::unique_float_buffer_lock initial_guess_buffer_;
 	flakelib::volume::unique_float4_buffer_lock velocity_buffer_;
 
 	flake::volume::flakes::manager flakes_;

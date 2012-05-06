@@ -148,16 +148,16 @@
 					"bounding-box-size" : [10,10,10]
 				}
 			],
-			"vorticity-strength" : 1.0,
+			"vorticity-strength" : 10.0,
 			"camera-movement-speed" : 10.0,
 			"raycast-step-size" : 0.5,
 			"model-name" : "avz",
 			"buissnesq" :
 			{
-				"density-strength" : 0.5,
-				"temperature-strength" : 0.5,
+				"density-strength" : 0.1,
+				"temperature-strength" : 0.1,
 				"ambient-temperature" : 20.0,
-				"splat-temperature" : 30.0
+				"splat-temperature" : 60.0
 			},
 			"jacobi-iterations" : 40,
 			"near-plane" : 1.0,

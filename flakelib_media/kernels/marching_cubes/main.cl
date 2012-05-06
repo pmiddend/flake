@@ -37,57 +37,69 @@ int4 calcGridPos(uint i, uint4 gridSizeShift, uint4 gridSizeMask)
 
 // classify voxel based on number of vertices it will generate
 // one thread per voxel
-__kernel
+kernel
 void
-classifyVoxel(__global uint* voxelVerts, __global uint *voxelOccupied, global float const *volume,
-              uint4 gridSize, uint4 gridSizeShift, uint4 gridSizeMask, uint numVoxels,
-              float4 voxelSize, float isoValue,  __read_only image2d_t numVertsTex)
+classifyVoxel(
+	global uint *voxelVerts,
+	global uint *voxelOccupied,
+	global float const *volume,
+	uint4 gridSize,
+	uint4 gridSizeShift,
+	uint4 gridSizeMask,
+	uint numVoxels,
+	float4 voxelSize,
+	float isoValue,
+	read_only image2d_t numVertsTex)
 {
-    uint blockId = get_group_id(0);
-    uint i = get_global_id(0);
+	uint blockId = get_group_id(0);
+	uint i = get_global_id(0);
 
-    int4 gridPos = calcGridPos(i, gridSizeShift, gridSizeMask);
+	int4 gridPos = calcGridPos(i, gridSizeShift, gridSizeMask);
 
-    flakelib_volume_right_neighbors_float right_neighbors;
-    FLAKELIB_VOLUME_RIGHT_NEIGHBORS_LOAD(
-	    volume,
-	    right_neighbors,
-	    gridSize.x,
-	    gridPos,
-	    gridSize);
+	flakelib_volume_right_neighbors_float right_neighbors;
+	FLAKELIB_VOLUME_RIGHT_NEIGHBORS_LOAD(
+		volume,
+		right_neighbors,
+		gridSize.x,
+		gridPos,
+		gridSize);
 
-    // read field values at neighbouring grid vertices
-    float field[8];
+	// read field values at neighbouring grid vertices
+	float field[8];
 
-    field[0] = right_neighbors.at;
-    field[1] = right_neighbors.right;
-    field[2] = right_neighbors.rightbottom;
-    field[3] = right_neighbors.bottom;
-    field[4] = right_neighbors.back;
-    field[5] = right_neighbors.backright;
-    field[6] = right_neighbors.backrightbottom;
-    field[7] = right_neighbors.backbottom;
+	field[0] = right_neighbors.at;
+	field[1] = right_neighbors.right;
+	field[2] = right_neighbors.rightbottom;
+	field[3] = right_neighbors.bottom;
+	field[4] = right_neighbors.back;
+	field[5] = right_neighbors.backright;
+	field[6] = right_neighbors.backrightbottom;
+	field[7] = right_neighbors.backbottom;
 
-    // calculate flag indicating if each vertex is inside or outside isosurface
-    int cubeindex;
-	cubeindex =  (field[0] < isoValue); 
-	cubeindex += (field[1] < isoValue)*2; 
-	cubeindex += (field[2] < isoValue)*4; 
-	cubeindex += (field[3] < isoValue)*8; 
-	cubeindex += (field[4] < isoValue)*16; 
-	cubeindex += (field[5] < isoValue)*32; 
-	cubeindex += (field[6] < isoValue)*64; 
+	// calculate flag indicating if each vertex is inside or outside isosurface
+	int cubeindex;
+	cubeindex =  (field[0] < isoValue);
+	cubeindex += (field[1] < isoValue)*2;
+	cubeindex += (field[2] < isoValue)*4;
+	cubeindex += (field[3] < isoValue)*8;
+	cubeindex += (field[4] < isoValue)*16;
+	cubeindex += (field[5] < isoValue)*32;
+	cubeindex += (field[6] < isoValue)*64;
 	cubeindex += (field[7] < isoValue)*128;
 
-    // read number of vertices from texture
-    uint numVerts = read_imageui(numVertsTex, tableSampler, (int2)(cubeindex,0)).x;
+	// read number of vertices from texture
+	uint const numVerts =
+		read_imageui(
+			numVertsTex,
+			tableSampler,
+			(int2)(cubeindex,0)).x;
 
-    if (i < numVoxels) {
-        voxelVerts[i] = numVerts;
-        voxelOccupied[i] = (numVerts > 0);
-    }
+	if (i < numVoxels)
+	{
+		voxelVerts[i] = numVerts;
+		voxelOccupied[i] = (numVerts > 0);
+	}
 }
-     
 
 // compact voxel array
 __kernel

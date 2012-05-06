@@ -1,23 +1,16 @@
-#include <sge/renderer/texture/volume.hpp>
-#include <sge/renderer/texture/address_mode3.hpp>
-#include <sge/shader/update_single_uniform.hpp>
-#include <flake/media_path_from_string.hpp>
-#include <flakelib/volume/create_snow_volume_texture.hpp>
-#include <sge/renderer/texture/set_address_mode3.hpp>
-#include <sge/camera/matrix_conversion/world_projection.hpp>
-#include <fcppt/assign/make_container.hpp>
-#include <flakelib/marching_cubes/vf/format.hpp>
-#include <sge/shader/vf_to_string.hpp>
-#include <sge/shader/object_parameters.hpp>
 #include <flake/catch_statements.hpp>
+#include <flake/media_path_from_string.hpp>
 #include <flake/test/information/string_conversion_adapter.hpp>
 #include <flake/volume/tests/flakes.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
+#include <flakelib/marching_cubes/vf/format.hpp>
+#include <flakelib/volume/create_snow_volume_texture.hpp>
 #include <flakelib/volume/retrieve_filled_float_buffer.hpp>
 #include <flakelib/volume/retrieve_zero_float4_buffer.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
+#include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/image/colors.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
@@ -31,6 +24,12 @@
 #include <sge/renderer/state/float.hpp>
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>
+#include <sge/renderer/texture/address_mode3.hpp>
+#include <sge/renderer/texture/set_address_mode3.hpp>
+#include <sge/renderer/texture/volume.hpp>
+#include <sge/shader/object_parameters.hpp>
+#include <sge/shader/update_single_uniform.hpp>
+#include <sge/shader/vf_to_string.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters.hpp>
 #include <sge/timer/reset_when_expired.hpp>
@@ -204,6 +203,12 @@ flake::volume::tests::flakes::flakes(
 			simulation_size_.get(),
 			0.0f)),
 	activity_buffer_(
+		flakelib::volume::retrieve_filled_float_buffer(
+			this->buffer_pool(),
+			fill_buffer_,
+			simulation_size_.get(),
+			0.0f)),
+	initial_guess_buffer_(
 		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
 			fill_buffer_,
@@ -434,18 +439,6 @@ flake::volume::tests::flakes::render()
 	if(
 		this->feature_active(
 			test::json_identifier(
-				FCPPT_TEXT("flakes"))))
-		flakes_.render();
-
-	if(
-		this->feature_active(
-			test::json_identifier(
-				FCPPT_TEXT("arrows"))))
-		arrows_manager_.render();
-
-	if(
-		this->feature_active(
-			test::json_identifier(
 				FCPPT_TEXT("snowcover"))))
 	{
 		sge::shader::update_single_uniform(
@@ -466,6 +459,18 @@ flake::volume::tests::flakes::render()
 
 		marching_cubes_manager_.render();
 	}
+
+	if(
+		this->feature_active(
+			test::json_identifier(
+				FCPPT_TEXT("flakes"))))
+		flakes_.render();
+
+	if(
+		this->feature_active(
+			test::json_identifier(
+				FCPPT_TEXT("arrows"))))
+		arrows_manager_.render();
 
 
 	test::base::render();
@@ -517,22 +522,10 @@ flake::volume::tests::flakes::update()
 					boundary_buffer_->value()),
 				velocity_buffer_->value());
 
-		flakelib::volume::unique_float_buffer_lock initial_guess_buffer_lock(
-			fcppt::make_unique_ptr<flakelib::volume::float_buffer_lock>(
-				fcppt::ref(
-					this->buffer_pool()),
-				velocity_buffer_->value().size()));
-
-		fill_buffer_.apply(
-			flakelib::buffer::linear_view<cl_float>(
-				initial_guess_buffer_lock->value().buffer()),
-			static_cast<cl_float>(
-				0));
-
 		flakelib::volume::unique_float_buffer_lock pressure =
 			jacobi_.update(
 				flakelib::volume::simulation::stam::initial_guess_buffer_view(
-					initial_guess_buffer_lock->value()),
+					initial_guess_buffer_->value()),
 				flakelib::volume::boundary_buffer_view(
 					boundary_buffer_->value()),
 				flakelib::volume::simulation::stam::rhs_buffer_view(

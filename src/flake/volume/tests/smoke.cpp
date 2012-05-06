@@ -8,7 +8,6 @@
 #include <flakelib/splatter/pen/object.hpp>
 #include <flakelib/volume/retrieve_filled_float_buffer.hpp>
 #include <flakelib/volume/retrieve_zero_float4_buffer.hpp>
-#include <flakelib/volume/voxelize/from_raw_file.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/image/colors.hpp>
@@ -295,18 +294,6 @@ flake::volume::tests::smoke::smoke(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			boost::chrono::seconds(1)))
 {
-	/*
-	flakelib::volume::voxelize::from_raw_file(
-		flake::media_path_from_string(
-			FCPPT_TEXT("models/")+
-			sge::parse::json::find_and_convert_member<fcppt::string>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("model-name")))+
-			FCPPT_TEXT(".raw")),
-		boundary_buffer_->value(),
-		this->opencl_system().command_queue());
-		*/
 }
 
 awl::main::exit_code const
@@ -405,6 +392,13 @@ flake::volume::tests::smoke::update()
 					boundary_buffer_->value()),
 				flakelib::volume::simulation::stam::velocity(
 					velocity_buffer_->value())));
+
+		if(
+			this->feature_active(
+				test::json_identifier(
+					FCPPT_TEXT("arrows"))))
+			velocity_arrows_.update(
+				vorticity_buffer->value());
 
 		velocity_buffer_ =
 			vorticity_.apply_confinement(
@@ -554,11 +548,4 @@ flake::volume::tests::smoke::update()
 			flakelib::splatter::pen::blend_factor(
 				1.0f)),
 		splat_temperature_);
-
-	if(
-		this->feature_active(
-			test::json_identifier(
-				FCPPT_TEXT("arrows"))))
-		velocity_arrows_.update(
-			velocity_buffer_->value());
 }

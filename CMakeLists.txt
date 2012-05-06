@@ -184,7 +184,6 @@ set(
 	src/flakelib/volume/simulation/stam/subtract_pressure_gradient.cpp
 	src/flakelib/volume/simulation/stam/vorticity.cpp
 	src/flakelib/volume/simulation/stam/wind_source.cpp
-	src/flakelib/volume/voxelize/from_raw_file.cpp
 )
 
 set(

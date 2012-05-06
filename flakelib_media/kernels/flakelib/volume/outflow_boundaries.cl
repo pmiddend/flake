@@ -5,6 +5,8 @@
 kernel void FLAKELIB_KERNEL_NAME(outflow_boundaries_apply)(
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(input),
 	int const FLAKELIB_KERNEL_ARGUMENT(buffer_width),
+	int const FLAKELIB_KERNEL_ARGUMENT(buffer_height),
+	int const FLAKELIB_KERNEL_ARGUMENT(buffer_depth),
 	uint const FLAKELIB_KERNEL_ARGUMENT(line_pitch))
 {
 	int2 const current_position =
@@ -15,29 +17,33 @@ kernel void FLAKELIB_KERNEL_NAME(outflow_boundaries_apply)(
 	int4 const rect_size =
 		(int4)(
 			buffer_width,
-			buffer_width,
-			buffer_width,
+			buffer_height,
+			buffer_depth,
 			0);
 
-	// Right
-	input[
-		flakelib_volume_at(
-			line_pitch,
-			rect_size,
-			(int4)(
-				buffer_width-1,
-				current_position.x,
-				current_position.y,
-				0))] =
-			input[
-				flakelib_volume_at(
-					line_pitch,
-					rect_size,
-					(int4)(
-						buffer_width-2,
-						current_position.x,
-						current_position.y,
-						0))];
+	if(
+		current_position.x < buffer_height)
+	{
+		// Right
+		input[
+			flakelib_volume_at(
+				line_pitch,
+				rect_size,
+				(int4)(
+					buffer_width-1,
+					current_position.x,
+					current_position.y,
+					0))] =
+				input[
+					flakelib_volume_at(
+						line_pitch,
+						rect_size,
+						(int4)(
+							buffer_width-2,
+							current_position.x,
+							current_position.y,
+							0))];
+	}
 
 	// Top
 	input[
@@ -46,7 +52,7 @@ kernel void FLAKELIB_KERNEL_NAME(outflow_boundaries_apply)(
 			rect_size,
 			(int4)(
 				current_position.x,
-				buffer_width-1,
+				buffer_height-1,
 				current_position.y,
 				0))] =
 			input[
@@ -55,7 +61,7 @@ kernel void FLAKELIB_KERNEL_NAME(outflow_boundaries_apply)(
 					rect_size,
 					(int4)(
 						current_position.x,
-						buffer_width-2,
+						buffer_height-2,
 						current_position.y,
 						0))];
 
