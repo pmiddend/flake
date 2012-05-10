@@ -1,9 +1,12 @@
-#include <fcppt/assert/pre.hpp>
 #include <flakelib/buffer/volume_view_impl.hpp>
+#include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <flakelib/marching_cubes/manager.hpp>
 #include <flakelib/marching_cubes/object.hpp>
 #include <flakelib/marching_cubes/vf/format.hpp>
+#include <flakelib/scan/object.hpp>
+#include <flakelib/volume/unique_uint_buffer_lock.hpp>
 #include <sge/opencl/command_queue/object.hpp>
+#include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
 #include <sge/opencl/memory_object/scoped_objects.hpp>
 #include <sge/opencl/memory_object/size_type.hpp>
@@ -12,11 +15,11 @@
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
-#include <sge/shader/activate_everything.hpp>
-#include <sge/shader/scoped.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
+#include <fcppt/assert/error.hpp>
 #include <fcppt/assert/pre.hpp>
+#include <fcppt/assign/make_container.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/log2.hpp>
 #include <fcppt/math/dim/comparison.hpp>
@@ -27,19 +30,43 @@
 
 
 flakelib::marching_cubes::object::object(
+	flakelib::buffer_pool::object &_buffer_pool,
 	flakelib::marching_cubes::manager &_manager,
-	sge::shader::object &_shader,
-	flakelib::volume::grid_size const &_grid_size,
+	flakelib::marching_cubes::grid_size const &_grid_size,
 	marching_cubes::iso_level const &_iso_level)
 :
 	manager_(
 		_manager),
-	shader_(
-		_shader),
+	buffer_pool_(
+		_buffer_pool),
 	command_queue_(
 		_manager.command_queue_),
 	grid_size_(
 		_grid_size),
+	grid_size_log2_(
+		fcppt::math::log2(
+			grid_size_.get().w()),
+		fcppt::math::log2(
+			grid_size_.get().h()),
+		fcppt::math::log2(
+			grid_size_.get().d()),
+		0u),
+	grid_size_mask_(
+		flakelib::cl::uint4(
+			static_cast<cl_uint>(
+				grid_size_.get().w()-1u),
+			static_cast<cl_uint>(
+				grid_size_.get().h()-1u),
+			static_cast<cl_uint>(
+				grid_size_.get().d()-1u),
+			0u)),
+	grid_size_shift_(
+		flakelib::cl::uint4(
+			0u,
+			grid_size_log2_[0],
+			static_cast<cl_uint>(
+				grid_size_log2_[0]+grid_size_log2_[1]),
+			0u)),
 	iso_level_(
 		_iso_level),
 	positions_buffer_(),
@@ -47,42 +74,7 @@ flakelib::marching_cubes::object::object(
 	positions_buffer_cl_(),
 	normals_buffer_cl_(),
 	vertex_count_(
-		0u),
-	voxel_verts_(
-		_manager.command_queue_.context(),
-		sge::opencl::memory_object::flags_field(
-			sge::opencl::memory_object::flags::read) |
-		sge::opencl::memory_object::flags::write,
-		sge::opencl::memory_object::byte_size(
-			grid_size_.get().content() * sizeof(cl_uint))),
-	voxel_verts_scan_(
-		_manager.command_queue_.context(),
-		sge::opencl::memory_object::flags_field(
-			sge::opencl::memory_object::flags::read) |
-		sge::opencl::memory_object::flags::write,
-		sge::opencl::memory_object::byte_size(
-			grid_size_.get().content() * sizeof(cl_uint))),
-	voxel_occupied_(
-		_manager.command_queue_.context(),
-		sge::opencl::memory_object::flags_field(
-			sge::opencl::memory_object::flags::read) |
-		sge::opencl::memory_object::flags::write,
-		sge::opencl::memory_object::byte_size(
-			grid_size_.get().content() * sizeof(cl_uint))),
-	voxel_occupied_scan_(
-		_manager.command_queue_.context(),
-		sge::opencl::memory_object::flags_field(
-			sge::opencl::memory_object::flags::read) |
-		sge::opencl::memory_object::flags::write,
-		sge::opencl::memory_object::byte_size(
-			grid_size_.get().content() * sizeof(cl_uint))),
-	voxel_array_(
-		_manager.command_queue_.context(),
-		sge::opencl::memory_object::flags_field(
-			sge::opencl::memory_object::flags::read) |
-		sge::opencl::memory_object::flags::write,
-		sge::opencl::memory_object::byte_size(
-			grid_size_.get().content() * sizeof(cl_uint)))
+		0u)
 {
 	manager_.add_child(
 		*this);
@@ -90,258 +82,130 @@ flakelib::marching_cubes::object::object(
 
 flakelib::marching_cubes::vertex_count const
 flakelib::marching_cubes::object::update(
-	flakelib::volume::float_view const &_view)
+	flakelib::marching_cubes::density_view const &_density_view)
 {
 	FCPPT_ASSERT_PRE(
-		_view.size() == grid_size_.get());
+		_density_view.get().size().w() == grid_size_.get().w() &&
+		_density_view.get().size().h() == grid_size_.get().h() &&
+		_density_view.get().size().d() == grid_size_.get().d());
 
-	cl_uint const gridSizeLog2[4] =
-	{
-		fcppt::math::log2(
-			static_cast<cl_uint>(
-				grid_size_.get().w())),
-		fcppt::math::log2(
-			static_cast<cl_uint>(
-				grid_size_.get().h())),
-		fcppt::math::log2(
-			static_cast<cl_uint>(
-				grid_size_.get().d())),
-		0u
-	};
-
-	//std::cout << "Grid size log2: " << gridSizeLog2[0] << ", " << gridSizeLog2[1] << ", " << gridSizeLog2[2] << ", " << gridSizeLog2[3] << "\n";
-
-	cl_uint gridSize[4] =
-	{
-		static_cast<cl_uint>(
+	sge::opencl::memory_object::dim3 grid_size_dim(
+		static_cast<sge::opencl::memory_object::size_type>(
 			grid_size_.get().w()),
-		static_cast<cl_uint>(
+		static_cast<sge::opencl::memory_object::size_type>(
 			grid_size_.get().h()),
-		static_cast<cl_uint>(
-			grid_size_.get().d()),
-		0u
-	};
+		static_cast<sge::opencl::memory_object::size_type>(
+			grid_size_.get().d()));
 
-	//std::cout << "Grid size log2: " << gridSize[0] << ", " << gridSize[1] << ", " << gridSize[2] << ", " << gridSize[3] << "\n";
+	flakelib::volume::unique_uint_buffer_lock
+		vertices_for_voxel(
+			fcppt::make_unique_ptr<flakelib::volume::uint_buffer_lock>(
+				fcppt::ref(
+					buffer_pool_),
+				grid_size_dim)),
+		voxel_occupation(
+			fcppt::make_unique_ptr<flakelib::volume::uint_buffer_lock>(
+				fcppt::ref(
+					buffer_pool_),
+				grid_size_dim));
 
-	cl_uint gridSizeMask[4] =
-	{
-		static_cast<cl_uint>(
-			grid_size_.get().w()-1u),
-		static_cast<cl_uint>(
-			grid_size_.get().h()-1u),
-		static_cast<cl_uint>(
-			grid_size_.get().d()-1),
-		0u
-	};
+	manager_.classify_voxels(
+		_density_view,
+		flakelib::marching_cubes::vertices_for_voxel_view(
+			vertices_for_voxel->value()),
+		flakelib::marching_cubes::voxel_occupation_view(
+			voxel_occupation->value()),
+		iso_level_,
+		grid_size_,
+		grid_size_mask_,
+		grid_size_shift_);
 
-	cl_uint gridSizeShift[4] =
-	{
-		0u,
-		gridSizeLog2[0],
-		gridSizeLog2[0]+gridSizeLog2[1],
-		0u
-	};
+	flakelib::scan::object::unique_linear_uint_lock summed_voxel_occupation(
+		manager_.scan().update(
+			flakelib::scan::object::linear_uint_view(
+				voxel_occupation->value().buffer()),
+			flakelib::scan::batch_size(
+				1u)));
 
-	cl_float voxelSize[4] =
-	{
-		2.0f / static_cast<cl_float>(gridSize[0]),
-		2.0f / static_cast<cl_float>(gridSize[1]),
-		2.0f / static_cast<cl_float>(gridSize[2]),
-		0.0f
-	};
+	cl_uint const activeVoxels =
+		this->sum_last_elements(
+			summed_voxel_occupation->value(),
+			flakelib::linear::uint_view(
+				voxel_occupation->value().buffer()));
 
-	cl_uint const numVoxels =
-		static_cast<cl_uint>(
-			grid_size_.get().content());
+	if(activeVoxels == 0u)
+		return
+			flakelib::marching_cubes::vertex_count(
+				0u);
 
-	sge::opencl::memory_object::size_type const threads =
-		128u;
+	flakelib::volume::unique_uint_buffer_lock
+		compacted_voxel_occupation(
+			fcppt::make_unique_ptr<flakelib::volume::uint_buffer_lock>(
+				fcppt::ref(
+					buffer_pool_),
+				grid_size_dim));
 
-	FCPPT_ASSERT_PRE(
-		grid_size_.get().content() % threads == 0);
+	manager_.compact_voxels(
+		flakelib::marching_cubes::voxel_occupation_view(
+			voxel_occupation->value()),
+		flakelib::marching_cubes::summed_voxel_occupation_view(
+			flakelib::volume::uint_view(
+				summed_voxel_occupation->value().buffer(),
+				grid_size_dim)),
+		flakelib::marching_cubes::compacted_voxel_occupation_view(
+			compacted_voxel_occupation->value()));
 
-	// Example: 128^3 => grid = (16384,0,0) (what about sizes that aren't multiples of "threads")?
-	sge::opencl::memory_object::dim3 grid(
-		grid_size_.get().content() / threads,
-		1u,
-		1u);
+	// Not needed anymore
+	//summed_voxel_occupation.reset();
+	//voxel_occupation.reset();
 
-	// Get around maximum grid size of 65535 in each dimension
-	if(grid.w() > 65535u)
-	{
-		grid.h() = grid.w() / 32768u;
-		grid.w() = 32768u;
-	}
-
-	// calculate number of vertices need per voxel
-	manager_.launch_classifyVoxel(
-		grid,
-		sge::opencl::memory_object::dim3(
-			threads,
-			1u,
-			1u),
-		voxel_verts_.impl(),
-		voxel_occupied_.impl(),
-		_view.buffer().impl(),
-		gridSize,
-		gridSizeShift,
-		gridSizeMask,
-		numVoxels,
-		voxelSize,
-		iso_level_.get());
-
-	//std::size_t const first_scan_result =
-		manager_.scan_.scanExclusiveLarge(
-			voxel_occupied_scan_.impl(),
-			voxel_occupied_.impl(),
-			1,
-			numVoxels);
-
-	//std::cout << "First scan resulted in " << first_scan_result << "\n";
-
-	cl_uint activeVoxels = 0;
-	// read back values to calculate total number of non-empty voxels
-	// since we are using an exclusive scan, the total is the last value of
-	// the scan result plus the last value in the input array
-	{
-		cl_uint lastElement, lastScanElement;
-
-		clEnqueueReadBuffer(
-			command_queue_.impl(),
-			voxel_occupied_.impl(),
-			CL_TRUE,
-			(numVoxels-1) * sizeof(cl_uint),
-			sizeof(cl_uint),
-			&lastElement,
-			0,
-			0,
-			0);
-
-		clEnqueueReadBuffer(
-			command_queue_.impl(),
-			voxel_occupied_scan_.impl(),
-			CL_TRUE,
-			(numVoxels-1) * sizeof(cl_uint),
-			sizeof(cl_uint),
-			&lastScanElement,
-			0,
-			0,
-			0);
-
-		activeVoxels = lastElement + lastScanElement;
-
-	//	std::cout << "Last element: " << lastElement << ", lastScanElement: " << lastScanElement << "\n";
-	}
-
-    if (activeVoxels==0)
-        return
-		flakelib::marching_cubes::vertex_count(
-			0u);
-
-    // compact voxel index array
-    manager_.launch_compactVoxels(
-	    grid,
-	    sge::opencl::memory_object::dim3(
-		threads,
-		1u,
-		1u),
-	    voxel_array_.impl(),
-	    voxel_occupied_.impl(),
-	    voxel_occupied_scan_.impl(),
-	    numVoxels);
-
-	//std::size_t const second_scan_result =
-		manager_.scan_.scanExclusiveLarge(
-			voxel_verts_scan_.impl(),
-			voxel_verts_.impl(),
-			1,
-			numVoxels);
-
-	//std::cout << "Second scan resulted in " << second_scan_result << "\n";
-
+	flakelib::scan::object::unique_linear_uint_lock summed_vertices_for_voxel(
+		manager_.scan().update(
+			flakelib::scan::object::linear_uint_view(
+				vertices_for_voxel->value().buffer()),
+			flakelib::scan::batch_size(
+				1u)));
 
 	// readback total number of vertices
-	cl_uint totalVerts = 0;
-	{
-		cl_uint lastElement, lastScanElement;
+	vertex_count_ =
+		this->sum_last_elements(
+			summed_vertices_for_voxel->value(),
+			flakelib::linear::uint_view(
+				vertices_for_voxel->value().buffer()));
 
-		clEnqueueReadBuffer(
-			command_queue_.impl(),
-			voxel_verts_.impl(),
-			CL_TRUE,
-			(numVoxels-1) * sizeof(cl_uint),
-			sizeof(cl_uint),
-			&lastElement,
-			0,
-			0,
-			0);
+	// Not needed anymore
+	//vertices_for_voxel.reset();
 
-		clEnqueueReadBuffer(
-			command_queue_.impl(),
-			voxel_verts_scan_.impl(),
-			CL_TRUE,
-			(numVoxels-1) * sizeof(cl_uint),
-			sizeof(cl_uint),
-			&lastScanElement,
-			0,
-			0,
-			0);
-
-		totalVerts = lastElement + lastScanElement;
-	}
-
-	vertex_count_ = totalVerts;
 	this->resize_gl_buffers();
-
-	sge::opencl::memory_object::base_ref_sequence mem_objects;
-	mem_objects.push_back(
-		positions_buffer_cl_.get());
-	mem_objects.push_back(
-		normals_buffer_cl_.get());
 
 	sge::opencl::memory_object::scoped_objects scoped_vb(
 		command_queue_,
-		mem_objects);
+		fcppt::assign::make_container<sge::opencl::memory_object::base_ref_sequence>
+			(positions_buffer_cl_.get())
+			(normals_buffer_cl_.get()));
 
-	sge::opencl::memory_object::size_type const nthreads =
-		32;
-
-	sge::opencl::memory_object::dim3 grid2(
-		static_cast<sge::opencl::memory_object::size_type>(
-			std::ceil(static_cast<cl_float>(activeVoxels) / static_cast<cl_float>(nthreads))),
-		1u,
-		1u);
-
-	while(grid2.w() > 65535)
-	{
-		grid2.w()/=2;
-		grid2.h()*=2;
-	}
-
-	manager_.launch_generateTriangles2(
-		_view,
-		grid2,
-		sge::opencl::memory_object::dim3(
-		    nthreads,
-		    1,
-		    1),
-		positions_buffer_cl_->impl(),
-		normals_buffer_cl_->impl(),
-		voxel_array_.impl(),
-		voxel_verts_scan_.impl(),
-		_view.buffer().impl(),
-		gridSize,
-		gridSizeShift,
-		gridSizeMask,
-		voxelSize,
-		iso_level_.get(),
-		activeVoxels,
+	manager_.generate_triangles(
+		flakelib::marching_cubes::normals_buffer(
+			*normals_buffer_cl_),
+		flakelib::marching_cubes::positions_buffer(
+			*positions_buffer_cl_),
+		flakelib::marching_cubes::compacted_voxel_occupation_view(
+				compacted_voxel_occupation->value()),
+		flakelib::marching_cubes::summed_vertices_for_voxel_view(
+			flakelib::volume::uint_view(
+				summed_vertices_for_voxel->value().buffer(),
+				grid_size_dim)),
+		_density_view,
+		grid_size_,
+		grid_size_mask_,
+		grid_size_shift_,
+		iso_level_,
+		flakelib::marching_cubes::active_voxels(
+			activeVoxels),
 		vertex_count_);
 
 	return
-		flakelib::marching_cubes::vertex_count(
-			vertex_count_);
+		vertex_count_;
 }
 
 flakelib::marching_cubes::object::~object()
@@ -360,10 +224,6 @@ flakelib::marching_cubes::object::render()
 	FCPPT_ASSERT_PRE(
 		positions_buffer_->size() == normals_buffer_->size());
 
-	sge::shader::scoped scoped_shader(
-		shader_,
-		sge::shader::activate_everything());
-
 	sge::renderer::scoped_vertex_buffer
 		scoped_positions(
 			manager_.renderer_,
@@ -373,34 +233,33 @@ flakelib::marching_cubes::object::render()
 			*normals_buffer_);
 
 	FCPPT_ASSERT_PRE(
-		vertex_count_ % 3 == 0);
+		vertex_count_.get() % 3 == 0);
 
 	manager_.renderer_.render_nonindexed(
 		sge::renderer::first_vertex(
 			0u),
 		sge::renderer::vertex_count(
-			vertex_count_),
+			static_cast<sge::renderer::size_type>(
+				vertex_count_.get())),
 		sge::renderer::nonindexed_primitive_type::triangle);
 }
 
 void
 flakelib::marching_cubes::object::resize_gl_buffers()
 {
-	if(!vertex_count_)
+	if(!vertex_count_.get())
 		return;
 
-	if(positions_buffer_ && vertex_count_ < positions_buffer_->size().get())
+	if(positions_buffer_ && vertex_count_.get() < positions_buffer_->size().get())
 		return;
 
 	sge::renderer::vertex_count const real_vertex_count(
 		static_cast<sge::renderer::size_type>(
-			static_cast<double>(
-				vertex_count_) *
-			1.5));
+			2u * vertex_count_.get()));
 
 	positions_buffer_.take(
-		manager_.renderer_.create_vertex_buffer(
-			*(manager_.vertex_declaration_),
+		manager_.renderer().create_vertex_buffer(
+			manager_.vertex_declaration(),
 			sge::renderer::vf::dynamic::make_part_index
 			<
 				flakelib::marching_cubes::vf::format,
@@ -410,8 +269,8 @@ flakelib::marching_cubes::object::resize_gl_buffers()
 			sge::renderer::resource_flags::none));
 
 	normals_buffer_.take(
-		manager_.renderer_.create_vertex_buffer(
-			*(manager_.vertex_declaration_),
+		manager_.renderer().create_vertex_buffer(
+			manager_.vertex_declaration(),
 			sge::renderer::vf::dynamic::make_part_index
 			<
 				flakelib::marching_cubes::vf::format,
@@ -435,4 +294,36 @@ flakelib::marching_cubes::object::resize_gl_buffers()
 			fcppt::ref(
 				*normals_buffer_),
 			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
+}
+
+cl_uint
+flakelib::marching_cubes::object::sum_last_elements(
+	flakelib::linear::uint_view const &a,
+	flakelib::linear::uint_view const &b)
+{
+	sge::opencl::command_queue::scoped_buffer_mapping a_mapping(
+		command_queue_,
+		a.buffer(),
+		CL_MAP_READ,
+		sge::opencl::memory_object::byte_offset(
+			static_cast<sge::opencl::memory_object::byte_offset::value_type>(
+				(a.size().w()-1u) * sizeof(cl_uint))),
+		sge::opencl::memory_object::byte_size(
+			sizeof(cl_uint)));
+
+	sge::opencl::command_queue::scoped_buffer_mapping b_mapping(
+		command_queue_,
+		b.buffer(),
+		CL_MAP_READ,
+		sge::opencl::memory_object::byte_offset(
+			static_cast<sge::opencl::memory_object::byte_offset::value_type>(
+				(b.size().w()-1u) * sizeof(cl_uint))),
+		sge::opencl::memory_object::byte_size(
+			sizeof(cl_uint)));
+
+	return
+		*static_cast<cl_uint *>(
+			a_mapping.ptr()) +
+		*static_cast<cl_uint *>(
+			b_mapping.ptr());
 }

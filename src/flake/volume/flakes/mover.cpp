@@ -162,8 +162,9 @@ flake::volume::flakes::mover::update(
 		mem_objects);
 
 	move_kernel_->enqueue_automatic(
-		sge::opencl::memory_object::dim1(
-			vertex_count_));
+		flakelib::cl::global_dim1(
+			sge::opencl::memory_object::dim1(
+				vertex_count_)));
 }
 
 flake::volume::flakes::mover::~mover()
@@ -200,7 +201,8 @@ flake::volume::flakes::mover::initialize_velocities(
 		point_sizes_.get().buffer());
 
 	initialize_velocities_kernel_->enqueue_automatic(
-		velocities_->value().size());
+		flakelib::cl::global_dim1(
+			velocities_->value().size()));
 }
 
 void
@@ -212,5 +214,6 @@ flake::volume::flakes::mover::update_activity(
 		_boundary.get().buffer());
 
 	update_activity_kernel_->enqueue_automatic(
-		_boundary.get().size());
+		flakelib::cl::global_dim3(
+			_boundary.get().size()));
 }

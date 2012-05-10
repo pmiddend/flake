@@ -3,7 +3,7 @@
 #include <flakelib/volume/global_size.cl>
 #include <flakelib/volume/current_position.cl>
 #include <flakelib/volume/von_neumann/float_neighbors.cl>
-#include <flakelib/volume/von_neumann/gradient.cl>
+#include <flakelib/volume/von_neumann/float_gradient.cl>
 #include <flakelib/volume/von_neumann/load_neighbors.cl>
 
 kernel void
@@ -26,6 +26,6 @@ FLAKELIB_KERNEL_NAME(gradient_apply)(
 			buffer_pitch,
 			flakelib_volume_global_size(),
 			flakelib_volume_current_position())] =
-		flakelib_volume_von_neumann_gradient(
+		flakelib_volume_von_neumann_float_gradient(
 			&float_neighbors);
 }

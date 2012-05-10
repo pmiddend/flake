@@ -95,7 +95,8 @@ flakelib::volume::simulation::stam::jacobi::update(
 			current_destination);
 
 		kernel_->enqueue_automatic(
-			_boundary.get().size());
+			flakelib::cl::global_dim3(
+				_boundary.get().size()));
 	}
 
 	return

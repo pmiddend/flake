@@ -69,7 +69,8 @@ flakelib::volume::simulation::stam::vorticity::apply_vorticity(
 			_velocity.get().size().w()));
 
 	vorticity_kernel_->enqueue_automatic(
-		_velocity.get().size());
+		flakelib::cl::global_dim3(
+			_velocity.get().size()));
 
 	return
 		fcppt::move(
@@ -116,7 +117,8 @@ flakelib::volume::simulation::stam::vorticity::apply_confinement(
 			_vorticity.size().w()));
 
 	confinement_kernel_->enqueue_automatic(
-		_vorticity.size());
+		flakelib::cl::global_dim3(
+			_vorticity.size()));
 
 	return
 		fcppt::move(

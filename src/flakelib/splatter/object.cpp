@@ -93,7 +93,8 @@ flakelib::splatter::object::splat_planar_float(
 			_pen.draw_mode() == pen::draw_mode::mix));
 
 	splat_planar_float_->enqueue_automatic(
-		_pen.bounding().size().get());
+		flakelib::cl::global_dim2(
+			_pen.bounding().size().get()));
 }
 
 void
@@ -175,7 +176,8 @@ flakelib::splatter::object::splat_volume_float(
 			_pen.draw_mode() == pen::draw_mode::mix));
 
 	splat_volume_float_->enqueue_automatic(
-		_pen.bounding().size().get());
+		flakelib::cl::global_dim3(
+			_pen.bounding().size().get()));
 }
 
 flakelib::splatter::object::~object()

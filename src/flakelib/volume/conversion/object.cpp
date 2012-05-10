@@ -81,7 +81,8 @@ flakelib::volume::conversion::object::to_arrow_vb(
 		_origin.get().z());
 
 	to_arrow_vb_kernel_->enqueue_automatic(
-		_input.size());
+		flakelib::cl::global_dim3(
+			_input.size()));
 }
 
 void
@@ -137,7 +138,8 @@ flakelib::volume::conversion::object::float_view_to_flat_volume_texture(
 			_output.size().w() / _input.size().w()));
 
 	float_view_to_flat_volume_texture_kernel_->enqueue_automatic(
-		_input.size());
+		flakelib::cl::global_dim3(
+			_input.size()));
 }
 
 flakelib::volume::conversion::object::~object()

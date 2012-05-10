@@ -1,10 +1,12 @@
 #include <flakelib/exception.hpp>
 #include <flakelib/cl/kernel.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
+#include <sge/opencl/kernel/local_buffer.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <fcppt/from_std_string.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/algorithm/shortest_levenshtein.hpp>
+#include <fcppt/assert/error.hpp>
 #include <fcppt/assign/make_array.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -78,6 +80,23 @@ flakelib::cl::kernel::buffer_argument(
 }
 
 void
+flakelib::cl::kernel::vector_argument(
+	std::string const &_name,
+	flakelib::cl::uint4 const &_v)
+{
+	unassigned_parameters_.erase(
+		_name);
+
+	kernel_.argument(
+		this->index_for_name(
+			_name),
+		reinterpret_cast<unsigned char const *>(
+			_v.data()),
+		sge::opencl::memory_object::byte_size(
+			_v.size() * sizeof(cl_uint)));
+}
+
+void
 flakelib::cl::kernel::planar_image_argument(
 	std::string const &_name,
 	sge::opencl::memory_object::image::planar &_image)
@@ -92,21 +111,43 @@ flakelib::cl::kernel::planar_image_argument(
 }
 
 void
-flakelib::cl::kernel::enqueue_automatic(
-	sge::opencl::memory_object::dim1 const &_d)
+flakelib::cl::kernel::raw_memory_argument(
+	std::string const &_name,
+	cl_mem _mem)
 {
-	this->check_unassigned_parameters();
+	unassigned_parameters_.erase(
+		_name);
 
-	sge::opencl::command_queue::enqueue_kernel(
-		command_queue_,
-		kernel_,
-		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(_d[0]).container());
+	cl_int const error =
+		clSetKernelArg(
+			kernel_.impl(),
+			this->index_for_name(
+				_name).get(),
+			sizeof(cl_mem),
+			&_mem);
+
+	FCPPT_ASSERT_ERROR(
+		error == CL_SUCCESS);
+}
+
+void
+flakelib::cl::kernel::local_buffer_argument(
+	std::string const &_name,
+	sge::opencl::memory_object::byte_size const &_byte_size)
+{
+	unassigned_parameters_.erase(
+		_name);
+
+	kernel_.argument(
+		this->index_for_name(
+			_name),
+		sge::opencl::kernel::local_buffer(
+			_byte_size));
 }
 
 void
 flakelib::cl::kernel::enqueue_automatic(
-	sge::opencl::memory_object::dim2 const &_d)
+	flakelib::cl::global_dim1 const &_d)
 {
 	this->check_unassigned_parameters();
 
@@ -114,13 +155,12 @@ flakelib::cl::kernel::enqueue_automatic(
 		command_queue_,
 		kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(_d[0])
-			(_d[1]).container());
+			(_d.get()[0]).container());
 }
 
 void
 flakelib::cl::kernel::enqueue_automatic(
-	sge::opencl::memory_object::dim3 const &_d)
+	flakelib::cl::global_dim2 const &_d)
 {
 	this->check_unassigned_parameters();
 
@@ -128,9 +168,77 @@ flakelib::cl::kernel::enqueue_automatic(
 		command_queue_,
 		kernel_,
 		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
-			(_d[0])
-			(_d[1])
-			(_d[2]).container());
+			(_d.get()[0])
+			(_d.get()[1]).container());
+}
+
+void
+flakelib::cl::kernel::enqueue_automatic(
+	flakelib::cl::global_dim3 const &_d)
+{
+	this->check_unassigned_parameters();
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_d.get()[0])
+			(_d.get()[1])
+			(_d.get()[2]).container());
+}
+
+void
+flakelib::cl::kernel::enqueue(
+	flakelib::cl::global_dim1 const &_global,
+	flakelib::cl::local_dim1 const &_local)
+{
+	this->check_unassigned_parameters();
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_global.get()[0]).container(),
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_local.get()[0]).container());
+}
+
+void
+flakelib::cl::kernel::enqueue(
+	flakelib::cl::global_dim2 const &_global,
+	flakelib::cl::local_dim2 const &_local)
+{
+	this->check_unassigned_parameters();
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_global.get()[0])
+			(_global.get()[1]).container(),
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_local.get()[0])
+			(_local.get()[1]).container());
+}
+
+void
+flakelib::cl::kernel::enqueue(
+	flakelib::cl::global_dim3 const &_global,
+	flakelib::cl::local_dim3 const &_local)
+{
+	this->check_unassigned_parameters();
+
+	sge::opencl::command_queue::enqueue_kernel(
+		command_queue_,
+		kernel_,
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_global.get()[0])
+			(_global.get()[1])
+			(_global.get()[2]).container(),
+		fcppt::assign::make_array<sge::opencl::memory_object::size_type>
+			(_local.get()[0])
+			(_local.get()[1])
+			(_local.get()[2]).container());
 }
 
 sge::opencl::command_queue::object &

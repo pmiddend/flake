@@ -42,6 +42,10 @@ public:
 		sge::opencl::kernel::name const &);
 
 	FLAKELIB_SYMBOL
+	sge::opencl::program::object &
+	impl();
+
+	FLAKELIB_SYMBOL
 	~program();
 private:
 	typedef

@@ -63,8 +63,7 @@
 		},
 		"flakes" :
 		{
-			"simulation-size" : [64,64,64],
-			"snow-texture-size" : [64,64,64],
+			"simulation-size" : [128,64,128],
 			"snow-texture-repeats" : 20.0,
 			"arrow-scale" : 1.0,
 			"grid-scale" : 1.0,

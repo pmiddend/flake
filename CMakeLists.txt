@@ -163,6 +163,7 @@ set(
 	src/flakelib/planar/simulation/stam/subtract_pressure_gradient.cpp
 	src/flakelib/planar/simulation/stam/vorticity.cpp
 	src/flakelib/planar/simulation/stam/wind_source.cpp
+	src/flakelib/scan/object.cpp
 	src/flakelib/scoped_frame_limiter.cpp
 	src/flakelib/splatter/box/object_fwd.cpp
 	src/flakelib/splatter/object.cpp
@@ -172,7 +173,6 @@ set(
 	src/flakelib/utility/mix_buffers.cpp
 	src/flakelib/value_modulator/object.cpp
 	src/flakelib/volume/conversion/object.cpp
-	src/flakelib/volume/create_snow_volume_texture.cpp
 	src/flakelib/volume/gradient.cpp
 	src/flakelib/volume/retrieve_filled_float_buffer.cpp
 	src/flakelib/volume/retrieve_zero_float4_buffer.cpp
@@ -513,3 +513,26 @@ install(
 	DESTINATION
 	${INSTALL_BINARY_DIR})
 # solipsistic end
+
+# scan begin
+awl_utils_add_portable_executable(
+	tests_scan
+	"custom_main"
+	src/flake/volume/tests/scan.cpp)
+
+target_link_libraries(
+	tests_scan
+	flakelib
+	flake_helper_library
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
+	${Awl_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Boost_LIBRARIES})
+
+install(
+	TARGETS
+	tests_scan
+	DESTINATION
+	${INSTALL_BINARY_DIR})
+# scan end

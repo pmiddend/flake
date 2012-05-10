@@ -119,6 +119,13 @@ flakelib::cl::program::create_kernel(
 				kernel_name_it->second));
 }
 
+sge::opencl::program::object &
+flakelib::cl::program::impl()
+{
+	return
+		program_;
+}
+
 flakelib::cl::program::~program()
 {
 }

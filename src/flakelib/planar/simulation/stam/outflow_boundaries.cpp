@@ -36,7 +36,8 @@ flakelib::planar::simulation::stam::outflow_boundaries::update(
 			_view.size().w()));
 
 	kernel_->enqueue_automatic(
-		_view.size());
+		flakelib::cl::global_dim2(
+			_view.size()));
 }
 
 flakelib::planar::simulation::stam::outflow_boundaries::~outflow_boundaries()

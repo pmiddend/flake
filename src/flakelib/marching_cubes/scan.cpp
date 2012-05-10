@@ -107,17 +107,7 @@ flakelib::marching_cubes::scan::scanExclusiveLocal1(
     localWorkSize = WORKGROUP_SIZE;
     globalWorkSize = (n * size) / 4;
 
-    ciErrNum =
-    	clEnqueueNDRangeKernel(
-		command_queue_.impl(),
-		ckScanExclusiveLocal1.impl(),
-		1,
-		NULL,
-		&globalWorkSize,
-		&localWorkSize,
-		0,
-		NULL,
-		NULL);
+    ciErrNum = clEnqueueNDRangeKernel(command_queue_.impl(), ckScanExclusiveLocal1.impl(), 1, NULL, &globalWorkSize, &localWorkSize, 0, NULL, NULL);
 
     FCPPT_ASSERT_ERROR(
 	    ciErrNum == CL_SUCCESS);
@@ -234,12 +224,14 @@ flakelib::marching_cubes::scan::scanExclusiveLarge(
     FCPPT_ASSERT_ERROR(
 	    (batchSize * arrayLength) <= MAX_BATCH_ELEMENTS);
 
+    // Local scan
     scanExclusiveLocal1(
         d_Dst,
         d_Src,
         (batchSize * arrayLength) / (4 * WORKGROUP_SIZE),
         4 * WORKGROUP_SIZE);
 
+    // Sum of top level elements
     scanExclusiveLocal2(
         buffer_.impl(),
         d_Dst,

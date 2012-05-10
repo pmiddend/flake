@@ -12,6 +12,7 @@
 #include <flakelib/marching_cubes/manager.hpp>
 #include <flakelib/marching_cubes/object.hpp>
 #include <flakelib/marching_cubes/vertex_count.hpp>
+#include <flakelib/scan/object.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/value_modulator/object.hpp>
@@ -91,6 +92,7 @@ private:
 	flake::volume::model::manager models_;
 	flake::volume::obstacles::manager obstacles_;
 	flakelib::volume::gradient gradient_;
+	flakelib::scan::object scan_;
 	flakelib::marching_cubes::manager marching_cubes_manager_;
 	sge::shader::object snow_surface_shader_;
 	flakelib::marching_cubes::object marching_cubes_;

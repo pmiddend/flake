@@ -2,12 +2,20 @@
 #define FLAKELIB_CL_KERNEL_HPP_INCLUDED
 
 #include <flakelib/symbol.hpp>
+#include <flakelib/cl/global_dim1.hpp>
+#include <flakelib/cl/global_dim2.hpp>
+#include <flakelib/cl/global_dim3.hpp>
 #include <flakelib/cl/kernel_parameters.hpp>
+#include <flakelib/cl/local_dim1.hpp>
+#include <flakelib/cl/local_dim2.hpp>
+#include <flakelib/cl/local_dim3.hpp>
+#include <flakelib/cl/uint4.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/name.hpp>
 #include <sge/opencl/kernel/numeric_type.hpp>
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/memory_object/base_fwd.hpp>
+#include <sge/opencl/memory_object/byte_size.hpp>
 #include <sge/opencl/memory_object/dim1.hpp>
 #include <sge/opencl/memory_object/dim2.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
@@ -49,24 +57,60 @@ public:
 
 	FLAKELIB_SYMBOL
 	void
+	vector_argument(
+		std::string const &,
+		flakelib::cl::uint4 const &);
+
+	FLAKELIB_SYMBOL
+	void
 	planar_image_argument(
 		std::string const &,
 		sge::opencl::memory_object::image::planar &);
 
 	FLAKELIB_SYMBOL
 	void
-	enqueue_automatic(
-		sge::opencl::memory_object::dim1 const &);
+	raw_memory_argument(
+		std::string const &,
+		cl_mem);
+
+	FLAKELIB_SYMBOL
+	void
+	local_buffer_argument(
+		std::string const &,
+		sge::opencl::memory_object::byte_size const &);
 
 	FLAKELIB_SYMBOL
 	void
 	enqueue_automatic(
-		sge::opencl::memory_object::dim2 const &);
+		flakelib::cl::global_dim1 const &);
 
 	FLAKELIB_SYMBOL
 	void
 	enqueue_automatic(
-		sge::opencl::memory_object::dim3 const &);
+		flakelib::cl::global_dim2 const &);
+
+	FLAKELIB_SYMBOL
+	void
+	enqueue_automatic(
+		flakelib::cl::global_dim3 const &);
+
+	FLAKELIB_SYMBOL
+	void
+	enqueue(
+		flakelib::cl::global_dim1 const &,
+		flakelib::cl::local_dim1 const &);
+
+	FLAKELIB_SYMBOL
+	void
+	enqueue(
+		flakelib::cl::global_dim2 const &,
+		flakelib::cl::local_dim2 const &);
+
+	FLAKELIB_SYMBOL
+	void
+	enqueue(
+		flakelib::cl::global_dim3 const &,
+		flakelib::cl::local_dim3 const &);
 
 	FLAKELIB_SYMBOL
 	sge::opencl::command_queue::object &

@@ -36,7 +36,8 @@ flakelib::utility::fill_buffer::apply(
 		_value);
 
 	kernel_->enqueue_automatic(
-		_buffer.size());
+		flakelib::cl::global_dim1(
+			_buffer.size()));
 }
 
 flakelib::utility::fill_buffer::~fill_buffer()

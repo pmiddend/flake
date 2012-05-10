@@ -76,7 +76,8 @@ flake::planar::conversion::object::to_arrow_vb(
 		mem_objects);
 
 	to_arrow_vb_kernel_->enqueue_automatic(
-		_planar_buffer.size());
+		flakelib::cl::global_dim2(
+			_planar_buffer.size()));
 }
 
 void
@@ -114,7 +115,8 @@ flake::planar::conversion::object::scalar_to_texture(
 		mem_objects);
 
 	scalar_to_texture_kernel_->enqueue_automatic(
-		_planar_buffer.size());
+		flakelib::cl::global_dim2(
+			_planar_buffer.size()));
 }
 
 flake::planar::conversion::object::~object()

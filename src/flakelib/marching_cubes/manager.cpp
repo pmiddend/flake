@@ -1,5 +1,6 @@
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
+#include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/marching_cubes/manager.hpp>
 #include <flakelib/marching_cubes/num_vert_table.hpp>
@@ -20,13 +21,21 @@
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
+#include <fcppt/insert_to_std_string.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/error.hpp>
 #include <fcppt/assert/pre.hpp>
 
 
+namespace
+{
+sge::opencl::memory_object::size_type const nthreads =
+	32u;
+}
+
 flakelib::marching_cubes::manager::manager(
 	sge::renderer::device &_renderer,
+	flakelib::scan::object &_scan,
 	flakelib::volume::gradient &_gradient,
 	flakelib::cl::program_context const &_program_context)
 :
@@ -34,14 +43,14 @@ flakelib::marching_cubes::manager::manager(
 		_program_context.command_queue()),
 	renderer_(
 		_renderer),
+	scan_(
+		_scan),
 	vertex_declaration_(
 		renderer_.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format
 			<
 				flakelib::marching_cubes::vf::format
 			>())),
-	scan_(
-		_program_context),
 	children_(),
 	table_format_(
 		sge::opencl::memory_object::create_image_format(
@@ -72,26 +81,27 @@ flakelib::marching_cubes::manager::manager(
 			&num_vert_table,
 			&num_vert_table_error_code_)),
 	program_(
-		command_queue_.context(),
-		sge::opencl::program::file_to_source_string_sequence(
-			flakelib::media_path_from_string(
-				FCPPT_TEXT("kernels/marching_cubes/main.cl"))),
-		sge::opencl::program::optional_build_parameters(
-			sge::opencl::program::build_parameters()
-				.options(
-					_program_context.compiler_flags().get()))),
-	classifyVoxelKernel(
-		program_,
-		sge::opencl::kernel::name(
-			"classifyVoxel")),
-	compactVoxelsKernel(
-		program_,
-		sge::opencl::kernel::name(
-			"compactVoxels")),
-	generateTriangles2Kernel(
-		program_,
-		sge::opencl::kernel::name(
-			"generateTriangles2")),
+		_program_context.command_queue(),
+		flakelib::media_path_from_string(
+			FCPPT_TEXT("kernels/marching_cubes/main.cl")),
+		_program_context.compiler_flags() +
+		flakelib::cl::compiler_flags(
+			std::string(
+				" -DNTHREADS=")+
+			fcppt::insert_to_std_string(
+				nthreads))),
+	classify_kernel_(
+		program_.create_kernel(
+			sge::opencl::kernel::name(
+				"classify_voxels"))),
+	compact_kernel_(
+		program_.create_kernel(
+			sge::opencl::kernel::name(
+				"compact_voxels"))),
+	generate_triangles_kernel_(
+		program_.create_kernel(
+			sge::opencl::kernel::name(
+				"generate_triangles"))),
 	gradient_(
 		_gradient)
 {
@@ -100,6 +110,18 @@ flakelib::marching_cubes::manager::manager(
 
 	FCPPT_ASSERT_PRE(
 		num_vert_table_error_code_ == CL_SUCCESS);
+
+	classify_kernel_->raw_memory_argument(
+		"numVertsTex",
+		num_vert_table_);
+
+	generate_triangles_kernel_->raw_memory_argument(
+		"numVertsTex",
+		num_vert_table_);
+
+	generate_triangles_kernel_->raw_memory_argument(
+		"triTex",
+		triangle_table_);
 }
 
 void
@@ -130,6 +152,71 @@ flakelib::marching_cubes::manager::vertex_declaration()
 		*vertex_declaration_;
 }
 
+void
+flakelib::marching_cubes::manager::classify_voxels(
+	flakelib::marching_cubes::density_view const &_density,
+	flakelib::marching_cubes::vertices_for_voxel_view const &_vertices_for_voxel,
+	flakelib::marching_cubes::voxel_occupation_view const &_voxel_occupation,
+	flakelib::marching_cubes::iso_level const &_iso_level,
+	flakelib::marching_cubes::grid_size const &_grid_size,
+	flakelib::marching_cubes::grid_size_mask const &_grid_size_mask,
+	flakelib::marching_cubes::grid_size_shift const &_grid_size_shift)
+{
+	classify_kernel_->buffer_argument(
+		"density",
+		_density.get().buffer());
+
+	classify_kernel_->buffer_argument(
+		"vertices_for_voxel",
+		_vertices_for_voxel.get().buffer());
+
+	classify_kernel_->buffer_argument(
+		"voxel_occupation",
+		_voxel_occupation.get().buffer());
+
+	classify_kernel_->vector_argument(
+		"grid_size",
+		_grid_size.get());
+
+	classify_kernel_->vector_argument(
+		"grid_size_shift",
+		_grid_size_shift.get());
+
+	classify_kernel_->vector_argument(
+		"grid_size_mask",
+		_grid_size_mask.get());
+
+	classify_kernel_->numerical_argument(
+		"iso_value",
+		_iso_level.get());
+
+	classify_kernel_->enqueue_automatic(
+		flakelib::cl::global_dim1(
+			sge::opencl::memory_object::dim1(
+				_density.get().size().content())));
+}
+
+flakelib::scan::object &
+flakelib::marching_cubes::manager::scan() const
+{
+	return
+		scan_;
+}
+
+sge::renderer::device &
+flakelib::marching_cubes::manager::renderer() const
+{
+	return
+		renderer_;
+}
+
+sge::renderer::vertex_declaration const &
+flakelib::marching_cubes::manager::vertex_declaration() const
+{
+	return
+		*vertex_declaration_;
+}
+
 flakelib::marching_cubes::manager::~manager()
 {
 }
@@ -143,130 +230,102 @@ flakelib::marching_cubes::manager::add_child(
 }
 
 void
-flakelib::marching_cubes::manager::launch_classifyVoxel(
-	sge::opencl::memory_object::dim3 grid,
-	sge::opencl::memory_object::dim3 threads,
-	cl_mem voxelVerts,
-	cl_mem voxelOccupied,
-	cl_mem volume,
-	cl_uint gridSize[4],
-	cl_uint gridSizeShift[4],
-	cl_uint gridSizeMask[4],
-	uint numVoxels,
-	cl_float voxelSize[4],
-	float isoValue)
+flakelib::marching_cubes::manager::compact_voxels(
+	flakelib::marching_cubes::voxel_occupation_view const &_voxel_occupation,
+	flakelib::marching_cubes::summed_voxel_occupation_view const &_summed_voxel_occupation,
+	flakelib::marching_cubes::compacted_voxel_occupation_view const &_compacted_voxel_occupation)
 {
-	cl_int ciErrNum;
-	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 0, sizeof(cl_mem), &voxelVerts);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 1, sizeof(cl_mem), &voxelOccupied);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 2, sizeof(cl_mem), &volume);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 3, 4 * sizeof(cl_uint), gridSize);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 4, 4 * sizeof(cl_uint), gridSizeShift);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 5, 4 * sizeof(cl_uint), gridSizeMask);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 6, sizeof(uint), &numVoxels);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 7, 4 * sizeof(cl_float), voxelSize);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 8, sizeof(float), &isoValue);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(classifyVoxelKernel.impl(), 9, sizeof(cl_mem), &num_vert_table_);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	compact_kernel_->buffer_argument(
+		"voxel_occupation",
+		_voxel_occupation.get().buffer());
 
-	grid.w() *= threads.w();
-	ciErrNum = clEnqueueNDRangeKernel(command_queue_.impl(), classifyVoxelKernel.impl(), 1, NULL, (size_t*)grid.data(), (size_t*) threads.data(), 0, 0, 0);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	compact_kernel_->buffer_argument(
+		"summed_voxel_occupation",
+		_summed_voxel_occupation.get().buffer());
+
+	compact_kernel_->buffer_argument(
+		"compacted_voxel_occupation",
+		_compacted_voxel_occupation.get().buffer());
+
+	compact_kernel_->enqueue_automatic(
+		flakelib::cl::global_dim1(
+			sge::opencl::memory_object::dim1(
+				_voxel_occupation.get().size().content())));
 }
 
 void
-flakelib::marching_cubes::manager::launch_compactVoxels(
-	sge::opencl::memory_object::dim3 grid,
-	sge::opencl::memory_object::dim3 threads,
-	cl_mem compVoxelArray,
-	cl_mem voxelOccupied,
-	cl_mem voxelOccupiedScan,
-	uint numVoxels)
+flakelib::marching_cubes::manager::generate_triangles(
+	flakelib::marching_cubes::normals_buffer const &_normals_buffer,
+	flakelib::marching_cubes::positions_buffer const &_positions_buffer,
+	flakelib::marching_cubes::compacted_voxel_occupation_view const &_compacted_voxel_occupation_view,
+	flakelib::marching_cubes::summed_vertices_for_voxel_view const &_summed_vertices_for_voxel_view,
+	flakelib::marching_cubes::density_view const &_density_view,
+	flakelib::marching_cubes::grid_size const &_grid_size,
+	flakelib::marching_cubes::grid_size_mask const &_grid_size_mask,
+	flakelib::marching_cubes::grid_size_shift const &_grid_size_shift,
+	flakelib::marching_cubes::iso_level const &_iso_level,
+	flakelib::marching_cubes::active_voxels const &_active_voxels,
+	flakelib::marching_cubes::vertex_count const &_vertex_count)
 {
-	cl_int ciErrNum;
-	ciErrNum = clSetKernelArg(compactVoxelsKernel.impl(), 0, sizeof(cl_mem), &compVoxelArray);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(compactVoxelsKernel.impl(), 1, sizeof(cl_mem), &voxelOccupied);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(compactVoxelsKernel.impl(), 2, sizeof(cl_mem), &voxelOccupiedScan);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(compactVoxelsKernel.impl(), 3, sizeof(cl_uint), &numVoxels);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	generate_triangles_kernel_->buffer_argument(
+		"positions",
+		_positions_buffer.get());
 
-	grid.w() *= threads.w();
-	ciErrNum = clEnqueueNDRangeKernel(command_queue_.impl(), compactVoxelsKernel.impl(), 1, NULL, (size_t*) grid.data(), (size_t*) threads.data(), 0, 0, 0);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-}
+	generate_triangles_kernel_->buffer_argument(
+		"normals",
+		_normals_buffer.get());
 
-void
-flakelib::marching_cubes::manager::launch_generateTriangles2(
-	flakelib::volume::float_view const &_view,
-	sge::opencl::memory_object::dim3 grid,
-	sge::opencl::memory_object::dim3 threads,
-	cl_mem pos,
-	cl_mem norm,
-	cl_mem compactedVoxelArray,
-	cl_mem numVertsScanned,
-	cl_mem volume,
-	cl_uint gridSize[4],
-	cl_uint gridSizeShift[4],
-	cl_uint gridSizeMask[4],
-	cl_float voxelSize[4],
-	float isoValue,
-	uint activeVoxels,
-	sge::renderer::size_type const _vertex_count)
-{
 	flakelib::volume::unique_float4_buffer_lock gradient(
 		gradient_.update(
-			_view));
+			_density_view.get()));
 
-	cl_int ciErrNum;
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 0, sizeof(cl_mem), &pos);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 1, sizeof(cl_mem), &norm);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 2, sizeof(cl_mem), &compactedVoxelArray);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 3, sizeof(cl_mem), &numVertsScanned);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 4, sizeof(cl_mem), &volume);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 5, 4 * sizeof(cl_uint), gridSize);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 6, 4 * sizeof(cl_uint), gridSizeShift);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 7, 4 * sizeof(cl_uint), gridSizeMask);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 8, 4 * sizeof(cl_float), voxelSize);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 9, sizeof(float), &isoValue);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 10, sizeof(uint), &activeVoxels);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	cl_uint const cl_vertex_count =
-	static_cast<cl_uint>(
-		_vertex_count);
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 11, sizeof(uint), &cl_vertex_count);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	generate_triangles_kernel_->buffer_argument(
+		"gradient",
+		gradient->value().buffer());
 
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 12, sizeof(cl_mem), &num_vert_table_);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 13, sizeof(cl_mem), &triangle_table_);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
-	cl_mem gradient_buffer = gradient->value().buffer().impl();
-	ciErrNum = clSetKernelArg(generateTriangles2Kernel.impl(), 14, sizeof(cl_mem), &gradient_buffer);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	generate_triangles_kernel_->buffer_argument(
+		"compacted_voxel_occupation",
+		_compacted_voxel_occupation_view.get().buffer());
 
-	grid.w() *= threads.w();
-	ciErrNum = clEnqueueNDRangeKernel(command_queue_.impl(), generateTriangles2Kernel.impl(), 1, NULL, (size_t*) grid.data(), (size_t*) threads.data(), 0, 0, 0);
-	FCPPT_ASSERT_ERROR(ciErrNum == CL_SUCCESS);
+	generate_triangles_kernel_->buffer_argument(
+		"summed_vertices_for_voxel",
+		_summed_vertices_for_voxel_view.get().buffer());
+
+	generate_triangles_kernel_->buffer_argument(
+		"volume",
+		_density_view.get().buffer());
+
+	generate_triangles_kernel_->vector_argument(
+		"grid_size",
+		_grid_size.get());
+
+	generate_triangles_kernel_->vector_argument(
+		"grid_size_shift",
+		_grid_size_shift.get());
+
+	generate_triangles_kernel_->vector_argument(
+		"grid_size_mask",
+		_grid_size_mask.get());
+
+	generate_triangles_kernel_->numerical_argument(
+		"iso_value",
+		_iso_level.get());
+
+	generate_triangles_kernel_->numerical_argument(
+		"active_voxels",
+		_active_voxels.get());
+
+	generate_triangles_kernel_->numerical_argument(
+		"max_verts",
+		static_cast<cl_uint>(
+			_vertex_count.get()));
+
+	generate_triangles_kernel_->enqueue(
+		flakelib::cl::global_dim1(
+			sge::opencl::memory_object::dim1(
+				static_cast<sge::opencl::memory_object::size_type>(
+					_grid_size.get().w() * _grid_size.get().h() * _grid_size.get().d()))),
+		flakelib::cl::local_dim1(
+			sge::opencl::memory_object::dim1(
+				nthreads)));
 }

@@ -73,7 +73,8 @@ flakelib::planar::simulation::stam::vorticity::apply_vorticity(
 			_velocity.get().size().w()));
 
 	vorticity_kernel_->enqueue_automatic(
-		_velocity.get().size());
+		flakelib::cl::global_dim2(
+			_velocity.get().size()));
 
 	return
 		fcppt::move(
@@ -115,7 +116,8 @@ flakelib::planar::simulation::stam::vorticity::confinement_data(
 			_vorticity.size().w()));
 
 	confinement_data_kernel_->enqueue_automatic(
-		_vorticity.size());
+		flakelib::cl::global_dim2(
+			_vorticity.size()));
 
 	return
 		fcppt::move(
@@ -162,7 +164,8 @@ flakelib::planar::simulation::stam::vorticity::apply_confinement(
 			_vorticity.size().w()));
 
 	confinement_kernel_->enqueue_automatic(
-		_vorticity.size());
+		flakelib::cl::global_dim2(
+			_vorticity.size()));
 
 	return
 		fcppt::move(

@@ -67,8 +67,9 @@ flakelib::planar::simulation::stam::buissnesq::object::update(
 		_delta.count());
 
 	kernel_->enqueue_automatic(
-		sge::opencl::memory_object::dim1(
-			_velocity.get().size().content()));
+		flakelib::cl::global_dim1(
+			sge::opencl::memory_object::dim1(
+				_velocity.get().size().content())));
 }
 
 flakelib::planar::simulation::stam::buissnesq::object::~object()

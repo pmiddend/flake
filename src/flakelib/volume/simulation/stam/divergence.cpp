@@ -65,7 +65,8 @@ flakelib::volume::simulation::stam::divergence::update(
 			_buffer.size().w()));
 
 	kernel_->enqueue_automatic(
-		_buffer.size());
+		flakelib::cl::global_dim3(
+			_buffer.size()));
 
 	return
 		fcppt::move(

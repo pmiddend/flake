@@ -95,7 +95,8 @@ flakelib::planar::simulation::stam::jacobi::update(
 			current_destination);
 
 		kernel_->enqueue_automatic(
-			_boundary.get().size());
+			flakelib::cl::global_dim2(
+				_boundary.get().size()));
 	}
 
 	return

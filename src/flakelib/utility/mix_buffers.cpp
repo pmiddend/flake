@@ -41,7 +41,8 @@ flakelib::utility::mix_buffers::add_from_to(
 		_to_buffer.buffer());
 
 	add_kernel_->enqueue_automatic(
-		_from_buffer.size());
+		flakelib::cl::global_dim1(
+			_from_buffer.size()));
 }
 
 flakelib::utility::mix_buffers::~mix_buffers()

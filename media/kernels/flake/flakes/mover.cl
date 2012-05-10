@@ -1,8 +1,8 @@
 #include <flakelib/kernel_name.cl>
 #include <flakelib/kernel_argument.cl>
-#include <flakelib/volume/right_neighborhood4.cl>
-#include <flakelib/volume/load_right_neighborhood.cl>
-#include <flakelib/volume/interpolate_right_neighborhood.cl>
+#include <flakelib/volume/right_neighbors/float4.cl>
+#include <flakelib/volume/right_neighbors/load.cl>
+#include <flakelib/volume/right_neighbors/interpolate.cl>
 #include <flakelib/volume/at.cl>
 #include <flakelib/volume/von_neumann/load_neighbor_indices.cl>
 #include <flakelib/volume/von_neumann/float4_neighbors.cl>
@@ -219,8 +219,8 @@ FLAKELIB_KERNEL_NAME(move)(
 			return;
 		}
 
-		flakelib_volume_right_neighborhood4 neighbors;
-		FLAKELIB_VOLUME_LOAD_RIGHT_NEIGHBORHOOD(
+		flakelib_volume_right_neighbors_float4 neighbors;
+		FLAKELIB_VOLUME_RIGHT_NEIGHBORS_LOAD(
 			fluid_velocity,
 			neighbors,
 			buffer_pitch,
@@ -234,7 +234,7 @@ FLAKELIB_KERNEL_NAME(move)(
 					current_position,
 					&floors),
 			current_fluid_velocity =
-				FLAKELIB_VOLUME_INTERPOLATE_RIGHT_NEIGHBORHOOD(
+				FLAKELIB_VOLUME_RIGHT_NEIGHBORS_INTERPOLATE(
 					neighbors,
 					fractions);
 

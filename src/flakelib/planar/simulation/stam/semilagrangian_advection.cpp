@@ -82,7 +82,8 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update_float2(
 			_dt.count()));
 
 	planar_kernel_->enqueue_automatic(
-		_buffer.size());
+		flakelib::cl::global_dim2(
+			_buffer.size()));
 
 	return
 		fcppt::move(
@@ -135,7 +136,8 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update_float(
 			_dt.count()));
 
 	scalar_kernel_->enqueue_automatic(
-		_buffer.size());
+		flakelib::cl::global_dim2(
+			_buffer.size()));
 
 	return
 		fcppt::move(

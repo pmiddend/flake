@@ -8,6 +8,61 @@ out vec4 frag_color;
 
 void main()
 {
+	// NOTE: Is already normalized.
+	vec3 normal_vector =
+		-normal_interp;
+
+	vec3
+		blend_weights =
+			(abs(normal_vector) - 0.2) * 7.0;
+
+	blend_weights =
+		max(
+			blend_weights,
+			0.0);
+
+	float blend_sum =
+		blend_weights.x + blend_weights.y + blend_weights.z;
+
+	blend_weights /=
+		vec3(
+			blend_sum,
+			blend_sum,
+			blend_sum);
+
+	const float repeats =
+		1.0/4.0;
+
+	vec2
+		coord1 =
+			position_interp.yz * repeats,
+		coord2 =
+			position_interp.zx * repeats,
+		coord3 =
+			position_interp.xy * repeats;
+
+	vec4
+		col1 =
+			texture(
+				snow_rough,
+				coord1),
+		col2 =
+			texture(
+				snow_calm,
+				coord2),
+		col3 =
+			texture(
+				snow_rough,
+				coord3);
+
+	vec4 blended_color =
+		col1 * blend_weights.x +
+		col2 * blend_weights.y +
+		col3 * blend_weights.z;
+
+	frag_color =
+		blended_color;
+	/*
 	float
 		ambient =
 			0.5,
@@ -16,18 +71,11 @@ void main()
 			max(
 				0.0,
 				dot(
-					-normal_interp,
+					normal_vector,
 					-sun_direction));
+					*/
 
-	float texture_edge_length =
-		float(
-			textureSize(
-				snow_volume_texture,
-				0).x);
-
-	vec3 normalized_position =
-		position_interp / texture_edge_length;
-
+	/*
 	vec4 snow_value =
 		texture(
 			snow_volume_texture,
@@ -38,4 +86,5 @@ void main()
 		vec4(
 			snow_value.xyz,
 			1.0);
+			*/
 }
