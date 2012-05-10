@@ -377,28 +377,28 @@ install(
 # vorticity end
 
 # buoyancy begin
-#awl_utils_add_portable_executable(
-#	tests_buoyancy
-#	"custom_main"
-#	src/flake/planar/tests/buoyancy.cpp)
-#
-#target_link_libraries(
-#	tests_buoyancy
-#	flakelib
-#	flake_helper_library
-#	${Fcppt_core_LIBRARIES}
-#	${Fcppt_filesystem_LIBRARIES}
-#	${Awl_LIBRARIES}
-#	${SGE_LIBRARIES}
-#	${Rucksack_LIBRARIES}
-#	${Boost_LIBRARIES})
-#
-#install(
-#	TARGETS
-#	tests_buoyancy
-#	DESTINATION
-#	${INSTALL_BINARY_DIR})
-## buoyancy end
+awl_utils_add_portable_executable(
+	tests_buoyancy
+	"custom_main"
+	src/flake/planar/tests/buoyancy.cpp)
+
+target_link_libraries(
+	tests_buoyancy
+	flakelib
+	flake_helper_library
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
+	${Awl_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Rucksack_LIBRARIES}
+	${Boost_LIBRARIES})
+
+install(
+	TARGETS
+	tests_buoyancy
+	DESTINATION
+	${INSTALL_BINARY_DIR})
+# buoyancy end
 #
 ## flakes begin
 #awl_utils_add_portable_executable(
