@@ -84,13 +84,14 @@ find_package(
 	sprite
 	camera
 	texture
+	cg
+	renderercg
 	image3d
 	modelobj
 	console
 	font
 	fonttext
 	parse
-	shader
 	systems
 	window
 	viewport)
@@ -150,9 +151,9 @@ set(
 	src/flakelib/log_context.cpp
 	src/flakelib/log_location.cpp
 	src/flakelib/log_parameters.cpp
-	src/flakelib/marching_cubes/manager.cpp
-	src/flakelib/marching_cubes/object.cpp
-	src/flakelib/marching_cubes/scan.cpp
+#	src/flakelib/marching_cubes/manager.cpp
+#	src/flakelib/marching_cubes/object.cpp
+#	src/flakelib/marching_cubes/scan.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
 	src/flakelib/planar/simulation/stam/buissnesq/object.cpp
@@ -172,18 +173,18 @@ set(
 	src/flakelib/utility/fill_buffer.cpp
 	src/flakelib/utility/mix_buffers.cpp
 	src/flakelib/value_modulator/object.cpp
-	src/flakelib/volume/conversion/object.cpp
-	src/flakelib/volume/gradient.cpp
-	src/flakelib/volume/retrieve_filled_float_buffer.cpp
-	src/flakelib/volume/retrieve_zero_float4_buffer.cpp
-	src/flakelib/volume/simulation/stam/buissnesq/object.cpp
-	src/flakelib/volume/simulation/stam/divergence.cpp
-	src/flakelib/volume/simulation/stam/jacobi.cpp
-	src/flakelib/volume/simulation/stam/outflow_boundaries.cpp
-	src/flakelib/volume/simulation/stam/semilagrangian_advection.cpp
-	src/flakelib/volume/simulation/stam/subtract_pressure_gradient.cpp
-	src/flakelib/volume/simulation/stam/vorticity.cpp
-	src/flakelib/volume/simulation/stam/wind_source.cpp
+#	src/flakelib/volume/conversion/object.cpp
+#	src/flakelib/volume/gradient.cpp
+#	src/flakelib/volume/retrieve_filled_float_buffer.cpp
+#	src/flakelib/volume/retrieve_zero_float4_buffer.cpp
+#	src/flakelib/volume/simulation/stam/buissnesq/object.cpp
+#	src/flakelib/volume/simulation/stam/divergence.cpp
+#	src/flakelib/volume/simulation/stam/jacobi.cpp
+#	src/flakelib/volume/simulation/stam/outflow_boundaries.cpp
+#	src/flakelib/volume/simulation/stam/semilagrangian_advection.cpp
+#	src/flakelib/volume/simulation/stam/subtract_pressure_gradient.cpp
+#	src/flakelib/volume/simulation/stam/vorticity.cpp
+#	src/flakelib/volume/simulation/stam/wind_source.cpp
 )
 
 set(
@@ -208,14 +209,14 @@ set(
 	src/flake/test/update_features_from_json.cpp
 	src/flake/time_modifier/kernel.cpp
 	src/flake/time_modifier/object.cpp
-	src/flake/volume/arrows/manager.cpp
-	src/flake/volume/arrows/object.cpp
-	src/flake/volume/density_visualization/raycaster/object.cpp
-	src/flake/volume/flakes/manager.cpp
-	src/flake/volume/flakes/mover.cpp
-	src/flake/volume/model/manager.cpp
-	src/flake/volume/model/object.cpp
-	src/flake/volume/obstacles/manager.cpp
+#	src/flake/volume/arrows/manager.cpp
+#	src/flake/volume/arrows/object.cpp
+#	src/flake/volume/density_visualization/raycaster/object.cpp
+#	src/flake/volume/flakes/manager.cpp
+#	src/flake/volume/flakes/mover.cpp
+#	src/flake/volume/model/manager.cpp
+#	src/flake/volume/model/object.cpp
+#	src/flake/volume/obstacles/manager.cpp
 )
 
 fcppt_utils_add_source_groups(
@@ -376,163 +377,163 @@ install(
 # vorticity end
 
 # buoyancy begin
-awl_utils_add_portable_executable(
-	tests_buoyancy
-	"custom_main"
-	src/flake/planar/tests/buoyancy.cpp)
-
-target_link_libraries(
-	tests_buoyancy
-	flakelib
-	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${Awl_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Rucksack_LIBRARIES}
-	${Boost_LIBRARIES})
-
-install(
-	TARGETS
-	tests_buoyancy
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# buoyancy end
-
-# flakes begin
-awl_utils_add_portable_executable(
-	tests_flakes
-	"custom_main"
-	src/flake/volume/tests/flakes.cpp)
-
-target_link_libraries(
-	tests_flakes
-	flakelib
-	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${Awl_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Boost_LIBRARIES})
-
-install(
-	TARGETS
-	tests_flakes
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# flakes end
-
-# marching_cubes begin
-awl_utils_add_portable_executable(
-	tests_marching_cubes
-	"custom_main"
-	src/flake/volume/tests/marching_cubes.cpp)
-
-target_link_libraries(
-	tests_marching_cubes
-	flakelib
-	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${Awl_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Boost_LIBRARIES})
-
-install(
-	TARGETS
-	tests_marching_cubes
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# marching_cubes end
-
-# density_visualization begin
-awl_utils_add_portable_executable(
-	tests_density_visualization
-	"custom_main"
-	src/flake/volume/tests/density_visualization.cpp)
-
-target_link_libraries(
-	tests_density_visualization
-	flakelib
-	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${Awl_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Boost_LIBRARIES})
-
-install(
-	TARGETS
-	tests_density_visualization
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# density_visualization end
-
-# smoke begin
-awl_utils_add_portable_executable(
-	tests_smoke
-	"custom_main"
-	src/flake/volume/tests/smoke.cpp)
-
-target_link_libraries(
-	tests_smoke
-	flakelib
-	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${Awl_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Boost_LIBRARIES})
-
-install(
-	TARGETS
-	tests_smoke
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# smoke end
-
-# solipsistic begin
-awl_utils_add_portable_executable(
-	tests_solipsistic
-	"custom_main"
-	src/flake/volume/tests/solipsistic.cpp)
-
-target_link_libraries(
-	tests_solipsistic
-	flakelib
-	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${Awl_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Boost_LIBRARIES})
-
-install(
-	TARGETS
-	tests_solipsistic
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# solipsistic end
-
-# scan begin
-awl_utils_add_portable_executable(
-	tests_scan
-	"custom_main"
-	src/flake/volume/tests/scan.cpp)
-
-target_link_libraries(
-	tests_scan
-	flakelib
-	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${Awl_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Boost_LIBRARIES})
-
-install(
-	TARGETS
-	tests_scan
-	DESTINATION
-	${INSTALL_BINARY_DIR})
+#awl_utils_add_portable_executable(
+#	tests_buoyancy
+#	"custom_main"
+#	src/flake/planar/tests/buoyancy.cpp)
+#
+#target_link_libraries(
+#	tests_buoyancy
+#	flakelib
+#	flake_helper_library
+#	${Fcppt_core_LIBRARIES}
+#	${Fcppt_filesystem_LIBRARIES}
+#	${Awl_LIBRARIES}
+#	${SGE_LIBRARIES}
+#	${Rucksack_LIBRARIES}
+#	${Boost_LIBRARIES})
+#
+#install(
+#	TARGETS
+#	tests_buoyancy
+#	DESTINATION
+#	${INSTALL_BINARY_DIR})
+## buoyancy end
+#
+## flakes begin
+#awl_utils_add_portable_executable(
+#	tests_flakes
+#	"custom_main"
+#	src/flake/volume/tests/flakes.cpp)
+#
+#target_link_libraries(
+#	tests_flakes
+#	flakelib
+#	flake_helper_library
+#	${Fcppt_core_LIBRARIES}
+#	${Fcppt_filesystem_LIBRARIES}
+#	${Awl_LIBRARIES}
+#	${SGE_LIBRARIES}
+#	${Boost_LIBRARIES})
+#
+#install(
+#	TARGETS
+#	tests_flakes
+#	DESTINATION
+#	${INSTALL_BINARY_DIR})
+## flakes end
+#
+## marching_cubes begin
+#awl_utils_add_portable_executable(
+#	tests_marching_cubes
+#	"custom_main"
+#	src/flake/volume/tests/marching_cubes.cpp)
+#
+#target_link_libraries(
+#	tests_marching_cubes
+#	flakelib
+#	flake_helper_library
+#	${Fcppt_core_LIBRARIES}
+#	${Fcppt_filesystem_LIBRARIES}
+#	${Awl_LIBRARIES}
+#	${SGE_LIBRARIES}
+#	${Boost_LIBRARIES})
+#
+#install(
+#	TARGETS
+#	tests_marching_cubes
+#	DESTINATION
+#	${INSTALL_BINARY_DIR})
+## marching_cubes end
+#
+## density_visualization begin
+#awl_utils_add_portable_executable(
+#	tests_density_visualization
+#	"custom_main"
+#	src/flake/volume/tests/density_visualization.cpp)
+#
+#target_link_libraries(
+#	tests_density_visualization
+#	flakelib
+#	flake_helper_library
+#	${Fcppt_core_LIBRARIES}
+#	${Fcppt_filesystem_LIBRARIES}
+#	${Awl_LIBRARIES}
+#	${SGE_LIBRARIES}
+#	${Boost_LIBRARIES})
+#
+#install(
+#	TARGETS
+#	tests_density_visualization
+#	DESTINATION
+#	${INSTALL_BINARY_DIR})
+## density_visualization end
+#
+## smoke begin
+#awl_utils_add_portable_executable(
+#	tests_smoke
+#	"custom_main"
+#	src/flake/volume/tests/smoke.cpp)
+#
+#target_link_libraries(
+#	tests_smoke
+#	flakelib
+#	flake_helper_library
+#	${Fcppt_core_LIBRARIES}
+#	${Fcppt_filesystem_LIBRARIES}
+#	${Awl_LIBRARIES}
+#	${SGE_LIBRARIES}
+#	${Boost_LIBRARIES})
+#
+#install(
+#	TARGETS
+#	tests_smoke
+#	DESTINATION
+#	${INSTALL_BINARY_DIR})
+## smoke end
+#
+## solipsistic begin
+#awl_utils_add_portable_executable(
+#	tests_solipsistic
+#	"custom_main"
+#	src/flake/volume/tests/solipsistic.cpp)
+#
+#target_link_libraries(
+#	tests_solipsistic
+#	flakelib
+#	flake_helper_library
+#	${Fcppt_core_LIBRARIES}
+#	${Fcppt_filesystem_LIBRARIES}
+#	${Awl_LIBRARIES}
+#	${SGE_LIBRARIES}
+#	${Boost_LIBRARIES})
+#
+#install(
+#	TARGETS
+#	tests_solipsistic
+#	DESTINATION
+#	${INSTALL_BINARY_DIR})
+## solipsistic end
+#
+## scan begin
+#awl_utils_add_portable_executable(
+#	tests_scan
+#	"custom_main"
+#	src/flake/volume/tests/scan.cpp)
+#
+#target_link_libraries(
+#	tests_scan
+#	flakelib
+#	flake_helper_library
+#	${Fcppt_core_LIBRARIES}
+#	${Fcppt_filesystem_LIBRARIES}
+#	${Awl_LIBRARIES}
+#	${SGE_LIBRARIES}
+#	${Boost_LIBRARIES})
+#
+#install(
+#	TARGETS
+#	tests_scan
+#	DESTINATION
+#	${INSTALL_BINARY_DIR})
 # scan end

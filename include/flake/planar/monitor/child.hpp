@@ -2,6 +2,7 @@
 #define FLAKE_PLANAR_MONITOR_CHILD_HPP_INCLUDED
 
 #include <flake/planar/monitor/optional_projection.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
 #include <flake/planar/monitor/parent_fwd.hpp>
 #include <rucksack/widget/base_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -38,6 +39,7 @@ public:
 
 	virtual void
 	render(
+		sge::renderer::context::object &,
 		monitor::optional_projection const &) = 0;
 
 	virtual void

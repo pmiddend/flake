@@ -57,6 +57,7 @@ public:
 
 	void
 	render(
+		sge::renderer::context::object &,
 		monitor::optional_projection const &);
 
 	void
@@ -81,10 +82,12 @@ private:
 
 	void
 	render_font(
+		sge::renderer::context::object &,
 		monitor::optional_projection const &);
 
 	void
 	render_arrows(
+		sge::renderer::context::object &,
 		monitor::optional_projection const &);
 };
 }

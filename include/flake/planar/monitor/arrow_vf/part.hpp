@@ -1,7 +1,6 @@
 #ifndef FLAKE_PLANAR_MONITOR_ARROW_VF_PART_HPP_INCLUDED
 #define FLAKE_PLANAR_MONITOR_ARROW_VF_PART_HPP_INCLUDED
 
-#include <flake/planar/monitor/arrow_vf/color.hpp>
 #include <flake/planar/monitor/arrow_vf/position.hpp>
 #include <sge/renderer/vf/part.hpp>
 #include <fcppt/config/external_begin.hpp>

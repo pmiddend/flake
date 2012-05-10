@@ -74,6 +74,7 @@ flake::sprite_drawer_3d::~sprite_drawer_3d()
 
 void
 flake::sprite_drawer_3d::begin_rendering(
+	sge::renderer::context::object &,
 	sge::font::text::drawer::size_type const buffer_chars,
 	sge::font::pos const &,
 	sge::font::dim const &
@@ -88,6 +89,7 @@ flake::sprite_drawer_3d::begin_rendering(
 
 void
 flake::sprite_drawer_3d::draw_char(
+	sge::renderer::context::object &,
 	sge::font::text::char_type const _char,
 	sge::font::pos const &_pos,
 	sge::font::const_image_view const &_data
@@ -134,7 +136,8 @@ flake::sprite_drawer_3d::draw_char(
 }
 
 void
-flake::sprite_drawer_3d::end_rendering()
+flake::sprite_drawer_3d::end_rendering(
+	sge::renderer::context::object &_context)
 {
 	sge::sprite::process::with_options
 	<
@@ -153,6 +156,7 @@ flake::sprite_drawer_3d::end_rendering()
 			>
 		>
 	>(
+		_context,
 		sge::sprite::geometry::make_random_access_range(
 			sprites_.begin(),
 			sprites_.end()

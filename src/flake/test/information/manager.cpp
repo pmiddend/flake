@@ -5,7 +5,7 @@
 #include <sge/font/text/from_fcppt_string.hpp>
 #include <sge/font/text/part.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/onscreen_target.hpp>
+#include <sge/renderer/target/onscreen.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
 
@@ -27,7 +27,8 @@ flake::test::information::manager::manager(
 }
 
 void
-flake::test::information::manager::render()
+flake::test::information::manager::render(
+	sge::renderer::context::object &_context)
 {
 	sge::font::text::string result;
 
@@ -47,8 +48,8 @@ flake::test::information::manager::render()
 		5;
 
 	sge::font::rect const viewport_rect(
-			fcppt::math::box::structure_cast<sge::font::rect>(
-				renderer_.onscreen_target().viewport().get()));
+		fcppt::math::box::structure_cast<sge::font::rect>(
+			renderer_.onscreen_target().viewport().get()));
 
 	sge::font::rect current_font_rect(
 		sge::font::pos(
@@ -57,6 +58,7 @@ flake::test::information::manager::render()
 		viewport_rect.size());
 
 	sge::font::text::draw(
+		_context,
 		font_metrics_,
 		font_drawer_,
 		result,

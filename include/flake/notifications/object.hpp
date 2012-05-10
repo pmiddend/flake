@@ -7,6 +7,7 @@
 #include <sge/font/metrics_fwd.hpp>
 #include <sge/font/text/drawer_3d_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
 #include <sge/timer/basic_impl.hpp>
 #include <sge/timer/clocks/standard.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -45,7 +46,8 @@ public:
 	update();
 
 	void
-	render();
+	render(
+		sge::renderer::context::object &);
 
 	~object();
 private:

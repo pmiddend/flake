@@ -11,6 +11,7 @@
 #include <sge/image/color/object_impl.hpp>
 #include <sge/image/color/any/object.hpp>
 #include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
 #include <sge/sprite/object_decl.hpp>
 #include <sge/sprite/buffers/single.hpp>
 #include <sge/sprite/buffers/with_declaration.hpp>
@@ -51,18 +52,21 @@ public:
 
 	void
 	begin_rendering(
+		sge::renderer::context::object &,
 		sge::font::text::drawer::size_type buffer_chars,
 		sge::font::pos const &start,
 		sge::font::dim const &size);
 
 	void
 	draw_char(
+		sge::renderer::context::object &,
 		sge::font::text::char_type,
 		sge::font::pos const &,
 		sge::font::const_image_view const &);
 
 	void
-	end_rendering();
+	end_rendering(
+		sge::renderer::context::object &);
 
 	void
 	color(

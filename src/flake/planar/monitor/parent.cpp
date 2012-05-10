@@ -1,3 +1,8 @@
+#include <sge/renderer/cg/loaded_program.hpp>
+#include <sge/sprite/process/with_options.hpp>
+#include <sge/sprite/process/all.hpp>
+#include <sge/cg/parameter/vector/set.hpp>
+#include <sge/cg/program/from_file_parameters.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/arrow_vf/format.hpp>
@@ -8,12 +13,9 @@
 #include <sge/renderer/texture/filter/point.hpp>
 #include <sge/renderer/texture/filter/scoped.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
-#include <sge/shader/object_parameters.hpp>
-#include <sge/shader/vf_to_string.hpp>
 #include <sge/sprite/compare/default.hpp>
-#include <sge/sprite/intrusive/process/ordered.hpp>
-#include <sge/sprite/intrusive/process/ordered_with_options.hpp>
 #include <sge/sprite/process/default_geometry_options.hpp>
+#include <sge/sprite/intrusive/process/ordered.hpp>
 #include <sge/sprite/render/matrix_options.hpp>
 #include <sge/sprite/render/options.hpp>
 #include <sge/sprite/render/state_options.hpp>
@@ -31,6 +33,9 @@
 
 flake::planar::monitor::parent::parent(
 	sge::renderer::device &_renderer,
+	sge::cg::context::object &_cg_context,
+	flake::shader::vertex_profile const &_cg_vertex_profile,
+	flake::shader::pixel_profile const &_cg_pixel_profile,
 	sge::opencl::command_queue::object &_command_queue,
 	sge::font::metrics_shared_ptr const _font_metrics,
 	monitor::font_color const &_font_color)
@@ -47,29 +52,42 @@ flake::planar::monitor::parent::parent(
 	vd_(
 		renderer_.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format<arrow_vf::format>())),
-	arrow_shader_(
-		sge::shader::object_parameters(
-			renderer_,
-			*vd_,
-			sge::shader::vf_to_string<arrow_vf::format>(),
-			fcppt::assign::make_container<sge::shader::variable_sequence>
-				(sge::shader::variable(
-					"initial_position",
-					sge::shader::variable_type::uniform,
-					sge::renderer::vector2(10.0f,10.0f)))
-				((sge::shader::variable(
-					"projection",
-					sge::shader::variable_type::uniform,
-					sge::shader::matrix(
-						sge::renderer::matrix4(),
-						sge::shader::matrix_flags::projection)))),
-			sge::shader::sampler_sequence())
-			.vertex_shader(
-				flake::media_path_from_string(
-					FCPPT_TEXT("shaders/arrow/vertex.glsl")))
-			.fragment_shader(
-				flake::media_path_from_string(
-					FCPPT_TEXT("shaders/arrow/fragment.glsl")))),
+	arrow_vertex_program_(
+		sge::cg::program::from_file_parameters(
+			_cg_context,
+			sge::cg::program::source_type::text,
+			_cg_vertex_profile.get(),
+			flake::media_path_from_string(
+				FCPPT_TEXT("shaders/arrow.cg")),
+			sge::cg::program::main_function(
+				"vertex_main"),
+			_renderer.cg_compile_options(
+				_cg_context,
+				_cg_vertex_profile.get()))),
+	arrow_pixel_program_(
+		sge::cg::program::from_file_parameters(
+			_cg_context,
+			sge::cg::program::source_type::text,
+			_cg_pixel_profile.get(),
+			flake::media_path_from_string(
+				FCPPT_TEXT("shaders/arrow.cg")),
+			sge::cg::program::main_function(
+				"pixel_main"),
+			_renderer.cg_compile_options(
+				_cg_context,
+				_cg_pixel_profile.get()))),
+	loaded_arrow_vertex_program_(
+		renderer_.load_cg_program(
+			arrow_vertex_program_)),
+	loaded_arrow_pixel_program_(
+		renderer_.load_cg_program(
+			arrow_pixel_program_)),
+	arrow_initial_position_parameter_(
+		arrow_vertex_program_.parameter(
+			"initial_position")),
+	arrow_projection_parameter_(
+		arrow_vertex_program_.parameter(
+			"projection")),
 	sprite_system_(
 		renderer_,
 		sge::sprite::buffers::option::dynamic),
@@ -79,21 +97,43 @@ flake::planar::monitor::parent::parent(
 }
 
 sge::renderer::vertex_declaration const &
-flake::planar::monitor::parent::vertex_declaration() const
+flake::planar::monitor::parent::arrow_vertex_declaration() const
 {
 	return *vd_;
 }
 
 sge::opencl::context::object &
-flake::planar::monitor::parent::context() const
+flake::planar::monitor::parent::cl_context() const
 {
 	return command_queue_.context();
 }
 
-sge::shader::object &
-flake::planar::monitor::parent::arrow_shader()
+sge::renderer::cg::loaded_program &
+flake::planar::monitor::parent::loaded_arrow_vertex_program()
 {
-	return arrow_shader_;
+	return
+		*loaded_arrow_vertex_program_;
+}
+
+sge::renderer::cg::loaded_program &
+flake::planar::monitor::parent::loaded_arrow_pixel_program()
+{
+	return
+		*loaded_arrow_pixel_program_;
+}
+
+sge::cg::parameter::object &
+flake::planar::monitor::parent::arrow_projection_parameter()
+{
+	return
+		arrow_projection_parameter_;
+}
+
+sge::cg::parameter::object &
+flake::planar::monitor::parent::arrow_initial_position_parameter()
+{
+	return
+		arrow_initial_position_parameter_;
 }
 
 sge::renderer::device &
@@ -122,10 +162,11 @@ flake::planar::monitor::parent::font_drawer()
 
 void
 flake::planar::monitor::parent::render(
+	sge::renderer::context::object &_context,
 	monitor::optional_projection const &_projection)
 {
 	sge::renderer::texture::filter::scoped scoped_texture_filter(
-		renderer_,
+		_context,
 		sge::renderer::texture::stage(
 			0u),
 		sge::renderer::texture::filter::point());
@@ -138,19 +179,18 @@ flake::planar::monitor::parent::render(
 		projection_transform.take(
 			fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
 				fcppt::ref(
-					renderer_),
+					_context),
 				sge::renderer::matrix_mode::projection,
 				*_projection));
 
 		world_transform.take(
 			fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
 				fcppt::ref(
-					renderer_),
+					_context),
 				sge::renderer::matrix_mode::world,
 				sge::renderer::matrix4::identity()));
 
-
-		sge::sprite::intrusive::process::ordered_with_options
+		sge::sprite::process::with_options
 		<
 			sge::sprite::process::options
 			<
@@ -163,24 +203,27 @@ flake::planar::monitor::parent::render(
 				<
 					sge::sprite::render::matrix_options::nothing,
 					sge::sprite::render::state_options::set,
-					sge::sprite::render::vertex_options::declaration
+					sge::sprite::render::vertex_options::declaration_and_buffer
 				>
 			>
 		>(
-			sprite_collection_,
+			_context,
+			sprite_collection_.range(),
 			sprite_system_,
 			sge::sprite::compare::default_());
 	}
 	else
 	{
-		sge::sprite::intrusive::process::ordered(
-			sprite_collection_,
+		sge::sprite::process::all(
+			_context,
+			sprite_collection_.range(),
 			sprite_system_,
 			sge::sprite::compare::default_());
 	}
 
 	for(child_list::iterator it = children_.begin(); it != children_.end(); ++it)
 		it->render(
+			_context,
 			_projection);
 }
 

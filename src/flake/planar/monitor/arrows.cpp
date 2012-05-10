@@ -1,3 +1,9 @@
+#include <sge/renderer/context/object.hpp>
+#include <sge/renderer/vector2.hpp>
+#include <sge/renderer/target/onscreen.hpp>
+#include <sge/cg/parameter/matrix/set.hpp>
+#include <sge/cg/parameter/vector/set.hpp>
+#include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <flake/planar/monitor/arrows.hpp>
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/dummy_sprite/parameters.hpp>
@@ -11,24 +17,19 @@
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/first_index.hpp>
 #include <sge/renderer/nonindexed_primitive_type.hpp>
-#include <sge/renderer/onscreen_target.hpp>
+#include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/resource_flags.hpp>
 #include <sge/renderer/scoped_transform.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/size_type.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_count.hpp>
-#include <sge/renderer/viewport_size.hpp>
 #include <sge/renderer/projection/dim.hpp>
 #include <sge/renderer/projection/far.hpp>
 #include <sge/renderer/projection/near.hpp>
 #include <sge/renderer/projection/orthogonal_wh.hpp>
 #include <sge/renderer/vf/dynamic/part_index.hpp>
-#include <sge/shader/activate_everything.hpp>
-#include <sge/shader/matrix.hpp>
-#include <sge/shader/matrix_flags.hpp>
-#include <sge/shader/object.hpp>
-#include <sge/shader/scoped.hpp>
+#include <sge/renderer/cg/scoped_program.hpp>
 #include <sge/sprite/parameters.hpp>
 #include <sge/sprite/projection_matrix.hpp>
 #include <sge/texture/part_raw.hpp>
@@ -109,7 +110,7 @@ flake::planar::monitor::arrows::arrows(
 	position_(),
 	vb_(
 		child::parent().renderer().create_vertex_buffer(
-			child::parent().vertex_declaration(),
+			child::parent().arrow_vertex_declaration(),
 			sge::renderer::vf::dynamic::part_index(
 				0u),
 			sge::renderer::vertex_count(
@@ -118,7 +119,7 @@ flake::planar::monitor::arrows::arrows(
 			sge::renderer::resource_flags_field(
 				sge::renderer::resource_flags::readable))),
 	cl_vb_(
-		child::parent().context(),
+		child::parent().cl_context(),
 		*vb_,
 		sge::opencl::memory_object::renderer_buffer_lock_mode::write_only),
 	sprite_(),
@@ -208,12 +209,15 @@ flake::planar::monitor::arrows::name() const
 
 void
 flake::planar::monitor::arrows::render(
+	sge::renderer::context::object &_context,
 	monitor::optional_projection const &_projection)
 {
 	this->render_font(
+		_context,
 		_projection);
 
 	this->render_arrows(
+		_context,
 		_projection);
 }
 
@@ -244,10 +248,11 @@ flake::planar::monitor::arrows::~arrows()
 
 void
 flake::planar::monitor::arrows::render_font(
+	sge::renderer::context::object &_context,
 	monitor::optional_projection const &_projection)
 {
 	sge::renderer::scoped_transform world_transform(
-		child::parent().renderer(),
+		_context,
 		sge::renderer::matrix_mode::world,
 		sge::renderer::matrix4::identity());
 
@@ -256,7 +261,7 @@ flake::planar::monitor::arrows::render_font(
 	projection_transform.take(
 		fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
 			fcppt::ref(
-				child::parent().renderer()),
+				_context),
 			sge::renderer::matrix_mode::projection,
 			_projection
 			?
@@ -266,6 +271,7 @@ flake::planar::monitor::arrows::render_font(
 					child::parent().renderer().onscreen_target().viewport())));
 
 	sge::font::text::draw(
+		_context,
 		child::parent().font_metrics(),
 		child::parent().font_drawer(),
 		sge::font::text::from_fcppt_string(
@@ -282,38 +288,43 @@ flake::planar::monitor::arrows::render_font(
 
 void
 flake::planar::monitor::arrows::render_arrows(
+	sge::renderer::context::object &_context,
 	monitor::optional_projection const &_projection)
 {
-	// Activate the shader and the vertex declaration
-	sge::shader::scoped scoped_shader(
-		child::parent().arrow_shader(),
-		sge::shader::activate_everything());
+	sge::renderer::cg::scoped_program scoped_vertex_program(
+		_context,
+		child::parent().loaded_arrow_vertex_program());
+
+	sge::renderer::cg::scoped_program scoped_pixel_program(
+		_context,
+		child::parent().loaded_arrow_pixel_program());
+
+	sge::renderer::scoped_vertex_declaration scoped_vertex_declaration(
+		_context,
+		child::parent().arrow_vertex_declaration());
 
 	sge::renderer::scoped_vertex_buffer scoped_vb(
-		child::parent().renderer(),
+		_context,
 		*vb_);
 
-	child::parent().arrow_shader().update_uniform(
-		"projection",
-		sge::shader::matrix(
-			_projection.has_value()
-			?
-				*_projection
-			:
-				sge::renderer::projection::orthogonal_wh(
-					fcppt::math::dim::structure_cast<sge::renderer::projection::dim>(
-							sge::renderer::viewport_size(
-								child::parent().renderer())),
-					sge::renderer::projection::near(0.0f),
-					sge::renderer::projection::far(10.0f)),
-			sge::shader::matrix_flags::projection));
+	sge::cg::parameter::matrix::set(
+		child::parent().arrow_projection_parameter(),
+		_projection.has_value()
+		?
+			*_projection
+		:
+			sge::renderer::projection::orthogonal_wh(
+				fcppt::math::dim::structure_cast<sge::renderer::projection::dim>(
+					child::parent().renderer().onscreen_target().viewport().get().size()),
+				sge::renderer::projection::near(0.0f),
+				sge::renderer::projection::far(10.0f)));
 
-	child::parent().arrow_shader().update_uniform(
-		"initial_position",
+	sge::cg::parameter::vector::set(
+		child::parent().arrow_initial_position_parameter(),
 		fcppt::math::vector::structure_cast<sge::renderer::vector2>(
 			sprite_box_.position()));
 
-	child::parent().renderer().render_nonindexed(
+	_context.render_nonindexed(
 		sge::renderer::first_vertex(
 			0u),
 		sge::renderer::vertex_count(

@@ -48,6 +48,7 @@ public:
 
 	void
 	render(
+		sge::renderer::context::object &,
 		monitor::optional_projection const &);
 
 	void

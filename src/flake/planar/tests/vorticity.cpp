@@ -1,3 +1,4 @@
+#include <sge/renderer/context/object.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/media_path.hpp>
 #include <flake/media_path_from_string.hpp>
@@ -21,7 +22,7 @@
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
-#include <sge/renderer/onscreen_target.hpp>
+#include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/clear/parameters.hpp>
 #include <sge/renderer/texture/create_planar_from_view.hpp>
@@ -139,6 +140,9 @@ flake::planar::tests::vorticity::vorticity(
 				sge::renderer::resource_flags::none))),
 	monitor_parent_(
 		this->renderer(),
+		this->cg_context(),
+		this->cg_vertex_profile(),
+		this->cg_pixel_profile(),
 		this->opencl_system().command_queue(),
 		sge::font::metrics_shared_ptr(
 			this->font_system().create_font(
@@ -381,20 +385,23 @@ flake::planar::tests::vorticity::~vorticity()
 }
 
 void
-flake::planar::tests::vorticity::render()
+flake::planar::tests::vorticity::render(
+	sge::renderer::context::object &_context)
 {
-	this->renderer().onscreen_target().clear(
+	_context.clear(
 		sge::renderer::clear::parameters()
 			.back_buffer(
 				sge::image::colors::grey()));
 
 	monitor_parent_.render(
+		_context,
 		monitor::optional_projection(
 			sge::camera::matrix_conversion::world_projection(
 				freelook_camera_.coordinate_system(),
 				freelook_camera_.projection_matrix())));
 
-	test::base::render();
+	test::base::render(
+		_context);
 }
 
 void

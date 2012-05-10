@@ -8,11 +8,20 @@
 #include <flake/planar/monitor/font_color.hpp>
 #include <flake/planar/monitor/grid_dimensions.hpp>
 #include <flake/planar/monitor/grid_scale.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
 #include <flake/planar/monitor/optional_projection.hpp>
 #include <flake/planar/monitor/scaling_factor.hpp>
 #include <flake/planar/monitor/dummy_sprite/collection.hpp>
 #include <flake/planar/monitor/dummy_sprite/system.hpp>
+#include <flake/shader/vertex_profile.hpp>
+#include <flake/shader/pixel_profile.hpp>
 #include <sge/font/metrics_shared_ptr.hpp>
+#include <sge/cg/context/object_fwd.hpp>
+#include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
+#include <sge/cg/parameter/object.hpp>
+#include <sge/cg/parameter/object_fwd.hpp>
+#include <sge/cg/profile/object_fwd.hpp>
+#include <sge/cg/program/object.hpp>
 #include <sge/image/color/any/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
@@ -22,7 +31,6 @@
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
-#include <sge/shader/object.hpp>
 #include <fcppt/noncopyable.hpp>
 
 
@@ -54,18 +62,30 @@ FCPPT_NONCOPYABLE(
 public:
 	parent(
 		sge::renderer::device &,
+		sge::cg::context::object &,
+		flake::shader::vertex_profile const &,
+		flake::shader::pixel_profile const &,
 		sge::opencl::command_queue::object &,
 		sge::font::metrics_shared_ptr,
 		monitor::font_color const &);
 
 	sge::renderer::vertex_declaration const &
-	vertex_declaration() const;
+	arrow_vertex_declaration() const;
 
 	sge::opencl::context::object &
-	context() const;
+	cl_context() const;
 
-	sge::shader::object &
-	arrow_shader();
+	sge::renderer::cg::loaded_program &
+	loaded_arrow_vertex_program();
+
+	sge::renderer::cg::loaded_program &
+	loaded_arrow_pixel_program();
+
+	sge::cg::parameter::object &
+	arrow_projection_parameter();
+
+	sge::cg::parameter::object &
+	arrow_initial_position_parameter();
 
 	sge::renderer::device &
 	renderer() const;
@@ -81,6 +101,7 @@ public:
 
 	void
 	render(
+		sge::renderer::context::object &,
 		monitor::optional_projection const &);
 
 	void
@@ -95,7 +116,14 @@ private:
 	sge::font::metrics_shared_ptr font_metrics_;
 	flake::sprite_drawer_3d font_drawer_;
 	sge::renderer::vertex_declaration_scoped_ptr vd_;
-	sge::shader::object arrow_shader_;
+
+	sge::cg::program::object arrow_vertex_program_;
+	sge::cg::program::object arrow_pixel_program_;
+	sge::renderer::cg::loaded_program_scoped_ptr loaded_arrow_vertex_program_;
+	sge::renderer::cg::loaded_program_scoped_ptr loaded_arrow_pixel_program_;
+	sge::cg::parameter::object arrow_initial_position_parameter_;
+	sge::cg::parameter::object arrow_projection_parameter_;
+
 	monitor::dummy_sprite::system sprite_system_;
 	monitor::dummy_sprite::collection sprite_collection_;
 	monitor::child_list children_;

@@ -26,7 +26,11 @@
 #include <sge/systems/cursor_option_field.hpp>
 #include <sge/systems/instance_fwd.hpp>
 #include <sge/viewport/manager_fwd.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
 #include <sge/window/title.hpp>
+#include <sge/cg/context/object_fwd.hpp>
+#include <flake/shader/vertex_profile.hpp>
+#include <flake/shader/pixel_profile.hpp>
 #include <awl/main/exit_code.hpp>
 #include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -60,13 +64,23 @@ protected:
 	update() = 0;
 
 	virtual void
-	render() = 0;
+	render(
+		sge::renderer::context::object &) = 0;
 
 	sge::parse::json::object const &
 	configuration() const;
 
 	sge::renderer::device &
 	renderer();
+
+	sge::cg::context::object &
+	cg_context();
+
+	flake::shader::vertex_profile
+	cg_vertex_profile();
+
+	flake::shader::pixel_profile
+	cg_pixel_profile();
 
 	sge::opencl::single_device_system::object &
 	opencl_system();
@@ -117,6 +131,9 @@ private:
 	sge::parse::json::object const local_configuration_;
 	test::feature_sequence features_;
 	fcppt::scoped_ptr<sge::systems::instance> systems_;
+	fcppt::scoped_ptr<sge::cg::context::object> cg_context_;
+	fcppt::scoped_ptr<sge::cg::profile::object> cg_vertex_profile_;
+	fcppt::scoped_ptr<sge::cg::profile::object> cg_pixel_profile_;
 	fcppt::scoped_ptr<sge::opencl::single_device_system::object> opencl_system_;
 	fcppt::scoped_ptr<flakelib::cl::program_context> program_context_;
 	fcppt::scoped_ptr<flakelib::buffer_pool::object> buffer_pool_;

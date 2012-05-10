@@ -1,3 +1,8 @@
+#include <sge/cg/profile/object.hpp>
+#include <sge/cg/context/object.hpp>
+#include <sge/renderer/context/scoped.hpp>
+#include <sge/renderer/target/onscreen.hpp>
+#include <sge/renderer/device.hpp>
 #include <flake/font_metrics_cache.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/notifications/object.hpp>
@@ -26,11 +31,8 @@
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/parse_string_exn.hpp>
 #include <sge/parse/json/string_to_path.hpp>
-#include <sge/renderer/active_target.hpp>
 #include <sge/renderer/no_multi_sampling.hpp>
 #include <sge/renderer/parameters.hpp>
-#include <sge/renderer/scoped_block.hpp>
-#include <sge/renderer/target_base.hpp>
 #include <sge/systems/font.hpp>
 #include <sge/systems/image2d.hpp>
 #include <sge/systems/input.hpp>
@@ -96,12 +98,14 @@ flake::test::base::run()
 
 		this->update();
 
-		if(sge::renderer::active_target(this->renderer()).viewport().get().content())
+		if(this->renderer().onscreen_target().viewport().get().content())
 		{
-			sge::renderer::scoped_block scoped_render_block(
-				systems_->renderer());
+			sge::renderer::context::scoped scoped_context(
+				this->renderer(),
+				this->renderer().onscreen_target());
 
-			this->render();
+			this->render(
+				scoped_context.get());
 		}
 	}
 
@@ -171,6 +175,14 @@ flake::test::base::base(
 								| sge::systems::input_helper::cursor_demuxer
 								| sge::systems::input_helper::mouse_collector,
 							_cursor_options))))),
+	cg_context_(
+		fcppt::make_unique_ptr<sge::cg::context::object>()),
+	cg_vertex_profile_(
+		this->renderer().create_cg_profile(
+			sge::cg::profile::shader_type::vertex)),
+	cg_pixel_profile_(
+		this->renderer().create_cg_profile(
+			sge::cg::profile::shader_type::pixel)),
 	opencl_system_(
 		fcppt::make_unique_ptr<sge::opencl::single_device_system::object>(
 			fcppt::cref(
@@ -285,10 +297,13 @@ flake::test::base::update()
 }
 
 void
-flake::test::base::render()
+flake::test::base::render(
+	sge::renderer::context::object &_context)
 {
-	notifications_->render();
-	information_manager_->render();
+	notifications_->render(
+		_context);
+	information_manager_->render(
+		_context);
 }
 
 sge::parse::json::object const &
@@ -303,6 +318,29 @@ flake::test::base::renderer()
 {
 	return
 		systems_->renderer();
+}
+
+sge::cg::context::object &
+flake::test::base::cg_context()
+{
+	return
+		*cg_context_;
+}
+
+flake::shader::vertex_profile
+flake::test::base::cg_vertex_profile()
+{
+	return
+		flake::shader::vertex_profile(
+			*cg_vertex_profile_);
+}
+
+flake::shader::pixel_profile
+flake::test::base::cg_pixel_profile()
+{
+	return
+		flake::shader::pixel_profile(
+			*cg_pixel_profile_);
 }
 
 sge::opencl::single_device_system::object &

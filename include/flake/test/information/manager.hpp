@@ -5,6 +5,7 @@
 #include <sge/font/metrics_fwd.hpp>
 #include <sge/font/text/drawer_3d.hpp>
 #include <sge/image/color/any/object_fwd.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -30,7 +31,8 @@ public:
 		sge::image::color::any::object const &);
 
 	void
-	render();
+	render(
+		sge::renderer::context::object &);
 
 	~manager();
 private:

@@ -9,7 +9,7 @@
 #include <sge/font/text/size.hpp>
 #include <sge/opencl/memory_object/flags_field.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/onscreen_target.hpp>
+#include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/scoped_transform.hpp>
 #include <sge/renderer/texture/planar.hpp>
@@ -21,7 +21,6 @@
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
-#include <fcppt/scoped_ptr.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
@@ -100,7 +99,7 @@ flake::planar::monitor::texture::texture(
 					sge::renderer::resource_flags::none),
 				sge::renderer::texture::capabilities_field::null()))),
 	cl_texture_(
-		child::parent().context(),
+		child::parent().cl_context(),
 		sge::opencl::memory_object::flags_field(
 			sge::opencl::memory_object::flags::write),
 		*renderer_texture_),
@@ -171,28 +170,26 @@ flake::planar::monitor::texture::scaling_factor() const
 
 void
 flake::planar::monitor::texture::render(
+	sge::renderer::context::object &_context,
 	monitor::optional_projection const &_projection)
 {
 	sge::renderer::scoped_transform world_transform(
-		child::parent().renderer(),
+		_context,
 		sge::renderer::matrix_mode::world,
 		sge::renderer::matrix4::identity());
 
-	fcppt::scoped_ptr<sge::renderer::scoped_transform> projection_transform;
-
-	projection_transform.take(
-		fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
-			fcppt::ref(
-				child::parent().renderer()),
-			sge::renderer::matrix_mode::projection,
-			_projection
-			?
-				*_projection
-			:
-				sge::sprite::projection_matrix(
-					child::parent().renderer().onscreen_target().viewport())));
+	sge::renderer::scoped_transform projection_transform(
+		_context,
+		sge::renderer::matrix_mode::projection,
+		_projection
+		?
+			*_projection
+		:
+			sge::sprite::projection_matrix(
+				child::parent().renderer().onscreen_target().viewport()));
 
 	sge::font::text::draw(
+		_context,
 		child::parent().font_metrics(),
 		child::parent().font_drawer(),
 		sge::font::text::from_fcppt_string(

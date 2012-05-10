@@ -1,3 +1,4 @@
+#include <sge/renderer/target/onscreen.hpp>
 #include <flake/notifications/object.hpp>
 #include <sge/font/metrics.hpp>
 #include <sge/font/rect.hpp>
@@ -10,7 +11,6 @@
 #include <sge/image/color/init.hpp>
 #include <sge/image/color/rgba8.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/onscreen_target.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters_impl.hpp>
 #include <fcppt/make_unique_ptr.hpp>
@@ -81,7 +81,8 @@ flake::notifications::object::update()
 }
 
 void
-flake::notifications::object::render()
+flake::notifications::object::render(
+	sge::renderer::context::object &_context)
 {
 	// When drawing a font, we have to specify a rectangle to draw into.
 	// Since we're not getting such a rectangle in the constructor (which
@@ -94,8 +95,8 @@ flake::notifications::object::render()
 		5;
 
 	sge::font::rect const viewport_rect(
-			fcppt::math::box::structure_cast<sge::font::rect>(
-				renderer_.onscreen_target().viewport().get()));
+		fcppt::math::box::structure_cast<sge::font::rect>(
+			renderer_.onscreen_target().viewport().get()));
 
 	sge::font::rect current_font_rect(
 		sge::font::pos(
@@ -128,6 +129,7 @@ flake::notifications::object::render()
 			font_color);
 
 		sge::font::text::draw(
+			_context,
 			font_metrics_,
 			*font_drawer_,
 			sge::font::text::from_fcppt_string(
