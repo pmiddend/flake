@@ -3,7 +3,7 @@
 #include <sge/image2d/dim.hpp>
 #include <sge/image2d/view/size.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/caps/object.hpp>
+#include <sge/renderer/caps/device.hpp>
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/sprite/object_impl.hpp>
