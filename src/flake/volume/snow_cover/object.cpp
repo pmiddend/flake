@@ -1,10 +1,11 @@
 #include <sge/renderer/texture/planar.hpp>
+#include <flake/shader/load_edited_string.hpp>
 #include <sge/renderer/cg/loaded_texture.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/volume/snow_cover/object.hpp>
 #include <sge/cg/parameter/scalar/set.hpp>
 #include <sge/cg/parameter/vector/set.hpp>
-#include <sge/cg/program/from_file_parameters.hpp>
+#include <sge/cg/program/from_string_parameters.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/cg/loaded_program.hpp>
 
@@ -15,6 +16,7 @@ flake::volume::snow_cover::object::object(
 	sge::cg::context::object &_cg_context,
 	flake::shader::vertex_profile const &_cg_vertex_profile,
 	flake::shader::pixel_profile const &_cg_pixel_profile,
+	sge::renderer::vertex_declaration &_vertex_declaration,
 	flake::volume::snow_cover::texture_repeats const &_texture_repeats,
 	flake::volume::snow_cover::steep_texture const &_steep_texture,
 	flake::volume::snow_cover::flat_texture const &_flat_texture,
@@ -23,24 +25,30 @@ flake::volume::snow_cover::object::object(
 	camera_(
 		_camera),
 	vertex_program_(
-		sge::cg::program::from_file_parameters(
+		sge::cg::program::from_string_parameters(
 			_cg_context,
 			sge::cg::program::source_type::text,
 			_cg_vertex_profile.get(),
-			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/snow_cover.cg")),
+			flake::shader::load_edited_string(
+				_renderer,
+				_vertex_declaration,
+				flake::media_path_from_string(
+					FCPPT_TEXT("shaders/snow_cover.cg"))),
 			sge::cg::program::main_function(
 				"vertex_main"),
 			_renderer.cg_compile_options(
 				_cg_context,
 				_cg_vertex_profile.get()))),
 	pixel_program_(
-		sge::cg::program::from_file_parameters(
+		sge::cg::program::from_string_parameters(
 			_cg_context,
 			sge::cg::program::source_type::text,
 			_cg_pixel_profile.get(),
-			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/snow_cover.cg")),
+			flake::shader::load_edited_string(
+				_renderer,
+				_vertex_declaration,
+				flake::media_path_from_string(
+					FCPPT_TEXT("shaders/snow_cover.cg"))),
 			sge::cg::program::main_function(
 				"pixel_main"),
 			_renderer.cg_compile_options(

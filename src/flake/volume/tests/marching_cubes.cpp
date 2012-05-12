@@ -1,3 +1,5 @@
+#include <flake/volume/snow_cover/scoped.hpp>
+#include <sge/renderer/context/object.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/volume/tests/marching_cubes.hpp>
@@ -17,7 +19,6 @@
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/onscreen_target.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/clear/parameters.hpp>
 #include <sge/renderer/state/color.hpp>
@@ -35,12 +36,6 @@
 #include <sge/renderer/texture/filter/scoped.hpp>
 #include <sge/renderer/texture/filter/trilinear.hpp>
 #include <sge/renderer/texture/mipmap/all_levels.hpp>
-#include <sge/shader/activate_bare.hpp>
-#include <sge/shader/activate_everything.hpp>
-#include <sge/shader/object_parameters.hpp>
-#include <sge/shader/scoped.hpp>
-#include <sge/shader/update_single_uniform.hpp>
-#include <sge/shader/vf_to_string.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters.hpp>
 #include <fcppt/make_unique_ptr.hpp>
@@ -149,65 +144,53 @@ flake::volume::tests::marching_cubes::marching_cubes(
 		scan_,
 		gradient_,
 		this->program_context()),
-	shader_(
-		sge::shader::object_parameters(
-			this->renderer(),
-			marching_cubes_manager_.vertex_declaration(),
-			sge::shader::vf_to_string<flakelib::marching_cubes::vf::format>(),
-			fcppt::assign::make_container<sge::shader::variable_sequence>
-				(sge::shader::variable(
-					"mvp",
-					sge::shader::variable_type::uniform,
-					sge::shader::matrix(
-						sge::renderer::matrix4::identity(),
-						sge::shader::matrix_flags::projection)))
-				(sge::shader::variable(
-					"texture_repeats",
-					sge::shader::variable_type::constant,
-					sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
-						this->configuration(),
-						sge::parse::json::string_to_path(
-							FCPPT_TEXT("snow-texture-repeats")))))
-				(sge::shader::variable(
-					"sun_direction",
-					sge::shader::variable_type::constant,
-					sge::renderer::vector3(
-						0.8804509f,
-						0.17609018f,
-						0.440225453f))),
-			fcppt::assign::make_container<sge::shader::sampler_sequence>
-				(sge::shader::sampler(
-					"snow_rough",
-					sge::shader::texture_variant(
-						sge::renderer::texture::planar_shared_ptr(
-							sge::renderer::texture::create_planar_from_path(
-								flake::media_path_from_string(
-									FCPPT_TEXT("textures/snow_rough.png")),
-								this->renderer(),
-								this->image_system(),
-								sge::renderer::texture::mipmap::all_levels(
-									sge::renderer::texture::mipmap::auto_generate::yes),
-								sge::renderer::resource_flags::none)))))
-				(sge::shader::sampler(
-					"snow_calm",
-					sge::shader::texture_variant(
-						sge::renderer::texture::planar_shared_ptr(
-							sge::renderer::texture::create_planar_from_path(
-								flake::media_path_from_string(
-									FCPPT_TEXT("textures/snow_calm.png")),
-								this->renderer(),
-								this->image_system(),
-								sge::renderer::texture::mipmap::all_levels(
-									sge::renderer::texture::mipmap::auto_generate::yes),
-								sge::renderer::resource_flags::none))))))
-			.vertex_shader(
-				flake::media_path_from_string(
-					FCPPT_TEXT("shaders/marching_cubes/vertex.glsl")))
-			.fragment_shader(
-				flake::media_path_from_string(
-					FCPPT_TEXT("shaders/marching_cubes/fragment.glsl")))
-			.name(
-				FCPPT_TEXT("Marching cubes"))),
+	snow_cover_(
+		camera_,
+		this->renderer(),
+		this->cg_context(),
+		this->cg_vertex_profile(),
+		this->cg_pixel_profile(),
+		marching_cubes_manager_.vertex_declaration(),
+		flake::volume::snow_cover::texture_repeats(
+			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("snow-cover/texture-repeats")))),
+		flake::volume::snow_cover::steep_texture(
+			sge::renderer::texture::planar_shared_ptr(
+				sge::renderer::texture::create_planar_from_path(
+					flake::media_path_from_string(
+						FCPPT_TEXT("textures/")+
+						sge::parse::json::find_and_convert_member<fcppt::string>(
+							this->configuration(),
+							sge::parse::json::string_to_path(
+								FCPPT_TEXT("snow-cover/steep-texture")))+
+						FCPPT_TEXT(".png")),
+					this->renderer(),
+					this->image_system(),
+					sge::renderer::texture::mipmap::all_levels(
+						sge::renderer::texture::mipmap::auto_generate::yes),
+					sge::renderer::resource_flags::none))),
+		flake::volume::snow_cover::flat_texture(
+			sge::renderer::texture::planar_shared_ptr(
+				sge::renderer::texture::create_planar_from_path(
+					flake::media_path_from_string(
+						FCPPT_TEXT("textures/")+
+						sge::parse::json::find_and_convert_member<fcppt::string>(
+							this->configuration(),
+							sge::parse::json::string_to_path(
+								FCPPT_TEXT("snow-cover/flat-texture")))+
+						FCPPT_TEXT(".png")),
+					this->renderer(),
+					this->image_system(),
+					sge::renderer::texture::mipmap::all_levels(
+						sge::renderer::texture::mipmap::auto_generate::yes),
+					sge::renderer::resource_flags::none))),
+		flake::volume::snow_cover::sun_direction(
+			sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("sun-direction"))))),
 	marching_cubes_(
 		this->buffer_pool(),
 		marching_cubes_manager_,
@@ -270,10 +253,11 @@ flake::volume::tests::marching_cubes::~marching_cubes()
 }
 
 void
-flake::volume::tests::marching_cubes::render()
+flake::volume::tests::marching_cubes::render(
+	sge::renderer::context::object &_context)
 {
 	sge::renderer::state::scoped scoped_state(
-		this->renderer(),
+		_context,
 		sge::renderer::state::list
 			(this->feature_active(test::json_identifier(FCPPT_TEXT("wireframe")))
 			?
@@ -281,7 +265,7 @@ flake::volume::tests::marching_cubes::render()
 			:
 				sge::renderer::state::draw_mode::fill));
 
-	this->renderer().onscreen_target().clear(
+	_context.clear(
 		sge::renderer::clear::parameters()
 			.back_buffer(
 				sge::image::colors::black())
@@ -289,47 +273,15 @@ flake::volume::tests::marching_cubes::render()
 				sge::renderer::clear::depth_buffer_value(
 					1.0f)));
 
-	sge::shader::scoped scoped_shader(
-		shader_,
-		sge::shader::activate_everything());
+	flake::volume::snow_cover::scoped scoped_snow_cover(
+		snow_cover_,
+		_context);
 
-	shader_.update_uniform(
-		"mvp",
-		sge::shader::matrix(
-			sge::camera::matrix_conversion::world_projection(
-				camera_.coordinate_system(),
-				camera_.projection_matrix()),
-			sge::shader::matrix_flags::projection));
+	marching_cubes_manager_.render(
+		_context);
 
-	sge::renderer::texture::set_address_mode2(
-		this->renderer(),
-		sge::renderer::texture::stage(
-			0u),
-		sge::renderer::texture::address_mode2(
-			sge::renderer::texture::address_mode::repeat));
-
-	sge::renderer::texture::set_address_mode2(
-		this->renderer(),
-		sge::renderer::texture::stage(
-			1u),
-		sge::renderer::texture::address_mode2(
-			sge::renderer::texture::address_mode::repeat));
-
-	sge::renderer::texture::filter::scoped scoped_texture_filter0(
-		this->renderer(),
-		sge::renderer::texture::stage(
-			0u),
-		sge::renderer::texture::filter::linear());
-
-	sge::renderer::texture::filter::scoped scoped_texture_filter1(
-		this->renderer(),
-		sge::renderer::texture::stage(
-			1u),
-		sge::renderer::texture::filter::linear());
-
-	marching_cubes_manager_.render();
-
-	test::base::render();
+	test::base::render(
+		_context);
 }
 
 void

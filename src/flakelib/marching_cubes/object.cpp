@@ -1,3 +1,4 @@
+#include <sge/renderer/context/object.hpp>
 #include <flakelib/buffer/volume_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <flakelib/marching_cubes/manager.hpp>
@@ -213,7 +214,8 @@ flakelib::marching_cubes::object::~object()
 }
 
 void
-flakelib::marching_cubes::object::render()
+flakelib::marching_cubes::object::render(
+	sge::renderer::context::object &_context)
 {
 	if(!positions_buffer_)
 		return;
@@ -226,16 +228,16 @@ flakelib::marching_cubes::object::render()
 
 	sge::renderer::scoped_vertex_buffer
 		scoped_positions(
-			manager_.renderer_,
+			_context,
 			*positions_buffer_),
 		scoped_normals(
-			manager_.renderer_,
+			_context,
 			*normals_buffer_);
 
 	FCPPT_ASSERT_PRE(
 		vertex_count_.get() % 3 == 0);
 
-	manager_.renderer_.render_nonindexed(
+	_context.render_nonindexed(
 		sge::renderer::first_vertex(
 			0u),
 		sge::renderer::vertex_count(

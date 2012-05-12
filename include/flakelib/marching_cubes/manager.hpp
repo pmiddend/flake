@@ -22,6 +22,7 @@
 #include <flakelib/marching_cubes/voxel_occupation_view.hpp>
 #include <flakelib/scan/object_fwd.hpp>
 #include <flakelib/volume/gradient_fwd.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
@@ -52,7 +53,8 @@ public:
 
 	FLAKELIB_SYMBOL
 	void
-	render();
+	render(
+		sge::renderer::context::object &);
 
 	FLAKELIB_SYMBOL
 	sge::renderer::vertex_declaration &

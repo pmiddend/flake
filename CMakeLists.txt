@@ -151,9 +151,9 @@ set(
 	src/flakelib/log_context.cpp
 	src/flakelib/log_location.cpp
 	src/flakelib/log_parameters.cpp
-	#src/flakelib/marching_cubes/manager.cpp
-	#src/flakelib/marching_cubes/object.cpp
-	#src/flakelib/marching_cubes/scan.cpp
+	src/flakelib/marching_cubes/manager.cpp
+	src/flakelib/marching_cubes/object.cpp
+	src/flakelib/marching_cubes/scan.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
 	src/flakelib/planar/simulation/stam/buissnesq/object.cpp
@@ -404,36 +404,13 @@ install(
 # buoyancy end
 #
 # flakes begin
-awl_utils_add_portable_executable(
-	tests_flakes
-	"custom_main"
-	src/flake/volume/tests/flakes.cpp)
-
-target_link_libraries(
-	tests_flakes
-	flakelib
-	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${Awl_LIBRARIES}
-	${SGE_LIBRARIES}
-	${Boost_LIBRARIES})
-
-install(
-	TARGETS
-	tests_flakes
-	DESTINATION
-	${INSTALL_BINARY_DIR})
-# flakes end
-#
-## marching_cubes begin
 #awl_utils_add_portable_executable(
-#	tests_marching_cubes
+#	tests_flakes
 #	"custom_main"
-#	src/flake/volume/tests/marching_cubes.cpp)
+#	src/flake/volume/tests/flakes.cpp)
 #
 #target_link_libraries(
-#	tests_marching_cubes
+#	tests_flakes
 #	flakelib
 #	flake_helper_library
 #	${Fcppt_core_LIBRARIES}
@@ -444,9 +421,32 @@ install(
 #
 #install(
 #	TARGETS
-#	tests_marching_cubes
+#	tests_flakes
 #	DESTINATION
 #	${INSTALL_BINARY_DIR})
+# flakes end
+#
+## marching_cubes begin
+awl_utils_add_portable_executable(
+	tests_marching_cubes
+	"custom_main"
+	src/flake/volume/tests/marching_cubes.cpp)
+
+target_link_libraries(
+	tests_marching_cubes
+	flakelib
+	flake_helper_library
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
+	${Awl_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Boost_LIBRARIES})
+
+install(
+	TARGETS
+	tests_marching_cubes
+	DESTINATION
+	${INSTALL_BINARY_DIR})
 ## marching_cubes end
 #
 ## density_visualization begin

@@ -13,6 +13,7 @@
 #include <sge/cg/parameter/named.hpp>
 #include <sge/cg/program/object.hpp>
 #include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
 #include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -35,6 +36,7 @@ public:
 		sge::cg::context::object &,
 		flake::shader::vertex_profile const &,
 		flake::shader::pixel_profile const &,
+		sge::renderer::vertex_declaration &,
 		flake::volume::snow_cover::texture_repeats const &,
 		flake::volume::snow_cover::steep_texture const &,
 		flake::volume::snow_cover::flat_texture const &,

@@ -8,7 +8,7 @@ struct vertex_outputs
 vertex_outputs
 vertex_main(
 	in float4 position : POSITION,
-	in float4 normal : NORMAL,
+	in float4 normal : $0$,
 	uniform float4x4 mvp)
 {
 	vertex_outputs outs;
@@ -31,27 +31,15 @@ vertex_main(
 		outs;
 }
 
-float4
-pixel_main(
-	vertex_outputs vertex_data,
-	uniform float3 sun_direction,
-	uniform float texture_repeats,
-	uniform sampler2D steep_texture,
-	uniform sampler2D flat_texture)
-	: COLOR
+float3
+calculate_blend_weights(
+	float3 normal_vector)
 {
-	// NOTE: Is already normalized.
-	float3 normal_vector =
-		-vertex_data.normal;
-
 	float3
 		blend_weights =
-			(abs(normal_vector) - 0.2) * 7.0;
-
-	blend_weights =
-		max(
-			blend_weights,
-			0.0);
+			max(
+				(abs(normal_vector) - 0.2) * 7.0,
+				0.0);
 
 	float blend_sum =
 		blend_weights.x + blend_weights.y + blend_weights.z;
@@ -59,16 +47,27 @@ pixel_main(
 	blend_weights /=
 		blend_sum.xxx;
 
+	return
+		blend_weights;
+}
+
+float4
+calculate_blended_color(
+	float3 blend_weights,
+	float3 world_position,
+	uniform sampler2D steep_texture,
+	uniform sampler2D flat_texture)
+{
 	const float repeats =
 		1.0/4.0;
 
 	float2
 		coord1 =
-			vertex_data.world_position.yz * repeats,
+			world_position.yz * repeats,
 		coord2 =
-			vertex_data.world_position.zx * repeats,
+			world_position.zx * repeats,
 		coord3 =
-			vertex_data.world_position.xy * repeats;
+			world_position.xy * repeats;
 
 	float4
 		col1 =
@@ -84,36 +83,58 @@ pixel_main(
 				steep_texture,
 				coord3);
 
-	float4 blended_color =
+	return
 		col1 * blend_weights.x +
 		col2 * blend_weights.y +
 		col3 * blend_weights.z;
+}
+
+float
+calculate_light_intensity(
+	float3 normal_vector,
+	float3 sun_direction)
+{
+	const float ambient =
+		0.5;
 
 	return
-		blended_color;
-	/*
-	float
-		ambient =
-			0.5,
-		intensity =
-			ambient +
-			max(
-				0.0,
-				dot(
-					normal_vector,
-					-sun_direction));
-					*/
+		ambient +
+		max(
+			0.0,
+			dot(
+				normal_vector,
+				-sun_direction));
+}
 
-	/*
-	float4 snow_value =
-		texture(
-			snow_volume_texture,
-			texture_repeats * normalized_position);
+float4
+pixel_main(
+	vertex_outputs vertex_data,
+	uniform float3 sun_direction,
+	uniform float texture_repeats,
+	uniform sampler2D steep_texture,
+	uniform sampler2D flat_texture)
+	: COLOR
+{
+	// NOTE: Is already normalized.
+	float3 normal_vector =
+		-vertex_data.normal;
 
-	frag_color =
-		intensity *
+	float4
+		blended_color =
+			calculate_blended_color(
+				calculate_blend_weights(
+					normal_vector),
+				vertex_data.world_position,
+				steep_texture,
+				flat_texture);
+
+	float intensity =
+		calculate_light_intensity(
+			normal_vector,
+			sun_direction);
+
+	return
 		float4(
-			snow_value.xyz,
+			intensity * blended_color.xyz,
 			1.0);
-			*/
 }

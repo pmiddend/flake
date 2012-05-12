@@ -125,16 +125,17 @@ flakelib::marching_cubes::manager::manager(
 }
 
 void
-flakelib::marching_cubes::manager::render()
+flakelib::marching_cubes::manager::render(
+	sge::renderer::context::object &_context)
 {
 	sge::renderer::state::scoped scoped_state(
-		renderer_,
+		_context,
 		sge::renderer::state::list
 			(sge::renderer::state::depth_func::less)
 			(sge::renderer::state::cull_mode::off));
 
 	sge::renderer::scoped_vertex_declaration scoped_vertex_declaration(
-		renderer_,
+		_context,
 		*vertex_declaration_);
 
 	for(
@@ -142,7 +143,8 @@ flakelib::marching_cubes::manager::render()
 			children_.begin();
 		it != children_.end();
 		++it)
-		it->render();
+		it->render(
+			_context);
 }
 
 sge::renderer::vertex_declaration &

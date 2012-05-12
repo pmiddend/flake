@@ -54,7 +54,14 @@
 			"near-plane" : 0.1,
 			"iso-level" : 0.2,
 			"far-plane" : 1000.0,
+			"sun-direction" : [0.8804509,0.17609018,0.440225453],
 			"fov" : 60.0,
+			"snow-cover" :
+			{
+				"texture-repeats" : 20.0,
+				"steep-texture" : "snow_rough",
+				"flat-texture" : "snow_calm"
+			},
 			"features" :
 			{
 				"paused" : false,

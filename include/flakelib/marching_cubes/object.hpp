@@ -19,6 +19,7 @@
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/preprocessor/disable_gcc_warning.hpp>
 #include <fcppt/preprocessor/pop_warning.hpp>
@@ -77,7 +78,8 @@ private:
 	flakelib::marching_cubes::vertex_count vertex_count_;
 
 	void
-	render();
+	render(
+		sge::renderer::context::object &);
 
 	void
 	resize_gl_buffers();

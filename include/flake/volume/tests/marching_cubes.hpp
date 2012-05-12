@@ -14,9 +14,9 @@
 #include <sge/camera/first_person/object.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
-#include <sge/shader/object.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
+#include <flake/volume/snow_cover/object.hpp>
 #include <awl/main/exit_code.hpp>
 #include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -59,14 +59,15 @@ private:
 	flakelib::volume::gradient gradient_;
 	flakelib::scan::object scan_;
 	flakelib::marching_cubes::manager marching_cubes_manager_;
-	sge::shader::object shader_;
+	flake::volume::snow_cover::object snow_cover_;
 	flakelib::marching_cubes::object marching_cubes_;
 
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;
 
 	void
-	render();
+	render(
+		sge::renderer::context::object &);
 
 	void
 	update();
