@@ -316,20 +316,18 @@ flake::volume::tests::flakes::flakes(
 	scan_(
 		this->program_context(),
 		this->buffer_pool()),
-	/*
 	marching_cubes_manager_(
 		this->renderer(),
 		scan_,
 		gradient_,
 		this->program_context()),
-		*/
-	/*
 	snow_cover_(
 		camera_,
 		this->renderer(),
 		this->cg_context(),
 		this->cg_vertex_profile(),
 		this->cg_pixel_profile(),
+		marching_cubes_manager_.vertex_declaration(),
 		flake::volume::snow_cover::texture_repeats(
 			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
 				this->configuration(),
@@ -370,8 +368,6 @@ flake::volume::tests::flakes::flakes(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("sun-direction"))))),
-		*/
-	/*
 	marching_cubes_(
 		this->buffer_pool(),
 		marching_cubes_manager_,
@@ -389,7 +385,6 @@ flake::volume::tests::flakes::flakes(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("iso-level"))))),
-					*/
 	wind_strength_modulator_(
 		std::tr1::bind(
 			&flakelib::volume::simulation::stam::wind_source::wind_strength,
@@ -415,7 +410,7 @@ flake::volume::tests::flakes::flakes(
 			boost::chrono::seconds(1))),
 	snow_cover_update_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
-			boost::chrono::seconds(1)))/*,
+			boost::chrono::seconds(1))),
 	snow_cover_vertices_(
 		0u),
 	snow_cover_vertices_information_(
@@ -426,7 +421,6 @@ flake::volume::tests::flakes::flakes(
 			std::tr1::bind(
 				&flakes::snow_cover_vertices_,
 				this)))
-				*/
 {
 }
 
@@ -469,7 +463,6 @@ flake::volume::tests::flakes::render(
 		models_.render(
 			_context);
 
-	/*
 	if(
 		this->feature_active(
 			test::json_identifier(
@@ -482,7 +475,6 @@ flake::volume::tests::flakes::render(
 		marching_cubes_manager_.render(
 			_context);
 	}
-	*/
 
 	if(
 		this->feature_active(
@@ -573,7 +565,6 @@ flake::volume::tests::flakes::update()
 			flakelib::volume::boundary_buffer_view(
 				boundary_buffer_->value()));
 
-		/*
 		if(sge::timer::reset_when_expired(snow_cover_update_) && this->feature_active(test::json_identifier(FCPPT_TEXT("marchingcubes"))))
 		{
 			snow_cover_vertices_ =
@@ -581,7 +572,6 @@ flake::volume::tests::flakes::update()
 					flakelib::marching_cubes::density_view(
 						snow_density_buffer_->value()));
 		}
-		*/
 
 		wind_strength_modulator_.update(
 			raw_delta);

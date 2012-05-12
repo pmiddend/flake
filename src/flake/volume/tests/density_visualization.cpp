@@ -1,3 +1,4 @@
+#include <sge/renderer/context/object.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/volume/tests/density_visualization.hpp>
 #include <flakelib/duration.hpp>
@@ -13,7 +14,6 @@
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/onscreen_target.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/clear/parameters.hpp>
 #include <sge/renderer/state/color.hpp>
@@ -119,6 +119,9 @@ flake::volume::tests::density_visualization::density_visualization(
 		this->program_context()),
 	raycaster_(
 		this->renderer(),
+		this->cg_context(),
+		this->cg_vertex_profile(),
+		this->cg_pixel_profile(),
 		this->opencl_system().context(),
 		camera_,
 		this->image_system(),
@@ -172,16 +175,19 @@ flake::volume::tests::density_visualization::~density_visualization()
 }
 
 void
-flake::volume::tests::density_visualization::render()
+flake::volume::tests::density_visualization::render(
+	sge::renderer::context::object &_context)
 {
-	this->renderer().onscreen_target().clear(
+	_context.clear(
 		sge::renderer::clear::parameters()
 			.back_buffer(
 				sge::image::colors::black()));
 
-	raycaster_.render();
+	raycaster_.render(
+		_context);
 
-	test::base::render();
+	test::base::render(
+		_context);
 }
 
 void

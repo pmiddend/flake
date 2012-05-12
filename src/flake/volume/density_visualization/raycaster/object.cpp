@@ -1,3 +1,13 @@
+#include <sge/renderer/cg/loaded_program.hpp>
+#include <sge/renderer/vector2.hpp>
+#include <sge/renderer/context/object.hpp>
+#include <sge/cg/parameter/matrix/set.hpp>
+#include <sge/renderer/cg/scoped_program.hpp>
+#include <sge/renderer/scoped_vertex_declaration.hpp>
+#include <sge/renderer/cg/scoped_texture.hpp>
+#include <sge/cg/parameter/vector/set.hpp>
+#include <sge/renderer/cg/loaded_texture.hpp>
+#include <sge/cg/parameter/scalar/set.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/volume/density_visualization/raycaster/object.hpp>
 #include <flake/volume/density_visualization/raycaster/vf/format.hpp>
@@ -55,8 +65,8 @@
 flake::volume::density_visualization::raycaster::object::object(
 	sge::renderer::device &_renderer,
 	sge::cg::context::object &_cg_context,
-	flake::shader::vertex_profile const &_vertex_profile,
-	flake::shader::pixel_profile const &_pixel_profile,
+	flake::shader::vertex_profile const &_cg_vertex_profile,
+	flake::shader::pixel_profile const &_cg_pixel_profile,
 	sge::opencl::context::object &_context,
 	sge::camera::base const &_camera,
 	sge::image2d::system &_image_system,
@@ -127,7 +137,7 @@ flake::volume::density_visualization::raycaster::object::object(
 			sge::cg::program::source_type::text,
 			_cg_pixel_profile.get(),
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/volume_arrow.cg")),
+				FCPPT_TEXT("shaders/raycaster.cg")),
 			sge::cg::program::main_function(
 				"pixel_main"),
 			_renderer.cg_compile_options(
@@ -142,62 +152,60 @@ flake::volume::density_visualization::raycaster::object::object(
 	mvp_parameter_(
 		vertex_program_.parameter(
 			"mvp")),
-	/*
-	shader_(
-		sge::shader::object_parameters(
-			renderer_,
-			*vertex_declaration_,
-			sge::shader::vf_to_string<vf::format>(),
-			fcppt::assign::make_container<sge::shader::variable_sequence>
-				(sge::shader::variable(
-					"mvp",
-					sge::shader::variable_type::uniform,
-					sge::shader::matrix(
-						sge::renderer::matrix4::identity(),
-						sge::shader::matrix_flags::projection)))
-				(sge::shader::variable(
-					"step_size",
-					sge::shader::variable_type::constant,
-					_step_size.get()))
-				(sge::shader::variable(
-					"elements_per_row",
-					sge::shader::variable_type::constant,
-					static_cast<sge::renderer::glsl::uniform::int_type>(
-						texture_->size().w() / _grid_size.get().w())))
-				(sge::shader::variable(
-					"camera_is_inside_cube",
-					sge::shader::variable_type::uniform,
-					sge::renderer::scalar()))
-				(sge::shader::variable(
-					"slice_width",
-					sge::shader::variable_type::constant,
-					static_cast<sge::renderer::glsl::uniform::int_type>(
-						_grid_size.get().w())))
-				(sge::shader::variable(
-					"texture_size",
-					sge::shader::variable_type::constant,
-					sge::renderer::vector2(
-						static_cast<sge::renderer::scalar>(
-							texture_->size().w()),
-						static_cast<sge::renderer::scalar>(
-							texture_->size().h()))))
-				(sge::shader::variable(
-					"camera_position",
-					sge::shader::variable_type::uniform,
-					sge::renderer::vector3())),
-			fcppt::assign::make_container<sge::shader::sampler_sequence>
-				(sge::shader::sampler(
-					"density_texture",
-					texture_)))
-			.vertex_shader(
-				flake::media_path_from_string(
-					FCPPT_TEXT("shaders/raycaster/vertex.glsl")))
-			.fragment_shader(
-				flake::media_path_from_string(
-					FCPPT_TEXT("shaders/raycaster/fragment.glsl")))
-			.name(
-				FCPPT_TEXT("Raycaster")))*/
+	step_size_parameter_(
+		pixel_program_.parameter(
+			"step_size")),
+	elements_per_row_parameter_(
+		pixel_program_.parameter(
+			"elements_per_row")),
+	camera_is_inside_cube_parameter_(
+		pixel_program_.parameter(
+			"camera_is_inside_cube")),
+	slice_width_vertex_parameter_(
+		vertex_program_.parameter(
+			"slice_width")),
+	slice_width_pixel_parameter_(
+		pixel_program_.parameter(
+			"slice_width")),
+	texture_size_parameter_(
+		pixel_program_.parameter(
+			"texture_size")),
+	camera_position_parameter_(
+		pixel_program_.parameter(
+			"camera_position")),
+	loaded_texture_(
+		_renderer.load_cg_texture(
+			pixel_program_.parameter(
+				"density_texture").object(),
+			*texture_))
 {
+	sge::cg::parameter::scalar::set(
+		step_size_parameter_.object(),
+		_step_size.get());
+
+	sge::cg::parameter::scalar::set(
+		elements_per_row_parameter_.object(),
+		static_cast<int>(
+			texture_->size().w() / _grid_size.get().w()));
+
+	sge::cg::parameter::scalar::set(
+		slice_width_vertex_parameter_.object(),
+		static_cast<sge::renderer::scalar>(
+			_grid_size.get().w()));
+
+	sge::cg::parameter::scalar::set(
+		slice_width_pixel_parameter_.object(),
+		static_cast<int>(
+			_grid_size.get().w()));
+
+	sge::cg::parameter::vector::set(
+		texture_size_parameter_.object(),
+		sge::renderer::vector2(
+			static_cast<sge::renderer::scalar>(
+				texture_->size().w()),
+			static_cast<sge::renderer::scalar>(
+				texture_->size().h())));
+
 	sge::renderer::scoped_vertex_lock vblock(
 		*vertex_buffer_,
 		sge::renderer::lock_mode::writeonly);
@@ -303,26 +311,37 @@ flake::volume::density_visualization::raycaster::object::update(
 }
 
 void
-flake::volume::density_visualization::raycaster::object::render()
+flake::volume::density_visualization::raycaster::object::render(
+	sge::renderer::context::object &_context)
 {
-	sge::shader::scoped scoped_shader(
-		shader_,
-		sge::shader::activate_everything());
+	sge::renderer::cg::scoped_texture scoped_texture(
+		_context,
+		*loaded_texture_);
 
-	shader_.update_uniform(
-		"mvp",
-		sge::shader::matrix(
-			sge::camera::matrix_conversion::world_projection(
-				camera_.coordinate_system(),
-				camera_.projection_matrix()),
-			sge::shader::matrix_flags::projection));
+	sge::renderer::cg::scoped_program
+		scoped_vertex_program(
+			_context,
+			*loaded_vertex_program_),
+		scoped_pixel_program(
+			_context,
+			*loaded_pixel_program_);
 
-	shader_.update_uniform(
-		"camera_position",
+	sge::renderer::scoped_vertex_declaration scoped_vd(
+		_context,
+		*vertex_declaration_);
+
+	sge::cg::parameter::matrix::set(
+		mvp_parameter_.object(),
+		sge::camera::matrix_conversion::world_projection(
+			camera_.coordinate_system(),
+			camera_.projection_matrix()));
+
+	sge::cg::parameter::vector::set(
+		camera_position_parameter_.object(),
 		-camera_.coordinate_system().position().get());
 
-	shader_.update_uniform(
-		"camera_is_inside_cube",
+	sge::cg::parameter::scalar::set(
+		camera_is_inside_cube_parameter_.object(),
 		this->camera_is_inside_cube()
 		?
 			static_cast<sge::renderer::scalar>(1.0f)
@@ -330,36 +349,37 @@ flake::volume::density_visualization::raycaster::object::render()
 			static_cast<sge::renderer::scalar>(0.0f));
 
 	sge::renderer::state::scoped scoped_state(
-		renderer_,
+		_context,
 		sge::renderer::state::list
 			(sge::renderer::state::bool_::enable_alpha_blending = true)
 			(sge::renderer::state::source_blend_func::src_alpha)
+			(sge::renderer::state::dest_blend_func::inv_src_alpha)
 			(
-			 this->camera_is_inside_cube()
-			 ?
-				 sge::renderer::state::cull_mode::counter_clockwise
-			 : sge::renderer::state::cull_mode::clockwise)
-			(sge::renderer::state::dest_blend_func::inv_src_alpha));
+			this->camera_is_inside_cube()
+			?
+				sge::renderer::state::cull_mode::counter_clockwise
+			:
+			 	sge::renderer::state::cull_mode::clockwise));
 
 	sge::renderer::texture::filter::scoped scoped_texture_filter(
-		renderer_,
+		_context,
 		sge::renderer::texture::stage(
 			0u),
 //		sge::renderer::texture::filter::point());
 		sge::renderer::texture::filter::linear());
 
 	sge::renderer::texture::set_address_mode2(
-		renderer_,
+		_context,
 		sge::renderer::texture::stage(
 			0u),
 		sge::renderer::texture::address_mode2(
 			sge::renderer::texture::address_mode::clamp));
 
 	sge::renderer::scoped_vertex_buffer scoped_vb(
-		renderer_,
+		_context,
 		*vertex_buffer_);
 
-	renderer_.render_nonindexed(
+	_context.render_nonindexed(
 		sge::renderer::first_vertex(
 			0u),
 		sge::renderer::vertex_count(

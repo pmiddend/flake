@@ -93,16 +93,16 @@ private:
 	flake::volume::obstacles::manager obstacles_;
 	flakelib::volume::gradient gradient_;
 	flakelib::scan::object scan_;
-	//flakelib::marching_cubes::manager marching_cubes_manager_;
-	//flake::volume::snow_cover::object snow_cover_;
-	//flakelib::marching_cubes::object marching_cubes_;
+	flakelib::marching_cubes::manager marching_cubes_manager_;
+	flake::volume::snow_cover::object snow_cover_;
+	flakelib::marching_cubes::object marching_cubes_;
 	flakelib::value_modulator::object wind_strength_modulator_;
 
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;
 	sge::timer::basic<sge::timer::clocks::standard> snow_cover_update_;
-	//flakelib::marching_cubes::vertex_count snow_cover_vertices_;
-	//flake::test::information::object snow_cover_vertices_information_;
+	flakelib::marching_cubes::vertex_count snow_cover_vertices_;
+	flake::test::information::object snow_cover_vertices_information_;
 
 	void
 	render(

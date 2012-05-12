@@ -12,10 +12,11 @@
 #include <flakelib/volume/conversion/scaling_factor.hpp>
 #include <sge/camera/base_fwd.hpp>
 #include <sge/cg/context/object_fwd.hpp>
-#include <sge/cg/parameter/object.hpp>
-#include <sge/cg/parameter/object_fwd.hpp>
+#include <sge/cg/parameter/named.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
 #include <sge/cg/profile/object_fwd.hpp>
 #include <sge/cg/program/object.hpp>
+#include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
@@ -60,7 +61,8 @@ public:
 		flakelib::volume::conversion::constant_addition const &);
 
 	void
-	render();
+	render(
+		sge::renderer::context::object &);
 
 	~object();
 private:
@@ -79,7 +81,15 @@ private:
 	sge::cg::program::object pixel_program_;
 	sge::renderer::cg::loaded_program_scoped_ptr loaded_vertex_program_;
 	sge::renderer::cg::loaded_program_scoped_ptr loaded_pixel_program_;
-	sge::cg::parameter::object mvp_parameter_;
+	sge::cg::parameter::named mvp_parameter_;
+	sge::cg::parameter::named step_size_parameter_;
+	sge::cg::parameter::named elements_per_row_parameter_;
+	sge::cg::parameter::named camera_is_inside_cube_parameter_;
+	sge::cg::parameter::named slice_width_vertex_parameter_;
+	sge::cg::parameter::named slice_width_pixel_parameter_;
+	sge::cg::parameter::named texture_size_parameter_;
+	sge::cg::parameter::named camera_position_parameter_;
+	sge::renderer::cg::loaded_texture_scoped_ptr loaded_texture_;
 
 	bool
 	camera_is_inside_cube() const;

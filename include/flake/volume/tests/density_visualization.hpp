@@ -56,7 +56,8 @@ private:
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;
 
 	void
-	render();
+	render(
+		sge::renderer::context::object &);
 
 	void
 	update();
