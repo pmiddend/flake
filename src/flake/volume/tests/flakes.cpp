@@ -269,7 +269,7 @@ flake::volume::tests::flakes::flakes(
 		this->program_context(),
 		this->buffer_pool(),
 		flakes_.cl_positions(),
-//		flakes_.cl_point_sizes(),
+		flakes_.cl_point_sizes(),
 		volume::flakes::snow_density_view(
 			snow_density_buffer_->value()),
 		volume::flakes::collision_increment(

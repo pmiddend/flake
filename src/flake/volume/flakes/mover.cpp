@@ -1,3 +1,4 @@
+#include <fcppt/assign/make_container.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/volume/flakes/mover.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
@@ -15,6 +16,7 @@ flake::volume::flakes::mover::mover(
 	flakelib::cl::program_context const &_program_context,
 	flakelib::buffer_pool::object &_buffer_pool,
 	flakes::position_view const &_positions,
+	flakes::point_size_view const &_point_sizes,
 	flakes::snow_density_view const &_snow_density,
 	flakes::collision_increment const &_collision_increment,
 	flakes::activity_view const &_activity,
@@ -42,6 +44,8 @@ flake::volume::flakes::mover::mover(
 				"update_activity"))),
 	positions_(
 		_positions),
+	point_sizes_(
+		_point_sizes),
 	activity_(
 		_activity),
 	velocities_(
@@ -95,6 +99,10 @@ flake::volume::flakes::mover::mover(
 		_activity.get().buffer());
 
 	move_kernel_->buffer_argument(
+		"sizes",
+		_point_sizes.get().buffer());
+
+	move_kernel_->buffer_argument(
 		"positions",
 		_positions.get().buffer());
 
@@ -144,13 +152,11 @@ flake::volume::flakes::mover::update(
 		static_cast<cl_uint>(
 			_velocity.get().size().w()));
 
-	sge::opencl::memory_object::base_ref_sequence mem_objects;
-	mem_objects.push_back(
-		&positions_.get().buffer());
-
 	sge::opencl::memory_object::scoped_objects scoped_vb(
 		move_kernel_->command_queue(),
-		mem_objects);
+		fcppt::assign::make_container<sge::opencl::memory_object::base_ref_sequence>
+			(&positions_.get().buffer())
+			(&point_sizes_.get().buffer()));
 
 	move_kernel_->enqueue_automatic(
 		flakelib::cl::global_dim1(
@@ -167,6 +173,14 @@ flake::volume::flakes::mover::initialize_velocities(
 	flakes::minimum_size const &_minimum_size,
 	flakes::maximum_size const &_maximum_size)
 {
+	sge::opencl::memory_object::base_ref_sequence mem_objects;
+	mem_objects.push_back(
+		&point_sizes_.get().buffer());
+
+	sge::opencl::memory_object::scoped_objects scoped_vb(
+		move_kernel_->command_queue(),
+		mem_objects);
+
 	initialize_velocities_kernel_->numerical_argument(
 		"minimum_size",
 		_minimum_size.get());
@@ -178,6 +192,10 @@ flake::volume::flakes::mover::initialize_velocities(
 	initialize_velocities_kernel_->buffer_argument(
 		"velocities",
 		velocities_->value().buffer());
+
+	initialize_velocities_kernel_->buffer_argument(
+		"sizes",
+		point_sizes_.get().buffer());
 
 	initialize_velocities_kernel_->enqueue_automatic(
 		flakelib::cl::global_dim1(

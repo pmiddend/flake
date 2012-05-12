@@ -9,6 +9,7 @@ vertex_outputs
 vertex_main(
 	in float4 position : POSITION,
 	in float2 texture_coordinates : TEXCOORD0,
+	in float point_size : $8$,
 	uniform float3 camera_position,
 	uniform float maximum_distance,
 	uniform float4x4 mvp)
@@ -33,7 +34,7 @@ vertex_main(
                                 0.01);
 
         outs.point_size =
-                maxed_distance * 30.0;
+                maxed_distance * point_size;
 
 	outs.position =
 		mul(
@@ -63,9 +64,6 @@ pixel_main(
 			starting_texcoord + texcoord * float2(tile_size,1.0));
 
 	return
-	/*
-		float4(1.0,1.0,1.0,1.0);
-		*/
 		float4(
 			texture_value.xyz,
 			texture_value.w * 0.5);
