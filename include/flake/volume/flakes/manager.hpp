@@ -66,9 +66,6 @@ public:
 	flakes::position_view const
 	cl_positions();
 
-	flakes::point_size_view const
-	cl_point_sizes();
-
 	flakes::minimum_size const &
 	minimum_size() const;
 
@@ -83,7 +80,6 @@ private:
 	flakes::maximum_size const maximum_size_;
 	sge::renderer::vertex_declaration_scoped_ptr vertex_declaration_;
 	sge::renderer::vertex_buffer_scoped_ptr positions_buffer_;
-	sge::renderer::vertex_buffer_scoped_ptr point_sizes_buffer_;
 	sge::renderer::vertex_buffer_scoped_ptr texcoords_buffer_;
 	flakes::texture_tile_size tile_size_;
 
@@ -100,7 +96,6 @@ private:
 	sge::renderer::cg::loaded_texture_scoped_ptr loaded_texture_;
 
 	fcppt::scoped_ptr<sge::opencl::memory_object::buffer> cl_positions_buffer_;
-	fcppt::scoped_ptr<sge::opencl::memory_object::buffer> cl_point_sizes_buffer_;
 
 	void
 	generate_particles(

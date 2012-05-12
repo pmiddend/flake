@@ -1,3 +1,4 @@
+#include <sge/cg/parameter/scalar/set.hpp>
 #include <sge/renderer/cg/loaded_texture.hpp>
 #include <sge/renderer/cg/loaded_program.hpp>
 #include <sge/renderer/vector2.hpp>
@@ -90,17 +91,6 @@ flake::volume::flakes::manager::manager(
 			sge::renderer::vertex_count(
 				_flake_count.get()),
 			sge::renderer::resource_flags::none)),
-	point_sizes_buffer_(
-		renderer_.create_vertex_buffer(
-			*vertex_declaration_,
-			sge::renderer::vf::dynamic::make_part_index
-			<
-				vf::format,
-				vf::point_size_part
-			>(),
-			sge::renderer::vertex_count(
-				_flake_count.get()),
-			sge::renderer::resource_flags::none)),
 	texcoords_buffer_(
 		renderer_.create_vertex_buffer(
 			*vertex_declaration_,
@@ -176,12 +166,21 @@ flake::volume::flakes::manager::manager(
 			pixel_program_.parameter(
 				"main_texture").object(),
 			*texture_)),
-	cl_positions_buffer_(),
-	cl_point_sizes_buffer_()
+	cl_positions_buffer_()
 {
 	this->generate_particles(
 		_grid_size,
 		_tile_count);
+
+	sge::cg::parameter::scalar::set(
+		maximum_distance_parameter_.object(),
+		static_cast<sge::renderer::scalar>(
+			_grid_size.get().w()));
+
+	sge::cg::parameter::scalar::set(
+		tile_size_parameter_.object(),
+		static_cast<sge::renderer::scalar>(
+			_tile_size.get()));
 
 	cl_positions_buffer_.take(
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
@@ -189,14 +188,6 @@ flake::volume::flakes::manager::manager(
 				_context),
 			fcppt::ref(
 				*positions_buffer_),
-			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
-
-	cl_point_sizes_buffer_.take(
-		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
-			fcppt::ref(
-				_context),
-			fcppt::ref(
-				*point_sizes_buffer_),
 			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
 }
 
@@ -228,8 +219,6 @@ flake::volume::flakes::manager::render(
 		fcppt::assign::make_container<sge::renderer::const_vertex_buffer_ref_container>
 			(fcppt::cref(
 				*positions_buffer_))
-			(fcppt::cref(
-				*point_sizes_buffer_))
 			(fcppt::cref(
 				*texcoords_buffer_)));
 
@@ -264,15 +253,6 @@ flake::volume::flakes::manager::cl_positions()
 				*cl_positions_buffer_));
 }
 
-flake::volume::flakes::point_size_view const
-flake::volume::flakes::manager::cl_point_sizes()
-{
-	return
-		flake::volume::flakes::point_size_view(
-			flake::volume::flakes::point_size_view::value_type(
-				*cl_point_sizes_buffer_));
-}
-
 flake::volume::flakes::minimum_size const &
 flake::volume::flakes::manager::minimum_size() const
 {
@@ -300,10 +280,6 @@ flake::volume::flakes::manager::generate_particles(
 		*positions_buffer_,
 		sge::renderer::lock_mode::writeonly);
 
-	sge::renderer::scoped_vertex_lock const point_sizes_vblock(
-		*point_sizes_buffer_,
-		sge::renderer::lock_mode::writeonly);
-
 	sge::renderer::scoped_vertex_lock const texcoords_vblock(
 		*texcoords_buffer_,
 		sge::renderer::lock_mode::writeonly);
@@ -311,17 +287,11 @@ flake::volume::flakes::manager::generate_particles(
 	sge::renderer::vf::view<vf::position_part> const positions(
 		positions_vblock.value());
 
-	sge::renderer::vf::view<vf::point_size_part> const point_sizes(
-		point_sizes_vblock.value());
-
 	sge::renderer::vf::view<vf::texcoord_part> const texcoords(
 		texcoords_vblock.value());
 
 	sge::renderer::vf::view<vf::position_part>::iterator positions_it(
 		positions.begin());
-
-	sge::renderer::vf::view<vf::point_size_part>::iterator point_sizes_it(
-		point_sizes.begin());
 
 	sge::renderer::vf::view<vf::texcoord_part>::iterator texcoords_it(
 		texcoords.begin());
@@ -427,10 +397,6 @@ flake::volume::flakes::manager::generate_particles(
 
 		sge::renderer::scalar const flake_size =
 			size_rng();
-
-		(*point_sizes_it++).set<vf::point_size>(
-			vf::point_size::packed_type(
-				flake_size));
 
 		(*positions_it++).set<vf::position>(
 			starting_position);

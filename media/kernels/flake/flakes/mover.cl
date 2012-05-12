@@ -67,7 +67,6 @@ flake_initial_velocity(
 
 kernel void
 FLAKELIB_KERNEL_NAME(initialize_velocities)(
-	global float const *FLAKELIB_KERNEL_ARGUMENT(sizes),
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(velocities),
 	float const FLAKELIB_KERNEL_ARGUMENT(minimum_size),
 	float const FLAKELIB_KERNEL_ARGUMENT(maximum_size))
@@ -75,7 +74,7 @@ FLAKELIB_KERNEL_NAME(initialize_velocities)(
 	velocities[get_global_id(0)] =
 		flake_initial_velocity(
 			FLAKELIB_NORMALIZE_FROM_RANGE(
-				sizes[get_global_id(0)],
+				maximum_size,
 				minimum_size,
 				maximum_size));
 }
@@ -114,7 +113,6 @@ kernel void
 FLAKELIB_KERNEL_NAME(move)(
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(positions),
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(velocities),
-	global float *FLAKELIB_KERNEL_ARGUMENT(sizes),
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(fluid_velocity),
 	float const FLAKELIB_KERNEL_ARGUMENT(time_delta),
 	float const FLAKELIB_KERNEL_ARGUMENT(collision_increment),
@@ -133,7 +131,7 @@ FLAKELIB_KERNEL_NAME(move)(
 
 	float const normalized_size =
 		FLAKELIB_NORMALIZE_FROM_RANGE(
-			sizes[get_global_id(0)],
+			maximum_size,
 			minimum_size,
 			maximum_size);
 
