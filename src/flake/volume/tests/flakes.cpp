@@ -147,7 +147,6 @@ flake::volume::tests::flakes::flakes(
 		this->program_context()),
 	conversion_object_(
 		this->program_context()),
-	/*
 	arrows_manager_(
 		this->renderer(),
 		this->cg_context(),
@@ -171,7 +170,6 @@ flake::volume::tests::flakes::flakes(
 		flakelib::volume::conversion::origin(
 			sge::renderer::vector3::null()),
 		simulation_size_),
-		*/
 	wind_source_(
 		this->program_context(),
 		flakelib::volume::simulation::stam::wind_strength(
@@ -291,7 +289,6 @@ flake::volume::tests::flakes::flakes(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("iso-level"))))),
-	/*
 	models_(
 		this->renderer(),
 		this->cg_context(),
@@ -319,11 +316,14 @@ flake::volume::tests::flakes::flakes(
 	scan_(
 		this->program_context(),
 		this->buffer_pool()),
+	/*
 	marching_cubes_manager_(
 		this->renderer(),
 		scan_,
 		gradient_,
 		this->program_context()),
+		*/
+	/*
 	snow_cover_(
 		camera_,
 		this->renderer(),
@@ -462,7 +462,6 @@ flake::volume::tests::flakes::render(
 				sge::renderer::clear::depth_buffer_value(
 					1.0f)));
 
-	/*
 	if(
 		this->feature_active(
 			test::json_identifier(
@@ -470,6 +469,7 @@ flake::volume::tests::flakes::render(
 		models_.render(
 			_context);
 
+	/*
 	if(
 		this->feature_active(
 			test::json_identifier(
@@ -484,23 +484,19 @@ flake::volume::tests::flakes::render(
 	}
 	*/
 
-	/*
 	if(
 		this->feature_active(
 			test::json_identifier(
 				FCPPT_TEXT("flakes"))))
-				*/
 		flakes_.render(
 			_context);
 
-	/*
 	if(
 		this->feature_active(
 			test::json_identifier(
 				FCPPT_TEXT("arrows"))))
 		arrows_manager_.render(
 			_context);
-			*/
 
 
 	test::base::render(
@@ -591,12 +587,10 @@ flake::volume::tests::flakes::update()
 			raw_delta);
 	}
 
-	/*
 	if(
 		this->feature_active(
 			test::json_identifier(
 				FCPPT_TEXT("arrows"))))
 		velocity_arrows_.update(
 			velocity_buffer_->value());
-			*/
 }
