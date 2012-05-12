@@ -9,9 +9,12 @@
 #include <flake/volume/flakes/mover.hpp>
 #include <flake/volume/model/manager.hpp>
 #include <flake/volume/obstacles/manager.hpp>
+#include <flake/volume/snow_cover/object.hpp>
+/*
 #include <flakelib/marching_cubes/manager.hpp>
 #include <flakelib/marching_cubes/object.hpp>
 #include <flakelib/marching_cubes/vertex_count.hpp>
+*/
 #include <flakelib/scan/object.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
@@ -31,7 +34,6 @@
 #include <sge/camera/first_person/object.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>
 #include <sge/opencl/memory_object/dim3.hpp>
-#include <sge/shader/object.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
 #include <awl/main/exit_code.hpp>
@@ -69,8 +71,8 @@ private:
 	flakelib::utility::fill_buffer fill_buffer_;
 	flakelib::splatter::object splatter_;
 	flakelib::volume::conversion::object conversion_object_;
-	flake::volume::arrows::manager arrows_manager_;
-	flake::volume::arrows::object velocity_arrows_;
+	//flake::volume::arrows::manager arrows_manager_;
+	//flake::volume::arrows::object velocity_arrows_;
 
 	// Simulation
 	flakelib::volume::simulation::stam::wind_source wind_source_;
@@ -89,23 +91,24 @@ private:
 
 	flake::volume::flakes::manager flakes_;
 	flake::volume::flakes::mover flakes_mover_;
-	flake::volume::model::manager models_;
-	flake::volume::obstacles::manager obstacles_;
-	flakelib::volume::gradient gradient_;
-	flakelib::scan::object scan_;
-	flakelib::marching_cubes::manager marching_cubes_manager_;
-	sge::shader::object snow_surface_shader_;
-	flakelib::marching_cubes::object marching_cubes_;
+	//flake::volume::model::manager models_;
+	//flake::volume::obstacles::manager obstacles_;
+	//flakelib::volume::gradient gradient_;
+	//flakelib::scan::object scan_;
+	//flakelib::marching_cubes::manager marching_cubes_manager_;
+	//flake::volume::snow_cover::object snow_cover_;
+	//flakelib::marching_cubes::object marching_cubes_;
 	flakelib::value_modulator::object wind_strength_modulator_;
 
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;
 	sge::timer::basic<sge::timer::clocks::standard> snow_cover_update_;
-	flakelib::marching_cubes::vertex_count snow_cover_vertices_;
-	flake::test::information::object snow_cover_vertices_information_;
+	//flakelib::marching_cubes::vertex_count snow_cover_vertices_;
+	//flake::test::information::object snow_cover_vertices_information_;
 
 	void
-	render();
+	render(
+		sge::renderer::context::object &);
 
 	void
 	update();

@@ -64,7 +64,12 @@
 		"flakes" :
 		{
 			"simulation-size" : [128,64,128],
-			"snow-texture-repeats" : 20.0,
+			"snow-cover" :
+			{
+				"texture-repeats" : 20.0,
+				"steep-texture" : "snow_rough",
+				"flat-texture" : "snow_calm"
+			},
 			"arrow-scale" : 1.0,
 			"grid-scale" : 1.0,
 			"wind-strength-start" : 1.0,

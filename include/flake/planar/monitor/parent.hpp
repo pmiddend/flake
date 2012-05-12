@@ -8,20 +8,17 @@
 #include <flake/planar/monitor/font_color.hpp>
 #include <flake/planar/monitor/grid_dimensions.hpp>
 #include <flake/planar/monitor/grid_scale.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
 #include <flake/planar/monitor/optional_projection.hpp>
 #include <flake/planar/monitor/scaling_factor.hpp>
 #include <flake/planar/monitor/dummy_sprite/collection.hpp>
 #include <flake/planar/monitor/dummy_sprite/system.hpp>
-#include <flake/shader/vertex_profile.hpp>
 #include <flake/shader/pixel_profile.hpp>
-#include <sge/font/metrics_shared_ptr.hpp>
+#include <flake/shader/vertex_profile.hpp>
 #include <sge/cg/context/object_fwd.hpp>
-#include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
-#include <sge/cg/parameter/object.hpp>
-#include <sge/cg/parameter/object_fwd.hpp>
+#include <sge/cg/parameter/named.hpp>
 #include <sge/cg/profile/object_fwd.hpp>
 #include <sge/cg/program/object.hpp>
+#include <sge/font/metrics_shared_ptr.hpp>
 #include <sge/image/color/any/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
@@ -31,6 +28,8 @@
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
+#include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 
 
@@ -81,10 +80,10 @@ public:
 	sge::renderer::cg::loaded_program &
 	loaded_arrow_pixel_program();
 
-	sge::cg::parameter::object &
+	sge::cg::parameter::object const &
 	arrow_projection_parameter();
 
-	sge::cg::parameter::object &
+	sge::cg::parameter::object const &
 	arrow_initial_position_parameter();
 
 	sge::renderer::device &
@@ -121,8 +120,8 @@ private:
 	sge::cg::program::object arrow_pixel_program_;
 	sge::renderer::cg::loaded_program_scoped_ptr loaded_arrow_vertex_program_;
 	sge::renderer::cg::loaded_program_scoped_ptr loaded_arrow_pixel_program_;
-	sge::cg::parameter::object arrow_initial_position_parameter_;
-	sge::cg::parameter::object arrow_projection_parameter_;
+	sge::cg::parameter::named const arrow_initial_position_parameter_;
+	sge::cg::parameter::named const arrow_projection_parameter_;
 
 	monitor::dummy_sprite::system sprite_system_;
 	monitor::dummy_sprite::collection sprite_collection_;

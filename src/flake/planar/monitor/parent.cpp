@@ -1,21 +1,22 @@
-#include <sge/renderer/cg/loaded_program.hpp>
-#include <sge/sprite/process/with_options.hpp>
-#include <sge/sprite/process/all.hpp>
-#include <sge/cg/parameter/vector/set.hpp>
-#include <sge/cg/program/from_file_parameters.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/arrow_vf/format.hpp>
+#include <sge/cg/parameter/named.hpp>
+#include <sge/cg/parameter/vector/set.hpp>
+#include <sge/cg/program/from_file_parameters.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/scoped_transform.hpp>
+#include <sge/renderer/cg/loaded_program.hpp>
 #include <sge/renderer/texture/stage.hpp>
 #include <sge/renderer/texture/filter/point.hpp>
 #include <sge/renderer/texture/filter/scoped.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/sprite/compare/default.hpp>
-#include <sge/sprite/process/default_geometry_options.hpp>
 #include <sge/sprite/intrusive/process/ordered.hpp>
+#include <sge/sprite/process/all.hpp>
+#include <sge/sprite/process/default_geometry_options.hpp>
+#include <sge/sprite/process/with_options.hpp>
 #include <sge/sprite/render/matrix_options.hpp>
 #include <sge/sprite/render/options.hpp>
 #include <sge/sprite/render/state_options.hpp>
@@ -122,18 +123,18 @@ flake::planar::monitor::parent::loaded_arrow_pixel_program()
 		*loaded_arrow_pixel_program_;
 }
 
-sge::cg::parameter::object &
+sge::cg::parameter::object const &
 flake::planar::monitor::parent::arrow_projection_parameter()
 {
 	return
-		arrow_projection_parameter_;
+		arrow_projection_parameter_.object();
 }
 
-sge::cg::parameter::object &
+sge::cg::parameter::object const &
 flake::planar::monitor::parent::arrow_initial_position_parameter()
 {
 	return
-		arrow_initial_position_parameter_;
+		arrow_initial_position_parameter_.object();
 }
 
 sge::renderer::device &

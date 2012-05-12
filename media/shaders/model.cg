@@ -1,0 +1,60 @@
+struct vertex_outputs
+{
+	float4 position : POSITION;
+	float2 texcoord : TEXCOORD0;
+	float3 normal : TEXCOORD1;
+};
+
+vertex_outputs
+vertex_main(
+	in float3 position : POSITION,
+	in float2 texcoord : TEXCOORD0,
+	in float3 normal : NORMAL,
+	uniform float4x4 mvp,
+	uniform float4x4 world)
+{
+	vertex_outputs outs;
+
+	outs.position =
+		mul(
+			mvp,
+			float4(
+				position,
+				1.0));
+
+	outs.normal =
+		normal;
+
+	outs.texcoord =
+		texcoord;
+
+	return
+		outs;
+}
+
+float4
+pixel_main(
+	vertex_outputs vertex_data,
+	uniform float3 sun_direction,
+	uniform sampler2D primary_texture)
+	: COLOR
+{
+	float
+		ambient =
+			0.5,
+		intensity =
+			ambient +
+			max(
+				0.0,
+				dot(
+					vertex_data.normal,
+					-sun_direction));
+
+	return
+		float4(
+			intensity *
+			tex2D(
+				primary_texture,
+				vertex_data.texcoord).xyz,
+			1.0);
+}

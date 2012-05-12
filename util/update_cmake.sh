@@ -32,11 +32,13 @@ update_cmake_file \
 	src/flake/test/information \
 	src/flake/volume \
 	src/flake/volume/arrows \
+	src/flake/volume/snow_cover \
 	src/flake/volume/flakes \
 	src/flake/volume/density_visualization/raycaster \
 	src/flake/volume/model \
 	src/flake/volume/obstacles \
 	src/flake/planar/monitor \
+	src/flake/shader \
 	src/flake/planar/conversion \
 	src/flake/notifications \
 	src/flake/time_modifier

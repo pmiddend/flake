@@ -1,6 +1,8 @@
 #ifndef FLAKE_VOLUME_DENSITY_VISUALIZATION_RAYCASTER_OBJECT_HPP_INCLUDED
 #define FLAKE_VOLUME_DENSITY_VISUALIZATION_RAYCASTER_OBJECT_HPP_INCLUDED
 
+#include <flake/shader/pixel_profile.hpp>
+#include <flake/shader/vertex_profile.hpp>
 #include <flake/volume/density_visualization/raycaster/debug_output.hpp>
 #include <flake/volume/density_visualization/raycaster/step_size.hpp>
 #include <flakelib/volume/float_view.hpp>
@@ -9,14 +11,19 @@
 #include <flakelib/volume/conversion/object_fwd.hpp>
 #include <flakelib/volume/conversion/scaling_factor.hpp>
 #include <sge/camera/base_fwd.hpp>
+#include <sge/cg/context/object_fwd.hpp>
+#include <sge/cg/parameter/object.hpp>
+#include <sge/cg/parameter/object_fwd.hpp>
+#include <sge/cg/profile/object_fwd.hpp>
+#include <sge/cg/program/object.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
+#include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
 #include <sge/renderer/texture/planar_shared_ptr.hpp>
-#include <sge/shader/object.hpp>
 #include <fcppt/noncopyable.hpp>
 
 
@@ -35,6 +42,9 @@ FCPPT_NONCOPYABLE(
 public:
 	object(
 		sge::renderer::device &,
+		sge::cg::context::object &,
+		flake::shader::vertex_profile const &,
+		flake::shader::pixel_profile const &,
 		sge::opencl::context::object &,
 		sge::camera::base const &,
 		sge::image2d::system &,
@@ -64,7 +74,12 @@ private:
 	sge::renderer::vertex_buffer_scoped_ptr vertex_buffer_;
 	sge::renderer::texture::planar_shared_ptr texture_;
 	sge::opencl::memory_object::image::planar cl_texture_;
-	sge::shader::object shader_;
+
+	sge::cg::program::object vertex_program_;
+	sge::cg::program::object pixel_program_;
+	sge::renderer::cg::loaded_program_scoped_ptr loaded_vertex_program_;
+	sge::renderer::cg::loaded_program_scoped_ptr loaded_pixel_program_;
+	sge::cg::parameter::object mvp_parameter_;
 
 	bool
 	camera_is_inside_cube() const;

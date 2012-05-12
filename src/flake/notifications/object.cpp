@@ -1,4 +1,3 @@
-#include <sge/renderer/target/onscreen.hpp>
 #include <flake/notifications/object.hpp>
 #include <sge/font/metrics.hpp>
 #include <sge/font/rect.hpp>
@@ -11,6 +10,7 @@
 #include <sge/image/color/init.hpp>
 #include <sge/image/color/rgba8.hpp>
 #include <sge/renderer/device.hpp>
+#include <sge/renderer/target/onscreen.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters_impl.hpp>
 #include <fcppt/make_unique_ptr.hpp>

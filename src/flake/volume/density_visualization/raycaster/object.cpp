@@ -7,6 +7,7 @@
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
+#include <sge/cg/program/from_file_parameters.hpp>
 #include <sge/image/store.hpp>
 #include <sge/image2d/l8.hpp>
 #include <sge/image2d/save_from_view.hpp>
@@ -40,10 +41,6 @@
 #include <sge/renderer/vf/view.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
-#include <sge/shader/activate_everything.hpp>
-#include <sge/shader/object_parameters.hpp>
-#include <sge/shader/scoped.hpp>
-#include <sge/shader/vf_to_string.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/contains_point.hpp>
@@ -57,6 +54,9 @@
 
 flake::volume::density_visualization::raycaster::object::object(
 	sge::renderer::device &_renderer,
+	sge::cg::context::object &_cg_context,
+	flake::shader::vertex_profile const &_vertex_profile,
+	flake::shader::pixel_profile const &_pixel_profile,
 	sge::opencl::context::object &_context,
 	sge::camera::base const &_camera,
 	sge::image2d::system &_image_system,
@@ -109,6 +109,40 @@ flake::volume::density_visualization::raycaster::object::object(
 			sge::opencl::memory_object::flags::read) |
 			sge::opencl::memory_object::flags::write,
 		*texture_),
+	vertex_program_(
+		sge::cg::program::from_file_parameters(
+			_cg_context,
+			sge::cg::program::source_type::text,
+			_cg_vertex_profile.get(),
+			flake::media_path_from_string(
+				FCPPT_TEXT("shaders/raycaster.cg")),
+			sge::cg::program::main_function(
+				"vertex_main"),
+			_renderer.cg_compile_options(
+				_cg_context,
+				_cg_vertex_profile.get()))),
+	pixel_program_(
+		sge::cg::program::from_file_parameters(
+			_cg_context,
+			sge::cg::program::source_type::text,
+			_cg_pixel_profile.get(),
+			flake::media_path_from_string(
+				FCPPT_TEXT("shaders/volume_arrow.cg")),
+			sge::cg::program::main_function(
+				"pixel_main"),
+			_renderer.cg_compile_options(
+				_cg_context,
+				_cg_pixel_profile.get()))),
+	loaded_vertex_program_(
+		renderer_.load_cg_program(
+			vertex_program_)),
+	loaded_pixel_program_(
+		renderer_.load_cg_program(
+			pixel_program_)),
+	mvp_parameter_(
+		vertex_program_.parameter(
+			"mvp")),
+	/*
 	shader_(
 		sge::shader::object_parameters(
 			renderer_,
@@ -162,7 +196,7 @@ flake::volume::density_visualization::raycaster::object::object(
 				flake::media_path_from_string(
 					FCPPT_TEXT("shaders/raycaster/fragment.glsl")))
 			.name(
-				FCPPT_TEXT("Raycaster")))
+				FCPPT_TEXT("Raycaster")))*/
 {
 	sge::renderer::scoped_vertex_lock vblock(
 		*vertex_buffer_,

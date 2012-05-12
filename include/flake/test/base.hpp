@@ -4,6 +4,8 @@
 #include <flake/font_metrics_cache.hpp>
 #include <flake/notifications/object_fwd.hpp>
 #include <flake/notifications/text.hpp>
+#include <flake/shader/pixel_profile.hpp>
+#include <flake/shader/vertex_profile.hpp>
 #include <flake/test/feature_sequence.hpp>
 #include <flake/test/json_identifier.hpp>
 #include <flake/test/information/manager_fwd.hpp>
@@ -13,6 +15,7 @@
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
+#include <sge/cg/context/object_fwd.hpp>
 #include <sge/charconv/system_fwd.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <sge/image2d/system_fwd.hpp>
@@ -23,14 +26,11 @@
 #include <sge/opencl/single_device_system/object_fwd.hpp>
 #include <sge/parse/json/object.hpp>
 #include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
 #include <sge/systems/cursor_option_field.hpp>
 #include <sge/systems/instance_fwd.hpp>
 #include <sge/viewport/manager_fwd.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
 #include <sge/window/title.hpp>
-#include <sge/cg/context/object_fwd.hpp>
-#include <flake/shader/vertex_profile.hpp>
-#include <flake/shader/pixel_profile.hpp>
 #include <awl/main/exit_code.hpp>
 #include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>

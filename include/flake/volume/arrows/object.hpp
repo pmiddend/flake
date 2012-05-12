@@ -12,6 +12,7 @@
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/preprocessor/disable_gcc_warning.hpp>
@@ -57,7 +58,8 @@ public:
 		flakelib::volume::float4_view const &);
 
 	void
-	render();
+	render(
+		sge::renderer::context::object &);
 
 	~object();
 private:

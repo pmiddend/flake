@@ -8,6 +8,7 @@
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
+#include <sge/renderer/context/object.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 
@@ -64,13 +65,14 @@ flake::volume::arrows::object::update(
 }
 
 void
-flake::volume::arrows::object::render()
+flake::volume::arrows::object::render(
+	sge::renderer::context::object &_context)
 {
 	sge::renderer::scoped_vertex_buffer scoped_vb(
-		renderer_,
+		_context,
 		*vb_);
 
-	renderer_.render_nonindexed(
+	_context.render_nonindexed(
 		sge::renderer::first_vertex(
 			0u),
 		sge::renderer::vertex_count(

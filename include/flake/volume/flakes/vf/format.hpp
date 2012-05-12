@@ -24,8 +24,8 @@ sge::renderer::vf::format
 	boost::mpl::vector3
 	<
 		vf::position_part,
-		vf::point_size_part,
-		vf::texcoord_part
+		vf::texcoord_part,
+		vf::point_size_part
 	>
 >
 format;

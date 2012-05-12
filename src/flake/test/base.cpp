@@ -1,8 +1,3 @@
-#include <sge/cg/profile/object.hpp>
-#include <sge/cg/context/object.hpp>
-#include <sge/renderer/context/scoped.hpp>
-#include <sge/renderer/target/onscreen.hpp>
-#include <sge/renderer/device.hpp>
 #include <flake/font_metrics_cache.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/notifications/object.hpp>
@@ -17,6 +12,8 @@
 #include <flakelib/cl/cflags.hpp>
 #include <flakelib/cl/compiler_flags.hpp>
 #include <flakelib/cl/program_context.hpp>
+#include <sge/cg/context/object.hpp>
+#include <sge/cg/profile/object.hpp>
 #include <sge/charconv/create_system.hpp>
 #include <sge/charconv/system.hpp>
 #include <sge/font/metrics.hpp>
@@ -31,8 +28,11 @@
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/parse_string_exn.hpp>
 #include <sge/parse/json/string_to_path.hpp>
+#include <sge/renderer/device.hpp>
 #include <sge/renderer/no_multi_sampling.hpp>
 #include <sge/renderer/parameters.hpp>
+#include <sge/renderer/context/scoped.hpp>
+#include <sge/renderer/target/onscreen.hpp>
 #include <sge/systems/font.hpp>
 #include <sge/systems/image2d.hpp>
 #include <sge/systems/input.hpp>
@@ -178,11 +178,15 @@ flake::test::base::base(
 	cg_context_(
 		fcppt::make_unique_ptr<sge::cg::context::object>()),
 	cg_vertex_profile_(
-		this->renderer().create_cg_profile(
-			sge::cg::profile::shader_type::vertex)),
+		fcppt::make_unique_ptr<sge::cg::profile::object>(
+			fcppt::cref(
+				this->renderer().create_cg_profile(
+					sge::cg::profile::shader_type::vertex)))),
 	cg_pixel_profile_(
-		this->renderer().create_cg_profile(
-			sge::cg::profile::shader_type::pixel)),
+		fcppt::make_unique_ptr<sge::cg::profile::object>(
+			fcppt::cref(
+				this->renderer().create_cg_profile(
+					sge::cg::profile::shader_type::pixel)))),
 	opencl_system_(
 		fcppt::make_unique_ptr<sge::opencl::single_device_system::object>(
 			fcppt::cref(

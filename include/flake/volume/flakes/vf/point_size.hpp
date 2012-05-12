@@ -2,9 +2,10 @@
 #define FLAKE_VOLUME_FLAKES_VF_POINT_SIZE_HPP_INCLUDED
 
 #include <sge/renderer/scalar.hpp>
-#include <sge/renderer/vf/make_unspecified_tag.hpp>
-#include <sge/renderer/vf/unspecified.hpp>
+#include <sge/renderer/vf/extra.hpp>
+#include <sge/renderer/vf/index.hpp>
 #include <sge/renderer/vf/vector.hpp>
+
 
 namespace flake
 {
@@ -14,21 +15,15 @@ namespace flakes
 {
 namespace vf
 {
-namespace tags
-{
-SGE_RENDERER_VF_MAKE_UNSPECIFIED_TAG(
-	point_size);
-}
-
 typedef
-sge::renderer::vf::unspecified
+sge::renderer::vf::extra
 <
 	sge::renderer::vf::vector
 	<
 		sge::renderer::scalar,
-		1
+		1u
 	>,
-	tags::point_size
+	sge::renderer::vf::index<8u>
 >
 point_size;
 }

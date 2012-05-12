@@ -206,7 +206,8 @@ flakelib::scan::object::exclusive_local2(
 		flakelib::cl::global_dim1(
 			static_cast<flakelib::cl::global_dim1::value_type>(
 				iSnapUp(
-					_batch_size.get() * _block_count.get(),
+					static_cast<cl_uint>(
+						_batch_size.get() * _block_count.get()),
 					WORKGROUP_SIZE))),
 		flakelib::cl::local_dim1(
 			static_cast<flakelib::cl::global_dim1::value_type>(

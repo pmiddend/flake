@@ -151,9 +151,9 @@ set(
 	src/flakelib/log_context.cpp
 	src/flakelib/log_location.cpp
 	src/flakelib/log_parameters.cpp
-#	src/flakelib/marching_cubes/manager.cpp
-#	src/flakelib/marching_cubes/object.cpp
-#	src/flakelib/marching_cubes/scan.cpp
+	#src/flakelib/marching_cubes/manager.cpp
+	#src/flakelib/marching_cubes/object.cpp
+	#src/flakelib/marching_cubes/scan.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
 	src/flakelib/planar/simulation/stam/buissnesq/object.cpp
@@ -173,18 +173,18 @@ set(
 	src/flakelib/utility/fill_buffer.cpp
 	src/flakelib/utility/mix_buffers.cpp
 	src/flakelib/value_modulator/object.cpp
-#	src/flakelib/volume/conversion/object.cpp
-#	src/flakelib/volume/gradient.cpp
-#	src/flakelib/volume/retrieve_filled_float_buffer.cpp
-#	src/flakelib/volume/retrieve_zero_float4_buffer.cpp
-#	src/flakelib/volume/simulation/stam/buissnesq/object.cpp
-#	src/flakelib/volume/simulation/stam/divergence.cpp
-#	src/flakelib/volume/simulation/stam/jacobi.cpp
-#	src/flakelib/volume/simulation/stam/outflow_boundaries.cpp
-#	src/flakelib/volume/simulation/stam/semilagrangian_advection.cpp
-#	src/flakelib/volume/simulation/stam/subtract_pressure_gradient.cpp
-#	src/flakelib/volume/simulation/stam/vorticity.cpp
-#	src/flakelib/volume/simulation/stam/wind_source.cpp
+	src/flakelib/volume/conversion/object.cpp
+	src/flakelib/volume/gradient.cpp
+	src/flakelib/volume/retrieve_filled_float_buffer.cpp
+	src/flakelib/volume/retrieve_zero_float4_buffer.cpp
+	src/flakelib/volume/simulation/stam/buissnesq/object.cpp
+	src/flakelib/volume/simulation/stam/divergence.cpp
+	src/flakelib/volume/simulation/stam/jacobi.cpp
+	src/flakelib/volume/simulation/stam/outflow_boundaries.cpp
+	src/flakelib/volume/simulation/stam/semilagrangian_advection.cpp
+	src/flakelib/volume/simulation/stam/subtract_pressure_gradient.cpp
+	src/flakelib/volume/simulation/stam/vorticity.cpp
+	src/flakelib/volume/simulation/stam/wind_source.cpp
 )
 
 set(
@@ -209,14 +209,17 @@ set(
 	src/flake/test/update_features_from_json.cpp
 	src/flake/time_modifier/kernel.cpp
 	src/flake/time_modifier/object.cpp
-#	src/flake/volume/arrows/manager.cpp
-#	src/flake/volume/arrows/object.cpp
-#	src/flake/volume/density_visualization/raycaster/object.cpp
-#	src/flake/volume/flakes/manager.cpp
-#	src/flake/volume/flakes/mover.cpp
-#	src/flake/volume/model/manager.cpp
-#	src/flake/volume/model/object.cpp
-#	src/flake/volume/obstacles/manager.cpp
+	src/flake/volume/arrows/manager.cpp
+	src/flake/volume/arrows/object.cpp
+	src/flake/volume/snow_cover/object.cpp
+	src/flake/volume/snow_cover/scoped.cpp
+	src/flake/shader/load_edited_string.cpp
+	#src/flake/volume/density_visualization/raycaster/object.cpp
+	src/flake/volume/flakes/manager.cpp
+	src/flake/volume/flakes/mover.cpp
+	src/flake/volume/model/manager.cpp
+	src/flake/volume/model/object.cpp
+	src/flake/volume/obstacles/manager.cpp
 )
 
 fcppt_utils_add_source_groups(
@@ -400,28 +403,28 @@ install(
 	${INSTALL_BINARY_DIR})
 # buoyancy end
 #
-## flakes begin
-#awl_utils_add_portable_executable(
-#	tests_flakes
-#	"custom_main"
-#	src/flake/volume/tests/flakes.cpp)
-#
-#target_link_libraries(
-#	tests_flakes
-#	flakelib
-#	flake_helper_library
-#	${Fcppt_core_LIBRARIES}
-#	${Fcppt_filesystem_LIBRARIES}
-#	${Awl_LIBRARIES}
-#	${SGE_LIBRARIES}
-#	${Boost_LIBRARIES})
-#
-#install(
-#	TARGETS
-#	tests_flakes
-#	DESTINATION
-#	${INSTALL_BINARY_DIR})
-## flakes end
+# flakes begin
+awl_utils_add_portable_executable(
+	tests_flakes
+	"custom_main"
+	src/flake/volume/tests/flakes.cpp)
+
+target_link_libraries(
+	tests_flakes
+	flakelib
+	flake_helper_library
+	${Fcppt_core_LIBRARIES}
+	${Fcppt_filesystem_LIBRARIES}
+	${Awl_LIBRARIES}
+	${SGE_LIBRARIES}
+	${Boost_LIBRARIES})
+
+install(
+	TARGETS
+	tests_flakes
+	DESTINATION
+	${INSTALL_BINARY_DIR})
+# flakes end
 #
 ## marching_cubes begin
 #awl_utils_add_portable_executable(

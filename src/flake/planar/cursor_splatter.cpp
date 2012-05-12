@@ -8,9 +8,9 @@
 #include <sge/input/cursor/move_event.hpp>
 #include <sge/input/cursor/object.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/vector2.hpp>
 #include <sge/renderer/vector3.hpp>
+#include <sge/renderer/target/onscreen.hpp>
 #include <fcppt/math/box/contains_point.hpp>
 #include <fcppt/math/box/rect.hpp>
 #include <fcppt/math/box/structure_cast.hpp>

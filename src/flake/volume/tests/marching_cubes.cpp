@@ -1,7 +1,3 @@
-#include <sge/shader/activate_everything.hpp>
-#include <sge/renderer/texture/filter/trilinear.hpp>
-#include <sge/renderer/texture/filter/linear.hpp>
-#include <sge/renderer/texture/filter/scoped.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/volume/tests/marching_cubes.hpp>
@@ -35,8 +31,12 @@
 #include <sge/renderer/texture/set_address_mode2.hpp>
 #include <sge/renderer/texture/volume.hpp>
 #include <sge/renderer/texture/volume_shared_ptr.hpp>
+#include <sge/renderer/texture/filter/linear.hpp>
+#include <sge/renderer/texture/filter/scoped.hpp>
+#include <sge/renderer/texture/filter/trilinear.hpp>
 #include <sge/renderer/texture/mipmap/all_levels.hpp>
 #include <sge/shader/activate_bare.hpp>
+#include <sge/shader/activate_everything.hpp>
 #include <sge/shader/object_parameters.hpp>
 #include <sge/shader/scoped.hpp>
 #include <sge/shader/update_single_uniform.hpp>

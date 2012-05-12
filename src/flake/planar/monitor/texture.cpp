@@ -9,9 +9,9 @@
 #include <sge/font/text/size.hpp>
 #include <sge/opencl/memory_object/flags_field.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/scoped_transform.hpp>
+#include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/planar_parameters.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
