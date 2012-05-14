@@ -314,9 +314,9 @@ void
 flake::volume::density_visualization::raycaster::object::render(
 	sge::renderer::context::object &_context)
 {
-	sge::renderer::cg::scoped_texture scoped_texture(
+	sge::renderer::scoped_vertex_declaration scoped_vd(
 		_context,
-		*loaded_texture_);
+		*vertex_declaration_);
 
 	sge::renderer::cg::scoped_program
 		scoped_vertex_program(
@@ -326,9 +326,9 @@ flake::volume::density_visualization::raycaster::object::render(
 			_context,
 			*loaded_pixel_program_);
 
-	sge::renderer::scoped_vertex_declaration scoped_vd(
+	sge::renderer::cg::scoped_texture scoped_texture(
 		_context,
-		*vertex_declaration_);
+		*loaded_texture_);
 
 	sge::cg::parameter::matrix::set(
 		mvp_parameter_.object(),

@@ -153,9 +153,9 @@ flake::volume::tests::density_visualization::density_visualization(
 						20,
 						20))),
 			flakelib::splatter::pen::is_round(
-				false),
+				true),
 			flakelib::splatter::pen::is_smooth(
-				false),
+				true),
 			flakelib::splatter::pen::draw_mode::mix,
 			flakelib::splatter::pen::blend_factor(
 				1.0f)),

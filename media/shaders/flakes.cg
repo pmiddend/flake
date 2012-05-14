@@ -1,7 +1,7 @@
 struct vertex_outputs
 {
 	float4 position : POSITION;
-	float2 texture_coordinates : COLOR0;
+	float2 texture_coordinates;
 	float point_size : PSIZE;
 };
 
@@ -52,8 +52,8 @@ vertex_main(
 
 float4
 pixel_main(
+	vertex_outputs vertex_data,
 	float2 texcoord : TEXCOORD0,
-	float2 starting_texcoord : COLOR0,
 	uniform sampler2D main_texture : TEX0,
 	uniform float tile_size)
 	: COLOR
@@ -61,7 +61,7 @@ pixel_main(
 	float4 texture_value =
 		tex2D(
 			main_texture,
-			starting_texcoord + texcoord * float2(tile_size,1.0));
+			vertex_data.texture_coordinates + texcoord * float2(tile_size,1.0));
 
 	return
 		float4(
