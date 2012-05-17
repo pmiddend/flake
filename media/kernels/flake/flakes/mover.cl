@@ -31,7 +31,7 @@ generate_randomized_position(
 
 	result.y =
 		// 1/5.0f + flakelib_random_float_value(f.x - f.z - f.y) / 2.0f;
-		(result.x + (1.0f - result.x) * flakelib_random_float_value(f.x - f.z - f.y))/2.0f;
+		(result.x + (1.0f - result.x) * flakelib_random_float_value(f.x - f.z - f.y));
 
 	return
 		result * convert_float4(bounding_rect);
@@ -171,11 +171,7 @@ FLAKELIB_KERNEL_NAME(move)(
 					flakelib_volume_at(
 						buffer_pitch,
 						bounding_rect,
-						(int4)(
-							lefttopback_position.x,
-							0,
-							lefttopback_position.z,
-							0));
+						projected_position);
 
 
 				// Project coordinate to the ground, update the snow depth

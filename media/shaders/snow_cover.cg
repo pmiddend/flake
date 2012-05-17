@@ -23,9 +23,15 @@ vertex_main(
 	outs.world_position =
 		position.xyz;
 
-	outs.normal =
-		normalize(
+	float normal_length =
+		length(
 			normal.xyz);
+
+	if(normal_length < 0.00001 || normal_length > 2.0)
+		outs.normal = float3(1.0,0.0,0.0);
+	else
+		outs.normal =
+			normal / normal_length;
 
 	return
 		outs;
@@ -43,6 +49,9 @@ calculate_blend_weights(
 
 	float blend_sum =
 		blend_weights.x + blend_weights.y + blend_weights.z;
+
+	if(blend_sum < 0.001)
+		return float3(1.0,0.0,0.0);
 
 	blend_weights /=
 		blend_sum.xxx;

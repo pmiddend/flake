@@ -397,18 +397,10 @@ flake::volume::flakes::manager::generate_particles(
 			renderer_scalar_distribution(
 				renderer_scalar_distribution::min(
 					static_cast<sge::renderer::scalar>(
-						_grid_size.get().h()/5u)),
+						1.0f)),
 				renderer_scalar_distribution::sup(
 					static_cast<sge::renderer::scalar>(
-						_grid_size.get().h()/2u+10u)))),
-		second_y_rng(
-			number_generator,
-			renderer_scalar_distribution(
-				renderer_scalar_distribution::min(
-					3.0f),
-				renderer_scalar_distribution::sup(
-					static_cast<sge::renderer::scalar>(
-						_grid_size.get().h()/2u+10u)))),
+						_grid_size.get().h()-1.0f)))),
 		z_rng(
 			number_generator,
 			renderer_scalar_distribution(
@@ -431,10 +423,6 @@ flake::volume::flakes::manager::generate_particles(
 				y_rng(),
 				z_rng(),
 				1.0f);
-
-		if(starting_position.x() < static_cast<sge::renderer::scalar>(_grid_size.get().w()))
-			starting_position.y() =
-				second_y_rng();
 
 		sge::renderer::scalar const flake_size =
 			size_rng();

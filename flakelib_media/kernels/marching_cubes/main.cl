@@ -359,7 +359,10 @@ FLAKELIB_KERNEL_NAME(generate_triangles)(
 			(int2)(cubeindex,0)).x;
 
 	// Create numVerts/3 triangles...
-	for(uint i=0; i < numVerts; i+=3)
+	for(
+		uint i = 0u;
+		i < numVerts;
+		i += 3u)
 	{
 		uint const index =
 			summed_vertices_for_voxel[voxel] + i;
