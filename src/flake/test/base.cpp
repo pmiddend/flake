@@ -168,8 +168,9 @@ flake::test::base::base(
 								sge::renderer::vsync::on,
 								sge::renderer::no_multi_sampling),
 							sge::viewport::fill_on_resize())
-						 	.name(
-								FCPPT_TEXT("opengl")))
+						 	.caps(
+								sge::renderer::caps::system_field(
+									sge::renderer::caps::system::opengl)))
 						(sge::systems::font())
 						(sge::systems::input(
 							sge::systems::input_helper_field(
