@@ -263,7 +263,7 @@ flake::volume::flakes::manager::render(
 			0u),
 		sge::renderer::vertex_count(
 			positions_buffer_->size()),
-		sge::renderer::nonindexed_primitive_type::point);
+		sge::renderer::primitive_type::point_list);
 }
 
 flake::volume::flakes::position_view const
@@ -400,7 +400,9 @@ flake::volume::flakes::manager::generate_particles(
 						1.0f)),
 				renderer_scalar_distribution::sup(
 					static_cast<sge::renderer::scalar>(
-						_grid_size.get().h()-1.0f)))),
+						_grid_size.get().h())-
+					static_cast<sge::renderer::scalar>(
+						1.0f)))),
 		z_rng(
 			number_generator,
 			renderer_scalar_distribution(

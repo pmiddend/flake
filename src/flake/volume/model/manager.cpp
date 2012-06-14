@@ -278,7 +278,7 @@ flake::volume::model::manager::render(
 				0u),
 			sge::renderer::vertex_count(
 				current_vertex_buffer->size()),
-			sge::renderer::nonindexed_primitive_type::triangle);
+			sge::renderer::primitive_type::triangle_list);
 	}
 }
 

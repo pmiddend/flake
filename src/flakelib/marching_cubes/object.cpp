@@ -243,7 +243,7 @@ flakelib::marching_cubes::object::render(
 		sge::renderer::vertex_count(
 			static_cast<sge::renderer::size_type>(
 				vertex_count_.get())),
-		sge::renderer::nonindexed_primitive_type::triangle);
+		sge::renderer::primitive_type::triangle_list);
 }
 
 void

@@ -12,7 +12,7 @@
 #include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/first_index.hpp>
-#include <sge/renderer/nonindexed_primitive_type.hpp>
+#include <sge/renderer/primitive_type.hpp>
 #include <sge/renderer/resource_flags.hpp>
 #include <sge/renderer/scoped_transform.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
@@ -328,5 +328,5 @@ flake::planar::monitor::arrows::render_arrows(
 			0u),
 		sge::renderer::vertex_count(
 			vb_->size()),
-		sge::renderer::nonindexed_primitive_type::line);
+		sge::renderer::primitive_type::line_list);
 }

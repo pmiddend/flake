@@ -384,7 +384,7 @@ flake::volume::density_visualization::raycaster::object::render(
 			0u),
 		sge::renderer::vertex_count(
 			36u),
-		sge::renderer::nonindexed_primitive_type::triangle);
+		sge::renderer::primitive_type::triangle_list);
 }
 
 flake::volume::density_visualization::raycaster::object::~object()
