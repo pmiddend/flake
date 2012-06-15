@@ -49,6 +49,31 @@ add_definitions(
 	${Rucksack_DEFINITIONS})
 # rucksack end
 
+# cg begin
+find_package(
+	Cg REQUIRED)
+include_directories(
+	${Cg_INCLUDE_DIR})
+add_definitions(
+	${Cg_DEFINITIONS})
+# cg end
+
+# OpenCL begin
+find_package(
+	OpenCL REQUIRED)
+include_directories(
+	${OpenCL_INCLUDE_DIR})
+add_definitions(
+	${OpenCL_DEFINITIONS})
+# OpenCL end
+
+# cg begin
+find_package(
+	OpenGL REQUIRED)
+include_directories(
+	${OPENGL_INCLUDE_DIR})
+# cg end
+
 # OpenCL begin
 find_package(
 	OpenCL REQUIRED)
@@ -94,7 +119,11 @@ find_package(
 	parse
 	systems
 	window
-	viewport)
+	viewport
+	# All of the following are optional (transitive static)
+	plugin
+	audio
+)
 
 include_directories(${SGE_INCLUDE_DIRS})
 add_definitions(${SGE_DEFINITIONS})
@@ -311,6 +340,8 @@ function(
 			ncurses)
 	endif()
 
+	message("OpenCL libraries are: ${OPENCL_LIBRARIES}")
+
 
 	# This is, of course, extremely overlinked
 	target_link_libraries(
@@ -320,8 +351,8 @@ function(
 		${Awl_LIBRARIES}
 		${SGE_LIBRARIES}
 		${Rucksack_LIBRARIES}
-		# FIXME FIXME FIXME
-		OpenCL
+		${OPENCL_LIBRARIES}
+		${OPENGL_gl_LIBRARY}
 		${Boost_LIBRARIES})
 
 	install(
@@ -355,6 +386,9 @@ add_library(
 	STATIC
 	${FLAKE_FILES})
 
+add_definitions(
+	${FLAKELIB_CONFIG_LINK_MACROS})
+
 # vorticity begin
 awl_utils_add_portable_executable(
 	tests_vorticity
@@ -363,13 +397,16 @@ awl_utils_add_portable_executable(
 
 target_link_libraries(
 	tests_vorticity
-	flakelib
+	${FLAKELIB_DEFAULT_LINK_TARGET}
 	flake_helper_library
 	${Fcppt_core_LIBRARIES}
 	${Fcppt_filesystem_LIBRARIES}
+	${Cg_LIBRARIES}
 	${Awl_LIBRARIES}
 	${SGE_LIBRARIES}
 	${Rucksack_LIBRARIES}
+	${OPENCL_LIBRARIES}
+	${OPENGL_gl_LIBRARY}
 	${Boost_LIBRARIES})
 
 install(
@@ -387,13 +424,16 @@ awl_utils_add_portable_executable(
 
 target_link_libraries(
 	tests_buoyancy
-	flakelib
+	${FLAKELIB_DEFAULT_LINK_TARGET}
 	flake_helper_library
 	${Fcppt_core_LIBRARIES}
 	${Fcppt_filesystem_LIBRARIES}
 	${Awl_LIBRARIES}
+	${Cg_LIBRARIES}
 	${SGE_LIBRARIES}
 	${Rucksack_LIBRARIES}
+	${OPENCL_LIBRARIES}
+	${OPENGL_gl_LIBRARY}
 	${Boost_LIBRARIES})
 
 install(
@@ -411,11 +451,14 @@ awl_utils_add_portable_executable(
 
 target_link_libraries(
 	tests_flakes
-	flakelib
+	${FLAKELIB_DEFAULT_LINK_TARGET}
 	flake_helper_library
 	${Fcppt_core_LIBRARIES}
 	${Fcppt_filesystem_LIBRARIES}
+	${Cg_LIBRARIES}
+	${OPENCL_LIBRARIES}
 	${Awl_LIBRARIES}
+	${OPENGL_gl_LIBRARY}
 	${SGE_LIBRARIES}
 	${Boost_LIBRARIES})
 
@@ -434,12 +477,15 @@ awl_utils_add_portable_executable(
 
 target_link_libraries(
 	tests_marching_cubes
-	flakelib
+	${FLAKELIB_DEFAULT_LINK_TARGET}
 	flake_helper_library
 	${Fcppt_core_LIBRARIES}
 	${Fcppt_filesystem_LIBRARIES}
+	${Cg_LIBRARIES}
 	${Awl_LIBRARIES}
 	${SGE_LIBRARIES}
+	${OPENGL_gl_LIBRARY}
+	${OPENCL_LIBRARIES}
 	${Boost_LIBRARIES})
 
 install(
@@ -457,12 +503,15 @@ awl_utils_add_portable_executable(
 
 target_link_libraries(
 	tests_density_visualization
-	flakelib
+	${FLAKELIB_DEFAULT_LINK_TARGET}
 	flake_helper_library
 	${Fcppt_core_LIBRARIES}
 	${Fcppt_filesystem_LIBRARIES}
+	${Cg_LIBRARIES}
 	${Awl_LIBRARIES}
 	${SGE_LIBRARIES}
+	${OPENCL_LIBRARIES}
+	${OPENGL_gl_LIBRARY}
 	${Boost_LIBRARIES})
 
 install(
@@ -503,11 +552,14 @@ awl_utils_add_portable_executable(
 
 target_link_libraries(
 	tests_solipsistic
-	flakelib
+	${FLAKELIB_DEFAULT_LINK_TARGET}
 	flake_helper_library
 	${Fcppt_core_LIBRARIES}
 	${Fcppt_filesystem_LIBRARIES}
+	${Cg_LIBRARIES}
 	${Awl_LIBRARIES}
+	${OPENCL_LIBRARIES}
+	${OPENGL_gl_LIBRARY}
 	${SGE_LIBRARIES}
 	${Boost_LIBRARIES})
 
@@ -526,12 +578,15 @@ awl_utils_add_portable_executable(
 
 target_link_libraries(
 	tests_scan
-	flakelib
+	${FLAKELIB_DEFAULT_LINK_TARGET}
 	flake_helper_library
 	${Fcppt_core_LIBRARIES}
 	${Fcppt_filesystem_LIBRARIES}
 	${Awl_LIBRARIES}
+	${OPENGL_gl_LIBRARY}
+	${OPENCL_LIBRARIES}
 	${SGE_LIBRARIES}
+	${Cg_LIBRARIES}
 	${Boost_LIBRARIES})
 
 install(

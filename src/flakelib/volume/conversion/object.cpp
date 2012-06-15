@@ -1,3 +1,14 @@
+#include <flakelib/buffer_pool/volume_lock_impl.hpp>
+#include <flakelib/exception.hpp>
+#include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
+#include <fcppt/filesystem/path_to_string.hpp>
+#include <fcppt/text.hpp>
+#include <flakelib/exception.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <flakelib/volume/float_buffer_lock.hpp>
+#include <fcppt/ref.hpp>
+#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/move.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/volume_view_impl.hpp>
 #include <flakelib/cl/kernel.hpp>
@@ -140,6 +151,68 @@ flakelib::volume::conversion::object::float_view_to_flat_volume_texture(
 	float_view_to_flat_volume_texture_kernel_->enqueue_automatic(
 		flakelib::cl::global_dim3(
 			_input.size()));
+}
+
+flakelib::volume::unique_float_buffer_lock
+flakelib::volume::conversion::object::raw_voxel_file_to_buffer(
+	flakelib::buffer_pool::object &_buffer_pool,
+	boost::filesystem::path const &_path,
+	flakelib::volume::conversion::raw_voxel_file_dimension const &_raw_voxel_file_dimension)
+{
+	flakelib::volume::unique_float_buffer_lock result(
+		fcppt::make_unique_ptr<flakelib::volume::float_buffer_lock>(
+			fcppt::ref(
+				_buffer_pool),
+			sge::opencl::memory_object::dim3(
+				_raw_voxel_file_dimension.get(),
+				_raw_voxel_file_dimension.get(),
+				_raw_voxel_file_dimension.get())));
+
+	boost::filesystem::fstream input_file(
+		_path);
+
+	if(!input_file.is_open())
+		throw
+			flakelib::exception(
+				FCPPT_TEXT("Couldn't load \"")+
+				fcppt::filesystem::path_to_string(
+					_path)+
+				FCPPT_TEXT("\""));
+
+	sge::opencl::command_queue::scoped_buffer_mapping scoped_mapping(
+		to_arrow_vb_kernel_->command_queue(),
+		result->value().buffer(),
+		CL_MAP_WRITE,
+		sge::opencl::memory_object::byte_offset(
+			0u),
+		result->value().buffer().byte_size());
+
+	cl_float *fptr =
+		static_cast<cl_float *>(
+			scoped_mapping.ptr());
+
+	for(
+		std::size_t i = 0;
+		i < result->value().size().content();
+		++i)
+	{
+		char new_char;
+
+		input_file.read(
+			&new_char,
+			1u);
+
+		*fptr++ =
+			new_char
+			?
+				1.0f
+			:
+				0.0f;
+	}
+
+	return
+		fcppt::move(
+			result);
 }
 
 flakelib::volume::conversion::object::~object()

@@ -139,6 +139,11 @@
 			"near-plane" : 0.1,
 			"far-plane" : 1000.0,
 			"fov" : 60.0,
+			"voxel-file" :
+			{
+				"name" : "cube.raw",
+				"size" : 64
+			},
 			"features" :
 			{
 				"paused" : false

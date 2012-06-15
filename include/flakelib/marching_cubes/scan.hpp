@@ -30,8 +30,8 @@ public:
 	scanExclusiveLarge(
 		cl_mem d_Dst,
 		cl_mem d_Src,
-		uint batchSize,
-		uint arrayLength);
+		cl_uint batchSize,
+		cl_uint arrayLength);
 
 	~scan();
 private:

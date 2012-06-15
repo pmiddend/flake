@@ -1,12 +1,15 @@
 #include <sge/renderer/context/object.hpp>
+#include <flake/media_path_from_string.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/volume/tests/density_visualization.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
+/*
 #include <flakelib/splatter/box/object.hpp>
 #include <flakelib/splatter/pen/object.hpp>
 #include <flakelib/volume/retrieve_filled_float_buffer.hpp>
+*/
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/image/colors.hpp>
@@ -107,16 +110,32 @@ flake::volume::tests::density_visualization::density_visualization(
 						FCPPT_TEXT("fov")))))),
 	fill_buffer_(
 		this->program_context()),
+	conversion_(
+		this->program_context()),
+	/*
 	splatter_(
 		this->program_context()),
+		*/
 	density_buffer_(
+		conversion_.raw_voxel_file_to_buffer(
+			this->buffer_pool(),
+			flake::media_path_from_string(
+				FCPPT_TEXT("models/")+
+				sge::parse::json::find_and_convert_member<fcppt::string>(
+					this->configuration(),
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("voxel-file/name")))),
+			flakelib::volume::conversion::raw_voxel_file_dimension(
+				sge::parse::json::find_and_convert_member<sge::opencl::memory_object::size_type>(
+					this->configuration(),
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("voxel-file/size")))))
+		/*
 		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
 			fill_buffer_,
 			simulation_size_.get(),
-			0.0f)),
-	conversion_(
-		this->program_context()),
+			0.0f)*/),
 	raycaster_(
 		this->renderer(),
 		this->cg_context(),
@@ -138,6 +157,7 @@ flake::volume::tests::density_visualization::density_visualization(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			boost::chrono::seconds(1)))
 {
+	/*
 	splatter_.splat_volume_float(
 		density_buffer_->value(),
 		flakelib::splatter::pen::volume(
@@ -161,6 +181,7 @@ flake::volume::tests::density_visualization::density_visualization(
 				1.0f)),
 		static_cast<cl_float>(
 			1.0f));
+			*/
 }
 
 awl::main::exit_code const

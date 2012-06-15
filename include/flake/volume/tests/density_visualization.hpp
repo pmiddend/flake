@@ -3,7 +3,7 @@
 
 #include <flake/test/base.hpp>
 #include <flake/volume/density_visualization/raycaster/object.hpp>
-#include <flakelib/splatter/object.hpp>
+//#include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/volume/grid_size.hpp>
 #include <flakelib/volume/unique_float_buffer_lock.hpp>
@@ -45,11 +45,11 @@ private:
 	sge::camera::perspective_projection_from_viewport perspective_projection_from_viewport_;
 
 	flakelib::utility::fill_buffer fill_buffer_;
-	flakelib::splatter::object splatter_;
+	//flakelib::splatter::object splatter_;
+	flakelib::volume::conversion::object conversion_;
 
 	flakelib::volume::unique_float_buffer_lock density_buffer_;
 
-	flakelib::volume::conversion::object conversion_;
 	flake::volume::density_visualization::raycaster::object raycaster_;
 
 	// Timer
