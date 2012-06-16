@@ -7,6 +7,8 @@
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/volume/grid_size.hpp>
 #include <flakelib/volume/unique_float_buffer_lock.hpp>
+#include <flake/volume/model/manager.hpp>
+#include <flake/volume/model/object.hpp>
 #include <flakelib/volume/conversion/object.hpp>
 #include <sge/camera/perspective_projection_from_viewport.hpp>
 #include <sge/camera/first_person/object.hpp>
@@ -51,6 +53,8 @@ private:
 	flakelib::volume::unique_float_buffer_lock density_buffer_;
 
 	flake::volume::density_visualization::raycaster::object raycaster_;
+	flake::volume::model::manager models_;
+	flake::volume::model::object avz_;
 
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;

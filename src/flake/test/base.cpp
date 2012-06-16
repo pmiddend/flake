@@ -1,3 +1,4 @@
+#include <sge/systems/quit_on_escape.hpp>
 #include <flake/font_metrics_cache.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/notifications/object.hpp>
@@ -178,6 +179,9 @@ flake::test::base::base(
 								| sge::systems::input_helper::cursor_demuxer
 								| sge::systems::input_helper::mouse_collector,
 							_cursor_options))))),
+	quit_connection_(
+		sge::systems::quit_on_escape(
+			*systems_)),
 	cg_context_(
 		fcppt::make_unique_ptr<sge::cg::context::object>()),
 	cg_vertex_profile_(

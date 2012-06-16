@@ -131,6 +131,7 @@ private:
 	sge::parse::json::object const local_configuration_;
 	test::feature_sequence features_;
 	fcppt::scoped_ptr<sge::systems::instance> systems_;
+	fcppt::signal::scoped_connection quit_connection_;
 	fcppt::scoped_ptr<sge::cg::context::object> cg_context_;
 	fcppt::scoped_ptr<sge::cg::profile::object> cg_vertex_profile_;
 	fcppt::scoped_ptr<sge::cg::profile::object> cg_pixel_profile_;

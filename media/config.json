@@ -139,10 +139,12 @@
 			"near-plane" : 0.1,
 			"far-plane" : 1000.0,
 			"fov" : 60.0,
+			"sun-direction" : [0.666667,-0.333333,-0.666667],
 			"voxel-file" :
 			{
-				"name" : "cube.raw",
-				"size" : 64
+				"name" : "avz.raw",
+				"size" : 64,
+				"model" : "avz"
 			},
 			"features" :
 			{

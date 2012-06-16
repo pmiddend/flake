@@ -120,7 +120,7 @@ flake::volume::tests::density_visualization::density_visualization(
 		conversion_.raw_voxel_file_to_buffer(
 			this->buffer_pool(),
 			flake::media_path_from_string(
-				FCPPT_TEXT("models/")+
+				FCPPT_TEXT("voxelized_models/")+
 				sge::parse::json::find_and_convert_member<fcppt::string>(
 					this->configuration(),
 					sge::parse::json::string_to_path(
@@ -153,6 +153,30 @@ flake::volume::tests::density_visualization::density_visualization(
 					FCPPT_TEXT("raycast-step-size")))),
 		flake::volume::density_visualization::raycaster::debug_output(
 			false)),
+	models_(
+		this->renderer(),
+		this->cg_context(),
+		this->cg_vertex_profile(),
+		this->cg_pixel_profile(),
+		this->image_system(),
+		camera_,
+		flake::volume::model::sun_direction(
+			sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("sun-direction"))))),
+	avz_(
+		models_,
+		flake::volume::model::identifier(
+			sge::parse::json::find_and_convert_member<fcppt::string>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("voxel-file/model")))),
+		flake::volume::model::position(
+			sge::renderer::vector3(
+				0.0f,
+				0.0f,
+				0.0f))),
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			boost::chrono::seconds(1)))
@@ -201,11 +225,19 @@ flake::volume::tests::density_visualization::render(
 {
 	_context.clear(
 		sge::renderer::clear::parameters()
+			.depth_buffer(
+				sge::renderer::clear::depth_buffer_value(
+					1.0f))
 			.back_buffer(
 				sge::image::colors::black()));
 
 	raycaster_.render(
 		_context);
+
+	/*
+	models_.render(
+		_context);
+		*/
 
 	test::base::render(
 		_context);
