@@ -31,6 +31,18 @@ if(
 endif()
 # boost end
 
+if(MSVC)
+	add_definitions(
+		-DUNICODE=1
+		-D_UNICODE=1)
+
+	# this in base init list
+	# assigment operator generation
+	add_definitions(
+		/wd4355
+		/wd4626)
+endif()
+
 # fcppt begin
 find_package(
 	Fcppt REQUIRED)

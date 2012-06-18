@@ -23,7 +23,7 @@ flake::time_modifier::kernel::faster()
 void
 flake::time_modifier::kernel::slower()
 {
-	if(current_multiplier_.get() > 1.0f)
+	if(current_multiplier_.get() > 1)
 		--current_multiplier_;
 	else
 		current_multiplier_ /=
