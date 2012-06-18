@@ -149,7 +149,7 @@ private:
 		cl_uint gridSize[4],
 		cl_uint gridSizeShift[4],
 		cl_uint gridSizeMask[4],
-		uint numVoxels,
+		cl_uint numVoxels,
 		cl_float voxelSize[4],
 		float isoValue);
 
@@ -160,7 +160,7 @@ private:
 		cl_mem compVoxelArray,
 		cl_mem voxelOccupied,
 		cl_mem voxelOccupiedScan,
-		uint numVoxels);
+		cl_uint numVoxels);
 
 	void
 	launch_generateTriangles2(
@@ -177,7 +177,7 @@ private:
 		cl_uint gridSizeMask[4],
 		cl_float voxelSize[4],
 		float isoValue,
-		uint activeVoxels,
+		cl_uint activeVoxels,
 		sge::renderer::size_type);
 };
 }

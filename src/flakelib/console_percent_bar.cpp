@@ -4,6 +4,7 @@
 #include <fcppt/config/external_begin.hpp>
 #include <cmath>
 #include <iostream>
+#include <string>
 #include <fcppt/config/external_end.hpp>
 #include <fcppt/config/platform.hpp>
 #ifdef FCPPT_CONFIG_UNIX_PLATFORM
