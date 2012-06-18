@@ -4,9 +4,9 @@
 
 #ifdef FCPPT_CONFIG_WINDOWS_PLATFORM
 #include <fcppt/config/include_windows.hpp>
-#else
-#include <fcppt/io/cerr.hpp>
 #endif
+
+#include <fcppt/io/cerr.hpp>
 
 void
 flake::message_box(
