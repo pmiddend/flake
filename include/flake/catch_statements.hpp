@@ -4,11 +4,9 @@
 #include <awl/main/exit_failure.hpp>
 #include <fcppt/exception.hpp>
 #include <fcppt/text.hpp>
-#include <fcppt/io/cerr.hpp>
 #include <fcppt/config/external_begin.hpp>
+#include <flake/message_box.hpp>
 #include <exception>
-#include <iostream>
-#include <ostream>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -18,21 +16,27 @@
 	catch(\
 		fcppt::exception const &e)\
 	{\
-		fcppt::io::cerr() << FCPPT_TEXT("fcppt exception caught: ") << e.string() << FCPPT_TEXT("\n");\
+		flake::message_box(\
+			FCPPT_TEXT("fcppt exception caught: ")+\
+			e.string());\
 		return\
 			awl::main::exit_failure();\
 	}\
 	catch(\
 		std::exception const &e)\
 	{\
-		std::cerr << "standard exception caught: " << e.what() << "\n";\
+		flake::message_box(\
+			FCPPT_TEXT("fcppt exception caught: ")+\
+			fcppt::from_std_string(\
+				e.what()));\
 		return\
 			awl::main::exit_failure();\
 	}\
 	catch(\
 		...)\
 	{\
-		std::cerr << "unknown exception caught\n";\
+		flake::message_box(\
+			FCPPT_TEXT("unknown exception caught"));\
 		return\
 			awl::main::exit_failure();\
 	}

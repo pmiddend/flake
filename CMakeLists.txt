@@ -221,6 +221,7 @@ set(
 	src/flake/font_metrics_cache.cpp
 	src/flake/media_path.cpp
 	src/flake/media_path_from_string.cpp
+	src/flake/message_box.cpp
 	src/flake/notifications/message.cpp
 	src/flake/notifications/object.cpp
 	src/flake/planar/conversion/object.cpp
@@ -230,6 +231,7 @@ set(
 	src/flake/planar/monitor/parent.cpp
 	src/flake/planar/monitor/texture.cpp
 	src/flake/save_l8_texture_to_file.cpp
+	src/flake/shader/load_edited_string.cpp
 	src/flake/sprite_drawer_3d.cpp
 	src/flake/test/base.cpp
 	src/flake/test/feature.cpp
@@ -240,15 +242,14 @@ set(
 	src/flake/time_modifier/object.cpp
 	src/flake/volume/arrows/manager.cpp
 	src/flake/volume/arrows/object.cpp
-	src/flake/volume/snow_cover/object.cpp
-	src/flake/volume/snow_cover/scoped.cpp
-	src/flake/shader/load_edited_string.cpp
 	src/flake/volume/density_visualization/raycaster/object.cpp
 	src/flake/volume/flakes/manager.cpp
 	src/flake/volume/flakes/mover.cpp
 	src/flake/volume/model/manager.cpp
 	src/flake/volume/model/object.cpp
 	src/flake/volume/obstacles/manager.cpp
+	src/flake/volume/snow_cover/object.cpp
+	src/flake/volume/snow_cover/scoped.cpp
 )
 
 fcppt_utils_add_source_groups(
