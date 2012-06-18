@@ -12,6 +12,8 @@
 #include <flake/test/information/object.hpp>
 #include <flake/time_modifier/multiplier.hpp>
 #include <flake/time_modifier/object_fwd.hpp>
+#include <flake/scoped_ostream_file_redirection.hpp>
+#include <flake/scoped_wostream_file_redirection.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
@@ -35,6 +37,7 @@
 #include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
+#include <fcppt/config/platform.hpp>
 #include <fcppt/signal/scoped_connection.hpp>
 #include <fcppt/signal/scoped_connection.hpp>
 
@@ -126,6 +129,14 @@ protected:
 	virtual void
 	viewport_callback();
 private:
+#ifdef FCPPT_CONFIG_WINDOWS_PLATFORM
+	flake::scoped_ostream_file_redirection error_redirection_;
+	flake::scoped_ostream_file_redirection log_redirection_;
+	flake::scoped_ostream_file_redirection output_redirection_;
+	flake::scoped_wostream_file_redirection werror_redirection_;
+	flake::scoped_wostream_file_redirection wlog_redirection_;
+	flake::scoped_wostream_file_redirection woutput_redirection_;
+#endif
 	fcppt::scoped_ptr<sge::charconv::system> charconv_system_;
 	fcppt::scoped_ptr<sge::parse::json::object> configuration_;
 	sge::parse::json::object const local_configuration_;

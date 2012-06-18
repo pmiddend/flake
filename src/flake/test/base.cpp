@@ -1,4 +1,3 @@
-#include <sge/systems/quit_on_escape.hpp>
 #include <flake/font_metrics_cache.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/notifications/object.hpp>
@@ -39,6 +38,7 @@
 #include <sge/systems/input.hpp>
 #include <sge/systems/instance.hpp>
 #include <sge/systems/list.hpp>
+#include <sge/systems/quit_on_escape.hpp>
 #include <sge/systems/renderer.hpp>
 #include <sge/systems/window.hpp>
 #include <sge/viewport/fill_on_resize.hpp>
@@ -125,6 +125,26 @@ flake::test::base::base(
 	test::feature_sequence const &_features,
 	sge::systems::cursor_option_field const &_cursor_options)
 :
+#ifdef FCPPT_CONFIG_WINDOWS_PLATFORM
+	error_redirection_(
+		std::cerr,
+		"error.txt"),
+	log_redirection_(
+		std::clog,
+		"log.txt"),
+	output_redirection_(
+		std::cout,
+		"output.txt"),
+	werror_redirection_(
+		std::wcerr,
+		"werror.txt"),
+	wlog_redirection_(
+		std::wclog,
+		"wlog.txt"),
+	woutput_redirection_(
+		std::wcout,
+		"woutput.txt"),
+#endif
 	charconv_system_(
 		sge::charconv::create_system()),
 	configuration_(

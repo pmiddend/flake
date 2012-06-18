@@ -1,11 +1,11 @@
 #ifndef FLAKE_CATCH_STATEMENTS_HPP_INCLUDED
 #define FLAKE_CATCH_STATEMENTS_HPP_INCLUDED
 
+#include <flake/message_box.hpp>
 #include <awl/main/exit_failure.hpp>
 #include <fcppt/exception.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <flake/message_box.hpp>
 #include <exception>
 #include <iostream>
 #include <fcppt/config/external_end.hpp>
