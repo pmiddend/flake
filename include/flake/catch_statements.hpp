@@ -17,7 +17,6 @@
 	catch(\
 		fcppt::exception const &e)\
 	{\
-		std::cerr << "lol\n";\
 		flake::message_box(\
 			FCPPT_TEXT("fcppt exception caught: ")+\
 			e.string());\
@@ -27,7 +26,6 @@
 	catch(\
 		std::exception const &e)\
 	{\
-		std::cerr << "lol\n";\
 		flake::message_box(\
 			FCPPT_TEXT("fcppt exception caught: ")+\
 			fcppt::from_std_string(\
@@ -38,7 +36,6 @@
 	catch(\
 		...)\
 	{\
-		std::cerr << "lol\n";\
 		flake::message_box(\
 			FCPPT_TEXT("unknown exception caught"));\
 		return\
