@@ -63,8 +63,8 @@ flakelib::volume::simulation::stam::wind_source::update(
 			_view.size().d()));
 
 	kernel_->enqueue_automatic(
-		flakelib::cl::global_dim2(
-			sge::opencl::memory_object::dim2(
+		sge::opencl::command_queue::global_dim2(
+			sge::opencl::dim2(
 				_view.size().h(),
 				_view.size().d())));
 }

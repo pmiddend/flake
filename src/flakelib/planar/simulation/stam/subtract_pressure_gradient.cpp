@@ -54,7 +54,7 @@ flakelib::planar::simulation::stam::subtract_pressure_gradient::update(
 			_boundary.get().size().w()));
 
 	kernel_->enqueue_automatic(
-		flakelib::cl::global_dim2(
+		sge::opencl::command_queue::global_dim2(
 			_boundary.get().size()));
 }
 

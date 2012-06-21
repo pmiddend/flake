@@ -1,25 +1,26 @@
-#include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <flakelib/exception.hpp>
-#include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
-#include <fcppt/filesystem/path_to_string.hpp>
-#include <fcppt/text.hpp>
-#include <flakelib/exception.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <flakelib/volume/float_buffer_lock.hpp>
-#include <fcppt/ref.hpp>
-#include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/move.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/buffer/volume_view_impl.hpp>
+#include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program_context.hpp>
+#include <flakelib/volume/float_buffer_lock.hpp>
 #include <flakelib/volume/conversion/object.hpp>
+#include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/scoped_objects.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
+#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/move.hpp>
+#include <fcppt/ref.hpp>
+#include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
+#include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/math/dim/is_quadratic.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <fcppt/config/external_end.hpp>
 
 
 flakelib::volume::conversion::object::object(
@@ -92,7 +93,7 @@ flakelib::volume::conversion::object::to_arrow_vb(
 		_origin.get().z());
 
 	to_arrow_vb_kernel_->enqueue_automatic(
-		flakelib::cl::global_dim3(
+		sge::opencl::command_queue::global_dim3(
 			_input.size()));
 }
 
@@ -149,7 +150,7 @@ flakelib::volume::conversion::object::float_view_to_flat_volume_texture(
 			_output.size().w() / _input.size().w()));
 
 	float_view_to_flat_volume_texture_kernel_->enqueue_automatic(
-		flakelib::cl::global_dim3(
+		sge::opencl::command_queue::global_dim3(
 			_input.size()));
 }
 
@@ -163,7 +164,7 @@ flakelib::volume::conversion::object::raw_voxel_file_to_buffer(
 		fcppt::make_unique_ptr<flakelib::volume::float_buffer_lock>(
 			fcppt::ref(
 				_buffer_pool),
-			sge::opencl::memory_object::dim3(
+			sge::opencl::dim3(
 				_raw_voxel_file_dimension.get(),
 				_raw_voxel_file_dimension.get(),
 				_raw_voxel_file_dimension.get())));
@@ -182,10 +183,11 @@ flakelib::volume::conversion::object::raw_voxel_file_to_buffer(
 	sge::opencl::command_queue::scoped_buffer_mapping scoped_mapping(
 		to_arrow_vb_kernel_->command_queue(),
 		result->value().buffer(),
-		CL_MAP_WRITE,
+		sge::opencl::command_queue::map_flags::write,
 		sge::opencl::memory_object::byte_offset(
 			0u),
-		result->value().buffer().byte_size());
+		result->value().buffer().byte_size(),
+		sge::opencl::event::sequence());
 
 	cl_float *fptr =
 		static_cast<cl_float *>(

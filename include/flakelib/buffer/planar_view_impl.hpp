@@ -6,7 +6,7 @@
 template<typename T>
 flakelib::buffer::planar_view<T>::planar_view(
 	sge::opencl::memory_object::buffer &_buffer,
-	sge::opencl::memory_object::dim2 const &_size)
+	sge::opencl::dim2 const &_size)
 :
 	buffer_(
 		&_buffer),
@@ -24,7 +24,7 @@ flakelib::buffer::planar_view<T>::buffer() const
 }
 
 template<typename T>
-sge::opencl::memory_object::dim2 const &
+sge::opencl::dim2 const &
 flakelib::buffer::planar_view<T>::size() const
 {
 	return

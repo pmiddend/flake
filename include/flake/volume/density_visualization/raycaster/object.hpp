@@ -13,10 +13,8 @@
 #include <sge/camera/base_fwd.hpp>
 #include <sge/cg/context/object_fwd.hpp>
 #include <sge/cg/parameter/named.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
 #include <sge/cg/profile/object_fwd.hpp>
 #include <sge/cg/program/object.hpp>
-#include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
@@ -24,6 +22,8 @@
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
+#include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
 #include <sge/renderer/texture/planar_shared_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
 

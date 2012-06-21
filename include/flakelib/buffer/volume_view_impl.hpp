@@ -6,7 +6,7 @@
 template<typename T>
 flakelib::buffer::volume_view<T>::volume_view(
 	sge::opencl::memory_object::buffer &_buffer,
-	sge::opencl::memory_object::dim3 const &_size)
+	sge::opencl::dim3 const &_size)
 :
 	buffer_(
 		_buffer),
@@ -23,7 +23,7 @@ flakelib::buffer::volume_view<T>::buffer() const
 }
 
 template<typename T>
-sge::opencl::memory_object::dim3 const &
+sge::opencl::dim3 const &
 flakelib::buffer::volume_view<T>::size() const
 {
 	return size_;

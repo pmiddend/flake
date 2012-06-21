@@ -11,7 +11,7 @@ flakelib::volume::unique_float_buffer_lock
 flakelib::volume::retrieve_filled_float_buffer(
 	buffer_pool::object &_buffer_pool,
 	utility::fill_buffer &_fill_buffer,
-	sge::opencl::memory_object::dim3 const &_size,
+	sge::opencl::dim3 const &_size,
 	cl_float const _value)
 {
 	flakelib::volume::unique_float_buffer_lock result(

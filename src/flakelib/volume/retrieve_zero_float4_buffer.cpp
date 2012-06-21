@@ -11,7 +11,7 @@ flakelib::volume::unique_float4_buffer_lock
 flakelib::volume::retrieve_zero_float4_buffer(
 	buffer_pool::object &_buffer_pool,
 	utility::fill_buffer &_fill_buffer,
-	sge::opencl::memory_object::dim3 const &_size)
+	sge::opencl::dim3 const &_size)
 {
 	flakelib::volume::unique_float4_buffer_lock result(
 		fcppt::make_unique_ptr<flakelib::volume::float4_buffer_lock>(

@@ -99,7 +99,7 @@ flake::volume::tests::smoke::smoke(
 		sge::systems::cursor_option_field(
 			sge::systems::cursor_option::exclusive)),
 	simulation_size_(
-		sge::parse::json::find_and_convert_member<sge::opencl::memory_object::dim3>(
+		sge::parse::json::find_and_convert_member<sge::opencl::dim3>(
 			this->configuration(),
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("simulation-size")))),

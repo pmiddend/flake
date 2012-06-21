@@ -1,8 +1,7 @@
-#include <sge/renderer/context/object.hpp>
-#include <flake/volume/snow_cover/scoped.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/test/information/string_conversion_adapter.hpp>
+#include <flake/volume/snow_cover/scoped.hpp>
 #include <flake/volume/tests/flakes.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
@@ -17,14 +16,15 @@
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/clear/parameters.hpp>
+#include <sge/renderer/context/object.hpp>
 #include <sge/renderer/state/color.hpp>
 #include <sge/renderer/state/draw_mode.hpp>
 #include <sge/renderer/state/float.hpp>
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>
+#include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/texture/address_mode2.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
 #include <sge/renderer/texture/set_address_mode2.hpp>
@@ -108,7 +108,7 @@ flake::volume::tests::flakes::flakes(
 		sge::systems::cursor_option_field(
 			sge::systems::cursor_option::exclusive)),
 	simulation_size_(
-		sge::parse::json::find_and_convert_member<sge::opencl::memory_object::dim3>(
+		sge::parse::json::find_and_convert_member<sge::opencl::dim3>(
 			this->configuration(),
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("simulation-size")))),
@@ -196,11 +196,25 @@ flake::volume::tests::flakes::flakes(
 	subtract_pressure_gradient_(
 		this->program_context()),
 	boundary_buffer_(
+		conversion_object_.raw_voxel_file_to_buffer(
+			this->buffer_pool(),
+			flake::media_path_from_string(
+				FCPPT_TEXT("voxelized_models/")+
+				sge::parse::json::find_and_convert_member<fcppt::string>(
+					this->configuration(),
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("voxel-file/name")))),
+			flakelib::volume::conversion::raw_voxel_file_dimension(
+				sge::parse::json::find_and_convert_member<sge::opencl::size_type>(
+					this->configuration(),
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("voxel-file/size")))))
+		/*
 		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
 			fill_buffer_,
 			simulation_size_.get(),
-			0.0f)),
+			0.0f)*/),
 	snow_density_buffer_(
 		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
@@ -301,6 +315,19 @@ flake::volume::tests::flakes::flakes(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("sun-direction"))))),
+	model_(
+		models_,
+		flake::volume::model::identifier(
+			sge::parse::json::find_and_convert_member<fcppt::string>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("voxel-file/model")))),
+		flake::volume::model::position(
+			sge::renderer::vector3(
+				0.0f,
+				0.0f,
+				0.0f))),
+	/*
 	obstacles_(
 		models_,
 		sge::parse::json::find_and_convert_member<sge::parse::json::array>(
@@ -310,6 +337,7 @@ flake::volume::tests::flakes::flakes(
 		flakelib::volume::boundary_buffer_view(
 			boundary_buffer_->value()),
 		splatter_),
+		*/
 	gradient_(
 		this->program_context(),
 		this->buffer_pool()),
@@ -320,7 +348,8 @@ flake::volume::tests::flakes::flakes(
 		this->renderer(),
 		scan_,
 		gradient_,
-		this->program_context()),
+		this->program_context(),
+		this->buffer_pool()),
 	snow_cover_(
 		camera_,
 		this->renderer(),

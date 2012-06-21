@@ -6,7 +6,7 @@
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/volume/unique_float_buffer_lock.hpp>
 #include <sge/opencl/clinclude.hpp>
-#include <sge/opencl/memory_object/dim3.hpp>
+#include <sge/opencl/dim3.hpp>
 
 
 namespace flakelib
@@ -18,7 +18,7 @@ flakelib::volume::unique_float_buffer_lock
 retrieve_filled_float_buffer(
 	buffer_pool::object &,
 	utility::fill_buffer &,
-	sge::opencl::memory_object::dim3 const &,
+	sge::opencl::dim3 const &,
 	cl_float);
 }
 }

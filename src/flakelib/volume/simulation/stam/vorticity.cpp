@@ -69,7 +69,7 @@ flakelib::volume::simulation::stam::vorticity::apply_vorticity(
 			_velocity.get().size().w()));
 
 	vorticity_kernel_->enqueue_automatic(
-		flakelib::cl::global_dim3(
+		sge::opencl::command_queue::global_dim3(
 			_velocity.get().size()));
 
 	return
@@ -117,7 +117,7 @@ flakelib::volume::simulation::stam::vorticity::apply_confinement(
 			_vorticity.size().w()));
 
 	confinement_kernel_->enqueue_automatic(
-		flakelib::cl::global_dim3(
+		sge::opencl::command_queue::global_dim3(
 			_vorticity.size()));
 
 	return

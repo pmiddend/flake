@@ -26,7 +26,7 @@ flakelib::cl::planar_image_view_to_cl_image(
 			sge::opencl::memory_object::image::sge_color_format_to_opencl(
 				sge::image2d::view::format(
 					_planar_image)),
-			fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
+			fcppt::math::dim::structure_cast<sge::opencl::dim2>(
 				sge::image2d::view::size(
 					_planar_image)),
 			sge::opencl::memory_object::image::planar_pitch(
@@ -35,12 +35,13 @@ flakelib::cl::planar_image_view_to_cl_image(
 	sge::opencl::command_queue::scoped_planar_mapping scoped_image(
 		_command_queue,
 		*result,
-		CL_MAP_WRITE,
+		sge::opencl::command_queue::map_flags::write,
 		sge::opencl::memory_object::rect(
 			sge::opencl::memory_object::rect::vector::null(),
 			fcppt::math::dim::structure_cast<sge::opencl::memory_object::rect::dim>(
 				sge::image2d::view::size(
-					_planar_image))));
+					_planar_image))),
+		sge::opencl::event::sequence());
 
 	sge::image2d::algorithm::copy_and_convert(
 		_planar_image,

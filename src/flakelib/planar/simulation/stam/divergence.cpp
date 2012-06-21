@@ -65,7 +65,7 @@ flakelib::planar::simulation::stam::divergence::update(
 			_buffer.size().w()));
 
 	kernel_->enqueue_automatic(
-		flakelib::cl::global_dim2(
+		sge::opencl::command_queue::global_dim2(
 			_buffer.size()));
 
 	return

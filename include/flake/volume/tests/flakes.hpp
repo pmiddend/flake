@@ -8,6 +8,7 @@
 #include <flake/volume/flakes/manager.hpp>
 #include <flake/volume/flakes/mover.hpp>
 #include <flake/volume/model/manager.hpp>
+#include <flake/volume/model/object.hpp>
 #include <flake/volume/obstacles/manager.hpp>
 #include <flake/volume/snow_cover/object.hpp>
 #include <flakelib/marching_cubes/manager.hpp>
@@ -31,7 +32,7 @@
 #include <sge/camera/perspective_projection_from_viewport.hpp>
 #include <sge/camera/first_person/object.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>
-#include <sge/opencl/memory_object/dim3.hpp>
+#include <sge/opencl/dim3.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
 #include <awl/main/exit_code.hpp>
@@ -90,7 +91,8 @@ private:
 	flake::volume::flakes::manager flakes_;
 	flake::volume::flakes::mover flakes_mover_;
 	flake::volume::model::manager models_;
-	flake::volume::obstacles::manager obstacles_;
+	flake::volume::model::object model_;
+	//flake::volume::obstacles::manager obstacles_;
 	flakelib::volume::gradient gradient_;
 	flakelib::scan::object scan_;
 	flakelib::marching_cubes::manager marching_cubes_manager_;

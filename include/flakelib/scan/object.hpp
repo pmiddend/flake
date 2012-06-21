@@ -55,6 +55,7 @@ private:
 	flakelib::cl::kernel_scoped_ptr exclusive_local2_kernel_;
 	flakelib::cl::kernel_scoped_ptr uniform_update_kernel_;
 	unique_linear_uint_lock buffer_;
+	unique_linear_uint_lock debug_buffer_;
 
 	FCPPT_MAKE_STRONG_TYPEDEF(
 		linear_uint_view,
@@ -94,6 +95,9 @@ private:
 	uniform_update(
 		destination const &,
 		block_count const &);
+
+	void
+	check_debug_buffer();
 };
 }
 }

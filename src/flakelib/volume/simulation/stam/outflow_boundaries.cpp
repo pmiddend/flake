@@ -51,8 +51,8 @@ flakelib::volume::simulation::stam::outflow_boundaries::update(
 			_view.size().w()));
 
 	kernel_->enqueue_automatic(
-		flakelib::cl::global_dim2(
-			sge::opencl::memory_object::dim2(
+		sge::opencl::command_queue::global_dim2(
+			sge::opencl::dim2(
 				_view.size().w(),
 				_view.size().h())));
 }

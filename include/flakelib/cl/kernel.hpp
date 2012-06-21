@@ -2,13 +2,13 @@
 #define FLAKELIB_CL_KERNEL_HPP_INCLUDED
 
 #include <flakelib/symbol.hpp>
-#include <flakelib/cl/global_dim1.hpp>
-#include <flakelib/cl/global_dim2.hpp>
-#include <flakelib/cl/global_dim3.hpp>
 #include <flakelib/cl/kernel_parameters.hpp>
-#include <flakelib/cl/local_dim1.hpp>
-#include <flakelib/cl/local_dim2.hpp>
-#include <flakelib/cl/local_dim3.hpp>
+#include <sge/opencl/command_queue/global_dim1.hpp>
+#include <sge/opencl/command_queue/global_dim2.hpp>
+#include <sge/opencl/command_queue/global_dim3.hpp>
+#include <sge/opencl/command_queue/local_dim1.hpp>
+#include <sge/opencl/command_queue/local_dim2.hpp>
+#include <sge/opencl/command_queue/local_dim3.hpp>
 #include <flakelib/cl/uint4.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/name.hpp>
@@ -16,9 +16,6 @@
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/memory_object/base_fwd.hpp>
 #include <sge/opencl/memory_object/byte_size.hpp>
-#include <sge/opencl/memory_object/dim1.hpp>
-#include <sge/opencl/memory_object/dim2.hpp>
-#include <sge/opencl/memory_object/dim3.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <sge/opencl/program/object_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -82,35 +79,35 @@ public:
 	FLAKELIB_SYMBOL
 	void
 	enqueue_automatic(
-		flakelib::cl::global_dim1 const &);
+		sge::opencl::command_queue::global_dim1 const &);
 
 	FLAKELIB_SYMBOL
 	void
 	enqueue_automatic(
-		flakelib::cl::global_dim2 const &);
+		sge::opencl::command_queue::global_dim2 const &);
 
 	FLAKELIB_SYMBOL
 	void
 	enqueue_automatic(
-		flakelib::cl::global_dim3 const &);
+		sge::opencl::command_queue::global_dim3 const &);
 
 	FLAKELIB_SYMBOL
 	void
 	enqueue(
-		flakelib::cl::global_dim1 const &,
-		flakelib::cl::local_dim1 const &);
+		sge::opencl::command_queue::global_dim1 const &,
+		sge::opencl::command_queue::local_dim1 const &);
 
 	FLAKELIB_SYMBOL
 	void
 	enqueue(
-		flakelib::cl::global_dim2 const &,
-		flakelib::cl::local_dim2 const &);
+		sge::opencl::command_queue::global_dim2 const &,
+		sge::opencl::command_queue::local_dim2 const &);
 
 	FLAKELIB_SYMBOL
 	void
 	enqueue(
-		flakelib::cl::global_dim3 const &,
-		flakelib::cl::local_dim3 const &);
+		sge::opencl::command_queue::global_dim3 const &,
+		sge::opencl::command_queue::local_dim3 const &);
 
 	FLAKELIB_SYMBOL
 	sge::opencl::command_queue::object &

@@ -1,3 +1,4 @@
+#include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <flakelib/media_path_from_string.hpp>
 #include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program_context.hpp>
@@ -10,6 +11,9 @@
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/is_power_of_2.hpp>
 
+// Debug
+#include <iostream>
+#include <cstdlib>
 
 namespace
 {
@@ -66,17 +70,57 @@ flakelib::scan::object::object(
 		fcppt::make_unique_ptr<linear_uint_lock>(
 			fcppt::ref(
 				buffer_pool_),
-			sge::opencl::memory_object::dim1(
-				static_cast<sge::opencl::memory_object::size_type>(
-					(MAX_BATCH_ELEMENTS / (4u * WORKGROUP_SIZE)) * sizeof(cl_uint)))))
+			sge::opencl::dim1(
+				static_cast<sge::opencl::size_type>(
+					(MAX_BATCH_ELEMENTS / (4u * WORKGROUP_SIZE)) * sizeof(cl_uint))))),
+	debug_buffer_(
+		fcppt::make_unique_ptr<linear_uint_lock>(
+			fcppt::ref(
+				buffer_pool_),
+			sge::opencl::dim1(
+				sizeof(
+					cl_uint))))
 {
+	exclusive_local1_kernel_->buffer_argument(
+		"debug_buffer",
+		debug_buffer_->value().buffer());
+
+	exclusive_local2_kernel_->buffer_argument(
+		"debug_buffer",
+		debug_buffer_->value().buffer());
+
+	uniform_update_kernel_->buffer_argument(
+		"debug_buffer",
+		debug_buffer_->value().buffer());
+
 	exclusive_local2_kernel_->buffer_argument(
 		"d_Buf",
 		buffer_->value().buffer());
 
+	exclusive_local2_kernel_->numerical_argument(
+		"d_Buf_size",
+		static_cast<cl_uint>(
+			buffer_->value().size().w()));
+
 	uniform_update_kernel_->buffer_argument(
 		"d_Buf",
 		buffer_->value().buffer());
+
+	uniform_update_kernel_->numerical_argument(
+		"d_Buf_size",
+		static_cast<cl_uint>(
+			buffer_->value().size().w()));
+
+	sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
+		uniform_update_kernel_->command_queue(),
+		debug_buffer_->value().buffer(),
+		sge::opencl::command_queue::map_flags::write,
+		sge::opencl::memory_object::byte_offset(
+			0u),
+		debug_buffer_->value().buffer().byte_size(),
+		sge::opencl::event::sequence());
+
+	*static_cast<cl_uint *>(buffer_mapping.ptr()) = 0;
 }
 
 flakelib::scan::object::unique_linear_uint_lock
@@ -150,9 +194,19 @@ flakelib::scan::object::exclusive_local1(
 		"source",
 		_source.get().buffer());
 
+	exclusive_local1_kernel_->numerical_argument(
+		"source_size",
+		static_cast<cl_uint>(
+			_source.get().size().w()));
+
 	exclusive_local1_kernel_->buffer_argument(
 		"destination",
 		_destination.get().buffer());
+
+	exclusive_local1_kernel_->numerical_argument(
+		"destination_size",
+		static_cast<cl_uint>(
+			_destination.get().size().w()));
 
 	exclusive_local1_kernel_->local_buffer_argument(
 		"local_data",
@@ -160,16 +214,23 @@ flakelib::scan::object::exclusive_local1(
 			2u * WORKGROUP_SIZE * sizeof(cl_uint)));
 
 	exclusive_local1_kernel_->numerical_argument(
+		"local_data_size",
+		static_cast<cl_uint>(
+			2u * WORKGROUP_SIZE));
+
+	exclusive_local1_kernel_->numerical_argument(
 		"size",
 		_elements_per_workgroup.get());
 
 	exclusive_local1_kernel_->enqueue(
-		flakelib::cl::global_dim1(
-			static_cast<flakelib::cl::global_dim1::value_type>(
+		sge::opencl::command_queue::global_dim1(
+			static_cast<sge::opencl::command_queue::global_dim1::value_type>(
 				(_workgroup_count.get() * _elements_per_workgroup.get()) / 4u)),
-		flakelib::cl::local_dim1(
-			static_cast<flakelib::cl::global_dim1::value_type>(
+		sge::opencl::command_queue::local_dim1(
+			static_cast<sge::opencl::command_queue::global_dim1::value_type>(
 				WORKGROUP_SIZE)));
+
+	this->check_debug_buffer();
 }
 
 void
@@ -183,14 +244,30 @@ flakelib::scan::object::exclusive_local2(
 		"d_Dst",
 		_destination.get().buffer());
 
+	exclusive_local2_kernel_->numerical_argument(
+		"d_Dst_size",
+		static_cast<cl_uint>(
+			_destination.get().size().w()));
+
 	exclusive_local2_kernel_->buffer_argument(
 		"d_Src",
 		_source.get().buffer());
+
+	exclusive_local2_kernel_->numerical_argument(
+		"d_Src_size",
+		static_cast<cl_uint>(
+			_source.get().size().w()));
 
 	exclusive_local2_kernel_->local_buffer_argument(
 		"l_Data",
 		sge::opencl::memory_object::byte_size(
 			2u * WORKGROUP_SIZE * sizeof(cl_uint)));
+
+	exclusive_local2_kernel_->numerical_argument(
+		"l_Data_size",
+		static_cast<cl_uint>(
+			2u * WORKGROUP_SIZE));
+
 
 	exclusive_local2_kernel_->numerical_argument(
 		"N",
@@ -202,16 +279,23 @@ flakelib::scan::object::exclusive_local2(
 		static_cast<cl_uint>(
 			_block_count.get()));
 
-	exclusive_local2_kernel_->enqueue(
-		flakelib::cl::global_dim1(
-			static_cast<flakelib::cl::global_dim1::value_type>(
+	sge::opencl::size_type const
+		global_size =
+			static_cast<sge::opencl::size_type>(
 				iSnapUp(
 					static_cast<cl_uint>(
 						_batch_size.get() * _block_count.get()),
-					WORKGROUP_SIZE))),
-		flakelib::cl::local_dim1(
-			static_cast<flakelib::cl::global_dim1::value_type>(
+					WORKGROUP_SIZE));
+
+	exclusive_local2_kernel_->enqueue(
+		sge::opencl::command_queue::global_dim1(
+			sge::opencl::command_queue::global_dim1::value_type(
+				global_size)),
+		sge::opencl::command_queue::local_dim1(
+			sge::opencl::command_queue::local_dim1::value_type(
 				WORKGROUP_SIZE)));
+
+	this->check_debug_buffer();
 }
 
 void
@@ -223,11 +307,55 @@ flakelib::scan::object::uniform_update(
 		"d_Data",
 		_destination.get().buffer());
 
+	uniform_update_kernel_->numerical_argument(
+		"d_Data_size",
+		static_cast<cl_uint>(
+			_destination.get().size().w()));
+
+	FCPPT_ASSERT_PRE(
+		_block_count.get() * WORKGROUP_SIZE
+		<=
+		(_destination.get().buffer().byte_size().get())/(4u*sizeof(cl_uint)));
+
+	FCPPT_ASSERT_PRE(
+		((_block_count.get() * WORKGROUP_SIZE)/WORKGROUP_SIZE)
+		<=
+		(buffer_->value().buffer().byte_size().get() / sizeof(cl_uint)));
+
+
 	uniform_update_kernel_->enqueue(
-		flakelib::cl::global_dim1(
-			static_cast<flakelib::cl::global_dim1::value_type>(
+		sge::opencl::command_queue::global_dim1(
+			static_cast<sge::opencl::command_queue::global_dim1::value_type>(
 				_block_count.get() * WORKGROUP_SIZE)),
-		flakelib::cl::local_dim1(
-			static_cast<flakelib::cl::global_dim1::value_type>(
+		sge::opencl::command_queue::local_dim1(
+			static_cast<sge::opencl::command_queue::global_dim1::value_type>(
 				WORKGROUP_SIZE)));
+
+	this->check_debug_buffer();
+}
+
+void
+flakelib::scan::object::check_debug_buffer()
+{
+	sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
+		exclusive_local1_kernel_->command_queue(),
+		debug_buffer_->value().buffer(),
+		sge::opencl::command_queue::map_flags::read,
+		sge::opencl::memory_object::byte_offset(
+			0u),
+		debug_buffer_->value().buffer().byte_size(),
+		sge::opencl::event::sequence());
+
+	if(*static_cast<cl_uint *>(
+			buffer_mapping.ptr()))
+	{
+		std::cerr << "Debug buffer contains: " << *static_cast<cl_uint *>(
+			buffer_mapping.ptr()) << "!!!!\n";
+		std::exit(0);
+	}
+	else
+	{
+		std::cerr << "Debug buffer contains: " << *static_cast<cl_uint *>(
+			buffer_mapping.ptr()) << "!!!!\n";
+	}
 }

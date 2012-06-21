@@ -41,6 +41,8 @@ flakelib::buffer_pool::object::get_and_lock(
 		locked_buffers_.insert(
 			&(*it));
 
+		std::cout << "found a buffer: " << &(*it) << "\n";
+
 		return
 			*it;
 	}
@@ -58,6 +60,8 @@ flakelib::buffer_pool::object::get_and_lock(
 	locked_buffers_.insert(
 		&pool_.back());
 
+	std::cout << "created a buffer: " << &(pool_.back()) << "\n";
+
 	return
 		pool_.back();
 }
@@ -66,6 +70,8 @@ void
 flakelib::buffer_pool::object::unlock(
 	sge::opencl::memory_object::buffer &_buffer)
 {
+	std::cerr << "unlocking " << &_buffer << "\n";
+
 	locked_buffers::size_type const deleted_elements =
 		locked_buffers_.erase(
 			&_buffer);
@@ -92,4 +98,5 @@ flakelib::buffer_pool::object::memory_consumption() const
 
 flakelib::buffer_pool::object::~object()
 {
+	std::cerr << "~buffer_pool\n";
 }

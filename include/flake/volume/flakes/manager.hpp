@@ -23,7 +23,6 @@
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
 #include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
 #include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
 #include <sge/renderer/context/object_fwd.hpp>

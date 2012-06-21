@@ -29,11 +29,11 @@ flakelib::buffer::linear_view<T>::buffer() const
 }
 
 template<typename T>
-sge::opencl::memory_object::dim1
+sge::opencl::dim1
 flakelib::buffer::linear_view<T>::size() const
 {
 	return
-		sge::opencl::memory_object::dim1(
+		sge::opencl::dim1(
 			buffer_.byte_size().get() / sizeof(T));
 }
 

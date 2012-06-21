@@ -4,7 +4,7 @@
 #include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/buffer_pool/planar_lock_fwd.hpp>
-#include <sge/opencl/memory_object/dim2.hpp>
+#include <sge/opencl/dim2.hpp>
 #include <fcppt/nonassignable.hpp>
 
 
@@ -20,7 +20,7 @@ FCPPT_NONASSIGNABLE(
 public:
 	planar_lock(
 		buffer_pool::object &,
-		sge::opencl::memory_object::dim2 const &);
+		sge::opencl::dim2 const &);
 
 	buffer::planar_view<T> const &
 	value() const;

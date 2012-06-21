@@ -75,7 +75,7 @@ flake::volume::tests::density_visualization::density_visualization(
 		sge::systems::cursor_option_field(
 			sge::systems::cursor_option::exclusive)),
 	simulation_size_(
-		sge::parse::json::find_and_convert_member<sge::opencl::memory_object::dim3>(
+		sge::parse::json::find_and_convert_member<sge::opencl::dim3>(
 			this->configuration(),
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("simulation-size")))),
@@ -126,7 +126,7 @@ flake::volume::tests::density_visualization::density_visualization(
 					sge::parse::json::string_to_path(
 						FCPPT_TEXT("voxel-file/name")))),
 			flakelib::volume::conversion::raw_voxel_file_dimension(
-				sge::parse::json::find_and_convert_member<sge::opencl::memory_object::size_type>(
+				sge::parse::json::find_and_convert_member<sge::opencl::size_type>(
 					this->configuration(),
 					sge::parse::json::string_to_path(
 						FCPPT_TEXT("voxel-file/size")))))

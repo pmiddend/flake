@@ -112,7 +112,7 @@ flake::planar::tests::vorticity::vorticity(
 						FCPPT_TEXT("boundary"))))),
 	boundary_buffer_(
 		this->buffer_pool(),
-		fcppt::math::dim::structure_cast<sge::opencl::memory_object::dim2>(
+		fcppt::math::dim::structure_cast<sge::opencl::dim2>(
 			sge::image2d::view::size(
 				boundary_image_file_->view()))),
 	velocity_buffer_(

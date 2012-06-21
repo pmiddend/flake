@@ -8,7 +8,7 @@
 template<typename T>
 flakelib::buffer_pool::linear_lock<T>::linear_lock(
 	buffer_pool::object &_pool,
-	sge::opencl::memory_object::dim1 const &_size)
+	sge::opencl::dim1 const &_size)
 :
 	pool_(
 		_pool),

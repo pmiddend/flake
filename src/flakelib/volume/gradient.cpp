@@ -57,7 +57,7 @@ flakelib::volume::gradient::update(
 			_buffer.size().w()));
 
 	kernel_->enqueue_automatic(
-		flakelib::cl::global_dim3(
+		sge::opencl::command_queue::global_dim3(
 			_buffer.size()));
 
 	return

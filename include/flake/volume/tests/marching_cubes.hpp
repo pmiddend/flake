@@ -2,6 +2,7 @@
 #define FLAKE_VOLUME_TESTS_MARCHING_CUBES_HPP_INCLUDED
 
 #include <flake/test/base.hpp>
+#include <flake/volume/snow_cover/object.hpp>
 #include <flakelib/marching_cubes/manager.hpp>
 #include <flakelib/marching_cubes/object.hpp>
 #include <flakelib/scan/object.hpp>
@@ -13,10 +14,9 @@
 #include <sge/camera/perspective_projection_from_viewport.hpp>
 #include <sge/camera/first_person/object.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>
-#include <sge/opencl/memory_object/dim3.hpp>
+#include <sge/opencl/dim3.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
-#include <flake/volume/snow_cover/object.hpp>
 #include <awl/main/exit_code.hpp>
 #include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>

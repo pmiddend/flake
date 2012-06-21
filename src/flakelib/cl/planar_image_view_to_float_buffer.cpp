@@ -53,11 +53,12 @@ flakelib::cl::planar_image_view_to_float_buffer(
 	sge::opencl::command_queue::scoped_buffer_mapping scoped_bmap(
 		_command_queue,
 		_buffer.buffer(),
-		CL_MAP_WRITE,
+		sge::opencl::command_queue::map_flags::write,
 		sge::opencl::memory_object::byte_offset(
 			0u),
 		sge::opencl::memory_object::byte_size(
-			_buffer.buffer().byte_size()));
+			_buffer.buffer().byte_size()),
+		sge::opencl::event::sequence());
 
 	typedef
 	sge::image2d::view::const_element<sge::image::color::l8_format>::type

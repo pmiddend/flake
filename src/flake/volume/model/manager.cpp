@@ -1,5 +1,3 @@
-#include <sge/renderer/cg/scoped_texture.hpp>
-#include <fcppt/cref.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/volume/model/manager.hpp>
 #include <flake/volume/model/vf/format.hpp>
@@ -23,6 +21,7 @@
 #include <sge/renderer/cg/loaded_texture.hpp>
 #include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
 #include <sge/renderer/cg/scoped_program.hpp>
+#include <sge/renderer/cg/scoped_texture.hpp>
 #include <sge/renderer/context/object.hpp>
 #include <sge/renderer/state/bool.hpp>
 #include <sge/renderer/state/depth_func.hpp>
@@ -33,6 +32,7 @@
 #include <sge/renderer/texture/scoped.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
+#include <fcppt/cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/optional.hpp>
 #include <fcppt/ref.hpp>

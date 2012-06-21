@@ -1,13 +1,13 @@
-#include <sge/renderer/texture/planar.hpp>
-#include <flake/shader/load_edited_string.hpp>
-#include <sge/renderer/cg/loaded_texture.hpp>
 #include <flake/media_path_from_string.hpp>
+#include <flake/shader/load_edited_string.hpp>
 #include <flake/volume/snow_cover/object.hpp>
 #include <sge/cg/parameter/scalar/set.hpp>
 #include <sge/cg/parameter/vector/set.hpp>
 #include <sge/cg/program/from_string_parameters.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/cg/loaded_program.hpp>
+#include <sge/renderer/cg/loaded_texture.hpp>
+#include <sge/renderer/texture/planar.hpp>
 
 
 flake::volume::snow_cover::object::object(

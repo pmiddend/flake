@@ -1,4 +1,3 @@
-#include <fcppt/assign/make_container.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/volume/flakes/mover.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
@@ -9,6 +8,7 @@
 #include <sge/opencl/memory_object/scoped_objects.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
+#include <fcppt/assign/make_container.hpp>
 #include <fcppt/math/dim/output.hpp>
 
 
@@ -52,7 +52,7 @@ flake::volume::flakes::mover::mover(
 		fcppt::make_unique_ptr<linear_float4_lock>(
 			fcppt::ref(
 				_buffer_pool),
-			sge::opencl::memory_object::dim1(
+			sge::opencl::dim1(
 				_positions.get().size().w()))),
 	vertex_count_(
 		_positions.get().size().w())
@@ -159,8 +159,8 @@ flake::volume::flakes::mover::update(
 			(&point_sizes_.get().buffer()));
 
 	move_kernel_->enqueue_automatic(
-		flakelib::cl::global_dim1(
-			sge::opencl::memory_object::dim1(
+		sge::opencl::command_queue::global_dim1(
+			sge::opencl::dim1(
 				vertex_count_)));
 }
 
@@ -198,7 +198,7 @@ flake::volume::flakes::mover::initialize_velocities(
 		point_sizes_.get().buffer());
 
 	initialize_velocities_kernel_->enqueue_automatic(
-		flakelib::cl::global_dim1(
+		sge::opencl::command_queue::global_dim1(
 			velocities_->value().size()));
 }
 
@@ -211,6 +211,6 @@ flake::volume::flakes::mover::update_activity(
 		_boundary.get().buffer());
 
 	update_activity_kernel_->enqueue_automatic(
-		flakelib::cl::global_dim3(
+		sge::opencl::command_queue::global_dim3(
 			_boundary.get().size()));
 }

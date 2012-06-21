@@ -2,23 +2,25 @@
 #define FLAKELIB_VOLUME_CONVERSION_OBJECT_HPP_INCLUDED
 
 #include <flakelib/symbol.hpp>
+#include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/cl/kernel_scoped_ptr.hpp>
 #include <flakelib/cl/program.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/volume/float4_view.hpp>
 #include <flakelib/volume/float_view.hpp>
+#include <flakelib/volume/unique_float_buffer_lock.hpp>
 #include <flakelib/volume/conversion/arrow_scale.hpp>
 #include <flakelib/volume/conversion/constant_addition.hpp>
 #include <flakelib/volume/conversion/grid_scale.hpp>
-#include <flakelib/volume/conversion/raw_voxel_file_dimension.hpp>
 #include <flakelib/volume/conversion/origin.hpp>
+#include <flakelib/volume/conversion/raw_voxel_file_dimension.hpp>
 #include <flakelib/volume/conversion/scaling_factor.hpp>
-#include <flakelib/volume/unique_float_buffer_lock.hpp>
-#include <flakelib/buffer_pool/object_fwd.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/config/external_begin.hpp>
 #include <boost/filesystem/path.hpp>
+#include <fcppt/config/external_end.hpp>
 
 
 namespace flakelib

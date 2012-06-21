@@ -1,4 +1,3 @@
-#include <sge/renderer/context/object.hpp>
 #include <flakelib/buffer/volume_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <flakelib/marching_cubes/manager.hpp>
@@ -8,13 +7,14 @@
 #include <flakelib/volume/unique_uint_buffer_lock.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
-#include <sge/opencl/memory_object/dim3.hpp>
+#include <sge/opencl/dim3.hpp>
 #include <sge/opencl/memory_object/scoped_objects.hpp>
-#include <sge/opencl/memory_object/size_type.hpp>
+#include <sge/opencl/size_type.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
+#include <sge/renderer/context/object.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
@@ -90,12 +90,12 @@ flakelib::marching_cubes::object::update(
 		_density_view.get().size().h() == grid_size_.get().h() &&
 		_density_view.get().size().d() == grid_size_.get().d());
 
-	sge::opencl::memory_object::dim3 grid_size_dim(
-		static_cast<sge::opencl::memory_object::size_type>(
+	sge::opencl::dim3 grid_size_dim(
+		static_cast<sge::opencl::size_type>(
 			grid_size_.get().w()),
-		static_cast<sge::opencl::memory_object::size_type>(
+		static_cast<sge::opencl::size_type>(
 			grid_size_.get().h()),
-		static_cast<sge::opencl::memory_object::size_type>(
+		static_cast<sge::opencl::size_type>(
 			grid_size_.get().d()));
 
 	flakelib::volume::unique_uint_buffer_lock
@@ -110,6 +110,9 @@ flakelib::marching_cubes::object::update(
 					buffer_pool_),
 				grid_size_dim));
 
+	std::cout << "vertices for voxel has address: " << (&(vertices_for_voxel->value().buffer())) << "\n";
+
+	/*
 	manager_.classify_voxels(
 		_density_view,
 		flakelib::marching_cubes::vertices_for_voxel_view(
@@ -120,7 +123,9 @@ flakelib::marching_cubes::object::update(
 		grid_size_,
 		grid_size_mask_,
 		grid_size_shift_);
+		*/
 
+	/*
 	flakelib::scan::object::unique_linear_uint_lock summed_voxel_occupation(
 		manager_.scan().update(
 			flakelib::scan::object::linear_uint_view(
@@ -133,7 +138,9 @@ flakelib::marching_cubes::object::update(
 			summed_voxel_occupation->value(),
 			flakelib::linear::uint_view(
 				voxel_occupation->value().buffer()));
+				*/
 
+	/*
 	if(activeVoxels == 0u)
 		return
 			flakelib::marching_cubes::vertex_count(
@@ -155,27 +162,49 @@ flakelib::marching_cubes::object::update(
 				grid_size_dim)),
 		flakelib::marching_cubes::compacted_voxel_occupation_view(
 			compacted_voxel_occupation->value()));
+			*/
+
 
 	// Not needed anymore
 	//summed_voxel_occupation.reset();
 	//voxel_occupation.reset();
 
+	/*
+	std::cerr << "Creating summed vertices for voxel using scan\n";
 	flakelib::scan::object::unique_linear_uint_lock summed_vertices_for_voxel(
 		manager_.scan().update(
 			flakelib::scan::object::linear_uint_view(
 				vertices_for_voxel->value().buffer()),
 			flakelib::scan::batch_size(
 				1u)));
+	std::cerr << "Done creating\n";
 
 	// readback total number of vertices
+	// The +3 here? I don't know :(
 	vertex_count_ =
 		this->sum_last_elements(
 			summed_vertices_for_voxel->value(),
 			flakelib::linear::uint_view(
-				vertices_for_voxel->value().buffer()));
+//				vertices_for_voxel->value().buffer()))+3u;
+				vertices_for_voxel->value().buffer()))+3u;
+				*/
 
+	std::cerr << "Explicitly unlocking stuff\n";
+	voxel_occupation.reset();
+	vertices_for_voxel.reset();
+	//summed_voxel_occupation.reset();
+	//compacted_voxel_occupation.reset();
+	/*
+	summed_vertices_for_voxel.reset();
+	if(summed_vertices_for_voxel)
+		std::cerr << "summed_vertices_for_voxel still alive\n";
+		*/
+	std::cerr << "Done\n";
+	/*
 	// Not needed anymore
-	//vertices_for_voxel.reset();
+	std::cout << "Resetting vertices_for_voxel\n";
+	vertices_for_voxel.reset();
+	std::cout << "Done resetting\n";
 
 	this->resize_gl_buffers();
 
@@ -204,6 +233,9 @@ flakelib::marching_cubes::object::update(
 		flakelib::marching_cubes::active_voxels(
 			activeVoxels),
 		vertex_count_);
+		*/
+
+	std::cout << "Returning from function\n";
 
 	return
 		vertex_count_;
@@ -235,7 +267,11 @@ flakelib::marching_cubes::object::render(
 			*normals_buffer_);
 
 	FCPPT_ASSERT_PRE(
-		vertex_count_.get() % 3 == 0);
+		positions_buffer_->size().get() == normals_buffer_->size().get());
+
+	FCPPT_ASSERT_PRE(
+		vertex_count_.get() % 3u == 0u &&
+		vertex_count_.get() <= positions_buffer_->size().get());
 
 	_context.render_nonindexed(
 		sge::renderer::first_vertex(
@@ -306,22 +342,24 @@ flakelib::marching_cubes::object::sum_last_elements(
 	sge::opencl::command_queue::scoped_buffer_mapping a_mapping(
 		command_queue_,
 		a.buffer(),
-		CL_MAP_READ,
+		sge::opencl::command_queue::map_flags::read,
 		sge::opencl::memory_object::byte_offset(
 			static_cast<sge::opencl::memory_object::byte_offset::value_type>(
 				(a.size().w()-1u) * sizeof(cl_uint))),
 		sge::opencl::memory_object::byte_size(
-			sizeof(cl_uint)));
+			sizeof(cl_uint)),
+		sge::opencl::event::sequence());
 
 	sge::opencl::command_queue::scoped_buffer_mapping b_mapping(
 		command_queue_,
 		b.buffer(),
-		CL_MAP_READ,
+		sge::opencl::command_queue::map_flags::read,
 		sge::opencl::memory_object::byte_offset(
 			static_cast<sge::opencl::memory_object::byte_offset::value_type>(
 				(b.size().w()-1u) * sizeof(cl_uint))),
 		sge::opencl::memory_object::byte_size(
-			sizeof(cl_uint)));
+			sizeof(cl_uint)),
+		sge::opencl::event::sequence());
 
 	return
 		*static_cast<cl_uint *>(

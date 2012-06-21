@@ -2,6 +2,9 @@
 #define FLAKELIB_MARCHING_CUBES_MANAGER_HPP_INCLUDED
 
 #include <flakelib/symbol.hpp>
+#include <flakelib/buffer/linear_view.hpp>
+#include <flakelib/buffer_pool/linear_lock.hpp>
+#include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/kernel_scoped_ptr.hpp>
 #include <flakelib/cl/program.hpp>
@@ -22,14 +25,15 @@
 #include <flakelib/marching_cubes/voxel_occupation_view.hpp>
 #include <flakelib/scan/object_fwd.hpp>
 #include <flakelib/volume/gradient_fwd.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
-#include <sge/opencl/memory_object/dim3.hpp>
+#include <sge/opencl/dim3.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/size_type.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/unique_ptr.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/intrusive/list.hpp>
 #include <fcppt/config/external_end.hpp>
@@ -49,7 +53,8 @@ public:
 		sge::renderer::device &,
 		flakelib::scan::object &,
 		flakelib::volume::gradient &,
-		flakelib::cl::program_context const &);
+		flakelib::cl::program_context const &,
+		flakelib::buffer_pool::object &);
 
 	FLAKELIB_SYMBOL
 	void
@@ -118,6 +123,18 @@ private:
 	>
 	child_sequence;
 
+	typedef
+	flakelib::buffer::linear_view<cl_uint>
+	linear_uint_view;
+
+	typedef
+	flakelib::buffer_pool::linear_lock<cl_uint>
+	linear_uint_lock;
+
+	typedef
+	fcppt::unique_ptr<linear_uint_lock>
+	unique_linear_uint_lock;
+
 	sge::opencl::command_queue::object &command_queue_;
 	sge::renderer::device &renderer_;
 	flakelib::scan::object &scan_;
@@ -134,6 +151,7 @@ private:
 	cl::kernel_scoped_ptr compact_kernel_;
 	cl::kernel_scoped_ptr generate_triangles_kernel_;
 	flakelib::volume::gradient &gradient_;
+	unique_linear_uint_lock debug_buffer_;
 
 	void
 	add_child(
@@ -141,8 +159,8 @@ private:
 
 	void
 	launch_classifyVoxel(
-		sge::opencl::memory_object::dim3 grid,
-		sge::opencl::memory_object::dim3 threads,
+		sge::opencl::dim3 grid,
+		sge::opencl::dim3 threads,
 		cl_mem voxelVerts,
 		cl_mem voxelOccupied,
 		cl_mem volume,
@@ -155,8 +173,8 @@ private:
 
 	void
 	launch_compactVoxels(
-		sge::opencl::memory_object::dim3 grid,
-		sge::opencl::memory_object::dim3 threads,
+		sge::opencl::dim3 grid,
+		sge::opencl::dim3 threads,
 		cl_mem compVoxelArray,
 		cl_mem voxelOccupied,
 		cl_mem voxelOccupiedScan,
@@ -165,8 +183,8 @@ private:
 	void
 	launch_generateTriangles2(
 		flakelib::volume::float_view const &,
-		sge::opencl::memory_object::dim3 grid,
-		sge::opencl::memory_object::dim3 threads,
+		sge::opencl::dim3 grid,
+		sge::opencl::dim3 threads,
 		cl_mem pos,
 		cl_mem norm,
 		cl_mem compactedVoxelArray,
@@ -179,6 +197,10 @@ private:
 		float isoValue,
 		cl_uint activeVoxels,
 		sge::renderer::size_type);
+
+	void
+	check_debug_buffer(
+		std::string const &_operation);
 };
 }
 }

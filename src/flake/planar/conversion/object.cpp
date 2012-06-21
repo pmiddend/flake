@@ -3,7 +3,6 @@
 #include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program_context.hpp>
-#include <sge/opencl/command_queue/dim2.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
@@ -76,7 +75,7 @@ flake::planar::conversion::object::to_arrow_vb(
 		mem_objects);
 
 	to_arrow_vb_kernel_->enqueue_automatic(
-		flakelib::cl::global_dim2(
+		sge::opencl::command_queue::global_dim2(
 			_planar_buffer.size()));
 }
 
@@ -115,7 +114,7 @@ flake::planar::conversion::object::scalar_to_texture(
 		mem_objects);
 
 	scalar_to_texture_kernel_->enqueue_automatic(
-		flakelib::cl::global_dim2(
+		sge::opencl::command_queue::global_dim2(
 			_planar_buffer.size()));
 }
 

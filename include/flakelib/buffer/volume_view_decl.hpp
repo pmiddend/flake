@@ -3,7 +3,7 @@
 
 #include <flakelib/buffer/volume_view_fwd.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
-#include <sge/opencl/memory_object/dim3.hpp>
+#include <sge/opencl/dim3.hpp>
 #include <fcppt/nonassignable.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 
@@ -23,18 +23,18 @@ public:
 
 	volume_view(
 		sge::opencl::memory_object::buffer &,
-		sge::opencl::memory_object::dim3 const &);
+		sge::opencl::dim3 const &);
 
 	sge::opencl::memory_object::buffer &
 	buffer() const;
 
-	sge::opencl::memory_object::dim3 const &
+	sge::opencl::dim3 const &
 	size() const;
 
 	~volume_view();
 private:
 	sge::opencl::memory_object::buffer &buffer_;
-	sge::opencl::memory_object::dim3 size_;
+	sge::opencl::dim3 size_;
 };
 }
 }

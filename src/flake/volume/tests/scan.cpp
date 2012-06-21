@@ -112,17 +112,18 @@ flake::volume::tests::scan::run()
 		fcppt::make_unique_ptr<flakelib::scan::object::linear_uint_lock>(
 			fcppt::ref(
 				buffer_pool_),
-			sge::opencl::memory_object::dim1(
+			sge::opencl::dim1(
 				64u * 128u * 128u)));
 
 	{
 		sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
 			opencl_system_.command_queue(),
 			source_buffer->value().buffer(),
-			CL_MAP_WRITE,
+			sge::opencl::command_queue::map_flags::write,
 			sge::opencl::memory_object::byte_offset(
 				0u),
-			source_buffer->value().buffer().byte_size());
+			source_buffer->value().buffer().byte_size(),
+			sge::opencl::event::sequence());
 
 		cl_uint *ptr =
 			static_cast<cl_uint *>(
@@ -147,10 +148,11 @@ flake::volume::tests::scan::run()
 		sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
 			opencl_system_.command_queue(),
 			destination_buffer->value().buffer(),
-			CL_MAP_READ,
+			sge::opencl::command_queue::map_flags::read,
 			sge::opencl::memory_object::byte_offset(
 				0u),
-			destination_buffer->value().buffer().byte_size());
+			destination_buffer->value().buffer().byte_size(),
+			sge::opencl::event::sequence());
 
 		cl_uint *ptr =
 			static_cast<cl_uint *>(

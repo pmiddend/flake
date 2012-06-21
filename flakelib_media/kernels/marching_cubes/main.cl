@@ -29,8 +29,11 @@ calcGridPos(
 kernel
 void
 FLAKELIB_KERNEL_NAME(classify_voxels)(
+	global uint *FLAKELIB_KERNEL_ARGUMENT(debug_buffer),
 	global uint *FLAKELIB_KERNEL_ARGUMENT(vertices_for_voxel),
+	uint const FLAKELIB_KERNEL_ARGUMENT(vertices_for_voxel_size),
 	global uint *FLAKELIB_KERNEL_ARGUMENT(voxel_occupation),
+	uint const FLAKELIB_KERNEL_ARGUMENT(voxel_occupation_size),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(density),
 	uint4 const FLAKELIB_KERNEL_ARGUMENT(grid_size),
 	uint4 const FLAKELIB_KERNEL_ARGUMENT(grid_size_shift),
@@ -86,6 +89,9 @@ FLAKELIB_KERNEL_NAME(classify_voxels)(
 			tableSampler,
 			(int2)(cubeindex,0)).x;
 
+	if(i >= vertices_for_voxel_size || i >= voxel_occupation_size)
+		debug_buffer[0] = 1;
+
 	vertices_for_voxel[i] = numVerts;
 	voxel_occupation[i] = (numVerts > 0);
 }
@@ -94,15 +100,31 @@ FLAKELIB_KERNEL_NAME(classify_voxels)(
 kernel
 void
 FLAKELIB_KERNEL_NAME(compact_voxels)(
+	global uint *FLAKELIB_KERNEL_ARGUMENT(debug_buffer),
 	global uint *FLAKELIB_KERNEL_ARGUMENT(compacted_voxel_occupation),
+	uint const FLAKELIB_KERNEL_ARGUMENT(compacted_voxel_occupation_size),
 	global uint const *FLAKELIB_KERNEL_ARGUMENT(voxel_occupation),
-	global uint const *FLAKELIB_KERNEL_ARGUMENT(summed_voxel_occupation))
+	uint const FLAKELIB_KERNEL_ARGUMENT(voxel_occupation_size),
+	global uint const *FLAKELIB_KERNEL_ARGUMENT(summed_voxel_occupation),
+	uint const FLAKELIB_KERNEL_ARGUMENT(summed_voxel_occupation_size))
 {
 	size_t const id =
 		get_global_id(0);
+
+	if(id >= voxel_occupation_size)
+		debug_buffer[0] = 1;
+
 	if (voxel_occupation[id])
+	{
+		if(id >= summed_voxel_occupation_size)
+			debug_buffer[0] = 1;
+
+		if(summed_voxel_occupation[id] >= compacted_voxel_occupation_size)
+			debug_buffer[0] = 1;
+
 		compacted_voxel_occupation[summed_voxel_occupation[id]] =
 			(uint)id;
+	}
 }
 
 
@@ -204,10 +226,15 @@ constant unsigned const indices[12][2] =
 kernel
 void
 FLAKELIB_KERNEL_NAME(generate_triangles)(
+	global uint *FLAKELIB_KERNEL_ARGUMENT(debug_buffer),
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(positions),
+	uint const FLAKELIB_KERNEL_ARGUMENT(positions_size),
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(normals),
+	uint const FLAKELIB_KERNEL_ARGUMENT(normals_size),
 	global uint const *FLAKELIB_KERNEL_ARGUMENT(compacted_voxel_occupation),
+	uint const FLAKELIB_KERNEL_ARGUMENT(compacted_voxel_occupation_size),
 	global uint const *FLAKELIB_KERNEL_ARGUMENT(summed_vertices_for_voxel),
+	uint const FLAKELIB_KERNEL_ARGUMENT(summed_vertices_for_voxel_size),
 	global float const *FLAKELIB_KERNEL_ARGUMENT(volume),
 	uint4 const FLAKELIB_KERNEL_ARGUMENT(grid_size),
 	uint4 const FLAKELIB_KERNEL_ARGUMENT(grid_size_shift),
@@ -227,6 +254,9 @@ FLAKELIB_KERNEL_NAME(generate_triangles)(
 	uint const tid =
 		get_local_id(
 			0);
+
+	if(i >= compacted_voxel_occupation_size)
+		debug_buffer[0] = 1;
 
 	uint const voxel =
 		compacted_voxel_occupation[i];
@@ -334,6 +364,9 @@ FLAKELIB_KERNEL_NAME(generate_triangles)(
 		unsigned const other_index =
 			(i * NTHREADS) + tid;
 
+		if(other_index >= 16*NTHREADS)
+			debug_buffer[0] = 1;
+
 		vertexAndNormalInterp(
 			iso_value,
 			// Cube vertex positions in global coordinates
@@ -364,6 +397,9 @@ FLAKELIB_KERNEL_NAME(generate_triangles)(
 		i < numVerts;
 		i += 3u)
 	{
+		if(voxel >= summed_vertices_for_voxel_size)
+			debug_buffer[0] = 1;
+
 		uint const index =
 			summed_vertices_for_voxel[voxel] + i;
 
@@ -372,14 +408,26 @@ FLAKELIB_KERNEL_NAME(generate_triangles)(
 
 		uint edge;
 		edge = read_imageui(triTex, tableSampler, (int2)(i,cubeindex)).x;
+
+		if((edge*NTHREADS)+tid >= 16*NTHREADS)
+			debug_buffer[0] = 1;
+
 		v[0] = vertlist[(edge*NTHREADS)+tid];
 		n[0] = normlist[(edge*NTHREADS)+tid];
 
 		edge = read_imageui(triTex, tableSampler, (int2)(i+1,cubeindex)).x;
+
+		if((edge*NTHREADS)+tid >= 16*NTHREADS)
+			debug_buffer[0] = 1;
+
 		v[1] = vertlist[(edge*NTHREADS)+tid];
 		n[1] = normlist[(edge*NTHREADS)+tid];
 
 		edge = read_imageui(triTex, tableSampler, (int2)(i+2,cubeindex)).x;
+
+		if((edge*NTHREADS)+tid >= 16*NTHREADS)
+			debug_buffer[0] = 1;
+
 		v[2] = vertlist[(edge*NTHREADS)+tid];
 		n[2] = normlist[(edge*NTHREADS)+tid];
 
@@ -388,6 +436,12 @@ FLAKELIB_KERNEL_NAME(generate_triangles)(
 
 		if (index < (max_verts - 3))
 		{
+			if(index >= positions_size || index >= normals_size)
+				debug_buffer[0] = 1;
+			if(index+1 >= positions_size || index+1 >= normals_size)
+				debug_buffer[0] = 1;
+			if(index+2 >= positions_size || index+2 >= normals_size)
+				debug_buffer[0] = 1;
 			positions[index] = v[0];
 			normals[index] = n[0];
 

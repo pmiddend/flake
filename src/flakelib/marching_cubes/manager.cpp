@@ -9,6 +9,7 @@
 #include <flakelib/volume/gradient.hpp>
 #include <flakelib/volume/unique_float4_buffer_lock.hpp>
 #include <sge/opencl/command_queue/object.hpp>
+#include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/context/object.hpp>
 #include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
@@ -22,14 +23,21 @@
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <fcppt/insert_to_std_string.hpp>
+#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/error.hpp>
 #include <fcppt/assert/pre.hpp>
+#include <fcppt/math/dim/output.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <cstdlib>
+#include <iostream>
+#include <fcppt/config/external_end.hpp>
 
 
 namespace
 {
-sge::opencl::memory_object::size_type const nthreads =
+sge::opencl::size_type const nthreads =
 	32u;
 }
 
@@ -37,7 +45,8 @@ flakelib::marching_cubes::manager::manager(
 	sge::renderer::device &_renderer,
 	flakelib::scan::object &_scan,
 	flakelib::volume::gradient &_gradient,
-	flakelib::cl::program_context const &_program_context)
+	flakelib::cl::program_context const &_program_context,
+	flakelib::buffer_pool::object &_buffer_pool)
 :
 	command_queue_(
 		_program_context.command_queue()),
@@ -103,7 +112,14 @@ flakelib::marching_cubes::manager::manager(
 			sge::opencl::kernel::name(
 				"generate_triangles"))),
 	gradient_(
-		_gradient)
+		_gradient),
+	debug_buffer_(
+		fcppt::make_unique_ptr<linear_uint_lock>(
+			fcppt::ref(
+				_buffer_pool),
+			sge::opencl::dim1(
+				sizeof(
+					cl_uint))))
 {
 	FCPPT_ASSERT_PRE(
 		triangle_table_error_code_ == CL_SUCCESS);
@@ -111,9 +127,17 @@ flakelib::marching_cubes::manager::manager(
 	FCPPT_ASSERT_PRE(
 		num_vert_table_error_code_ == CL_SUCCESS);
 
+	classify_kernel_->buffer_argument(
+		"debug_buffer",
+		debug_buffer_->value().buffer());
+
 	classify_kernel_->raw_memory_argument(
 		"numVertsTex",
 		num_vert_table_);
+
+	generate_triangles_kernel_->buffer_argument(
+		"debug_buffer",
+		debug_buffer_->value().buffer());
 
 	generate_triangles_kernel_->raw_memory_argument(
 		"numVertsTex",
@@ -122,6 +146,25 @@ flakelib::marching_cubes::manager::manager(
 	generate_triangles_kernel_->raw_memory_argument(
 		"triTex",
 		triangle_table_);
+
+	compact_kernel_->buffer_argument(
+		"debug_buffer",
+		debug_buffer_->value().buffer());
+
+	{
+		sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
+			generate_triangles_kernel_->command_queue(),
+			debug_buffer_->value().buffer(),
+			sge::opencl::command_queue::map_flags::write,
+			sge::opencl::memory_object::byte_offset(
+				0u),
+			debug_buffer_->value().buffer().byte_size(),
+			sge::opencl::event::sequence());
+
+		*static_cast<cl_uint *>(buffer_mapping.ptr()) = 0;
+	}
+
+	this->check_debug_buffer("initial check");
 }
 
 void
@@ -172,9 +215,19 @@ flakelib::marching_cubes::manager::classify_voxels(
 		"vertices_for_voxel",
 		_vertices_for_voxel.get().buffer());
 
+	classify_kernel_->numerical_argument(
+		"vertices_for_voxel_size",
+		static_cast<cl_uint>(
+			_vertices_for_voxel.get().size().content()));
+
 	classify_kernel_->buffer_argument(
 		"voxel_occupation",
 		_voxel_occupation.get().buffer());
+
+	classify_kernel_->numerical_argument(
+		"voxel_occupation_size",
+		static_cast<cl_uint>(
+			_voxel_occupation.get().size().content()));
 
 	classify_kernel_->vector_argument(
 		"grid_size",
@@ -193,9 +246,12 @@ flakelib::marching_cubes::manager::classify_voxels(
 		_iso_level.get());
 
 	classify_kernel_->enqueue_automatic(
-		flakelib::cl::global_dim1(
-			sge::opencl::memory_object::dim1(
+		sge::opencl::command_queue::global_dim1(
+			sge::opencl::dim1(
 				_density.get().size().content())));
+
+	this->check_debug_buffer(
+		"classifyVoxels");
 }
 
 flakelib::scan::object &
@@ -241,18 +297,36 @@ flakelib::marching_cubes::manager::compact_voxels(
 		"voxel_occupation",
 		_voxel_occupation.get().buffer());
 
+	compact_kernel_->numerical_argument(
+		"voxel_occupation_size",
+		static_cast<cl_uint>(
+			_voxel_occupation.get().size().content()));
+
 	compact_kernel_->buffer_argument(
 		"summed_voxel_occupation",
 		_summed_voxel_occupation.get().buffer());
+
+	compact_kernel_->numerical_argument(
+		"summed_voxel_occupation_size",
+		static_cast<cl_uint>(
+			_summed_voxel_occupation.get().size().content()));
 
 	compact_kernel_->buffer_argument(
 		"compacted_voxel_occupation",
 		_compacted_voxel_occupation.get().buffer());
 
+	compact_kernel_->numerical_argument(
+		"compacted_voxel_occupation_size",
+		static_cast<cl_uint>(
+			_compacted_voxel_occupation.get().size().content()));
+
 	compact_kernel_->enqueue_automatic(
-		flakelib::cl::global_dim1(
-			sge::opencl::memory_object::dim1(
+		sge::opencl::command_queue::global_dim1(
+			sge::opencl::dim1(
 				_voxel_occupation.get().size().content())));
+
+	this->check_debug_buffer(
+		"compactVoxels");
 }
 
 void
@@ -273,9 +347,19 @@ flakelib::marching_cubes::manager::generate_triangles(
 		"positions",
 		_positions_buffer.get());
 
+	generate_triangles_kernel_->numerical_argument(
+		"positions_size",
+		static_cast<cl_uint>(
+			_positions_buffer.get().byte_size().get() / (4u*sizeof(cl_float))));
+
 	generate_triangles_kernel_->buffer_argument(
 		"normals",
 		_normals_buffer.get());
+
+	generate_triangles_kernel_->numerical_argument(
+		"normals_size",
+		static_cast<cl_uint>(
+			_positions_buffer.get().byte_size().get() / (4u*sizeof(cl_float))));
 
 	flakelib::volume::unique_float4_buffer_lock gradient(
 		gradient_.update(
@@ -289,9 +373,19 @@ flakelib::marching_cubes::manager::generate_triangles(
 		"compacted_voxel_occupation",
 		_compacted_voxel_occupation_view.get().buffer());
 
+	generate_triangles_kernel_->numerical_argument(
+		"compacted_voxel_occupation_size",
+		static_cast<cl_uint>(
+			_compacted_voxel_occupation_view.get().size().content()));
+
 	generate_triangles_kernel_->buffer_argument(
 		"summed_vertices_for_voxel",
 		_summed_vertices_for_voxel_view.get().buffer());
+
+	generate_triangles_kernel_->numerical_argument(
+		"summed_vertices_for_voxel_size",
+		static_cast<cl_uint>(
+			_summed_vertices_for_voxel_view.get().size().content()));
 
 	generate_triangles_kernel_->buffer_argument(
 		"volume",
@@ -323,11 +417,44 @@ flakelib::marching_cubes::manager::generate_triangles(
 			_vertex_count.get()));
 
 	generate_triangles_kernel_->enqueue(
-		flakelib::cl::global_dim1(
-			sge::opencl::memory_object::dim1(
-				static_cast<sge::opencl::memory_object::size_type>(
+		sge::opencl::command_queue::global_dim1(
+			sge::opencl::dim1(
+				static_cast<sge::opencl::size_type>(
 					_grid_size.get().w() * _grid_size.get().h() * _grid_size.get().d()))),
-		flakelib::cl::local_dim1(
-			sge::opencl::memory_object::dim1(
+		sge::opencl::command_queue::local_dim1(
+			sge::opencl::dim1(
 				nthreads)));
+
+	this->check_debug_buffer(
+		"generateTriangles");
+}
+
+void
+flakelib::marching_cubes::manager::check_debug_buffer(
+	std::string const &_operation)
+{
+	sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
+		generate_triangles_kernel_->command_queue(),
+		debug_buffer_->value().buffer(),
+		sge::opencl::command_queue::map_flags::read,
+		sge::opencl::memory_object::byte_offset(
+			0u),
+		debug_buffer_->value().buffer().byte_size(),
+		sge::opencl::event::sequence());
+
+	if(*static_cast<cl_uint *>(
+			buffer_mapping.ptr()))
+	{
+		std::cerr << _operation << ": Debug buffer contains: " << *static_cast<cl_uint *>(
+			buffer_mapping.ptr()) << "!!!!\n";
+		std::exit(0);
+	}
+	else
+	{
+		std::cerr << _operation << " everything ok\n";
+		/*
+		std::cerr << "Debug buffer contains: " << *static_cast<cl_uint *>(
+			buffer_mapping.ptr()) << "!!!!\n";
+			*/
+	}
 }

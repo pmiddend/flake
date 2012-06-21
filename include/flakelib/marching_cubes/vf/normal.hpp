@@ -3,8 +3,9 @@
 
 #include <sge/renderer/scalar.hpp>
 #include <sge/renderer/vf/extra.hpp>
-#include <sge/renderer/vf/vector.hpp>
 #include <sge/renderer/vf/index.hpp>
+#include <sge/renderer/vf/vector.hpp>
+
 
 namespace flakelib
 {

@@ -82,7 +82,7 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update_float2(
 			_dt.count()));
 
 	planar_kernel_->enqueue_automatic(
-		flakelib::cl::global_dim2(
+		sge::opencl::command_queue::global_dim2(
 			_buffer.size()));
 
 	return
@@ -136,7 +136,7 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update_float(
 			_dt.count()));
 
 	scalar_kernel_->enqueue_automatic(
-		flakelib::cl::global_dim2(
+		sge::opencl::command_queue::global_dim2(
 			_buffer.size()));
 
 	return

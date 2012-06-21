@@ -1,7 +1,6 @@
-#include <flake/volume/snow_cover/scoped.hpp>
-#include <sge/renderer/context/object.hpp>
 #include <flake/catch_statements.hpp>
 #include <flake/media_path_from_string.hpp>
+#include <flake/volume/snow_cover/scoped.hpp>
 #include <flake/volume/tests/marching_cubes.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
@@ -21,6 +20,7 @@
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/clear/parameters.hpp>
+#include <sge/renderer/context/object.hpp>
 #include <sge/renderer/state/color.hpp>
 #include <sge/renderer/state/draw_mode.hpp>
 #include <sge/renderer/state/float.hpp>
@@ -90,7 +90,7 @@ flake::volume::tests::marching_cubes::marching_cubes(
 		sge::systems::cursor_option_field(
 			sge::systems::cursor_option::exclusive)),
 	simulation_size_(
-		sge::parse::json::find_and_convert_member<sge::opencl::memory_object::dim3>(
+		sge::parse::json::find_and_convert_member<sge::opencl::dim3>(
 			this->configuration(),
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("simulation-size")))),
@@ -143,7 +143,8 @@ flake::volume::tests::marching_cubes::marching_cubes(
 		this->renderer(),
 		scan_,
 		gradient_,
-		this->program_context()),
+		this->program_context(),
+		this->buffer_pool()),
 	snow_cover_(
 		camera_,
 		this->renderer(),
@@ -223,9 +224,9 @@ flake::volume::tests::marching_cubes::marching_cubes(
 						10)),
 				flakelib::splatter::box::size(
 					flakelib::splatter::box::size::value_type(
-						20,
-						20,
-						20))),
+						40,
+						40,
+						40))),
 			flakelib::splatter::pen::is_round(
 				true),
 			flakelib::splatter::pen::is_smooth(
@@ -273,12 +274,14 @@ flake::volume::tests::marching_cubes::render(
 				sge::renderer::clear::depth_buffer_value(
 					1.0f)));
 
-	flake::volume::snow_cover::scoped scoped_snow_cover(
-		snow_cover_,
-		_context);
+	{
+		flake::volume::snow_cover::scoped scoped_snow_cover(
+			snow_cover_,
+			_context);
 
-	marching_cubes_manager_.render(
-		_context);
+		marching_cubes_manager_.render(
+			_context);
+	}
 
 	test::base::render(
 		_context);

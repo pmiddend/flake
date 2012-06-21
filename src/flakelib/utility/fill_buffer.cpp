@@ -36,7 +36,7 @@ flakelib::utility::fill_buffer::apply(
 		_value);
 
 	kernel_->enqueue_automatic(
-		flakelib::cl::global_dim1(
+		sge::opencl::command_queue::global_dim1(
 			_buffer.size()));
 }
 

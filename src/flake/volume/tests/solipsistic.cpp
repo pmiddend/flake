@@ -79,7 +79,7 @@ flake::volume::tests::solipsistic::solipsistic(
 				flake::media_path_from_string(
 					FCPPT_TEXT("config.json"))))),
 	simulation_size_(
-		sge::parse::json::find_and_convert_member<sge::opencl::memory_object::dim3>(
+		sge::parse::json::find_and_convert_member<sge::opencl::dim3>(
 			json_configuration_,
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("tests/solipsistic/simulation-size")))),

@@ -3,12 +3,12 @@
 
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/buffer_pool/volume_lock_decl.hpp>
-
+#include <iostream>
 
 template<typename T>
 flakelib::buffer_pool::volume_lock<T>::volume_lock(
 	buffer_pool::object &_pool,
-	sge::opencl::memory_object::dim3 const &_size)
+	sge::opencl::dim3 const &_size)
 :
 	pool_(
 		_pool),
