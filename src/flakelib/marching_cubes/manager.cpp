@@ -98,7 +98,12 @@ flakelib::marching_cubes::manager::manager(
 			std::string(
 				" -DNTHREADS=")+
 			fcppt::insert_to_std_string(
-				nthreads))),
+				nthreads)
+#ifdef FLAKELIB_SCAN_DEBUG
+			std::string(
+				"-D FLAKELIB_MARCHING_CUBES_DEBUG")
+#endif
+			)),
 	classify_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
@@ -151,6 +156,7 @@ flakelib::marching_cubes::manager::manager(
 		"debug_buffer",
 		debug_buffer_->value().buffer());
 
+#ifdef FLAKELIB_SCAN_DEBUG
 	{
 		sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
 			generate_triangles_kernel_->command_queue(),
@@ -165,6 +171,7 @@ flakelib::marching_cubes::manager::manager(
 	}
 
 	this->check_debug_buffer("initial check");
+#endif
 }
 
 void
@@ -250,8 +257,10 @@ flakelib::marching_cubes::manager::classify_voxels(
 			sge::opencl::dim1(
 				_density.get().size().content())));
 
+#ifdef FLAKELIB_SCAN_DEBUG
 	this->check_debug_buffer(
 		"classifyVoxels");
+#endif
 }
 
 flakelib::scan::object &
@@ -325,8 +334,10 @@ flakelib::marching_cubes::manager::compact_voxels(
 			sge::opencl::dim1(
 				_voxel_occupation.get().size().content())));
 
+#ifdef FLAKELIB_SCAN_DEBUG
 	this->check_debug_buffer(
 		"compactVoxels");
+#endif
 }
 
 void
@@ -425,10 +436,13 @@ flakelib::marching_cubes::manager::generate_triangles(
 			sge::opencl::dim1(
 				nthreads)));
 
+#ifdef FLAKELIB_SCAN_DEBUG
 	this->check_debug_buffer(
 		"generateTriangles");
+#endif
 }
 
+#ifdef FLAKELIB_SCAN_DEBUG
 void
 flakelib::marching_cubes::manager::check_debug_buffer(
 	std::string const &_operation)
@@ -458,3 +472,4 @@ flakelib::marching_cubes::manager::check_debug_buffer(
 			*/
 	}
 }
+#endif

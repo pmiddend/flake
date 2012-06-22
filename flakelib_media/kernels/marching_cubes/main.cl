@@ -89,8 +89,10 @@ FLAKELIB_KERNEL_NAME(classify_voxels)(
 			tableSampler,
 			(int2)(cubeindex,0)).x;
 
+#ifdef FLAKELIB_MARCHING_CUBES_DEBUG
 	if(i >= vertices_for_voxel_size || i >= voxel_occupation_size)
 		debug_buffer[0] = 1;
+#endif
 
 	vertices_for_voxel[i] = numVerts;
 	voxel_occupation[i] = (numVerts > 0);
@@ -111,16 +113,20 @@ FLAKELIB_KERNEL_NAME(compact_voxels)(
 	size_t const id =
 		get_global_id(0);
 
+#ifdef FLAKELIB_MARCHING_CUBES_DEBUG
 	if(id >= voxel_occupation_size)
 		debug_buffer[0] = 1;
+#endif
 
 	if (voxel_occupation[id])
 	{
+#ifdef FLAKELIB_MARCHING_CUBES_DEBUG
 		if(id >= summed_voxel_occupation_size)
 			debug_buffer[0] = 1;
 
 		if(summed_voxel_occupation[id] >= compacted_voxel_occupation_size)
 			debug_buffer[0] = 1;
+#endif
 
 		compacted_voxel_occupation[summed_voxel_occupation[id]] =
 			(uint)id;
@@ -255,8 +261,10 @@ FLAKELIB_KERNEL_NAME(generate_triangles)(
 		get_local_id(
 			0);
 
+#ifdef FLAKELIB_MARCHING_CUBES_DEBUG
 	if(i >= compacted_voxel_occupation_size)
 		debug_buffer[0] = 1;
+#endif
 
 	uint const voxel =
 		compacted_voxel_occupation[i];
@@ -364,8 +372,10 @@ FLAKELIB_KERNEL_NAME(generate_triangles)(
 		unsigned const other_index =
 			(i * NTHREADS) + tid;
 
+#ifdef FLAKELIB_MARCHING_CUBES_DEBUG
 		if(other_index >= 16*NTHREADS)
 			debug_buffer[0] = 1;
+#endif
 
 		vertexAndNormalInterp(
 			iso_value,
@@ -397,8 +407,10 @@ FLAKELIB_KERNEL_NAME(generate_triangles)(
 		i < numVerts;
 		i += 3u)
 	{
+#ifdef FLAKELIB_MARCHING_CUBES_DEBUG
 		if(voxel >= summed_vertices_for_voxel_size)
 			debug_buffer[0] = 1;
+#endif
 
 		uint const index =
 			summed_vertices_for_voxel[voxel] + i;
@@ -409,24 +421,30 @@ FLAKELIB_KERNEL_NAME(generate_triangles)(
 		uint edge;
 		edge = read_imageui(triTex, tableSampler, (int2)(i,cubeindex)).x;
 
+#ifdef FLAKELIB_MARCHING_CUBES_DEBUG
 		if((edge*NTHREADS)+tid >= 16*NTHREADS)
 			debug_buffer[0] = 1;
+#endif
 
 		v[0] = vertlist[(edge*NTHREADS)+tid];
 		n[0] = normlist[(edge*NTHREADS)+tid];
 
 		edge = read_imageui(triTex, tableSampler, (int2)(i+1,cubeindex)).x;
 
+#ifdef FLAKELIB_MARCHING_CUBES_DEBUG
 		if((edge*NTHREADS)+tid >= 16*NTHREADS)
 			debug_buffer[0] = 1;
+#endif
 
 		v[1] = vertlist[(edge*NTHREADS)+tid];
 		n[1] = normlist[(edge*NTHREADS)+tid];
 
 		edge = read_imageui(triTex, tableSampler, (int2)(i+2,cubeindex)).x;
 
+#ifdef FLAKELIB_MARCHING_CUBES_DEBUG
 		if((edge*NTHREADS)+tid >= 16*NTHREADS)
 			debug_buffer[0] = 1;
+#endif
 
 		v[2] = vertlist[(edge*NTHREADS)+tid];
 		n[2] = normlist[(edge*NTHREADS)+tid];
@@ -436,12 +454,14 @@ FLAKELIB_KERNEL_NAME(generate_triangles)(
 
 		if (index < (max_verts - 3))
 		{
+#ifdef FLAKELIB_MARCHING_CUBES_DEBUG
 			if(index >= positions_size || index >= normals_size)
 				debug_buffer[0] = 1;
 			if(index+1 >= positions_size || index+1 >= normals_size)
 				debug_buffer[0] = 1;
 			if(index+2 >= positions_size || index+2 >= normals_size)
 				debug_buffer[0] = 1;
+#endif
 			positions[index] = v[0];
 			normals[index] = n[0];
 

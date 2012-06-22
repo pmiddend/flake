@@ -53,7 +53,12 @@ flakelib::scan::object::object(
 			std::string(
 				" -DWORKGROUP_SIZE=")+
 			fcppt::insert_to_std_string(
-				WORKGROUP_SIZE))),
+				WORKGROUP_SIZE)
+#ifdef FLAKELIB_SCAN_DEBUG
+			+std::string(
+				" -DFLAKELIB_SCAN_DEBUG")
+#endif
+			)),
 	exclusive_local1_kernel_(
 		program_.create_kernel(
 			sge::opencl::kernel::name(
@@ -111,6 +116,7 @@ flakelib::scan::object::object(
 		static_cast<cl_uint>(
 			buffer_->value().size().w()));
 
+#ifdef FLAKELIB_SCAN_DEBUG
 	sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
 		uniform_update_kernel_->command_queue(),
 		debug_buffer_->value().buffer(),
@@ -121,6 +127,7 @@ flakelib::scan::object::object(
 		sge::opencl::event::sequence());
 
 	*static_cast<cl_uint *>(buffer_mapping.ptr()) = 0;
+#endif
 }
 
 flakelib::scan::object::unique_linear_uint_lock
@@ -230,7 +237,9 @@ flakelib::scan::object::exclusive_local1(
 			static_cast<sge::opencl::command_queue::global_dim1::value_type>(
 				WORKGROUP_SIZE)));
 
+#ifdef FLAKELIB_SCAN_DEBUG
 	this->check_debug_buffer();
+#endif
 }
 
 void
@@ -295,7 +304,9 @@ flakelib::scan::object::exclusive_local2(
 			sge::opencl::command_queue::local_dim1::value_type(
 				WORKGROUP_SIZE)));
 
+#ifdef FLAKELIB_SCAN_DEBUG
 	this->check_debug_buffer();
+#endif
 }
 
 void
@@ -331,9 +342,12 @@ flakelib::scan::object::uniform_update(
 			static_cast<sge::opencl::command_queue::global_dim1::value_type>(
 				WORKGROUP_SIZE)));
 
+#ifdef FLAKELIB_SCAN_DEBUG
 	this->check_debug_buffer();
+#endif
 }
 
+#ifdef FLAKELIB_SCAN_DEBUG
 void
 flakelib::scan::object::check_debug_buffer()
 {
@@ -359,3 +373,4 @@ flakelib::scan::object::check_debug_buffer()
 			buffer_mapping.ptr()) << "!!!!\n";
 	}
 }
+#endif

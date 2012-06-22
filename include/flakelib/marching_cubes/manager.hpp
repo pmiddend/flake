@@ -198,9 +198,11 @@ private:
 		cl_uint activeVoxels,
 		sge::renderer::size_type);
 
+#ifdef FLAKELIB_MARCHING_CUBES_DEBUG
 	void
 	check_debug_buffer(
 		std::string const &_operation);
+#endif
 };
 }
 }

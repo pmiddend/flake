@@ -14,7 +14,9 @@ scan1Inclusive(
 	uint const idata,
 	local uint *local_data,
 	uint const local_data_size,
+#ifdef FLAKELIB_SCAN_DEBUG
 	global uint *debug_buffer,
+#endif
 	uint const size)
 {
 	uint pos =
@@ -22,8 +24,10 @@ scan1Inclusive(
 		get_local_id(0) -
 		(get_local_id(0) & (size - 1u));
 
+#ifdef FLAKELIB_SCAN_DEBUG
 	if(pos >= local_data_size)
 		debug_buffer[0] = 1;
+#endif
 
 	local_data[pos] =
 		0;
@@ -31,8 +35,10 @@ scan1Inclusive(
 	pos +=
 		size;
 
+#ifdef FLAKELIB_SCAN_DEBUG
 	if(pos >= local_data_size)
 		debug_buffer[0] = 1;
+#endif
 
 	local_data[pos] =
 		idata;
@@ -45,22 +51,28 @@ scan1Inclusive(
 	{
 	    barrier(CLK_LOCAL_MEM_FENCE);
 
+#ifdef FLAKELIB_SCAN_DEBUG
 		if(pos >= local_data_size || pos < offset)
 			debug_buffer[0] = 1;
+#endif
 
 	    uint const t =
 	    	local_data[pos] + local_data[pos - offset];
 
 	    barrier(CLK_LOCAL_MEM_FENCE);
 
+#ifdef FLAKELIB_SCAN_DEBUG
 		if(pos >= local_data_size)
 			debug_buffer[0] = 1;
+#endif
 
 	    local_data[pos] = t;
 	}
 
+#ifdef FLAKELIB_SCAN_DEBUG
 	if(pos >= local_data_size)
 		debug_buffer[0] = 1;
+#endif
 
 	return
 		local_data[pos];
@@ -71,7 +83,9 @@ scan1Exclusive(
 	uint idata,
 	local uint *l_Data,
 	uint const local_data_size,
+#ifdef FLAKELIB_SCAN_DEBUG
 	global uint *debug_buffer,
+#endif
 	uint size)
 {
 	return
@@ -79,7 +93,9 @@ scan1Exclusive(
 			idata,
 			l_Data,
 			local_data_size,
+#ifdef FLAKELIB_SCAN_DEBUG
 			debug_buffer,
+#endif
 			size) -
 		idata;
 }
@@ -92,7 +108,9 @@ scan4Inclusive(
 	uint4 data4,
 	local uint *local_data,
 	uint const local_data_size,
+#ifdef FLAKELIB_SCAN_DEBUG
 	global uint *debug_buffer,
+#endif
 	uint const size)
 {
 	// Prefix-sum the 4 vector components
@@ -106,7 +124,9 @@ scan4Inclusive(
 			data4.w,
 			local_data,
 			local_data_size,
+#ifdef FLAKELIB_SCAN_DEBUG
 			debug_buffer,
+#endif
 			size / 4u) -
 		data4.w;
 
@@ -119,7 +139,9 @@ scan4Exclusive(
 	uint4 const data4,
 	local uint *local_data,
 	uint const local_data_size,
+#ifdef FLAKELIB_SCAN_DEBUG
 	global uint *debug_buffer,
+#endif
 	uint const size)
 {
 	return
@@ -127,7 +149,9 @@ scan4Exclusive(
 			data4,
 			local_data,
 			local_data_size,
+#ifdef FLAKELIB_SCAN_DEBUG
 			debug_buffer,
+#endif
 			size) -
 		data4;
 }
@@ -146,15 +170,19 @@ FLAKELIB_KERNEL_NAME(exclusive_local1)(
     uint const FLAKELIB_KERNEL_ARGUMENT(size),
     global uint *FLAKELIB_KERNEL_ARGUMENT(debug_buffer))
 {
+#ifdef FLAKELIB_SCAN_DEBUG
 	if(get_global_id(0) >= destination_size || get_global_id(0) >= source_size)
 		debug_buffer[0] = 1;
+#endif
 
 	destination[get_global_id(0)] =
 		scan4Exclusive(
 			source[get_global_id(0)],
 			local_data,
 			local_data_size,
+#ifdef FLAKELIB_SCAN_DEBUG
 			debug_buffer,
+#endif
 			size);
 }
 
@@ -183,8 +211,10 @@ FLAKELIB_KERNEL_NAME(exclusive_local2)(
 	    size_t const index =
 	    	(4 * WORKGROUP_SIZE - 1) + (4 * WORKGROUP_SIZE) * get_global_id(0);
 
+#ifdef FLAKELIB_SCAN_DEBUG
 	    if(index >= d_Dst_size || index >= d_Src_size)
 		    debug_buffer[0] = 1;
+#endif
 
 	    data =
 		d_Dst[index] +
@@ -197,14 +227,18 @@ FLAKELIB_KERNEL_NAME(exclusive_local2)(
 		data,
 		l_Data,
 		l_Data_size,
+#ifdef FLAKELIB_SCAN_DEBUG
 		debug_buffer,
+#endif
 		arrayLength);
 
     // Avoid out-of-bound access
     if(get_global_id(0) < N)
     {
+#ifdef FLAKELIB_SCAN_DEBUG
 	    if(get_global_id(0) >= d_Buf_size)
 		    debug_buffer[0] = 1;
+#endif
         d_Buf[get_global_id(0)] = odata;
     }
 }
@@ -222,16 +256,20 @@ FLAKELIB_KERNEL_NAME(uniform_update)(
 {
 	local uint buf[1];
 
+#ifdef FLAKELIB_SCAN_DEBUG
 	if(get_global_id(0) >= d_Data_size)
 		debug_buffer[0] = 1;
+#endif
 
 	uint4 data4 =
 		d_Data[get_global_id(0)];
 
 	if(get_local_id(0) == 0)
 	{
+#ifdef FLAKELIB_SCAN_DEBUG
 		if(get_group_id(0) >= d_Buf_size)
 			debug_buffer[0] = 1;
+#endif
 		buf[0] = d_Buf[get_group_id(0)];
 	}
 

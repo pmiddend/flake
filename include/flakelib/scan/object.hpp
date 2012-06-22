@@ -96,8 +96,10 @@ private:
 		destination const &,
 		block_count const &);
 
+#ifdef FLAKELIB_SCAN_DEBUG
 	void
 	check_debug_buffer();
+#endif
 };
 }
 }

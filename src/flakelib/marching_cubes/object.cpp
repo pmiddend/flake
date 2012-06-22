@@ -110,9 +110,6 @@ flakelib::marching_cubes::object::update(
 					buffer_pool_),
 				grid_size_dim));
 
-	std::cout << "vertices for voxel has address: " << (&(vertices_for_voxel->value().buffer())) << "\n";
-
-	/*
 	manager_.classify_voxels(
 		_density_view,
 		flakelib::marching_cubes::vertices_for_voxel_view(
@@ -123,9 +120,7 @@ flakelib::marching_cubes::object::update(
 		grid_size_,
 		grid_size_mask_,
 		grid_size_shift_);
-		*/
 
-	/*
 	flakelib::scan::object::unique_linear_uint_lock summed_voxel_occupation(
 		manager_.scan().update(
 			flakelib::scan::object::linear_uint_view(
@@ -138,9 +133,7 @@ flakelib::marching_cubes::object::update(
 			summed_voxel_occupation->value(),
 			flakelib::linear::uint_view(
 				voxel_occupation->value().buffer()));
-				*/
 
-	/*
 	if(activeVoxels == 0u)
 		return
 			flakelib::marching_cubes::vertex_count(
@@ -162,22 +155,18 @@ flakelib::marching_cubes::object::update(
 				grid_size_dim)),
 		flakelib::marching_cubes::compacted_voxel_occupation_view(
 			compacted_voxel_occupation->value()));
-			*/
 
 
 	// Not needed anymore
-	//summed_voxel_occupation.reset();
-	//voxel_occupation.reset();
+	summed_voxel_occupation.reset();
+	voxel_occupation.reset();
 
-	/*
-	std::cerr << "Creating summed vertices for voxel using scan\n";
 	flakelib::scan::object::unique_linear_uint_lock summed_vertices_for_voxel(
 		manager_.scan().update(
 			flakelib::scan::object::linear_uint_view(
 				vertices_for_voxel->value().buffer()),
 			flakelib::scan::batch_size(
 				1u)));
-	std::cerr << "Done creating\n";
 
 	// readback total number of vertices
 	// The +3 here? I don't know :(
@@ -185,26 +174,10 @@ flakelib::marching_cubes::object::update(
 		this->sum_last_elements(
 			summed_vertices_for_voxel->value(),
 			flakelib::linear::uint_view(
-//				vertices_for_voxel->value().buffer()))+3u;
 				vertices_for_voxel->value().buffer()))+3u;
-				*/
 
-	std::cerr << "Explicitly unlocking stuff\n";
-	voxel_occupation.reset();
-	vertices_for_voxel.reset();
-	//summed_voxel_occupation.reset();
-	//compacted_voxel_occupation.reset();
-	/*
-	summed_vertices_for_voxel.reset();
-	if(summed_vertices_for_voxel)
-		std::cerr << "summed_vertices_for_voxel still alive\n";
-		*/
-	std::cerr << "Done\n";
-	/*
 	// Not needed anymore
-	std::cout << "Resetting vertices_for_voxel\n";
 	vertices_for_voxel.reset();
-	std::cout << "Done resetting\n";
 
 	this->resize_gl_buffers();
 
@@ -233,9 +206,6 @@ flakelib::marching_cubes::object::update(
 		flakelib::marching_cubes::active_voxels(
 			activeVoxels),
 		vertex_count_);
-		*/
-
-	std::cout << "Returning from function\n";
 
 	return
 		vertex_count_;
