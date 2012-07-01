@@ -108,6 +108,9 @@ flake::test::base::run()
 			this->render(
 				scoped_context.get());
 		}
+
+		dump_this_frame_ =
+			false;
 	}
 
 	return
@@ -312,7 +315,9 @@ flake::test::base::base(
 			std::tr1::bind(
 				&base::key_callback,
 				this,
-				std::tr1::placeholders::_1)))
+				std::tr1::placeholders::_1))),
+	dump_this_frame_(
+		false)
 {
 	FCPPT_LOG_DEBUG(
 		flakelib::log(),
@@ -474,6 +479,13 @@ flake::test::base::information_manager()
 		*information_manager_;
 }
 
+bool
+flake::test::base::dump_this_frame() const
+{
+	return
+		dump_this_frame_;
+}
+
 void
 flake::test::base::viewport_callback()
 {
@@ -500,6 +512,16 @@ flake::test::base::key_callback(
 {
 	if(!e.pressed())
 		return;
+
+	if(e.key_code() == sge::input::keyboard::key_code::print)
+	{
+		dump_this_frame_ =
+			true;
+		this->post_notification(
+			notifications::text(
+				FCPPT_TEXT("Dumped status...")));
+		return;
+	}
 
 	for(
 		test::feature_sequence::iterator it = features_.begin();

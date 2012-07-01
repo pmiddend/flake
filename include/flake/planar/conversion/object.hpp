@@ -5,6 +5,8 @@
 #include <flake/planar/conversion/constant_addition.hpp>
 #include <flake/planar/conversion/grid_scale.hpp>
 #include <flake/planar/conversion/scaling_factor.hpp>
+#include <flake/planar/conversion/x_coordinate_file.hpp>
+#include <flake/planar/conversion/y_coordinate_file.hpp>
 #include <flakelib/buffer/planar_view_fwd.hpp>
 #include <flakelib/cl/kernel_scoped_ptr.hpp>
 #include <flakelib/cl/program.hpp>
@@ -38,6 +40,17 @@ public:
 		sge::opencl::memory_object::buffer &,
 		conversion::grid_scale const &,
 		conversion::arrow_scale const &);
+
+	void
+	arrows_to_matlab_files(
+		flakelib::planar::float2_view const &,
+		flake::planar::conversion::x_coordinate_file const &,
+		flake::planar::conversion::y_coordinate_file const &);
+
+	void
+	scalar_to_matlab_file(
+		flakelib::planar::float_view const &,
+		boost::filesystem::path const &);
 
 	void
 	scalar_to_texture(

@@ -125,6 +125,9 @@ protected:
 
 	flake::test::information::manager &
 	information_manager();
+
+	bool
+	dump_this_frame() const;
 protected:
 	virtual void
 	viewport_callback();
@@ -157,6 +160,7 @@ private:
 	flake::test::information::object memory_consumption_information_;
 	fcppt::scoped_ptr<flake::time_modifier::object> time_modifier_;
 	fcppt::signal::scoped_connection key_callback_connection_;
+	bool dump_this_frame_;
 
 	void
 	key_callback(

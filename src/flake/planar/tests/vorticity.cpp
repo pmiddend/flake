@@ -475,6 +475,16 @@ flake::planar::tests::vorticity::update()
 		outflow_boundaries_.update(
 			velocity_buffer_->value());
 
+		if(this->dump_this_frame())
+			planar_converter_.arrows_to_matlab_files(
+				velocity_buffer_->value(),
+				flake::planar::conversion::x_coordinate_file(
+					boost::filesystem::path(
+						"/tmp/velocity_x.mat")),
+				flake::planar::conversion::y_coordinate_file(
+					boost::filesystem::path(
+						"/tmp/velocity_y.mat")));
+
 		planar_converter_.to_arrow_vb(
 			vorticity_gradient_buffer->value(),
 			vorticity_gradient_arrows_.cl_buffer(),
@@ -482,6 +492,11 @@ flake::planar::tests::vorticity::update()
 				vorticity_gradient_arrows_.grid_scale().get()),
 			conversion::arrow_scale(
 				vorticity_gradient_arrows_.arrow_scale().get()));
+
+		if(this->dump_this_frame())
+			planar_converter_.scalar_to_matlab_file(
+				vorticity_buffer->value(),
+				"/tmp/vorticity.mat");
 
 		planar_converter_.scalar_to_texture(
 			vorticity_buffer->value(),
@@ -526,6 +541,11 @@ flake::planar::tests::vorticity::update()
 					boundary_buffer_.value()),
 				flakelib::planar::simulation::stam::rhs_buffer_view(
 					divergence->value()));
+
+		if(this->dump_this_frame())
+			planar_converter_.scalar_to_matlab_file(
+				pressure->value(),
+				"/tmp/pressure.mat");
 
 		planar_converter_.scalar_to_texture(
 			pressure->value(),

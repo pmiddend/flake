@@ -231,6 +231,7 @@ set(
 set(
 	FLAKE_FILES
 	src/flake/basic_scoped_ostream_file_redirection.cpp
+	src/flake/exception.cpp
 	src/flake/font_metrics_cache.cpp
 	src/flake/media_path.cpp
 	src/flake/media_path_from_string.cpp

@@ -1,4 +1,7 @@
+#include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
+#include <fcppt/filesystem/path_to_string.hpp>
 #include <flake/media_path_from_string.hpp>
+#include <flake/exception.hpp>
 #include <flake/planar/conversion/object.hpp>
 #include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/cl/kernel.hpp>
@@ -15,6 +18,7 @@
 #include <fcppt/assign/make_array.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/variant/holds_type.hpp>
+#include <boost/filesystem/fstream.hpp>
 
 
 flake::planar::conversion::object::object(
@@ -77,6 +81,110 @@ flake::planar::conversion::object::to_arrow_vb(
 	to_arrow_vb_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim2(
 			_planar_buffer.size()));
+}
+
+void
+flake::planar::conversion::object::arrows_to_matlab_files(
+	flakelib::planar::float2_view const &_view,
+	flake::planar::conversion::x_coordinate_file const &_x_coordinate,
+	flake::planar::conversion::y_coordinate_file const &_y_coordinate)
+{
+	boost::filesystem::ofstream
+		x_file_stream(
+			_x_coordinate.get()),
+		y_file_stream(
+			_y_coordinate.get());
+
+	if(!x_file_stream.is_open())
+		throw
+			flake::exception(
+				FCPPT_TEXT("Couldn't open file \"")+
+				fcppt::filesystem::path_to_string(
+					_x_coordinate.get())+
+				FCPPT_TEXT("\""));
+
+	if(!y_file_stream.is_open())
+		throw
+			flake::exception(
+				FCPPT_TEXT("Couldn't open file \"")+
+				fcppt::filesystem::path_to_string(
+					_y_coordinate.get())+
+				FCPPT_TEXT("\""));
+
+	sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
+		command_queue_,
+		_view.buffer(),
+		sge::opencl::command_queue::map_flags::read,
+		sge::opencl::memory_object::byte_offset(
+			0u),
+		_view.buffer().byte_size(),
+		sge::opencl::event::sequence());
+
+	cl_float const *p =
+		static_cast<cl_float const *>(
+			buffer_mapping.ptr());
+
+	for(sge::opencl::size_type y = 0; y < _view.size().h(); ++y)
+	{
+		for(sge::opencl::size_type x = 0; x < _view.size().w(); ++x)
+		{
+			x_file_stream << (*p++);
+			y_file_stream << (*p++);
+			if(x < (_view.size().w()-1u))
+			{
+				x_file_stream << ",";
+				y_file_stream << ",";
+			}
+		}
+
+		if(y < (_view.size().h()-1u))
+		{
+			x_file_stream << "\n";
+			y_file_stream << "\n";
+		}
+	}
+}
+
+void
+flake::planar::conversion::object::scalar_to_matlab_file(
+	flakelib::planar::float_view const &_view,
+	boost::filesystem::path const &_file)
+{
+	boost::filesystem::ofstream file_stream(
+		_file);
+
+	if(!file_stream.is_open())
+		throw
+			flake::exception(
+				FCPPT_TEXT("Couldn't open file \"")+
+				fcppt::filesystem::path_to_string(
+					_file)+
+				FCPPT_TEXT("\""));
+
+	sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
+		command_queue_,
+		_view.buffer(),
+		sge::opencl::command_queue::map_flags::read,
+		sge::opencl::memory_object::byte_offset(
+			0u),
+		_view.buffer().byte_size(),
+		sge::opencl::event::sequence());
+
+	cl_float const *p =
+		static_cast<cl_float const *>(
+			buffer_mapping.ptr());
+
+	for(sge::opencl::size_type y = 0; y < _view.size().h(); ++y)
+	{
+		for(sge::opencl::size_type x = 0; x < _view.size().w(); ++x)
+		{
+			file_stream << (*p++);
+			if(x < (_view.size().w()-1u))
+				file_stream << ",";
+		}
+		if(y < (_view.size().h()-1u))
+			file_stream << "\n";
+	}
 }
 
 void

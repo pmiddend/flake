@@ -1,7 +1,9 @@
+//#include <mizuiro/color/object_impl.hpp>
 #include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
 #include <sge/image/color/l8_format.hpp>
 #include <sge/image/color/r32f_format.hpp>
+#include <sge/image/color/object.hpp>
 #include <sge/image2d/algorithm/copy_and_convert.hpp>
 #include <sge/image2d/view/const_element.hpp>
 #include <sge/image2d/view/const_object.hpp>
