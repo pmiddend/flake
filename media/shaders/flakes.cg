@@ -3,7 +3,23 @@ struct vertex_outputs
 	float4 position : POSITION;
 	float2 texture_coordinates;
 	float point_size : PSIZE;
+	// 3 is arbitrary
+	float alpha_value : TEXCOORD3;
 };
+
+float
+perspective_distance_formula(
+	float A,
+	float B,
+	float C,
+	float de,
+	float baseSize)
+{
+	return
+		baseSize *
+		rsqrt(
+			A + B * de + B * de * de);
+}
 
 vertex_outputs
 vertex_main(
@@ -16,6 +32,36 @@ vertex_main(
 {
 	vertex_outputs outs;
 
+	float
+		A = 0.96,
+		B = 0.19,
+		C = 0.06;
+
+	float
+		de =
+			distance(
+				position.xyz,
+				camera_position);
+
+	outs.point_size =
+		perspective_distance_formula(
+			0.96,
+			0.19,
+			0.06,
+			de,
+			3.0 * point_size);
+
+	outs.alpha_value =
+		min(
+			1.0,
+			perspective_distance_formula(
+				0.1,
+				0.15,
+				0.0,
+				de,
+				1.0));
+
+	/*
         float
                 distance_camera_point =
                         distance(
@@ -35,6 +81,7 @@ vertex_main(
 
         outs.point_size =
                 maxed_distance * point_size;
+		*/
 
 	outs.position =
 		mul(
@@ -66,6 +113,6 @@ pixel_main(
 	return
 		float4(
 			texture_value.xyz,
-			texture_value.w * 0.5);
+			texture_value.w * vertex_data.alpha_value);
 
 }

@@ -17,7 +17,7 @@ flakelib::log_parameters(
 			_location)
 		.level_defaults(
 			fcppt::io::clog(),
-			fcppt::log::level::debug)
+			fcppt::log::level::warning)
 		.enabled(
 			true);
 

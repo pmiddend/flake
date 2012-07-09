@@ -89,7 +89,7 @@
 			"fov" : 60.0,
 			"flakes" :
 			{
-				"count" : 20000,
+				"count" : 131072,
 				"minimum-size" : 10.0,
 				"maximum-size" : 30.0,
 				"texture" : "flakes.png",

@@ -513,7 +513,7 @@ flake::test::base::key_callback(
 	if(!e.pressed())
 		return;
 
-	if(e.key_code() == sge::input::keyboard::key_code::print)
+	if(e.key_code() == sge::input::keyboard::key_code::sysrq)
 	{
 		dump_this_frame_ =
 			true;
