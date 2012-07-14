@@ -1,4 +1,5 @@
 #include <flake/font_metrics_cache.hpp>
+#include <sge/renderer/context/scoped_scoped_ptr.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/notifications/object.hpp>
 #include <flake/shader/context.hpp>
@@ -100,12 +101,20 @@ flake::test::base::run()
 
 		if(this->renderer().onscreen_target().viewport().get().content())
 		{
+			/*
 			sge::renderer::context::scoped scoped_context(
 				this->renderer(),
 				this->renderer().onscreen_target());
+			*/
+			{
+				sge::renderer::context::scoped_scoped_ptr const scoped_block(
+					postprocessing_.create_render_context());
 
-			this->render(
-				scoped_context.get());
+				this->render(
+					scoped_block->get());
+			}
+
+			postprocessing_.render();
 		}
 
 		dump_this_frame_ =
@@ -307,6 +316,10 @@ flake::test::base::base(
 				&base::key_callback,
 				this,
 				std::tr1::placeholders::_1))),
+	postprocessing_(
+		this->renderer(),
+		this->viewport_manager(),
+		this->shader_context()),
 	dump_this_frame_(
 		false)
 {

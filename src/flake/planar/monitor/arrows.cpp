@@ -267,6 +267,7 @@ flake::planar::monitor::arrows::render_font(
 				sge::sprite::projection_matrix(
 					child::parent().renderer().onscreen_target().viewport())));
 
+	/*
 	sge::font::text::draw(
 		_context,
 		child::parent().font_metrics(),
@@ -281,6 +282,7 @@ flake::planar::monitor::arrows::render_font(
 		sge::font::text::align_h::center,
 		sge::font::text::align_v::center,
 		sge::font::text::flags::none);
+	*/
 }
 
 void

@@ -128,6 +128,7 @@ flake::notifications::object::render(
 		font_drawer_->color(
 			font_color);
 
+		/*
 		sge::font::text::draw(
 			_context,
 			font_metrics_,
@@ -138,6 +139,7 @@ flake::notifications::object::render(
 			sge::font::text::align_h::right,
 			sge::font::text::align_v::top,
 			sge::font::text::flags::none);
+		*/
 
 		current_font_rect.top(
 			current_font_rect.top() +

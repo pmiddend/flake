@@ -244,6 +244,8 @@ set(
 	src/flake/planar/monitor/child.cpp
 	src/flake/planar/monitor/parent.cpp
 	src/flake/planar/monitor/texture.cpp
+	src/flake/postprocessing/context.cpp
+	src/flake/postprocessing/fullscreen_quad.cpp
 	src/flake/save_l8_texture_to_file.cpp
 	src/flake/shader/context.cpp
 	src/flake/shader/load_edited_string.cpp

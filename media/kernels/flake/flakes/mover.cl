@@ -17,6 +17,13 @@
 #include <flakelib/normalize_from_range.cl>
 #include <flakelib/scale_normalized_value.cl>
 
+bool
+flakelib_activity_is_active(
+	float const f)
+{
+	return f > 0.5f;
+}
+
 float4 const
 generate_randomized_position(
 	int4 const bounding_rect,
@@ -199,7 +206,7 @@ FLAKELIB_KERNEL_NAME(move)(
 
 		// We've hit a boundary
 		//if(flakelib_boundary_is_solid(boundary,current_position_index))
-		if(activity[current_position_index] > 0.5f)
+		if(flakelib_activity_is_active(activity[current_position_index]))
 		{
 			snow_density[current_position_index] +=
 				collision_increment;
@@ -269,8 +276,18 @@ FLAKELIB_KERNEL_NAME(update_activity)(
 	float const this_activity =
 		activity[current_index];
 
-	if(this_activity > 0.5f || flakelib_boundary_is_solid(boundary,current_index))
+	// If already active, continue.
+	if(flakelib_activity_is_active(this_activity))
 		return;
+
+	// If it's a boundary, make it active (strictly speaking,
+	// this is redundant, we could just copy the boundary buffer once,
+	// but it doesn't hurt runtime that much, so...
+	if(flakelib_boundary_is_solid(boundary,current_index))
+	{
+		activity[current_index] = 1.0f;
+		return;
+	}
 
 	flakelib_volume_von_neumann_size_t_neighbors neighborhood =
 		flakelib_volume_von_neumann_load_neighbor_indices(
@@ -292,6 +309,7 @@ FLAKELIB_KERNEL_NAME(update_activity)(
 		FLAKELIB_VOLUME_VON_NEUMANN_SUM(
 			floats);
 
+	// If one of the neighbors is a boundary, make active
 	if(sum > 0.2f)
 	{
 		activity[current_index] = 1.0f;
@@ -306,8 +324,15 @@ FLAKELIB_KERNEL_NAME(update_activity)(
 		neighborhood,
 		floats);
 
-	float const is_active_because_of_snow_density = 1.0f;
+	float const is_active_because_of_snow_density =
+	      1.0f;
 
-	if(floats.left > is_active_because_of_snow_density || floats.right > is_active_because_of_snow_density || floats.top > is_active_because_of_snow_density || floats.bottom > is_active_because_of_snow_density || floats.front > is_active_because_of_snow_density || floats.back > is_active_because_of_snow_density)
+	if(
+		floats.left > is_active_because_of_snow_density ||
+		floats.right > is_active_because_of_snow_density ||
+		floats.top > is_active_because_of_snow_density ||
+		floats.bottom > is_active_because_of_snow_density ||
+		floats.front > is_active_because_of_snow_density ||
+		floats.back > is_active_because_of_snow_density)
 		activity[current_index] = 1.0f;
 }

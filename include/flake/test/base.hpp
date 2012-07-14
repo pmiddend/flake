@@ -5,6 +5,7 @@
 #include <flake/notifications/object_fwd.hpp>
 #include <flake/notifications/text.hpp>
 #include <flake/test/feature_sequence.hpp>
+#include <flake/postprocessing/context.hpp>
 #include <flake/test/json_identifier.hpp>
 #include <flake/test/information/manager_fwd.hpp>
 #include <flake/test/information/object.hpp>
@@ -150,6 +151,7 @@ private:
 	flake::test::information::object memory_consumption_information_;
 	fcppt::scoped_ptr<flake::time_modifier::object> time_modifier_;
 	fcppt::signal::scoped_connection key_callback_connection_;
+	flake::postprocessing::context postprocessing_;
 	bool dump_this_frame_;
 
 	void
