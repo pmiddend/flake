@@ -1,4 +1,7 @@
 #include <flake/postprocessing/context.hpp>
+#include <sge/renderer/texture/set_address_mode2.hpp>
+#include <sge/renderer/texture/address_mode2.hpp>
+#include <sge/renderer/texture/address_mode.hpp>
 #include <sge/renderer/depth_stencil_surface.hpp>
 #include <sge/renderer/color_surface.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
@@ -7,6 +10,7 @@
 #include <flake/media_path_from_string.hpp>
 #include <sge/renderer/texture/filter/scoped.hpp>
 #include <sge/renderer/texture/filter/point.hpp>
+#include <sge/renderer/texture/filter/linear.hpp>
 #include <sge/renderer/texture/planar_parameters.hpp>
 #include <sge/renderer/target/viewport.hpp>
 #include <fcppt/assert/pre.hpp>
@@ -27,6 +31,7 @@
 #include <sge/renderer/context/scoped.hpp>
 #include <flake/shader/scoped_pair.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
+#include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <sge/renderer/texture/capabilities_field.hpp>
 #include <fcppt/optional_impl.hpp>
@@ -50,16 +55,52 @@ flake::postprocessing::context::context(
 		*quad_vertex_declaration_,
 		flake::shader::vertex_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/postprocessing/finalize.cg"))),
-				//				FCPPT_TEXT("shaders/postprocessing/downsample.cg"))),
+				FCPPT_TEXT("shaders/postprocessing/downsample.cg"))),
 		flake::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/postprocessing/finalize.cg")))),
-				//				FCPPT_TEXT("shaders/postprocessing/downsample.cg")))),
-	/*
-	blur_horizontal_shader_(),
-	blur_vertical_shader_(),
-	*/
+				FCPPT_TEXT("shaders/postprocessing/downsample.cg")))),
+	downsample_input_texture_parameter_(
+		downsample_shader_,
+		renderer_,
+		downsample_shader_.pixel_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"input_texture")),
+		flake::shader::parameter::planar_texture::optional_value()),
+	blur_h_shader_(
+		_shader_context,
+		*quad_vertex_declaration_,
+		flake::shader::vertex_program_path(
+			flake::media_path_from_string(
+				FCPPT_TEXT("shaders/postprocessing/blur_h.cg"))),
+		flake::shader::pixel_program_path(
+			flake::media_path_from_string(
+				FCPPT_TEXT("shaders/postprocessing/blur_h.cg")))),
+	blur_h_input_texture_parameter_(
+		blur_h_shader_,
+		renderer_,
+		blur_h_shader_.pixel_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"input_texture")),
+		flake::shader::parameter::planar_texture::optional_value()),
+	blur_v_shader_(
+		_shader_context,
+		*quad_vertex_declaration_,
+		flake::shader::vertex_program_path(
+			flake::media_path_from_string(
+				FCPPT_TEXT("shaders/postprocessing/blur_v.cg"))),
+		flake::shader::pixel_program_path(
+			flake::media_path_from_string(
+				FCPPT_TEXT("shaders/postprocessing/blur_v.cg")))),
+	blur_v_input_texture_parameter_(
+		blur_v_shader_,
+		renderer_,
+		blur_v_shader_.pixel_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"input_texture")),
+		flake::shader::parameter::planar_texture::optional_value()),
 	finalize_shader_(
 		_shader_context,
 		*quad_vertex_declaration_,
@@ -69,13 +110,21 @@ flake::postprocessing::context::context(
 		flake::shader::pixel_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/postprocessing/finalize.cg")))),
-	input_texture_parameter_(
+	finalize_input_texture_parameter_(
 		finalize_shader_,
 		renderer_,
 		finalize_shader_.pixel_program(),
 		flake::shader::parameter::name(
 			sge::cg::string(
 				"input_texture")),
+		flake::shader::parameter::planar_texture::optional_value()),
+	finalize_blurred_texture_parameter_(
+		finalize_shader_,
+		renderer_,
+		finalize_shader_.pixel_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"blurred_texture")),
 		flake::shader::parameter::planar_texture::optional_value()),
 	viewport_connection_(
 		_viewport_manager.manage_callback(
@@ -85,9 +134,10 @@ flake::postprocessing::context::context(
 	rendering_result_texture_(),
 	offscreen_target_(
 		renderer_.create_target()),
-	buffer_texture_0_(),
-	buffer_texture_1_(),
-	result_texture_()
+	offscreen_downsampled_target_(
+		renderer_.create_target()),
+	downsampled_texture_0_(),
+	downsampled_texture_1_()
 {
 }
 
@@ -100,13 +150,8 @@ flake::postprocessing::context::create_render_context()
 	FCPPT_ASSERT_PRE(
 		offscreen_target_);
 
-	offscreen_target_->color_surface(
-		sge::renderer::color_surface_shared_ptr(
-			rendering_result_texture_->surface(
-				sge::renderer::texture::mipmap::level(
-					0u))),
-		sge::renderer::target::surface_index(
-			0u));
+	this->switch_target_texture(
+		*rendering_result_texture_);
 
 	return
 		fcppt::make_unique_ptr<sge::renderer::context::scoped>(
@@ -119,21 +164,11 @@ flake::postprocessing::context::create_render_context()
 void
 flake::postprocessing::context::render()
 {
-	sge::renderer::context::scoped const scoped_block(
-		renderer_,
-		renderer_.onscreen_target());
+	this->downsample();
+	this->blur_h();
+	this->blur_v();
+	this->finalize();
 
-	flake::shader::scoped_pair scoped_shader(
-		scoped_block.get(),
-		finalize_shader_);
-
-	sge::renderer::texture::filter::scoped scoped_texture_filter(
-		scoped_block.get(),
-		input_texture_parameter_.stage(),
-		sge::renderer::texture::filter::point());
-
-	fullscreen_quad_.render(
-		scoped_block.get());
 }
 
 flake::postprocessing::context::~context()
@@ -148,6 +183,29 @@ flake::postprocessing::context::viewport_callback()
 			sge::renderer::target::viewport_size(
 				renderer_.onscreen_target())));
 
+	sge::renderer::size_type const downsample_factor =
+		4u;
+
+	downsampled_texture_0_.take(
+		renderer_.create_planar_texture(
+			sge::renderer::texture::planar_parameters(
+				target_size / downsample_factor,
+				sge::image::color::format::rgba32f,
+				sge::renderer::texture::mipmap::off(),
+				sge::renderer::resource_flags::none,
+				sge::renderer::texture::capabilities_field(
+					sge::renderer::texture::capabilities::render_target))));
+
+	downsampled_texture_1_.take(
+		renderer_.create_planar_texture(
+			sge::renderer::texture::planar_parameters(
+				target_size / downsample_factor,
+				sge::image::color::format::rgba32f,
+				sge::renderer::texture::mipmap::off(),
+				sge::renderer::resource_flags::none,
+				sge::renderer::texture::capabilities_field(
+					sge::renderer::texture::capabilities::render_target))));
+
 	rendering_result_texture_.take(
 		renderer_.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
@@ -158,19 +216,183 @@ flake::postprocessing::context::viewport_callback()
 				sge::renderer::texture::capabilities_field(
 					sge::renderer::texture::capabilities::render_target))));
 
-	input_texture_parameter_.set(
+	finalize_input_texture_parameter_.set(
 		*rendering_result_texture_);
+
+	finalize_blurred_texture_parameter_.set(
+		*downsampled_texture_0_);
 
 	offscreen_target_->depth_stencil_surface(
 		sge::renderer::depth_stencil_surface_shared_ptr(
 			renderer_.create_depth_stencil_surface(
 				target_size,
 				sge::renderer::depth_stencil_format::d32)));
+}
+
+void
+flake::postprocessing::context::switch_downsampled_target_texture(
+	sge::renderer::texture::planar &_new_texture)
+{
+	offscreen_downsampled_target_->color_surface(
+		sge::renderer::color_surface_shared_ptr(
+			_new_texture.surface(
+				sge::renderer::texture::mipmap::level(
+					0u))),
+		sge::renderer::target::surface_index(
+			0u));
+
+	offscreen_downsampled_target_->viewport(
+		sge::renderer::target::viewport(
+			sge::renderer::pixel_rect(
+				sge::renderer::pixel_rect::vector::null(),
+				fcppt::math::dim::structure_cast<sge::renderer::pixel_rect::dim>(
+					_new_texture.size()))));
+}
+
+void
+flake::postprocessing::context::switch_target_texture(
+	sge::renderer::texture::planar &_new_texture)
+{
+	offscreen_target_->color_surface(
+		sge::renderer::color_surface_shared_ptr(
+			_new_texture.surface(
+				sge::renderer::texture::mipmap::level(
+					0u))),
+		sge::renderer::target::surface_index(
+			0u));
 
 	offscreen_target_->viewport(
 		sge::renderer::target::viewport(
 			sge::renderer::pixel_rect(
 				sge::renderer::pixel_rect::vector::null(),
 				fcppt::math::dim::structure_cast<sge::renderer::pixel_rect::dim>(
-					target_size))));
+					_new_texture.size()))));
 }
+
+void
+flake::postprocessing::context::downsample()
+{
+	this->switch_downsampled_target_texture(
+		*downsampled_texture_0_);
+
+	sge::renderer::context::scoped const scoped_block(
+		renderer_,
+		*offscreen_downsampled_target_);
+
+	downsample_input_texture_parameter_.set(
+		*rendering_result_texture_);
+
+	flake::shader::scoped_pair scoped_shader(
+		scoped_block.get(),
+		downsample_shader_);
+
+	sge::renderer::texture::filter::scoped scoped_texture_filter(
+		scoped_block.get(),
+		downsample_input_texture_parameter_.stage(),
+		sge::renderer::texture::filter::linear());
+
+	fullscreen_quad_.render(
+		scoped_block.get());
+}
+
+void
+flake::postprocessing::context::blur_h()
+{
+	this->switch_downsampled_target_texture(
+		*downsampled_texture_1_);
+
+	sge::renderer::context::scoped const scoped_block(
+		renderer_,
+		*offscreen_downsampled_target_);
+
+	blur_h_input_texture_parameter_.set(
+		*downsampled_texture_0_);
+
+	flake::shader::scoped_pair scoped_shader(
+		scoped_block.get(),
+		blur_h_shader_);
+
+	sge::renderer::texture::set_address_mode2(
+		scoped_block.get(),
+		blur_h_input_texture_parameter_.stage(),
+		sge::renderer::texture::address_mode2(
+			sge::renderer::texture::address_mode::clamp));
+
+	sge::renderer::texture::filter::scoped scoped_texture_filter(
+		scoped_block.get(),
+		blur_h_input_texture_parameter_.stage(),
+		sge::renderer::texture::filter::point());
+
+	fullscreen_quad_.render(
+		scoped_block.get());
+}
+
+void
+flake::postprocessing::context::blur_v()
+{
+	this->switch_downsampled_target_texture(
+		*downsampled_texture_0_);
+
+	sge::renderer::context::scoped const scoped_block(
+		renderer_,
+		*offscreen_downsampled_target_);
+
+	blur_v_input_texture_parameter_.set(
+		*downsampled_texture_1_);
+
+	flake::shader::scoped_pair scoped_shader(
+		scoped_block.get(),
+		blur_v_shader_);
+
+	sge::renderer::texture::set_address_mode2(
+		scoped_block.get(),
+		blur_v_input_texture_parameter_.stage(),
+		sge::renderer::texture::address_mode2(
+			sge::renderer::texture::address_mode::clamp));
+
+	sge::renderer::texture::filter::scoped scoped_texture_filter(
+		scoped_block.get(),
+		blur_v_input_texture_parameter_.stage(),
+		sge::renderer::texture::filter::point());
+
+	fullscreen_quad_.render(
+		scoped_block.get());
+}
+
+void
+flake::postprocessing::context::blur()
+{
+	unsigned const blur_iterations = 2;
+
+	for(unsigned i = 0; i < blur_iterations; ++i)
+	{
+		this->blur_h();
+		this->blur_v();
+	}
+}
+
+void
+flake::postprocessing::context::finalize()
+{
+	sge::renderer::context::scoped const scoped_block(
+		renderer_,
+		renderer_.onscreen_target());
+
+	flake::shader::scoped_pair scoped_shader(
+		scoped_block.get(),
+		finalize_shader_);
+
+	sge::renderer::texture::filter::scoped scoped_texture_filter_0(
+		scoped_block.get(),
+		finalize_input_texture_parameter_.stage(),
+		sge::renderer::texture::filter::point());
+
+	sge::renderer::texture::filter::scoped scoped_texture_filter_1(
+		scoped_block.get(),
+		finalize_blurred_texture_parameter_.stage(),
+		sge::renderer::texture::filter::linear());
+
+	fullscreen_quad_.render(
+		scoped_block.get());
+}
+

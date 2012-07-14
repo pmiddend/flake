@@ -30,19 +30,26 @@ gamma_correction(
 float4
 pixel_main(
 	vertex_outputs vertex_data,
-	uniform sampler2D input_texture)
+	uniform sampler2D input_texture,
+	uniform sampler2D blurred_texture)
 	: COLOR
 {
-	float2 inverted_texcoords =
-		float2(
-			vertex_data.texcoord.x,
-			1.0 - vertex_data.texcoord.y);
+	float2
+		texcoords =
+			vertex_data.texcoord,
+		inverted_texcoords =
+			float2(
+				texcoords.x,
+				1.0 - texcoords.y);
 
 	return
 		float4(
 			gamma_correction(
 				tex2D(
 					input_texture,
-					inverted_texcoords).xyz),
+					inverted_texcoords).xyz) +
+			tex2D(
+				blurred_texture,
+				texcoords).xyz,
 			1.0);
 }

@@ -3,6 +3,7 @@
 
 #include <sge/renderer/context/scoped_unique_ptr.hpp>
 #include <flake/shader/parameter/planar_texture.hpp>
+#include <flake/shader/parameter/vector.hpp>
 #include <flake/postprocessing/fullscreen_quad.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/viewport/manager_fwd.hpp>
@@ -41,21 +42,46 @@ private:
 	sge::renderer::vertex_declaration_scoped_ptr const quad_vertex_declaration_;
 	flake::postprocessing::fullscreen_quad fullscreen_quad_;
 	flake::shader::pair downsample_shader_;
+	flake::shader::parameter::planar_texture downsample_input_texture_parameter_;
+	flake::shader::pair blur_h_shader_;
+	flake::shader::parameter::planar_texture blur_h_input_texture_parameter_;
+	flake::shader::pair blur_v_shader_;
+	flake::shader::parameter::planar_texture blur_v_input_texture_parameter_;
 	flake::shader::pair finalize_shader_;
-	/*
-	flake::shader::pair blur_horizontal_shader_;
-	flake::shader::pair blur_vertical_shader_;
-	*/
-	flake::shader::parameter::planar_texture input_texture_parameter_;
+	flake::shader::parameter::planar_texture finalize_input_texture_parameter_;
+	flake::shader::parameter::planar_texture finalize_blurred_texture_parameter_;
 	fcppt::signal::scoped_connection viewport_connection_;
 	sge::renderer::texture::planar_scoped_ptr rendering_result_texture_;
 	sge::renderer::target::offscreen_scoped_ptr offscreen_target_;
-	sge::renderer::texture::planar_scoped_ptr buffer_texture_0_;
-	sge::renderer::texture::planar_scoped_ptr buffer_texture_1_;
-	sge::renderer::texture::planar_scoped_ptr result_texture_;
+	sge::renderer::target::offscreen_scoped_ptr offscreen_downsampled_target_;
+	sge::renderer::texture::planar_scoped_ptr downsampled_texture_0_;
+	sge::renderer::texture::planar_scoped_ptr downsampled_texture_1_;
 
 	void
 	viewport_callback();
+
+	void
+	switch_target_texture(
+		sge::renderer::texture::planar &);
+
+	void
+	switch_downsampled_target_texture(
+		sge::renderer::texture::planar &);
+
+	void
+	downsample();
+
+	void
+	blur_h();
+
+	void
+	blur_v();
+
+	void
+	blur();
+
+	void
+	finalize();
 };
 }
 }
