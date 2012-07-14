@@ -148,10 +148,8 @@ flake::volume::tests::marching_cubes::marching_cubes(
 	snow_cover_(
 		camera_,
 		this->renderer(),
-		this->cg_context(),
-		this->cg_vertex_profile(),
-		this->cg_pixel_profile(),
 		marching_cubes_manager_.vertex_declaration(),
+		this->shader_context(),
 		flake::volume::snow_cover::texture_repeats(
 			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
 				this->configuration(),
@@ -211,7 +209,8 @@ flake::volume::tests::marching_cubes::marching_cubes(
 					FCPPT_TEXT("iso-level"))))),
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
-			boost::chrono::seconds(1)))
+			boost::chrono::seconds(
+				1)))
 {
 	splatter_.splat_volume_float(
 		boundary_buffer_->value(),

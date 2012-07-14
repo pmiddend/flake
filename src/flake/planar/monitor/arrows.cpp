@@ -2,8 +2,7 @@
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/dummy_sprite/parameters.hpp>
 #include <rucksack/axis_policy2.hpp>
-#include <sge/cg/parameter/matrix/set.hpp>
-#include <sge/cg/parameter/vector/set.hpp>
+#include <flake/shader/scoped_pair.hpp>
 #include <sge/font/text/draw.hpp>
 #include <sge/font/text/flags_none.hpp>
 #include <sge/font/text/from_fcppt_string.hpp>
@@ -21,7 +20,6 @@
 #include <sge/renderer/vector2.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_count.hpp>
-#include <sge/renderer/cg/scoped_program.hpp>
 #include <sge/renderer/context/object.hpp>
 #include <sge/renderer/projection/dim.hpp>
 #include <sge/renderer/projection/far.hpp>
@@ -290,13 +288,9 @@ flake::planar::monitor::arrows::render_arrows(
 	sge::renderer::context::object &_context,
 	monitor::optional_projection const &_projection)
 {
-	sge::renderer::cg::scoped_program scoped_vertex_program(
+	flake::shader::scoped_pair scoped_shader(
 		_context,
-		child::parent().loaded_arrow_vertex_program());
-
-	sge::renderer::cg::scoped_program scoped_pixel_program(
-		_context,
-		child::parent().loaded_arrow_pixel_program());
+		child::parent().arrow_shader());
 
 	sge::renderer::scoped_vertex_declaration scoped_vertex_declaration(
 		_context,
@@ -306,8 +300,7 @@ flake::planar::monitor::arrows::render_arrows(
 		_context,
 		*vb_);
 
-	sge::cg::parameter::matrix::set(
-		child::parent().arrow_projection_parameter(),
+	child::parent().arrow_projection(
 		_projection.has_value()
 		?
 			*_projection
@@ -318,8 +311,8 @@ flake::planar::monitor::arrows::render_arrows(
 				sge::renderer::projection::near(0.0f),
 				sge::renderer::projection::far(10.0f)));
 
-	sge::cg::parameter::vector::set(
-		child::parent().arrow_initial_position_parameter(),
+
+	child::parent().arrow_position(
 		fcppt::math::vector::structure_cast<sge::renderer::vector2>(
 			sprite_box_.position()));
 

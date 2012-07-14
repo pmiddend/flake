@@ -139,9 +139,7 @@ flake::planar::tests::vorticity::vorticity(
 				sge::renderer::resource_flags::none))),
 	monitor_parent_(
 		this->renderer(),
-		this->cg_context(),
-		this->cg_vertex_profile(),
-		this->cg_pixel_profile(),
+		this->shader_context(),
 		this->opencl_system().command_queue(),
 		sge::font::metrics_shared_ptr(
 			this->font_system().create_font(

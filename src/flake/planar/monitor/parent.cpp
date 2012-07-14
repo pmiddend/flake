@@ -34,9 +34,7 @@
 
 flake::planar::monitor::parent::parent(
 	sge::renderer::device &_renderer,
-	sge::cg::context::object &_cg_context,
-	flake::shader::vertex_profile const &_cg_vertex_profile,
-	flake::shader::pixel_profile const &_cg_pixel_profile,
+	flake::shader::context &_shader_context,
 	sge::opencl::command_queue::object &_command_queue,
 	sge::font::metrics_shared_ptr const _font_metrics,
 	monitor::font_color const &_font_color)
@@ -53,42 +51,29 @@ flake::planar::monitor::parent::parent(
 	vd_(
 		renderer_.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format<arrow_vf::format>())),
-	arrow_vertex_program_(
-		sge::cg::program::from_file_parameters(
-			_cg_context,
-			sge::cg::program::source_type::text,
-			_cg_vertex_profile.get(),
+	arrow_shader_(
+		_shader_context,
+		*vd_,
+		flake::shader::vertex_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/arrow.cg")),
-			sge::cg::program::main_function(
-				"vertex_main"),
-			_renderer.cg_compile_options(
-				_cg_context,
-				_cg_vertex_profile.get()))),
-	arrow_pixel_program_(
-		sge::cg::program::from_file_parameters(
-			_cg_context,
-			sge::cg::program::source_type::text,
-			_cg_pixel_profile.get(),
+				FCPPT_TEXT("shaders/arrow.cg"))),
+		flake::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/arrow.cg")),
-			sge::cg::program::main_function(
-				"pixel_main"),
-			_renderer.cg_compile_options(
-				_cg_context,
-				_cg_pixel_profile.get()))),
-	loaded_arrow_vertex_program_(
-		renderer_.load_cg_program(
-			arrow_vertex_program_)),
-	loaded_arrow_pixel_program_(
-		renderer_.load_cg_program(
-			arrow_pixel_program_)),
+				FCPPT_TEXT("shaders/arrow.cg")))),
 	arrow_initial_position_parameter_(
-		arrow_vertex_program_.parameter(
-			"initial_position")),
+		arrow_shader_.vertex_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"initial_position")),
+		sge::renderer::vector2()),
 	arrow_projection_parameter_(
-		arrow_vertex_program_.parameter(
-			"projection")),
+		arrow_shader_.vertex_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"projection")),
+		flake::shader::parameter::is_projection_matrix(
+			true),
+		sge::renderer::matrix4()),
 	sprite_system_(
 		renderer_,
 		sge::sprite::buffers::option::dynamic),
@@ -109,32 +94,27 @@ flake::planar::monitor::parent::cl_context() const
 	return command_queue_.context();
 }
 
-sge::renderer::cg::loaded_program &
-flake::planar::monitor::parent::loaded_arrow_vertex_program()
+flake::shader::pair &
+flake::planar::monitor::parent::arrow_shader()
 {
 	return
-		*loaded_arrow_vertex_program_;
+		arrow_shader_;
 }
 
-sge::renderer::cg::loaded_program &
-flake::planar::monitor::parent::loaded_arrow_pixel_program()
+void
+flake::planar::monitor::parent::arrow_projection(
+	sge::renderer::matrix4 const &_matrix)
 {
-	return
-		*loaded_arrow_pixel_program_;
+	arrow_projection_parameter_.set(
+		_matrix);
 }
 
-sge::cg::parameter::object const &
-flake::planar::monitor::parent::arrow_projection_parameter()
+void
+flake::planar::monitor::parent::arrow_position(
+	sge::renderer::vector2 const &_position)
 {
-	return
-		arrow_projection_parameter_.object();
-}
-
-sge::cg::parameter::object const &
-flake::planar::monitor::parent::arrow_initial_position_parameter()
-{
-	return
-		arrow_initial_position_parameter_.object();
+	arrow_initial_position_parameter_.set(
+		_position);
 }
 
 sge::renderer::device &

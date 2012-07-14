@@ -7,16 +7,16 @@
 #include <flake/volume/model/object.hpp>
 #include <flake/volume/model/sun_direction.hpp>
 #include <sge/camera/base_fwd.hpp>
-#include <sge/cg/context/object_fwd.hpp>
-#include <sge/cg/parameter/named.hpp>
-#include <sge/cg/profile/object_fwd.hpp>
-#include <sge/cg/program/object.hpp>
+#include <flake/shader/context_fwd.hpp>
+#include <flake/shader/pair.hpp>
+#include <flake/shader/parameter/matrix.hpp>
+#include <flake/shader/parameter/planar_texture.hpp>
+#include <flake/shader/parameter/vector.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/model/obj/loader_scoped_ptr.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
-#include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -39,9 +39,7 @@ FCPPT_NONCOPYABLE(
 public:
 	manager(
 		sge::renderer::device &,
-		sge::cg::context::object &,
-		flake::shader::vertex_profile const &,
-		flake::shader::pixel_profile const &,
+		flake::shader::context &,
 		sge::image2d::system &,
 		sge::camera::base &,
 		model::sun_direction const &);
@@ -82,13 +80,11 @@ private:
 	sge::camera::base &camera_;
 	sge::renderer::vertex_declaration_scoped_ptr vertex_declaration_;
 
-	sge::cg::program::object vertex_program_;
-	sge::cg::program::object pixel_program_;
-	sge::renderer::cg::loaded_program_scoped_ptr loaded_vertex_program_;
-	sge::renderer::cg::loaded_program_scoped_ptr loaded_pixel_program_;
-	sge::cg::parameter::named mvp_parameter_;
-	sge::cg::parameter::named world_parameter_;
-	sge::cg::parameter::named sun_direction_parameter_;
+	flake::shader::pair shader_;
+	flake::shader::parameter::matrix<sge::renderer::scalar,4,4> mvp_parameter_;
+	flake::shader::parameter::matrix<sge::renderer::scalar,4,4> world_parameter_;
+	flake::shader::parameter::vector<sge::renderer::scalar,3> sun_direction_parameter_;
+	flake::shader::parameter::planar_texture loaded_texture_;
 
 	vertex_buffer_map identifier_to_vertex_buffer_;
 	texture_map identifier_to_texture_;

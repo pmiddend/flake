@@ -138,9 +138,7 @@ flake::volume::tests::density_visualization::density_visualization(
 			0.0f)*/),
 	raycaster_(
 		this->renderer(),
-		this->cg_context(),
-		this->cg_vertex_profile(),
-		this->cg_pixel_profile(),
+		this->shader_context(),
 		this->opencl_system().context(),
 		camera_,
 		this->image_system(),
@@ -155,9 +153,7 @@ flake::volume::tests::density_visualization::density_visualization(
 			false)),
 	models_(
 		this->renderer(),
-		this->cg_context(),
-		this->cg_vertex_profile(),
-		this->cg_pixel_profile(),
+		this->shader_context(),
 		this->image_system(),
 		camera_,
 		flake::volume::model::sun_direction(

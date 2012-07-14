@@ -1,4 +1,5 @@
 #include <flake/media_path_from_string.hpp>
+#include <flake/shader/scoped_pair.hpp>
 #include <flake/shader/load_edited_string.hpp>
 #include <flake/volume/flakes/manager.hpp>
 #include <flake/volume/flakes/vf/format.hpp>
@@ -7,11 +8,6 @@
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
-#include <sge/cg/parameter/matrix/set.hpp>
-#include <sge/cg/parameter/scalar/set.hpp>
-#include <sge/cg/parameter/vector/set.hpp>
-#include <sge/cg/program/from_file_parameters.hpp>
-#include <sge/cg/program/from_string_parameters.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
@@ -20,10 +16,6 @@
 #include <sge/renderer/vector2.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
-#include <sge/renderer/cg/loaded_program.hpp>
-#include <sge/renderer/cg/loaded_texture.hpp>
-#include <sge/renderer/cg/scoped_program.hpp>
-#include <sge/renderer/cg/scoped_texture.hpp>
 #include <sge/renderer/context/object.hpp>
 #include <sge/renderer/state/bool.hpp>
 #include <sge/renderer/state/depth_func.hpp>
@@ -55,9 +47,7 @@
 
 flake::volume::flakes::manager::manager(
 	sge::renderer::device &_renderer,
-	sge::cg::context::object &_cg_context,
-	flake::shader::vertex_profile const &_cg_vertex_profile,
-	flake::shader::pixel_profile const &_cg_pixel_profile,
+	flake::shader::context &_shader_context,
 	sge::camera::base &_camera,
 	sge::opencl::context::object &_context,
 	sge::image2d::system &_image_system,
@@ -115,54 +105,43 @@ flake::volume::flakes::manager::manager(
 			sge::renderer::resource_flags::none)),
 	tile_size_(
 		_tile_size),
-	vertex_program_(
-		sge::cg::program::from_string_parameters(
-			_cg_context,
-			sge::cg::program::source_type::text,
-			_cg_vertex_profile.get(),
-			flake::shader::load_edited_string(
-				renderer_,
-				*vertex_declaration_,
-				flake::media_path_from_string(
-					FCPPT_TEXT("shaders/flakes.cg"))),
-			sge::cg::program::main_function(
-				"vertex_main"),
-			_renderer.cg_compile_options(
-				_cg_context,
-				_cg_vertex_profile.get()))),
-	pixel_program_(
-		sge::cg::program::from_string_parameters(
-			_cg_context,
-			sge::cg::program::source_type::text,
-			_cg_pixel_profile.get(),
-			flake::shader::load_edited_string(
-				renderer_,
-				*vertex_declaration_,
-				flake::media_path_from_string(
-					FCPPT_TEXT("shaders/flakes.cg"))),
-			sge::cg::program::main_function(
-				"pixel_main"),
-			_renderer.cg_compile_options(
-				_cg_context,
-				_cg_pixel_profile.get()))),
-	loaded_vertex_program_(
-		renderer_.load_cg_program(
-			vertex_program_)),
-	loaded_pixel_program_(
-		renderer_.load_cg_program(
-			pixel_program_)),
+	shader_(
+		_shader_context,
+		*vertex_declaration_,
+		flake::shader::vertex_program_path(
+			flake::media_path_from_string(
+				FCPPT_TEXT("shaders/flakes.cg"))),
+		flake::shader::pixel_program_path(
+			flake::media_path_from_string(
+				FCPPT_TEXT("shaders/flakes.cg")))),
 	camera_position_parameter_(
-		vertex_program_.parameter(
-			"camera_position")),
+		shader_.vertex_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"camera_position")),
+		sge::renderer::vector3()),
 	tile_size_parameter_(
-		pixel_program_.parameter(
-			"tile_size")),
+		shader_.pixel_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"tile_size")),
+		static_cast<sge::renderer::scalar>(
+			_tile_size.get())),
 	maximum_distance_parameter_(
-		vertex_program_.parameter(
-			"maximum_distance")),
+		shader_.vertex_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"maximum_distance")),
+		static_cast<sge::renderer::scalar>(
+			_grid_size.get().w())),
 	mvp_parameter_(
-		vertex_program_.parameter(
-			"mvp")),
+		shader_.vertex_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"mvp")),
+		flake::shader::parameter::is_projection_matrix(
+			true),
+		sge::renderer::matrix4()),
 	texture_(
 		sge::renderer::texture::create_planar_from_path(
 			flake::media_path_from_string(
@@ -173,9 +152,13 @@ flake::volume::flakes::manager::manager(
 			sge::renderer::texture::mipmap::off(),
 			sge::renderer::resource_flags::none)),
 	loaded_texture_(
-		renderer_.load_cg_texture(
-			pixel_program_.parameter(
-				"main_texture").object(),
+		shader_,
+		renderer_,
+		shader_.pixel_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"main_texture")),
+		flake::shader::parameter::planar_texture::optional_value(
 			*texture_)),
 	cl_positions_buffer_(),
 	cl_point_sizes_buffer_()
@@ -183,16 +166,6 @@ flake::volume::flakes::manager::manager(
 	this->generate_particles(
 		_grid_size,
 		_tile_count);
-
-	sge::cg::parameter::scalar::set(
-		maximum_distance_parameter_.object(),
-		static_cast<sge::renderer::scalar>(
-			_grid_size.get().w()));
-
-	sge::cg::parameter::scalar::set(
-		tile_size_parameter_.object(),
-		static_cast<sge::renderer::scalar>(
-			_tile_size.get()));
 
 	cl_positions_buffer_.take(
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
@@ -215,22 +188,16 @@ void
 flake::volume::flakes::manager::render(
 	sge::renderer::context::object &_context)
 {
-	sge::renderer::cg::scoped_program
-		scoped_vertex_program(
-			_context,
-			*loaded_vertex_program_),
-		scoped_pixel_program(
-			_context,
-			*loaded_pixel_program_);
+	flake::shader::scoped_pair scoped_shader(
+		_context,
+		shader_);
 
-	sge::cg::parameter::matrix::set(
-		mvp_parameter_.object(),
+	mvp_parameter_.set(
 		sge::camera::matrix_conversion::world_projection(
 			camera_.coordinate_system(),
 			camera_.projection_matrix()));
 
-	sge::cg::parameter::vector::set(
-		camera_position_parameter_.object(),
+	camera_position_parameter_.set(
 		-camera_.coordinate_system().position().get());
 
 	sge::renderer::scoped_vertex_declaration_and_buffers scoped_vf(
@@ -253,10 +220,6 @@ flake::volume::flakes::manager::render(
 			(sge::renderer::state::depth_func::less)
 			(sge::renderer::state::bool_::write_to_depth_buffer = false)
 			(sge::renderer::state::bool_::enable_alpha_blending = true));
-
-	sge::renderer::cg::scoped_texture scoped_texture(
-		_context,
-		*loaded_texture_);
 
 	_context.render_nonindexed(
 		sge::renderer::first_vertex(

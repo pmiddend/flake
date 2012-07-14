@@ -4,8 +4,6 @@
 #include <flake/font_metrics_cache.hpp>
 #include <flake/notifications/object_fwd.hpp>
 #include <flake/notifications/text.hpp>
-#include <flake/shader/pixel_profile.hpp>
-#include <flake/shader/vertex_profile.hpp>
 #include <flake/test/feature_sequence.hpp>
 #include <flake/test/json_identifier.hpp>
 #include <flake/test/information/manager_fwd.hpp>
@@ -14,10 +12,10 @@
 #include <flake/time_modifier/object_fwd.hpp>
 #include <flake/scoped_ostream_file_redirection.hpp>
 #include <flake/scoped_wostream_file_redirection.hpp>
+#include <flake/shader/context_fwd.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
-#include <sge/cg/context/object_fwd.hpp>
 #include <sge/charconv/system_fwd.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <sge/image2d/system_fwd.hpp>
@@ -76,14 +74,8 @@ protected:
 	sge::renderer::device &
 	renderer();
 
-	sge::cg::context::object &
-	cg_context();
-
-	flake::shader::vertex_profile
-	cg_vertex_profile();
-
-	flake::shader::pixel_profile
-	cg_pixel_profile();
+	flake::shader::context &
+	shader_context();
 
 	sge::opencl::single_device_system::object &
 	opencl_system();
@@ -146,9 +138,7 @@ private:
 	test::feature_sequence features_;
 	fcppt::scoped_ptr<sge::systems::instance> systems_;
 	fcppt::signal::scoped_connection quit_connection_;
-	fcppt::scoped_ptr<sge::cg::context::object> cg_context_;
-	fcppt::scoped_ptr<sge::cg::profile::object> cg_vertex_profile_;
-	fcppt::scoped_ptr<sge::cg::profile::object> cg_pixel_profile_;
+	fcppt::scoped_ptr<flake::shader::context> shader_context_;
 	fcppt::scoped_ptr<sge::opencl::single_device_system::object> opencl_system_;
 	fcppt::scoped_ptr<flakelib::cl::program_context> program_context_;
 	fcppt::scoped_ptr<flakelib::buffer_pool::object> buffer_pool_;

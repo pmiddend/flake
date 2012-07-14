@@ -149,9 +149,7 @@ flake::volume::tests::flakes::flakes(
 		this->program_context()),
 	arrows_manager_(
 		this->renderer(),
-		this->cg_context(),
-		this->cg_vertex_profile(),
-		this->cg_pixel_profile(),
+		this->shader_context(),
 		camera_),
 	velocity_arrows_(
 		this->opencl_system().context(),
@@ -240,9 +238,7 @@ flake::volume::tests::flakes::flakes(
 			simulation_size_.get())),
 	flakes_(
 		this->renderer(),
-		this->cg_context(),
-		this->cg_vertex_profile(),
-		this->cg_pixel_profile(),
+		this->shader_context(),
 		camera_,
 		this->opencl_system().context(),
 		this->image_system(),
@@ -305,9 +301,7 @@ flake::volume::tests::flakes::flakes(
 					FCPPT_TEXT("iso-level"))))),
 	models_(
 		this->renderer(),
-		this->cg_context(),
-		this->cg_vertex_profile(),
-		this->cg_pixel_profile(),
+		this->shader_context(),
 		this->image_system(),
 		camera_,
 		flake::volume::model::sun_direction(
@@ -353,10 +347,8 @@ flake::volume::tests::flakes::flakes(
 	snow_cover_(
 		camera_,
 		this->renderer(),
-		this->cg_context(),
-		this->cg_vertex_profile(),
-		this->cg_pixel_profile(),
 		marching_cubes_manager_.vertex_declaration(),
+		this->shader_context(),
 		flake::volume::snow_cover::texture_repeats(
 			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
 				this->configuration(),
@@ -518,7 +510,6 @@ flake::volume::tests::flakes::render(
 				FCPPT_TEXT("arrows"))))
 		arrows_manager_.render(
 			_context);
-
 
 	test::base::render(
 		_context);

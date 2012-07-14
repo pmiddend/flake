@@ -1,4 +1,5 @@
 #include <flake/media_path_from_string.hpp>
+#include <flake/shader/scoped_pair.hpp>
 #include <flake/volume/model/manager.hpp>
 #include <flake/volume/model/vf/format.hpp>
 #include <flake/volume/model/vf/from_obj_map.hpp>
@@ -6,9 +7,6 @@
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
-#include <sge/cg/parameter/matrix/set.hpp>
-#include <sge/cg/parameter/vector/set.hpp>
-#include <sge/cg/program/from_file_parameters.hpp>
 #include <sge/model/obj/create.hpp>
 #include <sge/model/obj/loader.hpp>
 #include <sge/model/obj/vb_converter/convert.hpp>
@@ -17,11 +15,6 @@
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
-#include <sge/renderer/cg/loaded_program.hpp>
-#include <sge/renderer/cg/loaded_texture.hpp>
-#include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
-#include <sge/renderer/cg/scoped_program.hpp>
-#include <sge/renderer/cg/scoped_texture.hpp>
 #include <sge/renderer/context/object.hpp>
 #include <sge/renderer/state/bool.hpp>
 #include <sge/renderer/state/depth_func.hpp>
@@ -51,9 +44,7 @@
 
 flake::volume::model::manager::manager(
 	sge::renderer::device &_renderer,
-	sge::cg::context::object &_cg_context,
-	flake::shader::vertex_profile const &_cg_vertex_profile,
-	flake::shader::pixel_profile const &_cg_pixel_profile,
+	flake::shader::context &_shader_context,
 	sge::image2d::system &_image_system,
 	sge::camera::base &_camera,
 	model::sun_direction const &_sun_direction)
@@ -65,55 +56,51 @@ flake::volume::model::manager::manager(
 	vertex_declaration_(
 		_renderer.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format<vf::format>())),
-	vertex_program_(
-		sge::cg::program::from_file_parameters(
-			_cg_context,
-			sge::cg::program::source_type::text,
-			_cg_vertex_profile.get(),
+	shader_(
+		_shader_context,
+		*vertex_declaration_,
+		flake::shader::vertex_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/model.cg")),
-			sge::cg::program::main_function(
-				"vertex_main"),
-			_renderer.cg_compile_options(
-				_cg_context,
-				_cg_vertex_profile.get()))),
-	pixel_program_(
-		sge::cg::program::from_file_parameters(
-			_cg_context,
-			sge::cg::program::source_type::text,
-			_cg_pixel_profile.get(),
+				FCPPT_TEXT("shaders/model.cg"))),
+		flake::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/model.cg")),
-			sge::cg::program::main_function(
-				"pixel_main"),
-			_renderer.cg_compile_options(
-				_cg_context,
-				_cg_pixel_profile.get()))),
-	loaded_vertex_program_(
-		renderer_.load_cg_program(
-			vertex_program_)),
-	loaded_pixel_program_(
-		renderer_.load_cg_program(
-			pixel_program_)),
+				FCPPT_TEXT("shaders/model.cg")))),
 	mvp_parameter_(
-		vertex_program_.parameter(
-			"mvp")),
+		shader_.vertex_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"mvp")),
+		flake::shader::parameter::is_projection_matrix(
+			true),
+		sge::renderer::matrix4()),
 	world_parameter_(
-		vertex_program_.parameter(
-			"world")),
+		shader_.vertex_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"world")),
+		flake::shader::parameter::is_projection_matrix(
+			false),
+		sge::renderer::matrix4()),
 	sun_direction_parameter_(
-		pixel_program_.parameter(
-			"sun_direction")),
+		shader_.pixel_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"sun_direction")),
+		_sun_direction.get()),
+	loaded_texture_(
+		shader_,
+		renderer_,
+		shader_.pixel_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"primary_texture")),
+		flake::shader::parameter::planar_texture::optional_value()),
 	identifier_to_vertex_buffer_(),
 	identifier_to_texture_(),
 	model_loader_(
 		sge::model::obj::create()),
 	children_()
 {
-	sge::cg::parameter::vector::set(
-		sun_direction_parameter_.object(),
-		_sun_direction.get());
-
 	for(
 		boost::filesystem::directory_iterator current_file(
 			flake::media_path_from_string(
@@ -187,22 +174,16 @@ flake::volume::model::manager::render(
 		_context,
 		*vertex_declaration_);
 
-	sge::renderer::cg::scoped_program
-		scoped_vertex_program(
-			_context,
-			*loaded_vertex_program_),
-		scoped_pixel_program(
-			_context,
-			*loaded_pixel_program_);
+	flake::shader::scoped_pair scoped_shader(
+		_context,
+		shader_);
 
 	model::identifier previous_identifier(
 		fcppt::string(
 			FCPPT_TEXT("")));
 
 	fcppt::scoped_ptr<sge::renderer::scoped_vertex_buffer> scoped_vb;
-	sge::renderer::cg::loaded_texture_scoped_ptr loaded_texture;
 	fcppt::optional<sge::renderer::vertex_buffer &> current_vertex_buffer;
-	fcppt::scoped_ptr<sge::renderer::cg::scoped_texture> scoped_texture;
 
 	for(
 		child_sequence::iterator child =
@@ -236,18 +217,8 @@ flake::volume::model::manager::render(
 					fcppt::ref(
 						*(vertex_buffer->second))));
 
-			loaded_texture.take(
-				renderer_.load_cg_texture(
-					pixel_program_.parameter(
-						"primary_texture").object(),
-					*(texture->second)));
-
-			scoped_texture.take(
-				fcppt::make_unique_ptr<sge::renderer::cg::scoped_texture>(
-					fcppt::ref(
-						_context),
-					fcppt::cref(
-						*loaded_texture)));
+			loaded_texture_.set(
+				*(texture->second));
 		}
 
 		sge::camera::coordinate_system::object const moved_coordinate_system(
@@ -258,14 +229,12 @@ flake::volume::model::manager::render(
 				camera_.coordinate_system().position().get() +
 				child->position().get()));
 
-		sge::cg::parameter::matrix::set(
-			mvp_parameter_.object(),
+		mvp_parameter_.set(
 			sge::camera::matrix_conversion::world_projection(
 				moved_coordinate_system,
 				camera_.projection_matrix()));
 
-		sge::cg::parameter::matrix::set(
-			world_parameter_.object(),
+		world_parameter_.set(
 			sge::camera::matrix_conversion::world(
 				moved_coordinate_system));
 

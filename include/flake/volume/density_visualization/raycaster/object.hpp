@@ -1,9 +1,12 @@
 #ifndef FLAKE_VOLUME_DENSITY_VISUALIZATION_RAYCASTER_OBJECT_HPP_INCLUDED
 #define FLAKE_VOLUME_DENSITY_VISUALIZATION_RAYCASTER_OBJECT_HPP_INCLUDED
 
-#include <flake/shader/pixel_profile.hpp>
-#include <flake/shader/vertex_profile.hpp>
 #include <flake/volume/density_visualization/raycaster/debug_output.hpp>
+#include <flake/shader/pair.hpp>
+#include <flake/shader/parameter/scalar.hpp>
+#include <flake/shader/parameter/planar_texture.hpp>
+#include <flake/shader/parameter/vector.hpp>
+#include <flake/shader/parameter/matrix.hpp>
 #include <flake/volume/density_visualization/raycaster/step_size.hpp>
 #include <flakelib/volume/float_view.hpp>
 #include <flakelib/volume/grid_size.hpp>
@@ -11,10 +14,6 @@
 #include <flakelib/volume/conversion/object_fwd.hpp>
 #include <flakelib/volume/conversion/scaling_factor.hpp>
 #include <sge/camera/base_fwd.hpp>
-#include <sge/cg/context/object_fwd.hpp>
-#include <sge/cg/parameter/named.hpp>
-#include <sge/cg/profile/object_fwd.hpp>
-#include <sge/cg/program/object.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
@@ -43,9 +42,7 @@ FCPPT_NONCOPYABLE(
 public:
 	object(
 		sge::renderer::device &,
-		sge::cg::context::object &,
-		flake::shader::vertex_profile const &,
-		flake::shader::pixel_profile const &,
+		flake::shader::context &,
 		sge::opencl::context::object &,
 		sge::camera::base const &,
 		sge::image2d::system &,
@@ -77,19 +74,16 @@ private:
 	sge::renderer::texture::planar_shared_ptr texture_;
 	sge::opencl::memory_object::image::planar cl_texture_;
 
-	sge::cg::program::object vertex_program_;
-	sge::cg::program::object pixel_program_;
-	sge::renderer::cg::loaded_program_scoped_ptr loaded_vertex_program_;
-	sge::renderer::cg::loaded_program_scoped_ptr loaded_pixel_program_;
-	sge::cg::parameter::named mvp_parameter_;
-	sge::cg::parameter::named step_size_parameter_;
-	sge::cg::parameter::named elements_per_row_parameter_;
-	sge::cg::parameter::named camera_is_inside_cube_parameter_;
-	sge::cg::parameter::named slice_width_vertex_parameter_;
-	sge::cg::parameter::named slice_width_pixel_parameter_;
-	sge::cg::parameter::named texture_size_parameter_;
-	sge::cg::parameter::named camera_position_parameter_;
-	sge::renderer::cg::loaded_texture_scoped_ptr loaded_texture_;
+	flake::shader::pair shader_;
+	flake::shader::parameter::matrix<sge::renderer::scalar,4u,4u> mvp_parameter_;
+	flake::shader::parameter::scalar<sge::renderer::scalar> step_size_parameter_;
+	flake::shader::parameter::scalar<int> elements_per_row_parameter_;
+	flake::shader::parameter::scalar<sge::renderer::scalar> camera_is_inside_cube_parameter_;
+	flake::shader::parameter::scalar<sge::renderer::scalar> slice_width_vertex_parameter_;
+	flake::shader::parameter::scalar<int> slice_width_pixel_parameter_;
+	flake::shader::parameter::vector<sge::renderer::scalar,2> texture_size_parameter_;
+	flake::shader::parameter::vector<sge::renderer::scalar,3> camera_position_parameter_;
+	flake::shader::parameter::planar_texture loaded_texture_;
 
 	bool
 	camera_is_inside_cube() const;

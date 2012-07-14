@@ -12,12 +12,10 @@
 #include <flake/planar/monitor/scaling_factor.hpp>
 #include <flake/planar/monitor/dummy_sprite/collection.hpp>
 #include <flake/planar/monitor/dummy_sprite/system.hpp>
-#include <flake/shader/pixel_profile.hpp>
-#include <flake/shader/vertex_profile.hpp>
-#include <sge/cg/context/object_fwd.hpp>
-#include <sge/cg/parameter/named.hpp>
-#include <sge/cg/profile/object_fwd.hpp>
-#include <sge/cg/program/object.hpp>
+#include <flake/shader/context_fwd.hpp>
+#include <flake/shader/pair.hpp>
+#include <flake/shader/parameter/vector.hpp>
+#include <flake/shader/parameter/matrix.hpp>
 #include <sge/font/metrics_shared_ptr.hpp>
 #include <sge/image/color/any/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
@@ -28,7 +26,7 @@
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
-#include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
+#include <sge/renderer/vector2.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 
@@ -61,9 +59,7 @@ FCPPT_NONCOPYABLE(
 public:
 	parent(
 		sge::renderer::device &,
-		sge::cg::context::object &,
-		flake::shader::vertex_profile const &,
-		flake::shader::pixel_profile const &,
+		flake::shader::context &,
 		sge::opencl::command_queue::object &,
 		sge::font::metrics_shared_ptr,
 		monitor::font_color const &);
@@ -74,17 +70,16 @@ public:
 	sge::opencl::context::object &
 	cl_context() const;
 
-	sge::renderer::cg::loaded_program &
-	loaded_arrow_vertex_program();
+	flake::shader::pair &
+	arrow_shader();
 
-	sge::renderer::cg::loaded_program &
-	loaded_arrow_pixel_program();
+	void
+	arrow_projection(
+		sge::renderer::matrix4 const &);
 
-	sge::cg::parameter::object const &
-	arrow_projection_parameter();
-
-	sge::cg::parameter::object const &
-	arrow_initial_position_parameter();
+	void
+	arrow_position(
+		sge::renderer::vector2 const &);
 
 	sge::renderer::device &
 	renderer() const;
@@ -116,12 +111,9 @@ private:
 	flake::sprite_drawer_3d font_drawer_;
 	sge::renderer::vertex_declaration_scoped_ptr vd_;
 
-	sge::cg::program::object arrow_vertex_program_;
-	sge::cg::program::object arrow_pixel_program_;
-	sge::renderer::cg::loaded_program_scoped_ptr loaded_arrow_vertex_program_;
-	sge::renderer::cg::loaded_program_scoped_ptr loaded_arrow_pixel_program_;
-	sge::cg::parameter::named const arrow_initial_position_parameter_;
-	sge::cg::parameter::named const arrow_projection_parameter_;
+	flake::shader::pair arrow_shader_;
+	flake::shader::parameter::vector<sge::renderer::scalar,2> arrow_initial_position_parameter_;
+	flake::shader::parameter::matrix<sge::renderer::scalar,4,4> arrow_projection_parameter_;
 
 	monitor::dummy_sprite::system sprite_system_;
 	monitor::dummy_sprite::collection sprite_collection_;

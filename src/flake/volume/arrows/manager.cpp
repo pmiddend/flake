@@ -1,12 +1,10 @@
 #include <flake/media_path_from_string.hpp>
+#include <flake/shader/scoped_pair.hpp>
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/vf/format.hpp>
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
-#include <sge/cg/parameter/matrix/set.hpp>
-#include <sge/cg/parameter/vector/set.hpp>
-#include <sge/cg/program/from_file_parameters.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
@@ -24,9 +22,7 @@
 
 flake::volume::arrows::manager::manager(
 	sge::renderer::device &_renderer,
-	sge::cg::context::object &_cg_context,
-	flake::shader::vertex_profile const &_cg_vertex_profile,
-	flake::shader::pixel_profile const &_cg_pixel_profile,
+	flake::shader::context &_shader_context,
 	sge::camera::base &_camera)
 :
 	renderer_(
@@ -36,42 +32,29 @@ flake::volume::arrows::manager::manager(
 			sge::renderer::vf::dynamic::make_format<vf::format>())),
 	camera_(
 		_camera),
-	vertex_program_(
-		sge::cg::program::from_file_parameters(
-			_cg_context,
-			sge::cg::program::source_type::text,
-			_cg_vertex_profile.get(),
+	shader_(
+		_shader_context,
+		*vertex_declaration_,
+		flake::shader::vertex_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/volume_arrow.cg")),
-			sge::cg::program::main_function(
-				"vertex_main"),
-			_renderer.cg_compile_options(
-				_cg_context,
-				_cg_vertex_profile.get()))),
-	pixel_program_(
-		sge::cg::program::from_file_parameters(
-			_cg_context,
-			sge::cg::program::source_type::text,
-			_cg_pixel_profile.get(),
+				FCPPT_TEXT("shaders/volume_arrow.cg"))),
+		flake::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/volume_arrow.cg")),
-			sge::cg::program::main_function(
-				"pixel_main"),
-			_renderer.cg_compile_options(
-				_cg_context,
-				_cg_pixel_profile.get()))),
-	loaded_vertex_program_(
-		renderer_.load_cg_program(
-			vertex_program_)),
-	loaded_pixel_program_(
-		renderer_.load_cg_program(
-			pixel_program_)),
+				FCPPT_TEXT("shaders/volume_arrow.cg")))),
 	mvp_parameter_(
-		vertex_program_.parameter(
-			"mvp")),
+		shader_.vertex_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"mvp")),
+		flake::shader::parameter::is_projection_matrix(
+			true),
+		sge::renderer::matrix4()),
 	camera_position_parameter_(
-		vertex_program_.parameter(
-			"camera_position")),
+		shader_.vertex_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"camera_position")),
+		sge::renderer::vector3()),
 	children_()
 {
 }
@@ -91,23 +74,17 @@ flake::volume::arrows::manager::render(
 		_context,
 		*vertex_declaration_);
 
-	sge::cg::parameter::vector::set(
-		camera_position_parameter_.object(),
+	camera_position_parameter_.set(
 		-camera_.coordinate_system().position().get());
 
-	sge::cg::parameter::matrix::set(
-		mvp_parameter_.object(),
+	mvp_parameter_.set(
 		sge::camera::matrix_conversion::world_projection(
 			camera_.coordinate_system(),
 			camera_.projection_matrix()));
 
-	sge::renderer::cg::scoped_program
-		scoped_vertex_program(
-			_context,
-			*loaded_vertex_program_),
-		scoped_pixel_program(
-			_context,
-			*loaded_pixel_program_);
+	flake::shader::scoped_pair scoped_shader(
+		_context,
+		shader_);
 
 	for(
 		child_sequence::iterator it =

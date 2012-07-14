@@ -1,13 +1,12 @@
-#include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
-#include <fcppt/filesystem/path_to_string.hpp>
-#include <flake/media_path_from_string.hpp>
 #include <flake/exception.hpp>
+#include <flake/media_path_from_string.hpp>
 #include <flake/planar/conversion/object.hpp>
 #include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program_context.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
 #include <sge/opencl/command_queue/object.hpp>
+#include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/scoped_objects.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
@@ -16,9 +15,12 @@
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_array.hpp>
+#include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/variant/holds_type.hpp>
+#include <fcppt/config/external_begin.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <fcppt/config/external_end.hpp>
 
 
 flake::planar::conversion::object::object(
