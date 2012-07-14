@@ -196,7 +196,7 @@ flake::test::base::base(
 							sge::renderer::parameters(
 								sge::renderer::windowed(
 									sge::renderer::bit_depth::depth32),
-								sge::renderer::depth_stencil_buffer::d24,
+								sge::renderer::depth_stencil_buffer::off,
 								sge::renderer::vsync::on,
 								sge::renderer::no_multi_sampling),
 							sge::viewport::fill_on_resize())

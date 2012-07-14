@@ -37,15 +37,15 @@ public:
 
 	~context();
 private:
-	/*
-	flake::shader::pair downsample_shader_;
-	flake::shader::pair blur_horizontal_shader_;
-	flake::shader::pair blur_vertical_shader_;
-	*/
 	sge::renderer::device &renderer_;
 	sge::renderer::vertex_declaration_scoped_ptr const quad_vertex_declaration_;
 	flake::postprocessing::fullscreen_quad fullscreen_quad_;
+	flake::shader::pair downsample_shader_;
 	flake::shader::pair finalize_shader_;
+	/*
+	flake::shader::pair blur_horizontal_shader_;
+	flake::shader::pair blur_vertical_shader_;
+	*/
 	flake::shader::parameter::planar_texture input_texture_parameter_;
 	fcppt::signal::scoped_connection viewport_connection_;
 	sge::renderer::texture::planar_scoped_ptr rendering_result_texture_;

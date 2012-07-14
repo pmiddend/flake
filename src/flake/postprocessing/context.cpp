@@ -1,5 +1,6 @@
 #include <flake/postprocessing/context.hpp>
 #include <sge/renderer/depth_stencil_surface.hpp>
+#include <sge/renderer/color_surface.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/renderer/target/viewport_size.hpp>
 #include <sge/viewport/manager.hpp>
@@ -29,7 +30,6 @@
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <sge/renderer/texture/capabilities_field.hpp>
 #include <fcppt/optional_impl.hpp>
-#include <sge/renderer/target/from_texture.hpp>
 #include <sge/renderer/target/viewport_size.hpp>
 
 flake::postprocessing::context::context(
@@ -45,8 +45,18 @@ flake::postprocessing::context::context(
 	fullscreen_quad_(
 		renderer_,
 		*quad_vertex_declaration_),
+	downsample_shader_(
+		_shader_context,
+		*quad_vertex_declaration_,
+		flake::shader::vertex_program_path(
+			flake::media_path_from_string(
+				FCPPT_TEXT("shaders/postprocessing/finalize.cg"))),
+				//				FCPPT_TEXT("shaders/postprocessing/downsample.cg"))),
+		flake::shader::pixel_program_path(
+			flake::media_path_from_string(
+				FCPPT_TEXT("shaders/postprocessing/finalize.cg")))),
+				//				FCPPT_TEXT("shaders/postprocessing/downsample.cg")))),
 	/*
-	downsample_shader_(),
 	blur_horizontal_shader_(),
 	blur_vertical_shader_(),
 	*/
@@ -55,10 +65,10 @@ flake::postprocessing::context::context(
 		*quad_vertex_declaration_,
 		flake::shader::vertex_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/postprocessing.cg"))),
+				FCPPT_TEXT("shaders/postprocessing/finalize.cg"))),
 		flake::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/postprocessing.cg")))),
+				FCPPT_TEXT("shaders/postprocessing/finalize.cg")))),
 	input_texture_parameter_(
 		finalize_shader_,
 		renderer_,
@@ -73,7 +83,8 @@ flake::postprocessing::context::context(
 				&flake::postprocessing::context::viewport_callback,
 				this))),
 	rendering_result_texture_(),
-	offscreen_target_(),
+	offscreen_target_(
+		renderer_.create_target()),
 	buffer_texture_0_(),
 	buffer_texture_1_(),
 	result_texture_()
@@ -88,6 +99,14 @@ flake::postprocessing::context::create_render_context()
 
 	FCPPT_ASSERT_PRE(
 		offscreen_target_);
+
+	offscreen_target_->color_surface(
+		sge::renderer::color_surface_shared_ptr(
+			rendering_result_texture_->surface(
+				sge::renderer::texture::mipmap::level(
+					0u))),
+		sge::renderer::target::surface_index(
+			0u));
 
 	return
 		fcppt::make_unique_ptr<sge::renderer::context::scoped>(
@@ -142,15 +161,16 @@ flake::postprocessing::context::viewport_callback()
 	input_texture_parameter_.set(
 		*rendering_result_texture_);
 
-	offscreen_target_.take(
-		sge::renderer::target::from_texture(
-			renderer_,
-			*rendering_result_texture_));
-
 	offscreen_target_->depth_stencil_surface(
 		sge::renderer::depth_stencil_surface_shared_ptr(
 			renderer_.create_depth_stencil_surface(
 				target_size,
-				//sge::renderer::depth_stencil_format::d24s8));
 				sge::renderer::depth_stencil_format::d32)));
+
+	offscreen_target_->viewport(
+		sge::renderer::target::viewport(
+			sge::renderer::pixel_rect(
+				sge::renderer::pixel_rect::vector::null(),
+				fcppt::math::dim::structure_cast<sge::renderer::pixel_rect::dim>(
+					target_size))));
 }
