@@ -396,9 +396,6 @@ flake::planar::tests::vorticity::render(
 			sge::camera::matrix_conversion::world_projection(
 				freelook_camera_.coordinate_system(),
 				freelook_camera_.projection_matrix())));
-
-	test::base::render(
-		_context);
 }
 
 void

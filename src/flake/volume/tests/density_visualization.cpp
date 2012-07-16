@@ -234,9 +234,6 @@ flake::volume::tests::density_visualization::render(
 	models_.render(
 		_context);
 		*/
-
-	test::base::render(
-		_context);
 }
 
 void

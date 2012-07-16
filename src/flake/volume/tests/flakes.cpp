@@ -236,6 +236,15 @@ flake::volume::tests::flakes::flakes(
 			this->buffer_pool(),
 			fill_buffer_,
 			simulation_size_.get())),
+	skydome_(
+		this->renderer(),
+		this->shader_context(),
+		this->image_system(),
+		camera_,
+		flake::skydome::longitude(
+			40u),
+		flake::skydome::latitude(
+			20u)),
 	flakes_(
 		this->renderer(),
 		this->shader_context(),
@@ -477,6 +486,9 @@ flake::volume::tests::flakes::render(
 				sge::renderer::clear::depth_buffer_value(
 					1.0f)));
 
+	skydome_.render(
+		_context);
+
 	if(
 		this->feature_active(
 			test::json_identifier(
@@ -510,9 +522,6 @@ flake::volume::tests::flakes::render(
 				FCPPT_TEXT("arrows"))))
 		arrows_manager_.render(
 			_context);
-
-	test::base::render(
-		_context);
 }
 
 void

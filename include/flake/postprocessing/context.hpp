@@ -36,6 +36,9 @@ public:
 	void
 	render();
 
+	sge::renderer::context::scoped_unique_ptr
+	render_and_return_overlay();
+
 	~context();
 private:
 	sge::renderer::device &renderer_;
@@ -80,7 +83,7 @@ private:
 	void
 	blur();
 
-	void
+	sge::renderer::context::scoped_unique_ptr
 	finalize();
 };
 }

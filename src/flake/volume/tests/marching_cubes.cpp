@@ -273,16 +273,11 @@ flake::volume::tests::marching_cubes::render(
 				sge::renderer::clear::depth_buffer_value(
 					1.0f)));
 
-	{
-		flake::volume::snow_cover::scoped scoped_snow_cover(
-			snow_cover_,
-			_context);
+	flake::volume::snow_cover::scoped scoped_snow_cover(
+		snow_cover_,
+		_context);
 
-		marching_cubes_manager_.render(
-			_context);
-	}
-
-	test::base::render(
+	marching_cubes_manager_.render(
 		_context);
 }
 

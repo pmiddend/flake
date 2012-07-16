@@ -21,6 +21,7 @@
 #include <sge/renderer/target/offscreen.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/context/scoped.hpp>
+#include <fcppt/move.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <fcppt/make_unique_ptr.hpp>
@@ -164,11 +165,17 @@ flake::postprocessing::context::create_render_context()
 void
 flake::postprocessing::context::render()
 {
+	this->render_and_return_overlay();
+}
+
+sge::renderer::context::scoped_unique_ptr
+flake::postprocessing::context::render_and_return_overlay()
+{
 	this->downsample();
 	this->blur_h();
 	this->blur_v();
-	this->finalize();
-
+	return
+		this->finalize();
 }
 
 flake::postprocessing::context::~context()
@@ -190,7 +197,7 @@ flake::postprocessing::context::viewport_callback()
 		renderer_.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
 				target_size / downsample_factor,
-				sge::image::color::format::rgba32f,
+				sge::image::color::format::r32f,
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags::none,
 				sge::renderer::texture::capabilities_field(
@@ -200,7 +207,7 @@ flake::postprocessing::context::viewport_callback()
 		renderer_.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
 				target_size / downsample_factor,
-				sge::image::color::format::rgba32f,
+				sge::image::color::format::r32f,
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags::none,
 				sge::renderer::texture::capabilities_field(
@@ -371,28 +378,35 @@ flake::postprocessing::context::blur()
 	}
 }
 
-void
+sge::renderer::context::scoped_unique_ptr
 flake::postprocessing::context::finalize()
 {
-	sge::renderer::context::scoped const scoped_block(
-		renderer_,
-		renderer_.onscreen_target());
+	sge::renderer::context::scoped_unique_ptr result(
+		fcppt::make_unique_ptr<sge::renderer::context::scoped>(
+			fcppt::ref(
+				renderer_),
+			fcppt::ref(
+				renderer_.onscreen_target())));
 
 	flake::shader::scoped_pair scoped_shader(
-		scoped_block.get(),
+		result->get(),
 		finalize_shader_);
 
 	sge::renderer::texture::filter::scoped scoped_texture_filter_0(
-		scoped_block.get(),
+		result->get(),
 		finalize_input_texture_parameter_.stage(),
 		sge::renderer::texture::filter::point());
 
 	sge::renderer::texture::filter::scoped scoped_texture_filter_1(
-		scoped_block.get(),
+		result->get(),
 		finalize_blurred_texture_parameter_.stage(),
 		sge::renderer::texture::filter::linear());
 
 	fullscreen_quad_.render(
-		scoped_block.get());
+		result->get());
+
+	return
+		fcppt::move(
+			result);
 }
 

@@ -69,6 +69,10 @@ protected:
 	render(
 		sge::renderer::context::object &) = 0;
 
+	virtual void
+	render_overlay(
+		sge::renderer::context::object &);
+
 	sge::parse::json::object const &
 	configuration() const;
 

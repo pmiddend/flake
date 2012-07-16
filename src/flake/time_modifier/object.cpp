@@ -6,6 +6,7 @@
 #include <fcppt/text.hpp>
 #include <fcppt/signal/connection.hpp>
 #include <fcppt/tr1/functional.hpp>
+#include <fcppt/signal/auto_connection.hpp>
 
 
 flake::time_modifier::object::object(

@@ -101,20 +101,11 @@ flake::test::base::run()
 
 		if(this->renderer().onscreen_target().viewport().get().content())
 		{
-			/*
-			sge::renderer::context::scoped scoped_context(
-				this->renderer(),
-				this->renderer().onscreen_target());
-			*/
-			{
-				sge::renderer::context::scoped_scoped_ptr const scoped_block(
-					postprocessing_.create_render_context());
+			this->render(
+				postprocessing_.create_render_context()->get());
 
-				this->render(
-					scoped_block->get());
-			}
-
-			postprocessing_.render();
+			this->render_overlay(
+				postprocessing_.render_and_return_overlay()->get());
 		}
 
 		dump_this_frame_ =
@@ -337,7 +328,7 @@ flake::test::base::update()
 }
 
 void
-flake::test::base::render(
+flake::test::base::render_overlay(
 	sge::renderer::context::object &_context)
 {
 	notifications_->render(

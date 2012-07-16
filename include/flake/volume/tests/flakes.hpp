@@ -2,6 +2,7 @@
 #define FLAKE_VOLUME_TESTS_FLAKES_HPP_INCLUDED
 
 #include <flake/test/base.hpp>
+#include <flake/skydome/object.hpp>
 #include <flake/test/information/object.hpp>
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/object.hpp>
@@ -88,6 +89,7 @@ private:
 	flakelib::volume::unique_float_buffer_lock initial_guess_buffer_;
 	flakelib::volume::unique_float4_buffer_lock velocity_buffer_;
 
+	flake::skydome::object skydome_;
 	flake::volume::flakes::manager flakes_;
 	flake::volume::flakes::mover flakes_mover_;
 	flake::volume::model::manager models_;

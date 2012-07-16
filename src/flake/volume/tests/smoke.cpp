@@ -346,8 +346,6 @@ flake::volume::tests::smoke::render()
 			test::json_identifier(
 				FCPPT_TEXT("arrows"))))
 		arrows_manager_.render();
-
-	test::base::render();
 }
 
 void

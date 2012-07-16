@@ -252,6 +252,7 @@ set(
 	src/flake/shader/pair.cpp
 	src/flake/shader/parameter/planar_texture.cpp
 	src/flake/shader/scoped_pair.cpp
+	src/flake/skydome/object.cpp
 	src/flake/sprite_drawer_3d.cpp
 	src/flake/test/base.cpp
 	src/flake/test/feature.cpp

@@ -3,7 +3,6 @@
 #include <sge/image2d/dim.hpp>
 #include <sge/image2d/view/size.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/caps/device.hpp>
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/sprite/object_impl.hpp>
@@ -48,7 +47,7 @@ flake::sprite_drawer_3d::sprite_drawer_3d(
 				fcppt::ref(
 					_renderer
 				),
-				_renderer.caps().preferred_texture_format().get(),
+				sge::image::color::format::a8,
 				sge::renderer::texture::mipmap::off(),
 				fcppt::math::dim::fill<
 					2,

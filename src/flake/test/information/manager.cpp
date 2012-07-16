@@ -57,7 +57,6 @@ flake::test::information::manager::render(
 			padding),
 		viewport_rect.size());
 
-	/*
 	sge::font::text::draw(
 		_context,
 		font_metrics_,
@@ -67,7 +66,6 @@ flake::test::information::manager::render(
 		sge::font::text::align_h::left,
 		sge::font::text::align_v::bottom,
 		sge::font::text::flags::none);
-	*/
 }
 
 flake::test::information::manager::~manager()

@@ -31,6 +31,7 @@ update_cmake_file \
 	src/flake/test \
 	src/flake/test/information \
 	src/flake/postprocessing \
+	src/flake/skydome \
 	src/flake/volume \
 	src/flake/volume/arrows \
 	src/flake/volume/snow_cover \

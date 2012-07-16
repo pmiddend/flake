@@ -50,6 +50,6 @@ pixel_main(
 					inverted_texcoords).xyz) +
 			tex2D(
 				blurred_texture,
-				texcoords).xyz,
+				texcoords).xxx,
 			1.0);
 }

@@ -43,8 +43,14 @@ pixel_main(
 				vertex_data.texcoord));
 
 	return
+		/* This is dangerous, we have steps in the colors with it
 		step(
 			0.5,
+			lum) *
+		*/
+		smoothstep(
+			0.0,
+			1.0,
 			lum) *
 		pow(
 			lum,
