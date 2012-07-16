@@ -7,6 +7,7 @@
 #include <sge/font/text/flags_none.hpp>
 #include <sge/font/text/from_fcppt_string.hpp>
 #include <sge/font/text/part.hpp>
+#include <fcppt/container/bitfield/object_impl.hpp>
 #include <sge/font/text/size.hpp>
 #include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
 #include <sge/renderer/device.hpp>

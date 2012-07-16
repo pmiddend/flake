@@ -1,7 +1,8 @@
 #ifndef FLAKE_PLANAR_MONITOR_PARENT_HPP_INCLUDED
 #define FLAKE_PLANAR_MONITOR_PARENT_HPP_INCLUDED
 
-#include <flake/sprite_drawer_3d.hpp>
+	//#include <flake/sprite_drawer_3d.hpp>
+#include <sge/font/text/drawer_3d.hpp>
 #include <flake/planar/monitor/arrow_scale.hpp>
 #include <flake/planar/monitor/child.hpp>
 #include <flake/planar/monitor/child_list.hpp>
@@ -90,7 +91,7 @@ public:
 	sge::font::metrics &
 	font_metrics();
 
-	flake::sprite_drawer_3d &
+	sge::font::text::drawer_3d &
 	font_drawer();
 
 	void
@@ -108,7 +109,7 @@ private:
 	sge::renderer::device &renderer_;
 	sge::opencl::command_queue::object &command_queue_;
 	sge::font::metrics_shared_ptr font_metrics_;
-	flake::sprite_drawer_3d font_drawer_;
+	sge::font::text::drawer_3d font_drawer_;
 	sge::renderer::vertex_declaration_scoped_ptr vd_;
 
 	flake::shader::pair arrow_shader_;

@@ -18,6 +18,8 @@
 #include <sge/sprite/process/default_geometry_options.hpp>
 #include <sge/sprite/process/with_options.hpp>
 #include <sge/sprite/render/matrix_options.hpp>
+#include <sge/sprite/buffers/with_declaration.hpp>
+#include <sge/sprite/buffers/single.hpp>
 #include <sge/sprite/render/options.hpp>
 #include <sge/sprite/render/state_options.hpp>
 #include <sge/sprite/render/vertex_options.hpp>
@@ -30,7 +32,7 @@
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
-
+#include <sge/renderer/vertex_declaration.hpp>
 
 flake::planar::monitor::parent::parent(
 	sge::renderer::device &_renderer,
@@ -47,7 +49,9 @@ flake::planar::monitor::parent::parent(
 		_font_metrics),
 	font_drawer_(
 		renderer_,
-		_font_color.get()),
+		_font_color.get(),
+		sge::font::text::set_matrices(
+			false)),
 	vd_(
 		renderer_.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format<arrow_vf::format>())),
@@ -135,7 +139,7 @@ flake::planar::monitor::parent::font_metrics()
 	return *font_metrics_;
 }
 
-flake::sprite_drawer_3d &
+sge::font::text::drawer_3d &
 flake::planar::monitor::parent::font_drawer()
 {
 	return font_drawer_;

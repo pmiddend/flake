@@ -37,7 +37,9 @@ flake::notifications::object::object(
 			// The color is deliberately hard-coded here instead of being a ctor
 			// parameter. This way, I can decide to make the color
 			// a property of the message, not the notification manager.
-			sge::image::colors::white())),
+			sge::image::colors::white(),
+			sge::font::text::set_matrices(
+				true))),
 	messages_(),
 	second_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
