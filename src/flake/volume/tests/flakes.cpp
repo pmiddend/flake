@@ -240,11 +240,16 @@ flake::volume::tests::flakes::flakes(
 		this->renderer(),
 		this->shader_context(),
 		this->image_system(),
+		flake::skydome::texture_path(
+			flake::media_path_from_string(
+				FCPPT_TEXT("textures/sky.png"))),
 		camera_,
 		flake::skydome::longitude(
 			40u),
 		flake::skydome::latitude(
-			20u)),
+			20u),
+		flake::skydome::y_translation(
+			-0.2f)),
 	flakes_(
 		this->renderer(),
 		this->shader_context(),

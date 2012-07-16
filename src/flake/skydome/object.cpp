@@ -1,9 +1,11 @@
 #include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/state/scoped.hpp>
+#include <sge/renderer/texture/create_planar_from_path.hpp>
+#include <sge/renderer/texture/mipmap/off.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <fcppt/math/matrix/arithmetic.hpp>
 #include <sge/renderer/context/object.hpp>
-#include <sge/camera/matrix_conversion/rotation.hpp>
+#include <sge/camera/matrix_conversion/world.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/base.hpp>
 #include <sge/renderer/state/list.hpp>
@@ -32,6 +34,8 @@
 #include <flake/skydome/vf/position.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/texture/planar_scoped_ptr.hpp>
+#include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/index/dynamic/make_format.hpp>
 #include <sge/renderer/vector3.hpp>
 #include <sge/renderer/scoped_index_lock.hpp>
@@ -60,10 +64,14 @@ flake::skydome::object::object(
 	sge::renderer::device &_renderer,
 	flake::shader::context &_shader_context,
 	sge::image2d::system &_image_system,
+	flake::skydome::texture_path const &_texture_path,
 	sge::camera::base &_camera,
 	flake::skydome::longitude const &_longitude,
-	flake::skydome::latitude const &_latitude)
+	flake::skydome::latitude const &_latitude,
+	flake::skydome::y_translation const &_y_translation)
 :
+	y_translation_(
+		_y_translation),
 	renderer_(
 		_renderer),
 	camera_(
@@ -95,6 +103,13 @@ flake::skydome::object::object(
 				// the triangles
 				_longitude.get() * 3u),
 			sge::renderer::resource_flags::none)),
+	texture_(
+		sge::renderer::texture::create_planar_from_path(
+			_texture_path.get(),
+			renderer_,
+			_image_system,
+			sge::renderer::texture::mipmap::off(),
+			sge::renderer::resource_flags::none)),
 	shader_(
 		_shader_context,
 		*vertex_declaration_,
@@ -111,7 +126,16 @@ flake::skydome::object::object(
 				"mvp")),
 		flake::shader::parameter::is_projection_matrix(
 			true),
-		sge::renderer::matrix4())
+		sge::renderer::matrix4()),
+	texture_parameter_(
+		shader_,
+		renderer_,
+		shader_.pixel_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"sky_texture")),
+		flake::shader::parameter::planar_texture::optional_value(
+			*texture_))
 {
 	sge::renderer::scoped_vertex_lock vblock(
 		*vertex_buffer_,
@@ -302,8 +326,16 @@ flake::skydome::object::render(
 
 	mvp_parameter_.set(
 		camera_.projection_matrix().get() *
-		sge::camera::matrix_conversion::rotation(
-			camera_.coordinate_system()));
+		sge::camera::matrix_conversion::world(
+			sge::camera::coordinate_system::object(
+				camera_.coordinate_system().right(),
+				camera_.coordinate_system().up(),
+				camera_.coordinate_system().forward(),
+				sge::camera::coordinate_system::position(
+					sge::renderer::vector3(
+						0.0f,
+						y_translation_.get(),
+						0.0f)))));
 
 	_context.render_indexed(
 		*index_buffer_,

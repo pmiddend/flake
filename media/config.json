@@ -51,7 +51,7 @@
 			"simulation-size" : [64,64,64],
 			"snow-texture-size" : [64,64,64],
 			"snow-texture-repeats" : 100.0,
-			"near-plane" : 0.1,
+			"near-plane" : 0.01,
 			"iso-level" : 0.2,
 			"far-plane" : 1000.0,
 			"sun-direction" : [0.8804509,0.17609018,0.440225453],
