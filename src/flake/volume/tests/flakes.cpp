@@ -1,5 +1,6 @@
 #include <flake/catch_statements.hpp>
 #include <flake/media_path_from_string.hpp>
+#include <fcppt/math/dim/structure_cast.hpp>
 #include <flake/test/information/string_conversion_adapter.hpp>
 #include <flake/volume/snow_cover/scoped.hpp>
 #include <flake/volume/tests/flakes.hpp>
@@ -46,7 +47,6 @@
 #include <fcppt/config/external_begin.hpp>
 #include <boost/chrono.hpp>
 #include <fcppt/config/external_end.hpp>
-
 
 awl::main::exit_code const
 custom_main(
@@ -346,9 +346,12 @@ flake::volume::tests::flakes::flakes(
 			boundary_buffer_->value()),
 		splatter_),
 		*/
+/*
 	gradient_(
 		this->program_context(),
 		this->buffer_pool()),
+*/
+/*
 	scan_(
 		this->program_context(),
 		this->buffer_pool()),
@@ -358,6 +361,17 @@ flake::volume::tests::flakes::flakes(
 		gradient_,
 		this->program_context(),
 		this->buffer_pool()),
+*/
+	marching_cubes_manager_(
+		this->renderer(),
+		flakelib::marching_cubes::cpu::grid_size(
+			fcppt::math::dim::structure_cast<sge::renderer::dim3>(
+				simulation_size_.get())),
+		flakelib::marching_cubes::iso_level(
+			sge::parse::json::find_and_convert_member<cl_float>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("iso-level"))))),
 	snow_cover_(
 		camera_,
 		this->renderer(),
@@ -403,6 +417,7 @@ flake::volume::tests::flakes::flakes(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("sun-direction"))))),
+/*
 	marching_cubes_(
 		this->buffer_pool(),
 		marching_cubes_manager_,
@@ -420,6 +435,11 @@ flake::volume::tests::flakes::flakes(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("iso-level"))))),
+*/
+	snow_cover_parallel_update_(
+		marching_cubes_manager_,
+		this->opencl_system().command_queue(),
+		snow_density_buffer_->value()),
 	wind_strength_modulator_(
 		std::tr1::bind(
 			&flakelib::volume::simulation::stam::wind_source::wind_strength,
@@ -445,7 +465,7 @@ flake::volume::tests::flakes::flakes(
 			boost::chrono::seconds(1))),
 	snow_cover_update_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
-			boost::chrono::seconds(1))),
+			boost::chrono::milliseconds(1000)))/*,
 	snow_cover_vertices_(
 		0u),
 	snow_cover_vertices_information_(
@@ -455,7 +475,7 @@ flake::volume::tests::flakes::flakes(
 		flake::test::information::string_conversion_adapter<flakelib::marching_cubes::gpu::vertex_count>(
 			std::tr1::bind(
 				&flakes::snow_cover_vertices_,
-				this)))
+				this)))*/
 {
 }
 
@@ -600,12 +620,15 @@ flake::volume::tests::flakes::update()
 				boundary_buffer_->value()));
 
 		if(sge::timer::reset_when_expired(snow_cover_update_) && this->feature_active(test::json_identifier(FCPPT_TEXT("marchingcubes"))))
+			snow_cover_parallel_update_.restart_if_finished();
+		/*
 		{
 			snow_cover_vertices_ =
 				marching_cubes_.update(
 					flakelib::marching_cubes::gpu::density_view(
 						snow_density_buffer_->value()));
 		}
+		*/
 
 		wind_strength_modulator_.update(
 			raw_delta);

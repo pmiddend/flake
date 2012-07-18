@@ -1,11 +1,11 @@
-#include <flakelib/marching_cubes/cpu/implementation.hpp>
-#include <sge/opencl/memory_object/buffer.hpp>
-#include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <flakelib/buffer/volume_view.hpp>
+#include <flakelib/marching_cubes/cpu/implementation.hpp>
 #include <flakelib/marching_cubes/cpu/object.hpp>
 #include <flakelib/marching_cubes/vf/interleaved.hpp>
 #include <flakelib/marching_cubes/vf/interleaved_part.hpp>
 #include <flakelib/timer/object.hpp>
+#include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
+#include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/index_buffer.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
@@ -62,7 +62,9 @@ flakelib::marching_cubes::cpu::object::object(
 				_grid_size.get().d()))),
 	data_(
 		static_cast<real_sequence::size_type>(
-			_grid_size.get().content()))
+			_grid_size.get().content())),
+	is_dirty_(
+		false)
 {
 	implementation_->set_ext_data(
 		data_.data());
@@ -114,8 +116,11 @@ void
 flakelib::marching_cubes::cpu::object::construct_from_raw_data(
 	sge::renderer::scalar const *_data)
 {
+	is_dirty_ =
+		true;
+
 	{
-		flakelib::timer::object t(std::cout,"copying float[] -> double[]");
+		//		flakelib::timer::object t(std::cout,"copying float[] -> double[]");
 
 		std::copy(
 			_data,
@@ -129,7 +134,7 @@ flakelib::marching_cubes::cpu::object::construct_from_cl_buffer(
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::volume::float_view const &_view)
 {
-	flakelib::timer::object t(std::cout,"construction total");
+	//	flakelib::timer::object t(std::cout,"construction total");
 
 	sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
 		_command_queue,
@@ -148,10 +153,12 @@ flakelib::marching_cubes::cpu::object::construct_from_cl_buffer(
 void
 flakelib::marching_cubes::cpu::object::run()
 {
-	flakelib::timer::object t(std::cout,"marching cubes");
+	//	flakelib::timer::object t(std::cout,"marching cubes");
 	implementation_->run(
 		static_cast<real_sequence::value_type>(
 			iso_level_.get()));
+	is_dirty_ =
+		false;
 }
 
 void
@@ -160,7 +167,7 @@ flakelib::marching_cubes::cpu::object::update_buffers()
 	if(!implementation_->ntrigs())
 		return;
 
-	flakelib::timer::object t(std::cout,"buffer fill");
+	//	flakelib::timer::object t(std::cout,"buffer fill");
 	this->fill_vertex_buffer();
 	this->fill_index_buffer();
 }
@@ -172,6 +179,13 @@ flakelib::marching_cubes::cpu::object::vertex_declaration()
 		*vertex_declaration_;
 }
 
+bool
+flakelib::marching_cubes::cpu::object::is_dirty() const
+{
+	return
+		is_dirty_;
+}
+
 flakelib::marching_cubes::cpu::object::~object()
 {
 	implementation_->clean_all();
@@ -180,6 +194,7 @@ flakelib::marching_cubes::cpu::object::~object()
 void
 flakelib::marching_cubes::cpu::object::fill_vertex_buffer()
 {
+	std::cout << "Vertices: " << implementation_->nverts() << "\n";
 	vertex_buffer_.take(
 		renderer_.create_vertex_buffer(
 			*vertex_declaration_,

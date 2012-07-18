@@ -4,22 +4,24 @@
 #include <flake/skydome/object.hpp>
 #include <flake/test/base.hpp>
 #include <flake/test/information/object.hpp>
+#include <flakelib/marching_cubes/cpu/object.hpp>
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/object.hpp>
 #include <flake/volume/flakes/manager.hpp>
 #include <flake/volume/flakes/mover.hpp>
+#include <flake/volume/snow_cover/parallel_update.hpp>
 #include <flake/volume/model/manager.hpp>
 #include <flake/volume/model/object.hpp>
 #include <flake/volume/obstacles/manager.hpp>
 #include <flake/volume/snow_cover/object.hpp>
-#include <flakelib/marching_cubes/gpu/manager.hpp>
-#include <flakelib/marching_cubes/gpu/object.hpp>
-#include <flakelib/marching_cubes/gpu/vertex_count.hpp>
-#include <flakelib/scan/object.hpp>
+	//#include <flakelib/marching_cubes/gpu/manager.hpp>
+	//#include <flakelib/marching_cubes/gpu/object.hpp>
+	//#include <flakelib/marching_cubes/gpu/vertex_count.hpp>
+	//#include <flakelib/scan/object.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/value_modulator/object.hpp>
-#include <flakelib/volume/gradient.hpp>
+//#include <flakelib/volume/gradient.hpp>
 #include <flakelib/volume/grid_size.hpp>
 #include <flakelib/volume/unique_float4_buffer_lock.hpp>
 #include <flakelib/volume/unique_float_buffer_lock.hpp>
@@ -94,19 +96,20 @@ private:
 	flake::volume::flakes::mover flakes_mover_;
 	flake::volume::model::manager models_;
 	flake::volume::model::object model_;
-	//flake::volume::obstacles::manager obstacles_;
-	flakelib::volume::gradient gradient_;
-	flakelib::scan::object scan_;
-	flakelib::marching_cubes::gpu::manager marching_cubes_manager_;
+		//flakelib::volume::gradient gradient_;
+		//flakelib::scan::object scan_;
+		//flakelib::marching_cubes::gpu::manager marching_cubes_manager_;
+	flakelib::marching_cubes::cpu::object marching_cubes_manager_;
 	flake::volume::snow_cover::object snow_cover_;
-	flakelib::marching_cubes::gpu::object marching_cubes_;
+	flake::volume::snow_cover::parallel_update snow_cover_parallel_update_;
+		//flakelib::marching_cubes::gpu::object marching_cubes_;
 	flakelib::value_modulator::object wind_strength_modulator_;
 
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;
 	sge::timer::basic<sge::timer::clocks::standard> snow_cover_update_;
-	flakelib::marching_cubes::gpu::vertex_count snow_cover_vertices_;
-	flake::test::information::object snow_cover_vertices_information_;
+		//flakelib::marching_cubes::gpu::vertex_count snow_cover_vertices_;
+		//flake::test::information::object snow_cover_vertices_information_;
 
 	void
 	render(

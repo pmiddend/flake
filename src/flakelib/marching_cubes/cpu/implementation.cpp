@@ -797,7 +797,7 @@ void MarchingCubes::add_triangle( const char* trig_param, char n, int v12 )
         _triangles = new Triangle[ 2*_Ntrigs ] ;
         memcpy( _triangles, temp, static_cast<size_t>(_Ntrigs*static_cast<int>(sizeof(Triangle))) ) ;
         delete[] temp ;
-        printf("%d allocated triangles\n", _Ntrigs) ;
+        printf("%d, %d allocated triangles\n", _ntrigs, _Ntrigs) ;
         _Ntrigs *= 2 ;
       }
 
@@ -872,7 +872,7 @@ void MarchingCubes::test_vertex_addition()
     _vertices = new Vertex[ _Nverts*2 ] ;
     memcpy( _vertices, temp, static_cast<size_t>(_Nverts*static_cast<int>(sizeof(Vertex))) ) ;
     delete[] temp ;
-    printf("%d allocated vertices\n", _Nverts) ;
+    printf("%d, %d allocated vertices\n", _nverts, _Nverts) ;
     _Nverts *= 2 ;
   }
 }

@@ -4,9 +4,9 @@
 #include <flakelib/symbol.hpp>
 #include <flakelib/marching_cubes/iso_level.hpp>
 #include <flakelib/marching_cubes/cpu/grid_size.hpp>
+#include <flakelib/marching_cubes/cpu/implementation_fwd.hpp>
 #include <flakelib/volume/float_view.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
-#include <flakelib/marching_cubes/cpu/implementation_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/index_buffer_scoped_ptr.hpp>
 #include <sge/renderer/scalar.hpp>
@@ -64,6 +64,10 @@ public:
 	vertex_declaration();
 
 	FLAKELIB_SYMBOL
+	bool
+	is_dirty() const;
+
+	FLAKELIB_SYMBOL
 	~object();
 private:
 	typedef
@@ -77,6 +81,7 @@ private:
 	sge::renderer::index_buffer_scoped_ptr index_buffer_;
 	fcppt::scoped_ptr<MarchingCubes> implementation_;
 	real_sequence data_;
+	bool is_dirty_;
 
 	void
 	fill_vertex_buffer();

@@ -15,6 +15,7 @@ include(
 find_package(
 	Boost 1.45.0 REQUIRED COMPONENTS
 	chrono
+	thread
 	system)
 
 include_directories(
@@ -271,6 +272,7 @@ set(
 	src/flake/volume/model/object.cpp
 	src/flake/volume/obstacles/manager.cpp
 	src/flake/volume/snow_cover/object.cpp
+	src/flake/volume/snow_cover/parallel_update.cpp
 	src/flake/volume/snow_cover/scoped.cpp
 )
 
