@@ -192,9 +192,10 @@ set(
 	src/flakelib/log_context.cpp
 	src/flakelib/log_location.cpp
 	src/flakelib/log_parameters.cpp
-	src/flakelib/marching_cubes/manager.cpp
-	src/flakelib/marching_cubes/object.cpp
-	src/flakelib/marching_cubes/scan.cpp
+	src/flakelib/marching_cubes/cpu/implementation.cpp
+	src/flakelib/marching_cubes/cpu/object.cpp
+	src/flakelib/marching_cubes/gpu/manager.cpp
+	src/flakelib/marching_cubes/gpu/object.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
 	src/flakelib/planar/simulation/stam/buissnesq/object.cpp
@@ -205,6 +206,7 @@ set(
 	src/flakelib/planar/simulation/stam/subtract_pressure_gradient.cpp
 	src/flakelib/planar/simulation/stam/vorticity.cpp
 	src/flakelib/planar/simulation/stam/wind_source.cpp
+	src/flakelib/scan.cpp
 	src/flakelib/scan/object.cpp
 	src/flakelib/scoped_frame_limiter.cpp
 	src/flakelib/splatter/box/object_fwd.cpp

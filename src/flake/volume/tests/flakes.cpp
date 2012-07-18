@@ -406,7 +406,7 @@ flake::volume::tests::flakes::flakes(
 	marching_cubes_(
 		this->buffer_pool(),
 		marching_cubes_manager_,
-		flakelib::marching_cubes::grid_size(
+		flakelib::marching_cubes::gpu::grid_size(
 			flakelib::cl::uint4(
 				static_cast<cl_uint>(
 					simulation_size_.get().w()),
@@ -452,7 +452,7 @@ flake::volume::tests::flakes::flakes(
 		this->information_manager(),
 		test::information::identifier(
 			FCPPT_TEXT("snow vertices")),
-		flake::test::information::string_conversion_adapter<flakelib::marching_cubes::vertex_count>(
+		flake::test::information::string_conversion_adapter<flakelib::marching_cubes::gpu::vertex_count>(
 			std::tr1::bind(
 				&flakes::snow_cover_vertices_,
 				this)))
@@ -603,7 +603,7 @@ flake::volume::tests::flakes::update()
 		{
 			snow_cover_vertices_ =
 				marching_cubes_.update(
-					flakelib::marching_cubes::density_view(
+					flakelib::marching_cubes::gpu::density_view(
 						snow_density_buffer_->value()));
 		}
 

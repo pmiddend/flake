@@ -2,18 +2,18 @@
 #define FLAKE_TEST_BASE_HPP_INCLUDED
 
 #include <flake/font_metrics_cache.hpp>
+#include <flake/scoped_ostream_file_redirection.hpp>
+#include <flake/scoped_wostream_file_redirection.hpp>
 #include <flake/notifications/object_fwd.hpp>
 #include <flake/notifications/text.hpp>
-#include <flake/test/feature_sequence.hpp>
 #include <flake/postprocessing/context.hpp>
+#include <flake/shader/context_fwd.hpp>
+#include <flake/test/feature_sequence.hpp>
 #include <flake/test/json_identifier.hpp>
 #include <flake/test/information/manager_fwd.hpp>
 #include <flake/test/information/object.hpp>
 #include <flake/time_modifier/multiplier.hpp>
 #include <flake/time_modifier/object_fwd.hpp>
-#include <flake/scoped_ostream_file_redirection.hpp>
-#include <flake/scoped_wostream_file_redirection.hpp>
-#include <flake/shader/context_fwd.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>

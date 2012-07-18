@@ -1,17 +1,17 @@
 #ifndef FLAKE_VOLUME_MODEL_MANAGER_HPP_INCLUDED
 #define FLAKE_VOLUME_MODEL_MANAGER_HPP_INCLUDED
 
+#include <flake/shader/context_fwd.hpp>
+#include <flake/shader/pair.hpp>
 #include <flake/shader/pixel_profile.hpp>
 #include <flake/shader/vertex_profile.hpp>
+#include <flake/shader/parameter/matrix.hpp>
+#include <flake/shader/parameter/planar_texture.hpp>
+#include <flake/shader/parameter/vector.hpp>
 #include <flake/volume/model/identifier.hpp>
 #include <flake/volume/model/object.hpp>
 #include <flake/volume/model/sun_direction.hpp>
 #include <sge/camera/base_fwd.hpp>
-#include <flake/shader/context_fwd.hpp>
-#include <flake/shader/pair.hpp>
-#include <flake/shader/parameter/matrix.hpp>
-#include <flake/shader/parameter/planar_texture.hpp>
-#include <flake/shader/parameter/vector.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/model/obj/loader_scoped_ptr.hpp>
 #include <sge/renderer/device_fwd.hpp>

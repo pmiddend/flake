@@ -48,7 +48,7 @@
 		},
 		"marching-cubes" :
 		{
-			"simulation-size" : [64,64,64],
+			"simulation-size" : [128,128,128],
 			"snow-texture-size" : [64,64,64],
 			"snow-texture-repeats" : 100.0,
 			"near-plane" : 0.01,

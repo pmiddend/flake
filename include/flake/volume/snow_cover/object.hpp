@@ -1,12 +1,12 @@
 #ifndef FLAKE_VOLUME_SNOW_COVER_OBJECT_HPP_INCLUDED
 #define FLAKE_VOLUME_SNOW_COVER_OBJECT_HPP_INCLUDED
 
-#include <flake/shader/pair.hpp>
 #include <flake/shader/context.hpp>
+#include <flake/shader/pair.hpp>
 #include <flake/shader/parameter/matrix.hpp>
-#include <flake/shader/parameter/vector.hpp>
-#include <flake/shader/parameter/scalar.hpp>
 #include <flake/shader/parameter/planar_texture.hpp>
+#include <flake/shader/parameter/scalar.hpp>
+#include <flake/shader/parameter/vector.hpp>
 #include <flake/volume/snow_cover/flat_texture.hpp>
 #include <flake/volume/snow_cover/scoped_fwd.hpp>
 #include <flake/volume/snow_cover/steep_texture.hpp>

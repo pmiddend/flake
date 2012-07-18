@@ -4,12 +4,12 @@
 #include <sge/cg/program/object.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/cg/loaded_texture.hpp>
+#include <sge/renderer/cg/scoped_texture.hpp>
+#include <sge/renderer/texture/planar.hpp>
+#include <fcppt/cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
-#include <fcppt/cref.hpp>
-#include <sge/renderer/cg/scoped_texture.hpp>
 #include <fcppt/assert/pre.hpp>
-#include <sge/renderer/texture/planar.hpp>
 
 
 flake::shader::parameter::planar_texture::planar_texture(

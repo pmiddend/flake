@@ -1,20 +1,21 @@
 #ifndef FLAKE_POSTPROCESSING_CONTEXT_HPP_INCLUDED
 #define FLAKE_POSTPROCESSING_CONTEXT_HPP_INCLUDED
 
-#include <sge/renderer/context/scoped_unique_ptr.hpp>
-#include <flake/shader/parameter/planar_texture.hpp>
-#include <flake/shader/parameter/vector.hpp>
 #include <flake/postprocessing/fullscreen_quad.hpp>
-#include <sge/renderer/device_fwd.hpp>
-#include <sge/viewport/manager_fwd.hpp>
-#include <sge/renderer/target/offscreen_scoped_ptr.hpp>
-#include <sge/renderer/texture/planar_scoped_ptr.hpp>
-#include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
-#include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
-#include <fcppt/noncopyable.hpp>
-#include <fcppt/signal/scoped_connection.hpp>
 #include <flake/shader/context_fwd.hpp>
 #include <flake/shader/pair.hpp>
+#include <flake/shader/parameter/planar_texture.hpp>
+#include <flake/shader/parameter/vector.hpp>
+#include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
+#include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
+#include <sge/renderer/context/scoped_unique_ptr.hpp>
+#include <sge/renderer/target/offscreen_scoped_ptr.hpp>
+#include <sge/renderer/texture/planar_scoped_ptr.hpp>
+#include <sge/viewport/manager_fwd.hpp>
+#include <fcppt/noncopyable.hpp>
+#include <fcppt/signal/scoped_connection.hpp>
+
 
 namespace flake
 {

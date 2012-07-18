@@ -1,8 +1,6 @@
 #ifndef FLAKE_PLANAR_MONITOR_PARENT_HPP_INCLUDED
 #define FLAKE_PLANAR_MONITOR_PARENT_HPP_INCLUDED
 
-	//#include <flake/sprite_drawer_3d.hpp>
-#include <sge/font/text/drawer_3d.hpp>
 #include <flake/planar/monitor/arrow_scale.hpp>
 #include <flake/planar/monitor/child.hpp>
 #include <flake/planar/monitor/child_list.hpp>
@@ -15,9 +13,10 @@
 #include <flake/planar/monitor/dummy_sprite/system.hpp>
 #include <flake/shader/context_fwd.hpp>
 #include <flake/shader/pair.hpp>
-#include <flake/shader/parameter/vector.hpp>
 #include <flake/shader/parameter/matrix.hpp>
+#include <flake/shader/parameter/vector.hpp>
 #include <sge/font/metrics_shared_ptr.hpp>
+#include <sge/font/text/drawer_3d.hpp>
 #include <sge/image/color/any/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
@@ -25,9 +24,9 @@
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/vector2.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
-#include <sge/renderer/vector2.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 

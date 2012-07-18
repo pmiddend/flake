@@ -3,7 +3,10 @@
 
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/buffer_pool/volume_lock_decl.hpp>
+#include <fcppt/config/external_begin.hpp>
 #include <iostream>
+#include <fcppt/config/external_end.hpp>
+
 
 template<typename T>
 flakelib::buffer_pool::volume_lock<T>::volume_lock(

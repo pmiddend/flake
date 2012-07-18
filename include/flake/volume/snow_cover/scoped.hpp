@@ -1,8 +1,8 @@
 #ifndef FLAKE_VOLUME_SNOW_COVER_SCOPED_HPP_INCLUDED
 #define FLAKE_VOLUME_SNOW_COVER_SCOPED_HPP_INCLUDED
 
-#include <flake/volume/snow_cover/object_fwd.hpp>
 #include <flake/shader/scoped_pair.hpp>
+#include <flake/volume/snow_cover/object_fwd.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
 #include <sge/renderer/texture/filter/scoped.hpp>
 #include <fcppt/noncopyable.hpp>

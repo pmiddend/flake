@@ -2,23 +2,24 @@
 #define FLAKE_SKYDOME_OBJECT_HPP_INCLUDED
 
 #include <flake/shader/context_fwd.hpp>
-#include <flake/shader/parameter/planar_texture.hpp>
-#include <flake/shader/parameter/matrix.hpp>
 #include <flake/shader/pair.hpp>
-#include <flake/skydome/longitude.hpp>
+#include <flake/shader/parameter/matrix.hpp>
+#include <flake/shader/parameter/planar_texture.hpp>
 #include <flake/skydome/latitude.hpp>
+#include <flake/skydome/longitude.hpp>
 #include <flake/skydome/texture_path.hpp>
 #include <flake/skydome/y_translation.hpp>
-#include <sge/renderer/device_fwd.hpp>
 #include <sge/camera/base_fwd.hpp>
-#include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
-#include <sge/renderer/scalar.hpp>
 #include <sge/image2d/system_fwd.hpp>
-#include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
+#include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/index_buffer_scoped_ptr.hpp>
+#include <sge/renderer/scalar.hpp>
+#include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
+#include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
 #include <sge/renderer/texture/planar_scoped_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
+
 
 namespace flake
 {

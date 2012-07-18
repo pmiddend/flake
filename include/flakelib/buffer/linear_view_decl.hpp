@@ -2,9 +2,10 @@
 #define FLAKELIB_BUFFER_LINEAR_VIEW_DECL_HPP_INCLUDED
 
 #include <flakelib/buffer/linear_view_fwd.hpp>
-#include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/dim1.hpp>
+#include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <fcppt/nonassignable.hpp>
+
 
 namespace flakelib
 {

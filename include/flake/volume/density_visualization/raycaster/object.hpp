@@ -1,12 +1,12 @@
 #ifndef FLAKE_VOLUME_DENSITY_VISUALIZATION_RAYCASTER_OBJECT_HPP_INCLUDED
 #define FLAKE_VOLUME_DENSITY_VISUALIZATION_RAYCASTER_OBJECT_HPP_INCLUDED
 
-#include <flake/volume/density_visualization/raycaster/debug_output.hpp>
 #include <flake/shader/pair.hpp>
-#include <flake/shader/parameter/scalar.hpp>
-#include <flake/shader/parameter/planar_texture.hpp>
-#include <flake/shader/parameter/vector.hpp>
 #include <flake/shader/parameter/matrix.hpp>
+#include <flake/shader/parameter/planar_texture.hpp>
+#include <flake/shader/parameter/scalar.hpp>
+#include <flake/shader/parameter/vector.hpp>
+#include <flake/volume/density_visualization/raycaster/debug_output.hpp>
 #include <flake/volume/density_visualization/raycaster/step_size.hpp>
 #include <flakelib/volume/float_view.hpp>
 #include <flakelib/volume/grid_size.hpp>

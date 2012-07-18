@@ -1,18 +1,19 @@
 #ifndef FLAKE_SHADER_PARAMETER_PLANAR_TEXTURE_HPP_INCLUDED
 #define FLAKE_SHADER_PARAMETER_PLANAR_TEXTURE_HPP_INCLUDED
 
-#include <fcppt/noncopyable.hpp>
-#include <fcppt/optional_fwd.hpp>
-#include <sge/renderer/texture/planar_fwd.hpp>
 #include <flake/shader/pair_fwd.hpp>
-#include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
+#include <flake/shader/parameter/name.hpp>
 #include <sge/cg/parameter/named.hpp>
 #include <sge/cg/program/object_fwd.hpp>
-#include <sge/renderer/cg/scoped_texture.hpp>
 #include <sge/renderer/device_fwd.hpp>
-#include <flake/shader/parameter/name.hpp>
-#include <fcppt/scoped_ptr.hpp>
+#include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
+#include <sge/renderer/cg/scoped_texture.hpp>
+#include <sge/renderer/texture/planar_fwd.hpp>
+#include <fcppt/noncopyable.hpp>
 #include <fcppt/optional.hpp>
+#include <fcppt/optional_fwd.hpp>
+#include <fcppt/scoped_ptr.hpp>
+
 
 namespace flake
 {

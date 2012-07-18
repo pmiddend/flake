@@ -4,8 +4,8 @@
 #include <flake/basic_scoped_ostream_file_redirection_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/path.hpp>
 #include <iosfwd>
 #include <streambuf>
 #include <fcppt/config/external_end.hpp>

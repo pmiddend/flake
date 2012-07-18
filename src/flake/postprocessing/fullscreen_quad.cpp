@@ -1,20 +1,21 @@
 #include <flake/postprocessing/fullscreen_quad.hpp>
-#include <sge/renderer/context/object.hpp>
-#include <sge/renderer/scoped_vertex_buffer.hpp>
-#include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <flake/postprocessing/vf/format.hpp>
 #include <flake/postprocessing/vf/format_part.hpp>
-#include <sge/renderer/vertex_declaration.hpp>
-#include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/vertex_buffer.hpp>
-#include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/scoped_vertex_buffer.hpp>
+#include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/scoped_vertex_lock.hpp>
-#include <sge/renderer/vf/view.hpp>
+#include <sge/renderer/vertex_buffer.hpp>
+#include <sge/renderer/vertex_declaration.hpp>
+#include <sge/renderer/context/object.hpp>
 #include <sge/renderer/vf/iterator.hpp>
 #include <sge/renderer/vf/vertex.hpp>
+#include <sge/renderer/vf/view.hpp>
+#include <sge/renderer/vf/dynamic/make_format.hpp>
+#include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
+
 
 flake::postprocessing::fullscreen_quad::fullscreen_quad(
 	sge::renderer::device &_renderer,

@@ -23,8 +23,8 @@
 #include <flakelib/volume/unique_float4_buffer_lock.hpp>
 #include <flakelib/volume/velocity_buffer_view.hpp>
 #include <sge/opencl/clinclude.hpp>
-#include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/size_type.hpp>
+#include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 
 

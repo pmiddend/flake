@@ -3,10 +3,10 @@
 
 #include <flake/shader/context_fwd.hpp>
 #include <flake/shader/pair.hpp>
-#include <flake/shader/parameter/vector.hpp>
 #include <flake/shader/parameter/matrix.hpp>
-#include <flake/shader/parameter/scalar.hpp>
 #include <flake/shader/parameter/planar_texture.hpp>
+#include <flake/shader/parameter/scalar.hpp>
+#include <flake/shader/parameter/vector.hpp>
 #include <flake/volume/flakes/count.hpp>
 #include <flake/volume/flakes/maximum_size.hpp>
 #include <flake/volume/flakes/minimum_size.hpp>

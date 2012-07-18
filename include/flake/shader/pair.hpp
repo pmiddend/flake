@@ -1,19 +1,20 @@
 #ifndef FLAKE_SHADER_PAIR_HPP_INCLUDED
 #define FLAKE_SHADER_PAIR_HPP_INCLUDED
 
-#include <sge/cg/program/object.hpp>
-#include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
-#include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <flake/shader/context_fwd.hpp>
-#include <flake/shader/vertex_program_path.hpp>
-#include <flake/shader/scoped_pair_fwd.hpp>
 #include <flake/shader/pixel_program_path.hpp>
+#include <flake/shader/scoped_pair_fwd.hpp>
+#include <flake/shader/vertex_program_path.hpp>
 #include <flake/shader/parameter/matrix.hpp>
 #include <flake/shader/parameter/planar_texture_fwd.hpp>
+#include <sge/cg/program/object.hpp>
+#include <sge/renderer/vertex_declaration_fwd.hpp>
+#include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <fcppt/config/external_end.hpp>
+
 
 namespace flake
 {

@@ -7,19 +7,20 @@
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/scoped_transform.hpp>
+#include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/cg/loaded_program.hpp>
 #include <sge/renderer/texture/stage.hpp>
 #include <sge/renderer/texture/filter/point.hpp>
 #include <sge/renderer/texture/filter/scoped.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
+#include <sge/sprite/buffers/single.hpp>
+#include <sge/sprite/buffers/with_declaration.hpp>
 #include <sge/sprite/compare/default.hpp>
 #include <sge/sprite/intrusive/process/ordered.hpp>
 #include <sge/sprite/process/all.hpp>
 #include <sge/sprite/process/default_geometry_options.hpp>
 #include <sge/sprite/process/with_options.hpp>
 #include <sge/sprite/render/matrix_options.hpp>
-#include <sge/sprite/buffers/with_declaration.hpp>
-#include <sge/sprite/buffers/single.hpp>
 #include <sge/sprite/render/options.hpp>
 #include <sge/sprite/render/state_options.hpp>
 #include <sge/sprite/render/vertex_options.hpp>
@@ -32,7 +33,7 @@
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
-#include <sge/renderer/vertex_declaration.hpp>
+
 
 flake::planar::monitor::parent::parent(
 	sge::renderer::device &_renderer,

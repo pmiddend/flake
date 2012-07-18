@@ -3,13 +3,13 @@
 
 #include <flakelib/symbol.hpp>
 #include <flakelib/cl/kernel_parameters.hpp>
+#include <flakelib/cl/uint4.hpp>
 #include <sge/opencl/command_queue/global_dim1.hpp>
 #include <sge/opencl/command_queue/global_dim2.hpp>
 #include <sge/opencl/command_queue/global_dim3.hpp>
 #include <sge/opencl/command_queue/local_dim1.hpp>
 #include <sge/opencl/command_queue/local_dim2.hpp>
 #include <sge/opencl/command_queue/local_dim3.hpp>
-#include <flakelib/cl/uint4.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/kernel/name.hpp>
 #include <sge/opencl/kernel/numeric_type.hpp>

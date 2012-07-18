@@ -1,11 +1,12 @@
 #ifndef FLAKE_SHADER_CONTEXT_HPP_INCLUDED
 #define FLAKE_SHADER_CONTEXT_HPP_INCLUDED
 
-#include <sge/renderer/device_fwd.hpp>
 #include <sge/cg/context/object.hpp>
 #include <sge/cg/profile/object.hpp>
 #include <sge/cg/program/compile_options.hpp>
+#include <sge/renderer/device_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
+
 
 namespace flake
 {

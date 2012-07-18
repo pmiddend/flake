@@ -1,11 +1,12 @@
 #ifndef FLAKE_SHADER_SCOPED_PAIR_HPP_INCLUDED
 #define FLAKE_SHADER_SCOPED_PAIR_HPP_INCLUDED
 
-#include <sge/renderer/cg/scoped_program.hpp>
 #include <flake/shader/pair_fwd.hpp>
+#include <sge/renderer/cg/scoped_program.hpp>
+#include <sge/renderer/cg/scoped_texture.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <sge/renderer/cg/scoped_texture.hpp>
+
 
 namespace flake
 {

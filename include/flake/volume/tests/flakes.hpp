@@ -1,8 +1,8 @@
 #ifndef FLAKE_VOLUME_TESTS_FLAKES_HPP_INCLUDED
 #define FLAKE_VOLUME_TESTS_FLAKES_HPP_INCLUDED
 
-#include <flake/test/base.hpp>
 #include <flake/skydome/object.hpp>
+#include <flake/test/base.hpp>
 #include <flake/test/information/object.hpp>
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/object.hpp>
@@ -12,9 +12,9 @@
 #include <flake/volume/model/object.hpp>
 #include <flake/volume/obstacles/manager.hpp>
 #include <flake/volume/snow_cover/object.hpp>
-#include <flakelib/marching_cubes/manager.hpp>
-#include <flakelib/marching_cubes/object.hpp>
-#include <flakelib/marching_cubes/vertex_count.hpp>
+#include <flakelib/marching_cubes/gpu/manager.hpp>
+#include <flakelib/marching_cubes/gpu/object.hpp>
+#include <flakelib/marching_cubes/gpu/vertex_count.hpp>
 #include <flakelib/scan/object.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
@@ -97,15 +97,15 @@ private:
 	//flake::volume::obstacles::manager obstacles_;
 	flakelib::volume::gradient gradient_;
 	flakelib::scan::object scan_;
-	flakelib::marching_cubes::manager marching_cubes_manager_;
+	flakelib::marching_cubes::gpu::manager marching_cubes_manager_;
 	flake::volume::snow_cover::object snow_cover_;
-	flakelib::marching_cubes::object marching_cubes_;
+	flakelib::marching_cubes::gpu::object marching_cubes_;
 	flakelib::value_modulator::object wind_strength_modulator_;
 
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;
 	sge::timer::basic<sge::timer::clocks::standard> snow_cover_update_;
-	flakelib::marching_cubes::vertex_count snow_cover_vertices_;
+	flakelib::marching_cubes::gpu::vertex_count snow_cover_vertices_;
 	flake::test::information::object snow_cover_vertices_information_;
 
 	void

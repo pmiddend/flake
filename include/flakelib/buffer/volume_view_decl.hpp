@@ -2,10 +2,11 @@
 #define FLAKELIB_BUFFER_VOLUME_VIEW_DECL_HPP_INCLUDED
 
 #include <flakelib/buffer/volume_view_fwd.hpp>
-#include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/dim3.hpp>
+#include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <fcppt/nonassignable.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
+
 
 namespace flakelib
 {

@@ -1,5 +1,4 @@
 #include <flake/font_metrics_cache.hpp>
-#include <sge/renderer/context/scoped_scoped_ptr.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/notifications/object.hpp>
 #include <flake/shader/context.hpp>
@@ -32,6 +31,7 @@
 #include <sge/renderer/no_multi_sampling.hpp>
 #include <sge/renderer/parameters.hpp>
 #include <sge/renderer/context/scoped.hpp>
+#include <sge/renderer/context/scoped_scoped_ptr.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/systems/font.hpp>
 #include <sge/systems/image2d.hpp>

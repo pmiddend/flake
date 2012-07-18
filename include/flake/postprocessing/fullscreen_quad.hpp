@@ -1,12 +1,13 @@
 #ifndef FLAKE_POSTPROCESSING_FULLSCREEN_QUAD_HPP_INCLUDED
 #define FLAKE_POSTPROCESSING_FULLSCREEN_QUAD_HPP_INCLUDED
 
-#include <fcppt/noncopyable.hpp>
-#include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
-#include <sge/renderer/vertex_declaration_unique_ptr.hpp>
-#include <sge/renderer/vertex_declaration_fwd.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
+#include <sge/renderer/vertex_declaration_fwd.hpp>
+#include <sge/renderer/vertex_declaration_unique_ptr.hpp>
+#include <sge/renderer/context/object_fwd.hpp>
+#include <fcppt/noncopyable.hpp>
+
 
 namespace flake
 {

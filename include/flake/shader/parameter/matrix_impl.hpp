@@ -2,8 +2,9 @@
 #define FLAKE_SHADER_PARAMETER_MATRIX_IMPL_HPP_INCLUDED
 
 #include <flake/shader/parameter/matrix_decl.hpp>
-#include <sge/cg/program/object.hpp>
 #include <sge/cg/parameter/matrix/set.hpp>
+#include <sge/cg/program/object.hpp>
+
 
 template
 <
@@ -43,7 +44,7 @@ flake::shader::parameter::matrix<ValueType,M,N>::set(
 		/*
 		is_projection_matrix_.get()
 		?
-		
+
 		:
 		_matrix*/);
 }

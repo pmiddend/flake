@@ -1,13 +1,12 @@
 #include <flake/planar/monitor/arrows.hpp>
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/dummy_sprite/parameters.hpp>
-#include <rucksack/axis_policy2.hpp>
 #include <flake/shader/scoped_pair.hpp>
+#include <rucksack/axis_policy2.hpp>
 #include <sge/font/text/draw.hpp>
 #include <sge/font/text/flags_none.hpp>
 #include <sge/font/text/from_fcppt_string.hpp>
 #include <sge/font/text/part.hpp>
-#include <fcppt/container/bitfield/object_impl.hpp>
 #include <sge/font/text/size.hpp>
 #include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
 #include <sge/renderer/device.hpp>
@@ -36,6 +35,7 @@
 #include <fcppt/ref.hpp>
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>

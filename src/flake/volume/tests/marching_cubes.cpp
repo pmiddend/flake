@@ -8,6 +8,7 @@
 #include <flakelib/marching_cubes/vf/format.hpp>
 #include <flakelib/splatter/box/object.hpp>
 #include <flakelib/splatter/pen/object.hpp>
+#include <flakelib/timer/object.hpp>
 #include <flakelib/volume/retrieve_filled_float_buffer.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
@@ -141,10 +142,24 @@ flake::volume::tests::marching_cubes::marching_cubes(
 		this->buffer_pool()),
 	marching_cubes_manager_(
 		this->renderer(),
+		flakelib::marching_cubes::cpu::grid_size(
+			sge::renderer::dim3(
+				static_cast<sge::renderer::size_type>(
+					simulation_size_.get().w()),
+				static_cast<sge::renderer::size_type>(
+					simulation_size_.get().h()),
+				static_cast<sge::renderer::size_type>(
+					simulation_size_.get().d()))),
+		flakelib::marching_cubes::iso_level(
+			0.4f)),
+/*
+	marching_cubes_manager_(
+		this->renderer(),
 		scan_,
 		gradient_,
 		this->program_context(),
 		this->buffer_pool()),
+*/
 	snow_cover_(
 		camera_,
 		this->renderer(),
@@ -190,10 +205,11 @@ flake::volume::tests::marching_cubes::marching_cubes(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("sun-direction"))))),
+/*
 	marching_cubes_(
 		this->buffer_pool(),
 		marching_cubes_manager_,
-		flakelib::marching_cubes::grid_size(
+		flakelib::marching_cubes::gpu::grid_size(
 			flakelib::cl::uint4(
 				static_cast<cl_uint>(
 					simulation_size_.get().w()),
@@ -207,6 +223,7 @@ flake::volume::tests::marching_cubes::marching_cubes(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("iso-level"))))),
+*/
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			boost::chrono::seconds(
@@ -223,9 +240,9 @@ flake::volume::tests::marching_cubes::marching_cubes(
 						10)),
 				flakelib::splatter::box::size(
 					flakelib::splatter::box::size::value_type(
-						40,
-						40,
-						40))),
+						22,
+						22,
+						22))),
 			flakelib::splatter::pen::is_round(
 				true),
 			flakelib::splatter::pen::is_smooth(
@@ -236,9 +253,24 @@ flake::volume::tests::marching_cubes::marching_cubes(
 		static_cast<cl_float>(
 			1.0f));
 
+	{
+		flakelib::timer::object t(
+			std::cout,
+			"marching cubes");
+
+		marching_cubes_manager_.construct_from_cl_buffer(
+			this->opencl_system().command_queue(),
+			boundary_buffer_->value());
+
+		marching_cubes_manager_.run();
+
+		marching_cubes_manager_.update_buffers();
+	}
+	/*
 	marching_cubes_.update(
-		flakelib::marching_cubes::density_view(
+		flakelib::marching_cubes::gpu::density_view(
 			boundary_buffer_->value()));
+	*/
 }
 
 awl::main::exit_code const
@@ -298,8 +330,10 @@ flake::volume::tests::marching_cubes::update()
 	camera_.update(
 		10.0f * raw_delta);
 
+	/*
 	if(this->feature_active(flake::test::json_identifier(FCPPT_TEXT("frameupdate"))))
 		marching_cubes_.update(
-			flakelib::marching_cubes::density_view(
+			flakelib::marching_cubes::gpu::density_view(
 				boundary_buffer_->value()));
+	*/
 }

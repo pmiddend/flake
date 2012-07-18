@@ -1,15 +1,9 @@
-#include <sge/renderer/context/object.hpp>
-#include <flake/media_path_from_string.hpp>
 #include <flake/catch_statements.hpp>
+#include <flake/media_path_from_string.hpp>
 #include <flake/volume/tests/density_visualization.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
-/*
-#include <flakelib/splatter/box/object.hpp>
-#include <flakelib/splatter/pen/object.hpp>
-#include <flakelib/volume/retrieve_filled_float_buffer.hpp>
-*/
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/image/colors.hpp>
@@ -19,6 +13,7 @@
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/clear/parameters.hpp>
+#include <sge/renderer/context/object.hpp>
 #include <sge/renderer/state/color.hpp>
 #include <sge/renderer/state/draw_mode.hpp>
 #include <sge/renderer/state/float.hpp>

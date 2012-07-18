@@ -3,8 +3,9 @@
 
 #include <flake/test/base.hpp>
 #include <flake/volume/snow_cover/object.hpp>
-#include <flakelib/marching_cubes/manager.hpp>
-#include <flakelib/marching_cubes/object.hpp>
+#include <flakelib/marching_cubes/cpu/object.hpp>
+#include <flakelib/marching_cubes/gpu/manager.hpp>
+#include <flakelib/marching_cubes/gpu/object.hpp>
 #include <flakelib/scan/object.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
@@ -58,9 +59,10 @@ private:
 
 	flakelib::volume::gradient gradient_;
 	flakelib::scan::object scan_;
-	flakelib::marching_cubes::manager marching_cubes_manager_;
+		flakelib::marching_cubes::cpu::object marching_cubes_manager_;
+		//flakelib::marching_cubes::gpu::manager marching_cubes_manager_;
 	flake::volume::snow_cover::object snow_cover_;
-	flakelib::marching_cubes::object marching_cubes_;
+		//flakelib::marching_cubes::gpu::object marching_cubes_;
 
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;

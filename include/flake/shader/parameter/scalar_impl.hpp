@@ -2,8 +2,9 @@
 #define FLAKE_SHADER_PARAMETER_SCALAR_IMPL_HPP_INCLUDED
 
 #include <flake/shader/parameter/scalar_decl.hpp>
-#include <sge/cg/program/object.hpp>
 #include <sge/cg/parameter/scalar/set.hpp>
+#include <sge/cg/program/object.hpp>
+
 
 template<typename ValueType>
 flake::shader::parameter::scalar<ValueType>::scalar(
