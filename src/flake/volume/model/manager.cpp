@@ -47,7 +47,9 @@ flake::volume::model::manager::manager(
 	flake::shader::context &_shader_context,
 	sge::image2d::system &_image_system,
 	sge::camera::base &_camera,
-	model::sun_direction const &_sun_direction)
+	model::sun_direction const &_sun_direction,
+	flake::volume::model::fog_color const &_fog_color,
+	flake::volume::model::fog_density const &_fog_density)
 :
 	renderer_(
 		_renderer),
@@ -87,6 +89,18 @@ flake::volume::model::manager::manager(
 			sge::cg::string(
 				"sun_direction")),
 		_sun_direction.get()),
+	fog_color_parameter_(
+		shader_.pixel_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"fog_color")),
+		_fog_color.get()),
+	fog_density_parameter_(
+		shader_.vertex_program(),
+		flake::shader::parameter::name(
+			sge::cg::string(
+				"fog_density")),
+		_fog_density.get()),
 	loaded_texture_(
 		shader_,
 		renderer_,

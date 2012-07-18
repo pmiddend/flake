@@ -3,6 +3,7 @@ struct vertex_outputs
 	float4 position : POSITION;
 	float2 texcoord : TEXCOORD0;
 	float3 normal : TEXCOORD1;
+	float fog_exponent : TEXCOORD2;
 };
 
 vertex_outputs
@@ -11,9 +12,16 @@ vertex_main(
 	in float2 texcoord : TEXCOORD0,
 	in float3 normal : NORMAL,
 	uniform float4x4 mvp,
+	uniform float fog_density,
 	uniform float4x4 world)
 {
 	vertex_outputs outs;
+
+	float3 eye_position = mul(world,float4(position,1.0)).xyz;
+
+	float fog_distance = eye_position.z;
+
+	outs.fog_exponent = fog_distance * fog_density;
 
 	outs.position =
 		mul(
@@ -36,9 +44,15 @@ float4
 pixel_main(
 	vertex_outputs vertex_data,
 	uniform float3 sun_direction,
+	uniform float3 fog_color,
 	uniform sampler2D primary_texture)
 	: COLOR
 {
+	float fog_factor =
+		exp2(
+			-abs(
+				vertex_data.fog_exponent));
+
 	float
 		ambient =
 			0.5,
@@ -50,11 +64,14 @@ pixel_main(
 					vertex_data.normal,
 					-sun_direction));
 
+	float3 light_color =
+		intensity *
+		tex2D(
+			primary_texture,
+			vertex_data.texcoord).xyz;
+
 	return
 		float4(
-			intensity *
-			tex2D(
-				primary_texture,
-				vertex_data.texcoord).xyz,
+			lerp(fog_color,light_color,fog_factor),
 			1.0);
 }

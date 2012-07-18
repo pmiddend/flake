@@ -155,7 +155,17 @@ flake::volume::tests::density_visualization::density_visualization(
 			sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("sun-direction"))))),
+					FCPPT_TEXT("sun-direction")))),
+		flake::volume::model::fog_color(
+			sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("fog-color")))),
+		flake::volume::model::fog_density(
+			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("fog-density"))))),
 	avz_(
 		models_,
 		flake::volume::model::identifier(

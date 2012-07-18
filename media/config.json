@@ -101,6 +101,8 @@
 			"collision-increment-test" : 0.1,
 			"collision-increment" : 0.001,
 			"sun-direction" : [0.666667,-0.333333,-0.666667],
+		        "fog-color" : [0.3,0.3,0.3],
+		        "fog-density" : 0.01,
 			"iso-level" : 0.2,
 			"voxel-file" :
 			{

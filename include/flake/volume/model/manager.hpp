@@ -6,9 +6,12 @@
 #include <flake/shader/pixel_profile.hpp>
 #include <flake/shader/vertex_profile.hpp>
 #include <flake/shader/parameter/matrix.hpp>
+#include <flake/shader/parameter/scalar.hpp>
 #include <flake/shader/parameter/planar_texture.hpp>
 #include <flake/shader/parameter/vector.hpp>
 #include <flake/volume/model/identifier.hpp>
+#include <flake/volume/model/fog_color.hpp>
+#include <flake/volume/model/fog_density.hpp>
 #include <flake/volume/model/object.hpp>
 #include <flake/volume/model/sun_direction.hpp>
 #include <sge/camera/base_fwd.hpp>
@@ -42,7 +45,9 @@ public:
 		flake::shader::context &,
 		sge::image2d::system &,
 		sge::camera::base &,
-		model::sun_direction const &);
+		flake::volume::model::sun_direction const &,
+		flake::volume::model::fog_color const &,
+		flake::volume::model::fog_density const &);
 
 	void
 	render(
@@ -84,6 +89,8 @@ private:
 	flake::shader::parameter::matrix<sge::renderer::scalar,4,4> mvp_parameter_;
 	flake::shader::parameter::matrix<sge::renderer::scalar,4,4> world_parameter_;
 	flake::shader::parameter::vector<sge::renderer::scalar,3> sun_direction_parameter_;
+	flake::shader::parameter::vector<sge::renderer::scalar,3> fog_color_parameter_;
+	flake::shader::parameter::scalar<sge::renderer::scalar> fog_density_parameter_;
 	flake::shader::parameter::planar_texture loaded_texture_;
 
 	vertex_buffer_map identifier_to_vertex_buffer_;
