@@ -252,7 +252,7 @@ void
 flakelib::marching_cubes::cpu::object::fill_index_buffer()
 {
 	typedef
-	sge::renderer::index::format_16
+	sge::renderer::index::format_32
 	index_format;
 
 	index_buffer_.take(

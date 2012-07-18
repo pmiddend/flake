@@ -1,4 +1,6 @@
 #include <flake/media_path_from_string.hpp>
+#include <sge/renderer/texture/set_address_mode2.hpp>
+#include <sge/renderer/texture/address_mode2.hpp>
 #include <flake/shader/scoped_pair.hpp>
 #include <flake/skydome/index_format.hpp>
 #include <flake/skydome/object.hpp>
@@ -339,6 +341,12 @@ flake::skydome::object::render(
 						0.0f,
 						y_translation_.get(),
 						0.0f)))));
+
+	sge::renderer::texture::set_address_mode2(
+		_context,
+		texture_parameter_.stage(),
+		sge::renderer::texture::address_mode2(
+			sge::renderer::texture::address_mode::repeat));
 
 	_context.render_indexed(
 		*index_buffer_,
