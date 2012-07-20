@@ -33,7 +33,6 @@ class object
 FCPPT_NONCOPYABLE(
 	object);
 public:
-	explicit
 	object(
 		model::manager &,
 		model::identifier const &_identifier,

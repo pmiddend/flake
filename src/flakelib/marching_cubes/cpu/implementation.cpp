@@ -116,10 +116,10 @@ void MarchingCubes::init_temps()
 //-----------------------------------------------------------------------------
 {
   if( !_ext_data )
-    _data    = new real [_size_x * _size_y * _size_z] ;
-  _x_verts = new int  [_size_x * _size_y * _size_z] ;
-  _y_verts = new int  [_size_x * _size_y * _size_z] ;
-  _z_verts = new int  [_size_x * _size_y * _size_z] ;
+    _data    = new real [static_cast<size_t>(_size_x * _size_y * _size_z)] ;
+  _x_verts = new int  [static_cast<size_t>(_size_x * _size_y * _size_z)] ;
+  _y_verts = new int  [static_cast<size_t>(_size_x * _size_y * _size_z)] ;
+  _z_verts = new int  [static_cast<size_t>(_size_x * _size_y * _size_z)] ;
 
   memset( _x_verts, -1, static_cast<size_t>(_size_x * _size_y * _size_z * static_cast<int>(sizeof( int ))) ) ;
   memset( _y_verts, -1, static_cast<size_t>(_size_x * _size_y * _size_z * static_cast<int>(sizeof( int ))) ) ;
@@ -138,8 +138,8 @@ void MarchingCubes::init_all ()
 
   _nverts = _ntrigs = 0 ;
   _Nverts = _Ntrigs = ALLOC_SIZE ;
-  _vertices  = new Vertex  [_Nverts] ;
-  _triangles = new Triangle[_Ntrigs] ;
+  _vertices  = new Vertex  [static_cast<size_t>(_Nverts)] ;
+  _triangles = new Triangle[static_cast<size_t>(_Ntrigs)] ;
 }
 //_____________________________________________________________________________
 
@@ -794,7 +794,7 @@ void MarchingCubes::add_triangle( const char* trig_param, char n, int v12 )
       if( _ntrigs >= _Ntrigs )
       {
         Triangle *temp = _triangles ;
-        _triangles = new Triangle[ 2*_Ntrigs ] ;
+        _triangles = new Triangle[ static_cast<size_t>(2*_Ntrigs) ] ;
         memcpy( _triangles, temp, static_cast<size_t>(_Ntrigs*static_cast<int>(sizeof(Triangle))) ) ;
         delete[] temp ;
         printf("%d, %d allocated triangles\n", _ntrigs, _Ntrigs) ;
@@ -869,7 +869,7 @@ void MarchingCubes::test_vertex_addition()
   if( _nverts >= _Nverts )
   {
     Vertex *temp = _vertices ;
-    _vertices = new Vertex[ _Nverts*2 ] ;
+    _vertices = new Vertex[ static_cast<size_t>(_Nverts*2) ] ;
     memcpy( _vertices, temp, static_cast<size_t>(_Nverts*static_cast<int>(sizeof(Vertex))) ) ;
     delete[] temp ;
     printf("%d, %d allocated vertices\n", _nverts, _Nverts) ;

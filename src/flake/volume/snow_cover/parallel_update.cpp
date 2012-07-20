@@ -61,7 +61,7 @@ void
 flake::volume::snow_cover::parallel_update::thread()
 try
 {
-	while(true)
+	for(;;)
 	{
 		{
 			boost::unique_lock<boost::mutex> l(
