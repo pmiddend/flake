@@ -214,11 +214,18 @@ flake::volume::tests::flakes::flakes(
 			simulation_size_.get(),
 			0.0f)*/),
 	snow_density_buffer_(
-		flakelib::volume::retrieve_filled_float_buffer(
-			this->buffer_pool(),
-			fill_buffer_,
-			simulation_size_.get(),
-			0.0f)),
+		this->opencl_system().context(),
+		sge::opencl::memory_object::flags_field(
+			sge::opencl::memory_object::flags::read)
+			| sge::opencl::memory_object::flags::write
+			| sge::opencl::memory_object::flags::alloc_host_ptr,
+		sge::opencl::memory_object::byte_size(
+			simulation_size_.get().content() * sizeof(cl_float))),
+	snow_density_view_(
+		flakelib::volume::float_view(
+			snow_density_buffer_,
+			fcppt::math::dim::structure_cast<sge::opencl::dim3>(
+				simulation_size_.get()))),
 	activity_buffer_(
 		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
@@ -292,8 +299,7 @@ flake::volume::tests::flakes::flakes(
 		this->buffer_pool(),
 		flakes_.cl_positions(),
 		flakes_.cl_point_sizes(),
-		volume::flakes::snow_density_view(
-			snow_density_buffer_->value()),
+		snow_density_view_,
 		volume::flakes::collision_increment(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
@@ -449,7 +455,7 @@ flake::volume::tests::flakes::flakes(
 	snow_cover_parallel_update_(
 		marching_cubes_manager_,
 		this->opencl_system().command_queue(),
-		snow_density_buffer_->value()),
+		snow_density_view_),
 	wind_strength_modulator_(
 		std::tr1::bind(
 			&flakelib::volume::simulation::stam::wind_source::wind_strength,
@@ -487,6 +493,10 @@ flake::volume::tests::flakes::flakes(
 				&flakes::snow_cover_vertices_,
 				this)))*/
 {
+	fill_buffer_.apply(
+		flakelib::buffer::linear_view<cl_float>(
+			snow_density_buffer_),
+		0.0f);
 }
 
 awl::main::exit_code const

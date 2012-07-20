@@ -5,6 +5,8 @@
 #include <flake/test/base.hpp>
 #include <flake/test/information/object.hpp>
 #include <flakelib/marching_cubes/cpu/object.hpp>
+#include <sge/opencl/memory_object/buffer.hpp>
+#include <flake/volume/flakes/snow_density_view.hpp>
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/object.hpp>
 #include <flake/volume/flakes/manager.hpp>
@@ -86,7 +88,8 @@ private:
 
 	// Buffers
 	flakelib::volume::unique_float_buffer_lock boundary_buffer_;
-	flakelib::volume::unique_float_buffer_lock snow_density_buffer_;
+	sge::opencl::memory_object::buffer snow_density_buffer_;
+	flake::volume::flakes::snow_density_view snow_density_view_;
 	flakelib::volume::unique_float_buffer_lock activity_buffer_;
 	flakelib::volume::unique_float_buffer_lock initial_guess_buffer_;
 	flakelib::volume::unique_float4_buffer_lock velocity_buffer_;

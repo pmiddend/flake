@@ -1,4 +1,5 @@
 #include <flake/media_path_from_string.hpp>
+#include <sge/renderer/target/from_texture.hpp>
 #include <flake/postprocessing/context.hpp>
 #include <flake/shader/scoped_pair.hpp>
 #include <sge/renderer/color_surface.hpp>
@@ -132,10 +133,8 @@ flake::postprocessing::context::context(
 				&flake::postprocessing::context::viewport_callback,
 				this))),
 	rendering_result_texture_(),
-	offscreen_target_(
-		renderer_.create_target()),
-	offscreen_downsampled_target_(
-		renderer_.create_target()),
+	offscreen_target_(),
+	offscreen_downsampled_target_(),
 	downsampled_texture_0_(),
 	downsampled_texture_1_()
 {
@@ -227,6 +226,16 @@ flake::postprocessing::context::viewport_callback()
 
 	finalize_blurred_texture_parameter_.set(
 		*downsampled_texture_0_);
+
+	offscreen_target_.take(
+		sge::renderer::target::from_texture(
+			renderer_,
+			*rendering_result_texture_));
+
+	offscreen_downsampled_target_.take(
+		sge::renderer::target::from_texture(
+			renderer_,
+			*downsampled_texture_0_));
 
 	offscreen_target_->depth_stencil_surface(
 		sge::renderer::depth_stencil_surface_shared_ptr(

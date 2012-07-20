@@ -3,7 +3,7 @@
 
 #include <flakelib/buffer/volume_view_impl.hpp>
 #include <flakelib/marching_cubes/cpu/object_fwd.hpp>
-#include <flakelib/volume/float_view.hpp>
+#include <flake/volume/flakes/snow_density_view.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -25,7 +25,7 @@ public:
 	parallel_update(
 		flakelib::marching_cubes::cpu::object &,
 		sge::opencl::command_queue::object &,
-		flakelib::volume::float_view);
+		flake::volume::flakes::snow_density_view const &);
 
 	void
 	restart_if_finished();
@@ -34,7 +34,7 @@ public:
 private:
 	flakelib::marching_cubes::cpu::object &marching_cubes_;
 	sge::opencl::command_queue::object &command_queue_;
-	flakelib::volume::float_view const buffer_;
+	flake::volume::flakes::snow_density_view const buffer_;
 	boost::mutex dirty_mutex_;
 	boost::mutex finished_mutex_;
 	bool finished_;

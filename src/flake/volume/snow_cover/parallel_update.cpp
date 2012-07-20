@@ -5,7 +5,7 @@
 flake::volume::snow_cover::parallel_update::parallel_update(
 	flakelib::marching_cubes::cpu::object &_marching_cubes,
 	sge::opencl::command_queue::object &_command_queue,
-	flakelib::volume::float_view const _buffer)
+	flake::volume::flakes::snow_density_view const &_buffer)
 :
 	marching_cubes_(
 		_marching_cubes),
@@ -46,7 +46,7 @@ flake::volume::snow_cover::parallel_update::restart_if_finished()
 
 	marching_cubes_.construct_from_cl_buffer(
 		command_queue_,
-		buffer_);
+		buffer_.get());
 
 	not_dirty_.notify_all();
 }

@@ -134,7 +134,8 @@ flakelib::marching_cubes::cpu::object::construct_from_cl_buffer(
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::volume::float_view const &_view)
 {
-	//	flakelib::timer::object t(std::cout,"construction total");
+	flakelib::timer::object t(std::cout,"marching_cubes::construction");
+
 
 	sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
 		_command_queue,
@@ -153,7 +154,7 @@ flakelib::marching_cubes::cpu::object::construct_from_cl_buffer(
 void
 flakelib::marching_cubes::cpu::object::run()
 {
-	//	flakelib::timer::object t(std::cout,"marching cubes");
+	flakelib::timer::object t(std::cout,"marching_cubes::run");
 	implementation_->run(
 		static_cast<real_sequence::value_type>(
 			iso_level_.get()));
@@ -167,7 +168,7 @@ flakelib::marching_cubes::cpu::object::update_buffers()
 	if(!implementation_->ntrigs())
 		return;
 
-	//	flakelib::timer::object t(std::cout,"buffer fill");
+	flakelib::timer::object t(std::cout,"marching_cubes::buffer fill");
 	this->fill_vertex_buffer();
 	this->fill_index_buffer();
 }
@@ -194,7 +195,6 @@ flakelib::marching_cubes::cpu::object::~object()
 void
 flakelib::marching_cubes::cpu::object::fill_vertex_buffer()
 {
-	std::cout << "Vertices: " << implementation_->nverts() << "\n";
 	vertex_buffer_.take(
 		renderer_.create_vertex_buffer(
 			*vertex_declaration_,
