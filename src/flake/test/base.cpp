@@ -1,7 +1,7 @@
 #include <flake/font_metrics_cache.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/notifications/object.hpp>
-#include <flake/shader/context.hpp>
+#include <sge/shader/context.hpp>
 #include <flake/test/base.hpp>
 #include <flake/test/update_features_from_json.hpp>
 #include <flake/test/information/manager.hpp>
@@ -205,7 +205,7 @@ flake::test::base::base(
 		sge::systems::quit_on_escape(
 			*systems_)),
 	shader_context_(
-		fcppt::make_unique_ptr<flake::shader::context>(
+		fcppt::make_unique_ptr<sge::shader::context>(
 			fcppt::ref(
 				this->renderer()))),
 	opencl_system_(
@@ -351,7 +351,7 @@ flake::test::base::renderer()
 		systems_->renderer();
 }
 
-flake::shader::context &
+sge::shader::context &
 flake::test::base::shader_context()
 {
 	return

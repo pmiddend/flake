@@ -1,10 +1,10 @@
 #ifndef FLAKE_VOLUME_ARROWS_MANAGER_HPP_INCLUDED
 #define FLAKE_VOLUME_ARROWS_MANAGER_HPP_INCLUDED
 
-#include <flake/shader/context_fwd.hpp>
-#include <flake/shader/pair.hpp>
-#include <flake/shader/parameter/matrix.hpp>
-#include <flake/shader/parameter/vector.hpp>
+#include <sge/shader/context_fwd.hpp>
+#include <sge/shader/pair.hpp>
+#include <sge/shader/parameter/matrix.hpp>
+#include <sge/shader/parameter/vector.hpp>
 #include <flake/volume/arrows/object.hpp>
 #include <sge/camera/base_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
@@ -32,7 +32,7 @@ public:
 	explicit
 	manager(
 		sge::renderer::device &,
-		flake::shader::context &,
+		sge::shader::context &,
 		sge::camera::base &);
 
 	void
@@ -54,9 +54,9 @@ private:
 	sge::renderer::device &renderer_;
 	sge::renderer::vertex_declaration_scoped_ptr vertex_declaration_;
 	sge::camera::base &camera_;
-	flake::shader::pair shader_;
-	flake::shader::parameter::matrix<sge::renderer::scalar,4u,4u> mvp_parameter_;
-	flake::shader::parameter::vector<sge::renderer::scalar,3u> camera_position_parameter_;
+	sge::shader::pair shader_;
+	sge::shader::parameter::matrix<sge::renderer::scalar,4u,4u> mvp_parameter_;
+	sge::shader::parameter::vector<sge::renderer::scalar,3u> camera_position_parameter_;
 	child_sequence children_;
 
 	void

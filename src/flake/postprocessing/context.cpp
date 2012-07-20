@@ -1,7 +1,7 @@
 #include <flake/media_path_from_string.hpp>
 #include <sge/renderer/target/from_texture.hpp>
 #include <flake/postprocessing/context.hpp>
-#include <flake/shader/scoped_pair.hpp>
+#include <sge/shader/scoped_pair.hpp>
 #include <sge/renderer/color_surface.hpp>
 #include <sge/renderer/depth_stencil_surface.hpp>
 #include <sge/renderer/device.hpp>
@@ -41,7 +41,7 @@
 flake::postprocessing::context::context(
 	sge::renderer::device &_renderer,
 	sge::viewport::manager &_viewport_manager,
-	flake::shader::context &_shader_context)
+	sge::shader::context &_shader_context)
 :
 	renderer_(
 		_renderer),
@@ -54,79 +54,79 @@ flake::postprocessing::context::context(
 	downsample_shader_(
 		_shader_context,
 		*quad_vertex_declaration_,
-		flake::shader::vertex_program_path(
+		sge::shader::vertex_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/postprocessing/downsample.cg"))),
-		flake::shader::pixel_program_path(
+		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/postprocessing/downsample.cg")))),
 	downsample_input_texture_parameter_(
 		downsample_shader_,
 		renderer_,
 		downsample_shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"input_texture")),
-		flake::shader::parameter::planar_texture::optional_value()),
+		sge::shader::parameter::planar_texture::optional_value()),
 	blur_h_shader_(
 		_shader_context,
 		*quad_vertex_declaration_,
-		flake::shader::vertex_program_path(
+		sge::shader::vertex_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/postprocessing/blur_h.cg"))),
-		flake::shader::pixel_program_path(
+		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/postprocessing/blur_h.cg")))),
 	blur_h_input_texture_parameter_(
 		blur_h_shader_,
 		renderer_,
 		blur_h_shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"input_texture")),
-		flake::shader::parameter::planar_texture::optional_value()),
+		sge::shader::parameter::planar_texture::optional_value()),
 	blur_v_shader_(
 		_shader_context,
 		*quad_vertex_declaration_,
-		flake::shader::vertex_program_path(
+		sge::shader::vertex_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/postprocessing/blur_v.cg"))),
-		flake::shader::pixel_program_path(
+		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/postprocessing/blur_v.cg")))),
 	blur_v_input_texture_parameter_(
 		blur_v_shader_,
 		renderer_,
 		blur_v_shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"input_texture")),
-		flake::shader::parameter::planar_texture::optional_value()),
+		sge::shader::parameter::planar_texture::optional_value()),
 	finalize_shader_(
 		_shader_context,
 		*quad_vertex_declaration_,
-		flake::shader::vertex_program_path(
+		sge::shader::vertex_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/postprocessing/finalize.cg"))),
-		flake::shader::pixel_program_path(
+		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/postprocessing/finalize.cg")))),
 	finalize_input_texture_parameter_(
 		finalize_shader_,
 		renderer_,
 		finalize_shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"input_texture")),
-		flake::shader::parameter::planar_texture::optional_value()),
+		sge::shader::parameter::planar_texture::optional_value()),
 	finalize_blurred_texture_parameter_(
 		finalize_shader_,
 		renderer_,
 		finalize_shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"blurred_texture")),
-		flake::shader::parameter::planar_texture::optional_value()),
+		sge::shader::parameter::planar_texture::optional_value()),
 	viewport_connection_(
 		_viewport_manager.manage_callback(
 			std::tr1::bind(
@@ -297,7 +297,7 @@ flake::postprocessing::context::downsample()
 	downsample_input_texture_parameter_.set(
 		*rendering_result_texture_);
 
-	flake::shader::scoped_pair scoped_shader(
+	sge::shader::scoped_pair scoped_shader(
 		scoped_block.get(),
 		downsample_shader_);
 
@@ -323,7 +323,7 @@ flake::postprocessing::context::blur_h()
 	blur_h_input_texture_parameter_.set(
 		*downsampled_texture_0_);
 
-	flake::shader::scoped_pair scoped_shader(
+	sge::shader::scoped_pair scoped_shader(
 		scoped_block.get(),
 		blur_h_shader_);
 
@@ -355,7 +355,7 @@ flake::postprocessing::context::blur_v()
 	blur_v_input_texture_parameter_.set(
 		*downsampled_texture_1_);
 
-	flake::shader::scoped_pair scoped_shader(
+	sge::shader::scoped_pair scoped_shader(
 		scoped_block.get(),
 		blur_v_shader_);
 
@@ -396,7 +396,7 @@ flake::postprocessing::context::finalize()
 			fcppt::ref(
 				renderer_.onscreen_target())));
 
-	flake::shader::scoped_pair scoped_shader(
+	sge::shader::scoped_pair scoped_shader(
 		result->get(),
 		finalize_shader_);
 

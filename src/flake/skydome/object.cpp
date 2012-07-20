@@ -1,7 +1,7 @@
 #include <flake/media_path_from_string.hpp>
 #include <sge/renderer/texture/set_address_mode2.hpp>
 #include <sge/renderer/texture/address_mode2.hpp>
-#include <flake/shader/scoped_pair.hpp>
+#include <sge/shader/scoped_pair.hpp>
 #include <flake/skydome/index_format.hpp>
 #include <flake/skydome/object.hpp>
 #include <flake/skydome/vf/format.hpp>
@@ -67,7 +67,7 @@ sphere_point(
 
 flake::skydome::object::object(
 	sge::renderer::device &_renderer,
-	flake::shader::context &_shader_context,
+	sge::shader::context &_shader_context,
 	sge::image2d::system &_image_system,
 	flake::skydome::texture_path const &_texture_path,
 	sge::camera::base &_camera,
@@ -118,28 +118,28 @@ flake::skydome::object::object(
 	shader_(
 		_shader_context,
 		*vertex_declaration_,
-		flake::shader::vertex_program_path(
+		sge::shader::vertex_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/skydome.cg"))),
-		flake::shader::pixel_program_path(
+		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/skydome.cg")))),
 	mvp_parameter_(
 		shader_.vertex_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"mvp")),
-		flake::shader::parameter::is_projection_matrix(
+		sge::shader::parameter::is_projection_matrix(
 			true),
 		sge::renderer::matrix4()),
 	texture_parameter_(
 		shader_,
 		renderer_,
 		shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"sky_texture")),
-		flake::shader::parameter::planar_texture::optional_value(
+		sge::shader::parameter::planar_texture::optional_value(
 			*texture_))
 {
 	sge::renderer::scoped_vertex_lock vblock(
@@ -321,7 +321,7 @@ flake::skydome::object::render(
 		_context,
 		*vertex_declaration_);
 
-	flake::shader::scoped_pair scoped_shader(
+	sge::shader::scoped_pair scoped_shader(
 		_context,
 		shader_);
 

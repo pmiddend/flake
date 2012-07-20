@@ -1,12 +1,12 @@
 #ifndef FLAKE_VOLUME_FLAKES_MANAGER_HPP_INCLUDED
 #define FLAKE_VOLUME_FLAKES_MANAGER_HPP_INCLUDED
 
-#include <flake/shader/context_fwd.hpp>
-#include <flake/shader/pair.hpp>
-#include <flake/shader/parameter/matrix.hpp>
-#include <flake/shader/parameter/planar_texture.hpp>
-#include <flake/shader/parameter/scalar.hpp>
-#include <flake/shader/parameter/vector.hpp>
+#include <sge/shader/context_fwd.hpp>
+#include <sge/shader/pair.hpp>
+#include <sge/shader/parameter/matrix.hpp>
+#include <sge/shader/parameter/planar_texture.hpp>
+#include <sge/shader/parameter/scalar.hpp>
+#include <sge/shader/parameter/vector.hpp>
 #include <flake/volume/flakes/count.hpp>
 #include <flake/volume/flakes/maximum_size.hpp>
 #include <flake/volume/flakes/minimum_size.hpp>
@@ -42,7 +42,7 @@ FCPPT_NONCOPYABLE(
 public:
 	manager(
 		sge::renderer::device &,
-		flake::shader::context &,
+		sge::shader::context &,
 		sge::camera::base &,
 		sge::opencl::context::object &,
 		sge::image2d::system &,
@@ -81,13 +81,13 @@ private:
 	sge::renderer::vertex_buffer_scoped_ptr texcoords_buffer_;
 	sge::renderer::vertex_buffer_scoped_ptr point_sizes_buffer_;
 	flakes::texture_tile_size tile_size_;
-	flake::shader::pair shader_;
-	flake::shader::parameter::vector<sge::renderer::scalar,3u> camera_position_parameter_;
-	flake::shader::parameter::scalar<sge::renderer::scalar> tile_size_parameter_;
-	flake::shader::parameter::scalar<sge::renderer::scalar> maximum_distance_parameter_;
-	flake::shader::parameter::matrix<sge::renderer::scalar,4u,4u> mvp_parameter_;
+	sge::shader::pair shader_;
+	sge::shader::parameter::vector<sge::renderer::scalar,3u> camera_position_parameter_;
+	sge::shader::parameter::scalar<sge::renderer::scalar> tile_size_parameter_;
+	sge::shader::parameter::scalar<sge::renderer::scalar> maximum_distance_parameter_;
+	sge::shader::parameter::matrix<sge::renderer::scalar,4u,4u> mvp_parameter_;
 	sge::renderer::texture::planar_scoped_ptr texture_;
-	flake::shader::parameter::planar_texture loaded_texture_;
+	sge::shader::parameter::planar_texture loaded_texture_;
 	fcppt::scoped_ptr<sge::opencl::memory_object::buffer> cl_positions_buffer_;
 	fcppt::scoped_ptr<sge::opencl::memory_object::buffer> cl_point_sizes_buffer_;
 

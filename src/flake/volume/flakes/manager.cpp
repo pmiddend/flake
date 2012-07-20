@@ -1,6 +1,6 @@
 #include <flake/media_path_from_string.hpp>
-#include <flake/shader/load_edited_string.hpp>
-#include <flake/shader/scoped_pair.hpp>
+#include <sge/shader/load_edited_string.hpp>
+#include <sge/shader/scoped_pair.hpp>
 #include <flake/volume/flakes/manager.hpp>
 #include <flake/volume/flakes/vf/format.hpp>
 #include <flake/volume/flakes/vf/position_part.hpp>
@@ -47,7 +47,7 @@
 
 flake::volume::flakes::manager::manager(
 	sge::renderer::device &_renderer,
-	flake::shader::context &_shader_context,
+	sge::shader::context &_shader_context,
 	sge::camera::base &_camera,
 	sge::opencl::context::object &_context,
 	sge::image2d::system &_image_system,
@@ -108,38 +108,38 @@ flake::volume::flakes::manager::manager(
 	shader_(
 		_shader_context,
 		*vertex_declaration_,
-		flake::shader::vertex_program_path(
+		sge::shader::vertex_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/flakes.cg"))),
-		flake::shader::pixel_program_path(
+		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/flakes.cg")))),
 	camera_position_parameter_(
 		shader_.vertex_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"camera_position")),
 		sge::renderer::vector3()),
 	tile_size_parameter_(
 		shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"tile_size")),
 		static_cast<sge::renderer::scalar>(
 			_tile_size.get())),
 	maximum_distance_parameter_(
 		shader_.vertex_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"maximum_distance")),
 		static_cast<sge::renderer::scalar>(
 			_grid_size.get().w())),
 	mvp_parameter_(
 		shader_.vertex_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"mvp")),
-		flake::shader::parameter::is_projection_matrix(
+		sge::shader::parameter::is_projection_matrix(
 			true),
 		sge::renderer::matrix4()),
 	texture_(
@@ -155,10 +155,10 @@ flake::volume::flakes::manager::manager(
 		shader_,
 		renderer_,
 		shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"main_texture")),
-		flake::shader::parameter::planar_texture::optional_value(
+		sge::shader::parameter::planar_texture::optional_value(
 			*texture_)),
 	cl_positions_buffer_(),
 	cl_point_sizes_buffer_()
@@ -188,7 +188,7 @@ void
 flake::volume::flakes::manager::render(
 	sge::renderer::context::object &_context)
 {
-	flake::shader::scoped_pair scoped_shader(
+	sge::shader::scoped_pair scoped_shader(
 		_context,
 		shader_);
 

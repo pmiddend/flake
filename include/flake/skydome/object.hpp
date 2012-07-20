@@ -1,10 +1,10 @@
 #ifndef FLAKE_SKYDOME_OBJECT_HPP_INCLUDED
 #define FLAKE_SKYDOME_OBJECT_HPP_INCLUDED
 
-#include <flake/shader/context_fwd.hpp>
-#include <flake/shader/pair.hpp>
-#include <flake/shader/parameter/matrix.hpp>
-#include <flake/shader/parameter/planar_texture.hpp>
+#include <sge/shader/context_fwd.hpp>
+#include <sge/shader/pair.hpp>
+#include <sge/shader/parameter/matrix.hpp>
+#include <sge/shader/parameter/planar_texture.hpp>
 #include <flake/skydome/latitude.hpp>
 #include <flake/skydome/longitude.hpp>
 #include <flake/skydome/texture_path.hpp>
@@ -32,7 +32,7 @@ FCPPT_NONCOPYABLE(
 public:
 	object(
 		sge::renderer::device &,
-		flake::shader::context &,
+		sge::shader::context &,
 		sge::image2d::system &_image_system,
 		flake::skydome::texture_path const &,
 		sge::camera::base &,
@@ -53,9 +53,9 @@ private:
 	sge::renderer::vertex_buffer_scoped_ptr vertex_buffer_;
 	sge::renderer::index_buffer_scoped_ptr index_buffer_;
 	sge::renderer::texture::planar_scoped_ptr texture_;
-	flake::shader::pair shader_;
-	flake::shader::parameter::matrix<sge::renderer::scalar,4,4> mvp_parameter_;
-	flake::shader::parameter::planar_texture texture_parameter_;
+	sge::shader::pair shader_;
+	sge::shader::parameter::matrix<sge::renderer::scalar,4,4> mvp_parameter_;
+	sge::shader::parameter::planar_texture texture_parameter_;
 };
 }
 }

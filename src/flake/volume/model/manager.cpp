@@ -1,5 +1,5 @@
 #include <flake/media_path_from_string.hpp>
-#include <flake/shader/scoped_pair.hpp>
+#include <sge/shader/scoped_pair.hpp>
 #include <flake/volume/model/manager.hpp>
 #include <flake/volume/model/vf/format.hpp>
 #include <flake/volume/model/vf/from_obj_map.hpp>
@@ -44,7 +44,7 @@
 
 flake::volume::model::manager::manager(
 	sge::renderer::device &_renderer,
-	flake::shader::context &_shader_context,
+	sge::shader::context &_shader_context,
 	sge::image2d::system &_image_system,
 	sge::camera::base &_camera,
 	model::sun_direction const &_sun_direction,
@@ -61,43 +61,43 @@ flake::volume::model::manager::manager(
 	shader_(
 		_shader_context,
 		*vertex_declaration_,
-		flake::shader::vertex_program_path(
+		sge::shader::vertex_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/model.cg"))),
-		flake::shader::pixel_program_path(
+		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/model.cg")))),
 	mvp_parameter_(
 		shader_.vertex_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"mvp")),
-		flake::shader::parameter::is_projection_matrix(
+		sge::shader::parameter::is_projection_matrix(
 			true),
 		sge::renderer::matrix4()),
 	world_parameter_(
 		shader_.vertex_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"world")),
-		flake::shader::parameter::is_projection_matrix(
+		sge::shader::parameter::is_projection_matrix(
 			false),
 		sge::renderer::matrix4()),
 	sun_direction_parameter_(
 		shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"sun_direction")),
 		_sun_direction.get()),
 	fog_color_parameter_(
 		shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"fog_color")),
 		_fog_color.get()),
 	fog_density_parameter_(
 		shader_.vertex_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"fog_density")),
 		_fog_density.get()),
@@ -105,10 +105,10 @@ flake::volume::model::manager::manager(
 		shader_,
 		renderer_,
 		shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"primary_texture")),
-		flake::shader::parameter::planar_texture::optional_value()),
+		sge::shader::parameter::planar_texture::optional_value()),
 	identifier_to_vertex_buffer_(),
 	identifier_to_texture_(),
 	model_loader_(
@@ -188,7 +188,7 @@ flake::volume::model::manager::render(
 		_context,
 		*vertex_declaration_);
 
-	flake::shader::scoped_pair scoped_shader(
+	sge::shader::scoped_pair scoped_shader(
 		_context,
 		shader_);
 

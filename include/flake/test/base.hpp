@@ -7,7 +7,7 @@
 #include <flake/notifications/object_fwd.hpp>
 #include <flake/notifications/text.hpp>
 #include <flake/postprocessing/context.hpp>
-#include <flake/shader/context_fwd.hpp>
+#include <sge/shader/context_fwd.hpp>
 #include <flake/test/feature_sequence.hpp>
 #include <flake/test/json_identifier.hpp>
 #include <flake/test/information/manager_fwd.hpp>
@@ -79,7 +79,7 @@ protected:
 	sge::renderer::device &
 	renderer();
 
-	flake::shader::context &
+	sge::shader::context &
 	shader_context();
 
 	sge::opencl::single_device_system::object &
@@ -143,7 +143,7 @@ private:
 	test::feature_sequence features_;
 	fcppt::scoped_ptr<sge::systems::instance> systems_;
 	fcppt::signal::scoped_connection quit_connection_;
-	fcppt::scoped_ptr<flake::shader::context> shader_context_;
+	fcppt::scoped_ptr<sge::shader::context> shader_context_;
 	fcppt::scoped_ptr<sge::opencl::single_device_system::object> opencl_system_;
 	fcppt::scoped_ptr<flakelib::cl::program_context> program_context_;
 	fcppt::scoped_ptr<flakelib::buffer_pool::object> buffer_pool_;

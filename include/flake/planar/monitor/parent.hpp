@@ -11,10 +11,10 @@
 #include <flake/planar/monitor/scaling_factor.hpp>
 #include <flake/planar/monitor/dummy_sprite/collection.hpp>
 #include <flake/planar/monitor/dummy_sprite/system.hpp>
-#include <flake/shader/context_fwd.hpp>
-#include <flake/shader/pair.hpp>
-#include <flake/shader/parameter/matrix.hpp>
-#include <flake/shader/parameter/vector.hpp>
+#include <sge/shader/context_fwd.hpp>
+#include <sge/shader/pair.hpp>
+#include <sge/shader/parameter/matrix.hpp>
+#include <sge/shader/parameter/vector.hpp>
 #include <sge/font/metrics_shared_ptr.hpp>
 #include <sge/font/text/drawer_3d.hpp>
 #include <sge/image/color/any/object_fwd.hpp>
@@ -59,7 +59,7 @@ FCPPT_NONCOPYABLE(
 public:
 	parent(
 		sge::renderer::device &,
-		flake::shader::context &,
+		sge::shader::context &,
 		sge::opencl::command_queue::object &,
 		sge::font::metrics_shared_ptr,
 		monitor::font_color const &);
@@ -70,7 +70,7 @@ public:
 	sge::opencl::context::object &
 	cl_context() const;
 
-	flake::shader::pair &
+	sge::shader::pair &
 	arrow_shader();
 
 	void
@@ -111,9 +111,9 @@ private:
 	sge::font::text::drawer_3d font_drawer_;
 	sge::renderer::vertex_declaration_scoped_ptr vd_;
 
-	flake::shader::pair arrow_shader_;
-	flake::shader::parameter::vector<sge::renderer::scalar,2> arrow_initial_position_parameter_;
-	flake::shader::parameter::matrix<sge::renderer::scalar,4,4> arrow_projection_parameter_;
+	sge::shader::pair arrow_shader_;
+	sge::shader::parameter::vector<sge::renderer::scalar,2> arrow_initial_position_parameter_;
+	sge::shader::parameter::matrix<sge::renderer::scalar,4,4> arrow_projection_parameter_;
 
 	monitor::dummy_sprite::system sprite_system_;
 	monitor::dummy_sprite::collection sprite_collection_;

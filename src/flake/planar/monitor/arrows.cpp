@@ -1,7 +1,7 @@
 #include <flake/planar/monitor/arrows.hpp>
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/dummy_sprite/parameters.hpp>
-#include <flake/shader/scoped_pair.hpp>
+#include <sge/shader/scoped_pair.hpp>
 #include <rucksack/axis_policy2.hpp>
 #include <sge/font/text/draw.hpp>
 #include <sge/font/text/flags_none.hpp>
@@ -289,7 +289,7 @@ flake::planar::monitor::arrows::render_arrows(
 	sge::renderer::context::object &_context,
 	monitor::optional_projection const &_projection)
 {
-	flake::shader::scoped_pair scoped_shader(
+	sge::shader::scoped_pair scoped_shader(
 		_context,
 		child::parent().arrow_shader());
 

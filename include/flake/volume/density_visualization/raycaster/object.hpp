@@ -1,11 +1,11 @@
 #ifndef FLAKE_VOLUME_DENSITY_VISUALIZATION_RAYCASTER_OBJECT_HPP_INCLUDED
 #define FLAKE_VOLUME_DENSITY_VISUALIZATION_RAYCASTER_OBJECT_HPP_INCLUDED
 
-#include <flake/shader/pair.hpp>
-#include <flake/shader/parameter/matrix.hpp>
-#include <flake/shader/parameter/planar_texture.hpp>
-#include <flake/shader/parameter/scalar.hpp>
-#include <flake/shader/parameter/vector.hpp>
+#include <sge/shader/pair.hpp>
+#include <sge/shader/parameter/matrix.hpp>
+#include <sge/shader/parameter/planar_texture.hpp>
+#include <sge/shader/parameter/scalar.hpp>
+#include <sge/shader/parameter/vector.hpp>
 #include <flake/volume/density_visualization/raycaster/debug_output.hpp>
 #include <flake/volume/density_visualization/raycaster/step_size.hpp>
 #include <flakelib/volume/float_view.hpp>
@@ -42,7 +42,7 @@ FCPPT_NONCOPYABLE(
 public:
 	object(
 		sge::renderer::device &,
-		flake::shader::context &,
+		sge::shader::context &,
 		sge::opencl::context::object &,
 		sge::camera::base const &,
 		sge::image2d::system &,
@@ -74,16 +74,16 @@ private:
 	sge::renderer::texture::planar_shared_ptr texture_;
 	sge::opencl::memory_object::image::planar cl_texture_;
 
-	flake::shader::pair shader_;
-	flake::shader::parameter::matrix<sge::renderer::scalar,4u,4u> mvp_parameter_;
-	flake::shader::parameter::scalar<sge::renderer::scalar> step_size_parameter_;
-	flake::shader::parameter::scalar<int> elements_per_row_parameter_;
-	flake::shader::parameter::scalar<sge::renderer::scalar> camera_is_inside_cube_parameter_;
-	flake::shader::parameter::scalar<sge::renderer::scalar> slice_width_vertex_parameter_;
-	flake::shader::parameter::scalar<int> slice_width_pixel_parameter_;
-	flake::shader::parameter::vector<sge::renderer::scalar,2> texture_size_parameter_;
-	flake::shader::parameter::vector<sge::renderer::scalar,3> camera_position_parameter_;
-	flake::shader::parameter::planar_texture loaded_texture_;
+	sge::shader::pair shader_;
+	sge::shader::parameter::matrix<sge::renderer::scalar,4u,4u> mvp_parameter_;
+	sge::shader::parameter::scalar<sge::renderer::scalar> step_size_parameter_;
+	sge::shader::parameter::scalar<int> elements_per_row_parameter_;
+	sge::shader::parameter::scalar<sge::renderer::scalar> camera_is_inside_cube_parameter_;
+	sge::shader::parameter::scalar<sge::renderer::scalar> slice_width_vertex_parameter_;
+	sge::shader::parameter::scalar<int> slice_width_pixel_parameter_;
+	sge::shader::parameter::vector<sge::renderer::scalar,2> texture_size_parameter_;
+	sge::shader::parameter::vector<sge::renderer::scalar,3> camera_position_parameter_;
+	sge::shader::parameter::planar_texture loaded_texture_;
 
 	bool
 	camera_is_inside_cube() const;

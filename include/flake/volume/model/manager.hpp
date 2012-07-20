@@ -1,14 +1,14 @@
 #ifndef FLAKE_VOLUME_MODEL_MANAGER_HPP_INCLUDED
 #define FLAKE_VOLUME_MODEL_MANAGER_HPP_INCLUDED
 
-#include <flake/shader/context_fwd.hpp>
-#include <flake/shader/pair.hpp>
-#include <flake/shader/pixel_profile.hpp>
-#include <flake/shader/vertex_profile.hpp>
-#include <flake/shader/parameter/matrix.hpp>
-#include <flake/shader/parameter/scalar.hpp>
-#include <flake/shader/parameter/planar_texture.hpp>
-#include <flake/shader/parameter/vector.hpp>
+#include <sge/shader/context_fwd.hpp>
+#include <sge/shader/pair.hpp>
+#include <sge/shader/pixel_profile.hpp>
+#include <sge/shader/vertex_profile.hpp>
+#include <sge/shader/parameter/matrix.hpp>
+#include <sge/shader/parameter/scalar.hpp>
+#include <sge/shader/parameter/planar_texture.hpp>
+#include <sge/shader/parameter/vector.hpp>
 #include <flake/volume/model/identifier.hpp>
 #include <flake/volume/model/fog_color.hpp>
 #include <flake/volume/model/fog_density.hpp>
@@ -42,7 +42,7 @@ FCPPT_NONCOPYABLE(
 public:
 	manager(
 		sge::renderer::device &,
-		flake::shader::context &,
+		sge::shader::context &,
 		sge::image2d::system &,
 		sge::camera::base &,
 		flake::volume::model::sun_direction const &,
@@ -85,13 +85,13 @@ private:
 	sge::camera::base &camera_;
 	sge::renderer::vertex_declaration_scoped_ptr vertex_declaration_;
 
-	flake::shader::pair shader_;
-	flake::shader::parameter::matrix<sge::renderer::scalar,4,4> mvp_parameter_;
-	flake::shader::parameter::matrix<sge::renderer::scalar,4,4> world_parameter_;
-	flake::shader::parameter::vector<sge::renderer::scalar,3> sun_direction_parameter_;
-	flake::shader::parameter::vector<sge::renderer::scalar,3> fog_color_parameter_;
-	flake::shader::parameter::scalar<sge::renderer::scalar> fog_density_parameter_;
-	flake::shader::parameter::planar_texture loaded_texture_;
+	sge::shader::pair shader_;
+	sge::shader::parameter::matrix<sge::renderer::scalar,4,4> mvp_parameter_;
+	sge::shader::parameter::matrix<sge::renderer::scalar,4,4> world_parameter_;
+	sge::shader::parameter::vector<sge::renderer::scalar,3> sun_direction_parameter_;
+	sge::shader::parameter::vector<sge::renderer::scalar,3> fog_color_parameter_;
+	sge::shader::parameter::scalar<sge::renderer::scalar> fog_density_parameter_;
+	sge::shader::parameter::planar_texture loaded_texture_;
 
 	vertex_buffer_map identifier_to_vertex_buffer_;
 	texture_map identifier_to_texture_;

@@ -1,5 +1,5 @@
 #include <flake/media_path_from_string.hpp>
-#include <flake/shader/load_edited_string.hpp>
+#include <sge/shader/load_edited_string.hpp>
 #include <flake/volume/snow_cover/object.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/matrix4.hpp>
@@ -10,7 +10,7 @@ flake::volume::snow_cover::object::object(
 	sge::camera::base &_camera,
 	sge::renderer::device &_renderer,
 	sge::renderer::vertex_declaration &_vertex_declaration,
-	flake::shader::context &_shader_context,
+	sge::shader::context &_shader_context,
 	flake::volume::snow_cover::texture_repeats const &_texture_repeats,
 	flake::volume::snow_cover::steep_texture const &_steep_texture,
 	flake::volume::snow_cover::flat_texture const &_flat_texture,
@@ -21,10 +21,10 @@ flake::volume::snow_cover::object::object(
 	shader_(
 		_shader_context,
 		_vertex_declaration,
-		flake::shader::vertex_program_path(
+		sge::shader::vertex_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/snow_cover.cg"))),
-		flake::shader::pixel_program_path(
+		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/snow_cover.cg")))),
 	steep_texture_(
@@ -35,37 +35,37 @@ flake::volume::snow_cover::object::object(
 		shader_,
 		_renderer,
 		shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"steep_texture")),
-		flake::shader::parameter::planar_texture::optional_value(
+		sge::shader::parameter::planar_texture::optional_value(
 			*steep_texture_)),
 	flat_texture_parameter_(
 		shader_,
 		_renderer,
 		shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"flat_texture")),
-		flake::shader::parameter::planar_texture::optional_value(
+		sge::shader::parameter::planar_texture::optional_value(
 			*flat_texture_)),
 	mvp_parameter_(
 		shader_.vertex_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"mvp")),
-		flake::shader::parameter::is_projection_matrix(
+		sge::shader::parameter::is_projection_matrix(
 			true),
 		sge::renderer::matrix4()),
 	texture_repeats_parameter_(
 		shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"texture_repeats")),
 		_texture_repeats.get()),
 	sun_direction_parameter_(
 		shader_.pixel_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"sun_direction")),
 		_sun_direction.get())

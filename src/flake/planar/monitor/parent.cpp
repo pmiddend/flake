@@ -37,7 +37,7 @@
 
 flake::planar::monitor::parent::parent(
 	sge::renderer::device &_renderer,
-	flake::shader::context &_shader_context,
+	sge::shader::context &_shader_context,
 	sge::opencl::command_queue::object &_command_queue,
 	sge::font::metrics_shared_ptr const _font_metrics,
 	monitor::font_color const &_font_color)
@@ -59,24 +59,24 @@ flake::planar::monitor::parent::parent(
 	arrow_shader_(
 		_shader_context,
 		*vd_,
-		flake::shader::vertex_program_path(
+		sge::shader::vertex_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/arrow.cg"))),
-		flake::shader::pixel_program_path(
+		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/arrow.cg")))),
 	arrow_initial_position_parameter_(
 		arrow_shader_.vertex_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"initial_position")),
 		sge::renderer::vector2()),
 	arrow_projection_parameter_(
 		arrow_shader_.vertex_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"projection")),
-		flake::shader::parameter::is_projection_matrix(
+		sge::shader::parameter::is_projection_matrix(
 			true),
 		sge::renderer::matrix4()),
 	sprite_system_(
@@ -99,7 +99,7 @@ flake::planar::monitor::parent::cl_context() const
 	return command_queue_.context();
 }
 
-flake::shader::pair &
+sge::shader::pair &
 flake::planar::monitor::parent::arrow_shader()
 {
 	return

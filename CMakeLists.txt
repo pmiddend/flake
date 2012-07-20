@@ -120,6 +120,7 @@ find_package(
 	media
 	core
 	sprite
+	shader
 	camera
 	texture
 	cg
