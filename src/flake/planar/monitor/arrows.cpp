@@ -1,7 +1,6 @@
 #include <flake/planar/monitor/arrows.hpp>
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/dummy_sprite/parameters.hpp>
-#include <sge/shader/scoped_pair.hpp>
 #include <rucksack/axis_policy2.hpp>
 #include <sge/font/text/draw.hpp>
 #include <sge/font/text/flags_none.hpp>
@@ -27,6 +26,7 @@
 #include <sge/renderer/projection/orthogonal_wh.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/vf/dynamic/part_index.hpp>
+#include <sge/shader/scoped_pair.hpp>
 #include <sge/sprite/parameters.hpp>
 #include <sge/sprite/projection_matrix.hpp>
 #include <sge/texture/part_raw.hpp>

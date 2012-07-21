@@ -1,16 +1,15 @@
 #include <flake/media_path_from_string.hpp>
-#include <sge/renderer/target/from_texture.hpp>
 #include <flake/postprocessing/context.hpp>
-#include <sge/shader/scoped_pair.hpp>
 #include <sge/renderer/color_surface.hpp>
 #include <sge/renderer/depth_stencil_surface.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/context/object.hpp>
 #include <sge/renderer/context/scoped.hpp>
+#include <sge/renderer/target/from_texture.hpp>
 #include <sge/renderer/target/offscreen.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/target/viewport.hpp>
@@ -25,6 +24,7 @@
 #include <sge/renderer/texture/filter/point.hpp>
 #include <sge/renderer/texture/filter/scoped.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
+#include <sge/shader/scoped_pair.hpp>
 #include <sge/viewport/manager.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/move.hpp>
@@ -197,7 +197,7 @@ flake::postprocessing::context::viewport_callback()
 				target_size / downsample_factor,
 				sge::image::color::format::r32f,
 				sge::renderer::texture::mipmap::off(),
-				sge::renderer::resource_flags::none,
+				sge::renderer::resource_flags_field::null(),
 				sge::renderer::texture::capabilities_field(
 					sge::renderer::texture::capabilities::render_target))));
 
@@ -207,7 +207,7 @@ flake::postprocessing::context::viewport_callback()
 				target_size / downsample_factor,
 				sge::image::color::format::r32f,
 				sge::renderer::texture::mipmap::off(),
-				sge::renderer::resource_flags::none,
+				sge::renderer::resource_flags_field::null(),
 				sge::renderer::texture::capabilities_field(
 					sge::renderer::texture::capabilities::render_target))));
 
@@ -217,7 +217,7 @@ flake::postprocessing::context::viewport_callback()
 				target_size,
 				sge::image::color::format::rgba32f,
 				sge::renderer::texture::mipmap::off(),
-				sge::renderer::resource_flags::none,
+				sge::renderer::resource_flags_field::null(),
 				sge::renderer::texture::capabilities_field(
 					sge::renderer::texture::capabilities::render_target))));
 

@@ -1,6 +1,4 @@
 #include <flake/media_path_from_string.hpp>
-#include <sge/shader/load_edited_string.hpp>
-#include <sge/shader/scoped_pair.hpp>
 #include <flake/volume/flakes/manager.hpp>
 #include <flake/volume/flakes/vf/format.hpp>
 #include <flake/volume/flakes/vf/position_part.hpp>
@@ -9,7 +7,7 @@
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration_and_buffers.hpp>
 #include <sge/renderer/scoped_vertex_lock.hpp>
@@ -31,6 +29,8 @@
 #include <sge/renderer/vf/view.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
+#include <sge/shader/load_edited_string.hpp>
+#include <sge/shader/scoped_pair.hpp>
 #include <fcppt/cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
@@ -80,7 +80,7 @@ flake::volume::flakes::manager::manager(
 			>(),
 			sge::renderer::vertex_count(
 				_flake_count.get()),
-			sge::renderer::resource_flags::none)),
+			sge::renderer::resource_flags_field::null())),
 	texcoords_buffer_(
 		renderer_.create_vertex_buffer(
 			*vertex_declaration_,
@@ -91,7 +91,7 @@ flake::volume::flakes::manager::manager(
 			>(),
 			sge::renderer::vertex_count(
 				_flake_count.get()),
-			sge::renderer::resource_flags::none)),
+			sge::renderer::resource_flags_field::null())),
 	point_sizes_buffer_(
 		renderer_.create_vertex_buffer(
 			*vertex_declaration_,
@@ -102,7 +102,7 @@ flake::volume::flakes::manager::manager(
 			>(),
 			sge::renderer::vertex_count(
 				_flake_count.get()),
-			sge::renderer::resource_flags::none)),
+			sge::renderer::resource_flags_field::null())),
 	tile_size_(
 		_tile_size),
 	shader_(
@@ -150,7 +150,7 @@ flake::volume::flakes::manager::manager(
 			renderer_,
 			_image_system,
 			sge::renderer::texture::mipmap::off(),
-			sge::renderer::resource_flags::none)),
+			sge::renderer::resource_flags_field::null())),
 	loaded_texture_(
 		shader_,
 		renderer_,

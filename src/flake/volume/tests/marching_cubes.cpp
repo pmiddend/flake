@@ -19,7 +19,7 @@
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/clear/parameters.hpp>
 #include <sge/renderer/context/object.hpp>
 #include <sge/renderer/state/color.hpp>
@@ -184,7 +184,7 @@ flake::volume::tests::marching_cubes::marching_cubes(
 					this->image_system(),
 					sge::renderer::texture::mipmap::all_levels(
 						sge::renderer::texture::mipmap::auto_generate::yes),
-					sge::renderer::resource_flags::none))),
+					sge::renderer::resource_flags_field::null()))),
 		flake::volume::snow_cover::flat_texture(
 			sge::renderer::texture::planar_shared_ptr(
 				sge::renderer::texture::create_planar_from_path(
@@ -199,7 +199,7 @@ flake::volume::tests::marching_cubes::marching_cubes(
 					this->image_system(),
 					sge::renderer::texture::mipmap::all_levels(
 						sge::renderer::texture::mipmap::auto_generate::yes),
-					sge::renderer::resource_flags::none))),
+					sge::renderer::resource_flags_field::null()))),
 		flake::volume::snow_cover::sun_direction(
 			sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
 				this->configuration(),

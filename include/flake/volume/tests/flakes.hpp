@@ -4,26 +4,25 @@
 #include <flake/skydome/object.hpp>
 #include <flake/test/base.hpp>
 #include <flake/test/information/object.hpp>
-#include <flakelib/marching_cubes/cpu/object.hpp>
-#include <sge/opencl/memory_object/buffer.hpp>
-#include <flake/volume/flakes/snow_density_view.hpp>
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/object.hpp>
 #include <flake/volume/flakes/manager.hpp>
 #include <flake/volume/flakes/mover.hpp>
-#include <flake/volume/snow_cover/parallel_update.hpp>
+#include <flake/volume/flakes/snow_density_view.hpp>
 #include <flake/volume/model/manager.hpp>
 #include <flake/volume/model/object.hpp>
 #include <flake/volume/obstacles/manager.hpp>
 #include <flake/volume/snow_cover/object.hpp>
-	//#include <flakelib/marching_cubes/gpu/manager.hpp>
-	//#include <flakelib/marching_cubes/gpu/object.hpp>
-	//#include <flakelib/marching_cubes/gpu/vertex_count.hpp>
-	//#include <flakelib/scan/object.hpp>
+#include <flake/volume/snow_cover/parallel_update.hpp>
+#include <flakelib/marching_cubes/cpu/object.hpp>
+#include <flakelib/marching_cubes/gpu/manager.hpp>
+#include <flakelib/marching_cubes/gpu/object.hpp>
+#include <flakelib/marching_cubes/gpu/vertex_count.hpp>
+#include <flakelib/scan/object.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/value_modulator/object.hpp>
-//#include <flakelib/volume/gradient.hpp>
+#include <flakelib/volume/gradient.hpp>
 #include <flakelib/volume/grid_size.hpp>
 #include <flakelib/volume/unique_float4_buffer_lock.hpp>
 #include <flakelib/volume/unique_float_buffer_lock.hpp>
@@ -38,6 +37,7 @@
 #include <sge/camera/first_person/object.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>
 #include <sge/opencl/dim3.hpp>
+#include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
 #include <awl/main/exit_code.hpp>

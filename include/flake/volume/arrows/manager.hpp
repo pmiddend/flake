@@ -1,10 +1,6 @@
 #ifndef FLAKE_VOLUME_ARROWS_MANAGER_HPP_INCLUDED
 #define FLAKE_VOLUME_ARROWS_MANAGER_HPP_INCLUDED
 
-#include <sge/shader/context_fwd.hpp>
-#include <sge/shader/pair.hpp>
-#include <sge/shader/parameter/matrix.hpp>
-#include <sge/shader/parameter/vector.hpp>
 #include <flake/volume/arrows/object.hpp>
 #include <sge/camera/base_fwd.hpp>
 #include <sge/renderer/device_fwd.hpp>
@@ -12,6 +8,10 @@
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
+#include <sge/shader/context_fwd.hpp>
+#include <sge/shader/pair.hpp>
+#include <sge/shader/parameter/matrix.hpp>
+#include <sge/shader/parameter/vector.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/intrusive/list.hpp>

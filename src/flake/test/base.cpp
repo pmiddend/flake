@@ -1,7 +1,6 @@
 #include <flake/font_metrics_cache.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/notifications/object.hpp>
-#include <sge/shader/context.hpp>
 #include <flake/test/base.hpp>
 #include <flake/test/update_features_from_json.hpp>
 #include <flake/test/information/manager.hpp>
@@ -28,11 +27,12 @@
 #include <sge/parse/json/parse_string_exn.hpp>
 #include <sge/parse/json/string_to_path.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/no_multi_sampling.hpp>
-#include <sge/renderer/parameters.hpp>
+#include <sge/renderer/parameters/object.hpp>
+#include <sge/renderer/pixel_format/object.hpp>
 #include <sge/renderer/context/scoped.hpp>
 #include <sge/renderer/context/scoped_scoped_ptr.hpp>
 #include <sge/renderer/target/onscreen.hpp>
+#include <sge/shader/context.hpp>
 #include <sge/systems/font.hpp>
 #include <sge/systems/image2d.hpp>
 #include <sge/systems/input.hpp>
@@ -64,6 +64,7 @@
 #include <fcppt/io/cerr.hpp>
 #include <fcppt/log/headers.hpp>
 #include <fcppt/log/location.hpp>
+#include <fcppt/optional_impl.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/signal/connection.hpp>
 #include <fcppt/tr1/functional.hpp>
@@ -184,12 +185,14 @@ flake::test::base::base(
 									sge::parse::json::string_to_path(
 										FCPPT_TEXT("tests/window-size"))))).dont_show())
 						(sge::systems::renderer(
-							sge::renderer::parameters(
-								sge::renderer::windowed(
-									sge::renderer::bit_depth::depth32),
-								sge::renderer::depth_stencil_buffer::off,
-								sge::renderer::vsync::on,
-								sge::renderer::no_multi_sampling),
+							sge::renderer::parameters::object(
+								sge::renderer::pixel_format::object(
+									sge::renderer::pixel_format::color::depth32,
+									sge::renderer::pixel_format::depth_stencil::off,
+									sge::renderer::pixel_format::optional_multi_samples(),
+									sge::renderer::pixel_format::srgb::no),
+								sge::renderer::parameters::vsync::on,
+								sge::renderer::display_mode::optional_object()),
 							sge::viewport::fill_on_resize())
 						 	.caps(
 								sge::renderer::caps::system_field(

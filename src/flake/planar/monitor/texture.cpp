@@ -9,7 +9,7 @@
 #include <sge/font/text/size.hpp>
 #include <sge/opencl/memory_object/flags_field.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_transform.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/texture/planar.hpp>
@@ -95,8 +95,7 @@ flake::planar::monitor::texture::texture(
 					_grid_dimensions.get()),
 				sge::image::color::format::rgba32f,
 				sge::renderer::texture::mipmap::off(),
-				sge::renderer::resource_flags_field(
-					sge::renderer::resource_flags::none),
+				sge::renderer::resource_flags_field::null(),
 				sge::renderer::texture::capabilities_field::null()))),
 	cl_texture_(
 		child::parent().cl_context(),

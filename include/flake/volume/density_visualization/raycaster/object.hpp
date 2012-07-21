@@ -1,11 +1,6 @@
 #ifndef FLAKE_VOLUME_DENSITY_VISUALIZATION_RAYCASTER_OBJECT_HPP_INCLUDED
 #define FLAKE_VOLUME_DENSITY_VISUALIZATION_RAYCASTER_OBJECT_HPP_INCLUDED
 
-#include <sge/shader/pair.hpp>
-#include <sge/shader/parameter/matrix.hpp>
-#include <sge/shader/parameter/planar_texture.hpp>
-#include <sge/shader/parameter/scalar.hpp>
-#include <sge/shader/parameter/vector.hpp>
 #include <flake/volume/density_visualization/raycaster/debug_output.hpp>
 #include <flake/volume/density_visualization/raycaster/step_size.hpp>
 #include <flakelib/volume/float_view.hpp>
@@ -24,6 +19,11 @@
 #include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
 #include <sge/renderer/texture/planar_shared_ptr.hpp>
+#include <sge/shader/pair.hpp>
+#include <sge/shader/parameter/matrix.hpp>
+#include <sge/shader/parameter/planar_texture.hpp>
+#include <sge/shader/parameter/scalar.hpp>
+#include <sge/shader/parameter/vector.hpp>
 #include <fcppt/noncopyable.hpp>
 
 

@@ -251,11 +251,6 @@ set(
 	src/flake/postprocessing/context.cpp
 	src/flake/postprocessing/fullscreen_quad.cpp
 	src/flake/save_l8_texture_to_file.cpp
-	src/flake/shader/context.cpp
-	src/flake/shader/load_edited_string.cpp
-	src/flake/shader/pair.cpp
-	src/flake/shader/parameter/planar_texture.cpp
-	src/flake/shader/scoped_pair.cpp
 	src/flake/skydome/object.cpp
 	src/flake/test/base.cpp
 	src/flake/test/feature.cpp

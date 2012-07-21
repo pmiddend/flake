@@ -21,7 +21,7 @@
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/clear/parameters.hpp>
 #include <sge/renderer/context/object.hpp>
 #include <sge/renderer/texture/create_planar_from_view.hpp>
@@ -136,7 +136,7 @@ flake::planar::tests::vorticity::vorticity(
 			boundary_image_file_->view(),
 			sge::renderer::texture::mipmap::off(),
 			sge::renderer::resource_flags_field(
-				sge::renderer::resource_flags::none))),
+				sge::renderer::resource_flags_field::null()))),
 	monitor_parent_(
 		this->renderer(),
 		this->shader_context(),

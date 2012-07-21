@@ -1,5 +1,4 @@
 #include <flake/media_path_from_string.hpp>
-#include <sge/shader/scoped_pair.hpp>
 #include <flake/volume/model/manager.hpp>
 #include <flake/volume/model/vf/format.hpp>
 #include <flake/volume/model/vf/from_obj_map.hpp>
@@ -11,7 +10,7 @@
 #include <sge/model/obj/loader.hpp>
 #include <sge/model/obj/vb_converter/convert.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
@@ -25,6 +24,7 @@
 #include <sge/renderer/texture/scoped.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
+#include <sge/shader/scoped_pair.hpp>
 #include <fcppt/cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/optional.hpp>
@@ -147,7 +147,7 @@ flake::volume::model::manager::manager(
 			>(
 				renderer_,
 				*vertex_declaration_,
-				sge::renderer::resource_flags::none,
+				sge::renderer::resource_flags_field::null(),
 				*(model_loader_->load(
 					*current_file))));
 
@@ -171,7 +171,7 @@ flake::volume::model::manager::manager(
 				renderer_,
 				_image_system,
 				sge::renderer::texture::mipmap::off(),
-				sge::renderer::resource_flags::none));
+				sge::renderer::resource_flags_field::null()));
 	}
 }
 

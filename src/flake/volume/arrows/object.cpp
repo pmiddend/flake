@@ -5,7 +5,7 @@
 #include <flakelib/buffer/volume_view_impl.hpp>
 #include <flakelib/volume/conversion/object.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/context/object.hpp>
@@ -42,7 +42,7 @@ flake::volume::arrows::object::object(
 			>(),
 			sge::renderer::vertex_count(
 				_grid_size.get().content() * 2u),
-			sge::renderer::resource_flags::none)),
+			sge::renderer::resource_flags_field::null())),
 	gl_buffer_(
 		_context,
 		*vb_,

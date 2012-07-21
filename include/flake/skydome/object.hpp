@@ -1,10 +1,6 @@
 #ifndef FLAKE_SKYDOME_OBJECT_HPP_INCLUDED
 #define FLAKE_SKYDOME_OBJECT_HPP_INCLUDED
 
-#include <sge/shader/context_fwd.hpp>
-#include <sge/shader/pair.hpp>
-#include <sge/shader/parameter/matrix.hpp>
-#include <sge/shader/parameter/planar_texture.hpp>
 #include <flake/skydome/latitude.hpp>
 #include <flake/skydome/longitude.hpp>
 #include <flake/skydome/texture_path.hpp>
@@ -18,6 +14,10 @@
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
 #include <sge/renderer/texture/planar_scoped_ptr.hpp>
+#include <sge/shader/context_fwd.hpp>
+#include <sge/shader/pair.hpp>
+#include <sge/shader/parameter/matrix.hpp>
+#include <sge/shader/parameter/planar_texture.hpp>
 #include <fcppt/noncopyable.hpp>
 
 

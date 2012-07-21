@@ -20,7 +20,6 @@
 #include <sge/parse/json/parse_string_exn.hpp>
 #include <sge/parse/json/string_to_path.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
 #include <sge/renderer/state/color.hpp>
 #include <sge/renderer/state/draw_mode.hpp>
 #include <sge/renderer/state/float.hpp>

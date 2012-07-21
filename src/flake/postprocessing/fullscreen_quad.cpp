@@ -2,7 +2,7 @@
 #include <flake/postprocessing/vf/format.hpp>
 #include <flake/postprocessing/vf/format_part.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/scoped_vertex_lock.hpp>
@@ -35,7 +35,7 @@ flake::postprocessing::fullscreen_quad::fullscreen_quad(
 			>(),
 			sge::renderer::vertex_count(
 				4u),
-			sge::renderer::resource_flags::none))
+			sge::renderer::resource_flags_field::null()))
 {
 	sge::renderer::scoped_vertex_lock vblock(
 		*vertex_buffer_,

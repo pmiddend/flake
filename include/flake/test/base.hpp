@@ -7,7 +7,6 @@
 #include <flake/notifications/object_fwd.hpp>
 #include <flake/notifications/text.hpp>
 #include <flake/postprocessing/context.hpp>
-#include <sge/shader/context_fwd.hpp>
 #include <flake/test/feature_sequence.hpp>
 #include <flake/test/json_identifier.hpp>
 #include <flake/test/information/manager_fwd.hpp>
@@ -28,6 +27,7 @@
 #include <sge/parse/json/object.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
+#include <sge/shader/context_fwd.hpp>
 #include <sge/systems/cursor_option_field.hpp>
 #include <sge/systems/instance_fwd.hpp>
 #include <sge/viewport/manager_fwd.hpp>

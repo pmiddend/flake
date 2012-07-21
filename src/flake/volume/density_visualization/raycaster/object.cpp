@@ -1,5 +1,4 @@
 #include <flake/media_path_from_string.hpp>
-#include <sge/shader/scoped_pair.hpp>
 #include <flake/volume/density_visualization/raycaster/object.hpp>
 #include <flake/volume/density_visualization/raycaster/vf/format.hpp>
 #include <flake/volume/density_visualization/raycaster/vf/format_part.hpp>
@@ -16,7 +15,7 @@
 #include <sge/image2d/view/object.hpp>
 #include <sge/image2d/view/to_const.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/scoped_vertex_lock.hpp>
@@ -44,6 +43,7 @@
 #include <sge/renderer/vf/view.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
+#include <sge/shader/scoped_pair.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/contains_point.hpp>
@@ -91,7 +91,7 @@ flake::volume::density_visualization::raycaster::object::object(
 			>(),
 			sge::renderer::vertex_count(
 				36u),
-			sge::renderer::resource_flags::none)),
+			sge::renderer::resource_flags_field::null())),
 	texture_(
 		renderer_.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
@@ -101,7 +101,7 @@ flake::volume::density_visualization::raycaster::object::object(
 				sge::image::color::format::r32f,
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags_field(
-			//		sge::renderer::resource_flags::none),
+			//		sge::renderer::resource_flags_field::null()),
 					sge::renderer::resource_flags::readable),
 				sge::renderer::texture::capabilities_field::null()))),
 	cl_texture_(

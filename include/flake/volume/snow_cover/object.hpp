@@ -1,12 +1,6 @@
 #ifndef FLAKE_VOLUME_SNOW_COVER_OBJECT_HPP_INCLUDED
 #define FLAKE_VOLUME_SNOW_COVER_OBJECT_HPP_INCLUDED
 
-#include <sge/shader/context.hpp>
-#include <sge/shader/pair.hpp>
-#include <sge/shader/parameter/matrix.hpp>
-#include <sge/shader/parameter/planar_texture.hpp>
-#include <sge/shader/parameter/scalar.hpp>
-#include <sge/shader/parameter/vector.hpp>
 #include <flake/volume/snow_cover/flat_texture.hpp>
 #include <flake/volume/snow_cover/scoped_fwd.hpp>
 #include <flake/volume/snow_cover/steep_texture.hpp>
@@ -17,6 +11,12 @@
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
 #include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
+#include <sge/shader/context.hpp>
+#include <sge/shader/pair.hpp>
+#include <sge/shader/parameter/matrix.hpp>
+#include <sge/shader/parameter/planar_texture.hpp>
+#include <sge/shader/parameter/scalar.hpp>
+#include <sge/shader/parameter/vector.hpp>
 #include <fcppt/noncopyable.hpp>
 
 

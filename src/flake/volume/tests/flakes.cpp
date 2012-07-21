@@ -1,6 +1,5 @@
 #include <flake/catch_statements.hpp>
 #include <flake/media_path_from_string.hpp>
-#include <fcppt/math/dim/structure_cast.hpp>
 #include <flake/test/information/string_conversion_adapter.hpp>
 #include <flake/volume/snow_cover/scoped.hpp>
 #include <flake/volume/tests/flakes.hpp>
@@ -17,7 +16,7 @@
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/clear/parameters.hpp>
 #include <sge/renderer/context/object.hpp>
 #include <sge/renderer/state/color.hpp>
@@ -42,11 +41,13 @@
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/deg_to_rad.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
+#include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/tr1/functional.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/chrono.hpp>
 #include <fcppt/config/external_end.hpp>
+
 
 awl::main::exit_code const
 custom_main(
@@ -412,7 +413,7 @@ flake::volume::tests::flakes::flakes(
 					this->image_system(),
 					sge::renderer::texture::mipmap::all_levels(
 						sge::renderer::texture::mipmap::auto_generate::yes),
-					sge::renderer::resource_flags::none))),
+					sge::renderer::resource_flags_field::null()))),
 		flake::volume::snow_cover::flat_texture(
 			sge::renderer::texture::planar_shared_ptr(
 				sge::renderer::texture::create_planar_from_path(
@@ -427,7 +428,7 @@ flake::volume::tests::flakes::flakes(
 					this->image_system(),
 					sge::renderer::texture::mipmap::all_levels(
 						sge::renderer::texture::mipmap::auto_generate::yes),
-					sge::renderer::resource_flags::none))),
+					sge::renderer::resource_flags_field::null()))),
 		flake::volume::snow_cover::sun_direction(
 			sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
 				this->configuration(),

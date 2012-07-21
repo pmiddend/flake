@@ -1,5 +1,5 @@
 #include <flake/media_path_from_string.hpp>
-#include <flake/shader/scoped_pair.hpp>
+#include <sge/shader/scoped_pair.hpp>
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/vf/format.hpp>
 #include <sge/camera/base.hpp>
@@ -22,7 +22,7 @@
 
 flake::volume::arrows::manager::manager(
 	sge::renderer::device &_renderer,
-	flake::shader::context &_shader_context,
+	sge::shader::context &_shader_context,
 	sge::camera::base &_camera)
 :
 	renderer_(
@@ -35,23 +35,23 @@ flake::volume::arrows::manager::manager(
 	shader_(
 		_shader_context,
 		*vertex_declaration_,
-		flake::shader::vertex_program_path(
+		sge::shader::vertex_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/volume_arrow.cg"))),
-		flake::shader::pixel_program_path(
+		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("shaders/volume_arrow.cg")))),
 	mvp_parameter_(
 		shader_.vertex_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"mvp")),
-		flake::shader::parameter::is_projection_matrix(
+		sge::shader::parameter::is_projection_matrix(
 			true),
 		sge::renderer::matrix4()),
 	camera_position_parameter_(
 		shader_.vertex_program(),
-		flake::shader::parameter::name(
+		sge::shader::parameter::name(
 			sge::cg::string(
 				"camera_position")),
 		sge::renderer::vector3()),
@@ -82,7 +82,7 @@ flake::volume::arrows::manager::render(
 			camera_.coordinate_system(),
 			camera_.projection_matrix()));
 
-	flake::shader::scoped_pair scoped_shader(
+	sge::shader::scoped_pair scoped_shader(
 		_context,
 		shader_);
 

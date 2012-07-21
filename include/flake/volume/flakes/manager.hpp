@@ -1,12 +1,6 @@
 #ifndef FLAKE_VOLUME_FLAKES_MANAGER_HPP_INCLUDED
 #define FLAKE_VOLUME_FLAKES_MANAGER_HPP_INCLUDED
 
-#include <sge/shader/context_fwd.hpp>
-#include <sge/shader/pair.hpp>
-#include <sge/shader/parameter/matrix.hpp>
-#include <sge/shader/parameter/planar_texture.hpp>
-#include <sge/shader/parameter/scalar.hpp>
-#include <sge/shader/parameter/vector.hpp>
 #include <flake/volume/flakes/count.hpp>
 #include <flake/volume/flakes/maximum_size.hpp>
 #include <flake/volume/flakes/minimum_size.hpp>
@@ -25,6 +19,12 @@
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
 #include <sge/renderer/texture/planar_scoped_ptr.hpp>
+#include <sge/shader/context_fwd.hpp>
+#include <sge/shader/pair.hpp>
+#include <sge/shader/parameter/matrix.hpp>
+#include <sge/shader/parameter/planar_texture.hpp>
+#include <sge/shader/parameter/scalar.hpp>
+#include <sge/shader/parameter/vector.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
 

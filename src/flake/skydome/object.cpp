@@ -1,7 +1,4 @@
 #include <flake/media_path_from_string.hpp>
-#include <sge/renderer/texture/set_address_mode2.hpp>
-#include <sge/renderer/texture/address_mode2.hpp>
-#include <sge/shader/scoped_pair.hpp>
 #include <flake/skydome/index_format.hpp>
 #include <flake/skydome/object.hpp>
 #include <flake/skydome/vf/format.hpp>
@@ -12,7 +9,7 @@
 #include <sge/camera/matrix_conversion/world.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/index_buffer.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scalar.hpp>
 #include <sge/renderer/scoped_index_lock.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
@@ -28,15 +25,18 @@
 #include <sge/renderer/state/depth_func.hpp>
 #include <sge/renderer/state/list.hpp>
 #include <sge/renderer/state/scoped.hpp>
+#include <sge/renderer/texture/address_mode2.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/planar_scoped_ptr.hpp>
+#include <sge/renderer/texture/set_address_mode2.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/renderer/vf/iterator.hpp>
 #include <sge/renderer/vf/vertex.hpp>
 #include <sge/renderer/vf/view.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
+#include <sge/shader/scoped_pair.hpp>
 #include <fcppt/math/pi.hpp>
 #include <fcppt/math/twopi.hpp>
 #include <fcppt/math/matrix/arithmetic.hpp>
@@ -94,7 +94,7 @@ flake::skydome::object::object(
 			>(),
 			sge::renderer::vertex_count(
 				1u + _latitude.get() * _longitude.get()),
-			sge::renderer::resource_flags::none)),
+			sge::renderer::resource_flags_field::null())),
 	index_buffer_(
 		renderer_.create_index_buffer(
 			sge::renderer::index::dynamic::make_format<flake::skydome::index_format>(),
@@ -107,14 +107,14 @@ flake::skydome::object::object(
 				(_latitude.get()-1) * _longitude.get() * 2u * 3u +
 				// the triangles
 				_longitude.get() * 3u),
-			sge::renderer::resource_flags::none)),
+			sge::renderer::resource_flags_field::null())),
 	texture_(
 		sge::renderer::texture::create_planar_from_path(
 			_texture_path.get(),
 			renderer_,
 			_image_system,
 			sge::renderer::texture::mipmap::off(),
-			sge::renderer::resource_flags::none)),
+			sge::renderer::resource_flags_field::null())),
 	shader_(
 		_shader_context,
 		*vertex_declaration_,

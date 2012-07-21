@@ -11,10 +11,6 @@
 #include <flake/planar/monitor/scaling_factor.hpp>
 #include <flake/planar/monitor/dummy_sprite/collection.hpp>
 #include <flake/planar/monitor/dummy_sprite/system.hpp>
-#include <sge/shader/context_fwd.hpp>
-#include <sge/shader/pair.hpp>
-#include <sge/shader/parameter/matrix.hpp>
-#include <sge/shader/parameter/vector.hpp>
 #include <sge/font/metrics_shared_ptr.hpp>
 #include <sge/font/text/drawer_3d.hpp>
 #include <sge/image/color/any/object_fwd.hpp>
@@ -28,6 +24,10 @@
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
+#include <sge/shader/context_fwd.hpp>
+#include <sge/shader/pair.hpp>
+#include <sge/shader/parameter/matrix.hpp>
+#include <sge/shader/parameter/vector.hpp>
 #include <fcppt/noncopyable.hpp>
 
 

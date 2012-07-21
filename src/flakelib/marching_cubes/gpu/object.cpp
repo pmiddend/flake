@@ -11,7 +11,7 @@
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/memory_object/scoped_objects.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/context/object.hpp>
@@ -274,7 +274,7 @@ flakelib::marching_cubes::gpu::object::resize_gl_buffers()
 				flakelib::marching_cubes::vf::position_part
 			>(),
 			real_vertex_count,
-			sge::renderer::resource_flags::none));
+			sge::renderer::resource_flags_field::null()));
 
 	normals_buffer_.take(
 		manager_.renderer().create_vertex_buffer(
@@ -285,7 +285,7 @@ flakelib::marching_cubes::gpu::object::resize_gl_buffers()
 				flakelib::marching_cubes::vf::normal_part
 			>(),
 			real_vertex_count,
-			sge::renderer::resource_flags::none));
+			sge::renderer::resource_flags_field::null()));
 
 	positions_buffer_cl_.take(
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(

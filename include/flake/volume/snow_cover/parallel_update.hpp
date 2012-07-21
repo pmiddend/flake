@@ -1,9 +1,9 @@
 #ifndef FLAKE_VOLUME_SNOW_COVER_PARALLEL_UPDATE_HPP_INCLUDED
 #define FLAKE_VOLUME_SNOW_COVER_PARALLEL_UPDATE_HPP_INCLUDED
 
+#include <flake/volume/flakes/snow_density_view.hpp>
 #include <flakelib/buffer/volume_view_impl.hpp>
 #include <flakelib/marching_cubes/cpu/object_fwd.hpp>
-#include <flake/volume/flakes/snow_density_view.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>

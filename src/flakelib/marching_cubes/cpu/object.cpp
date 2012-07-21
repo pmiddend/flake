@@ -8,7 +8,7 @@
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/index_buffer.hpp>
-#include <sge/renderer/resource_flags_none.hpp>
+#include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_index_lock.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
@@ -206,7 +206,7 @@ flakelib::marching_cubes::cpu::object::fill_vertex_buffer()
 			sge::renderer::vertex_count(
 				static_cast<sge::renderer::size_type>(
 					implementation_->nverts())),
-			sge::renderer::resource_flags::none));
+			sge::renderer::resource_flags_field::null()));
 
 	sge::renderer::scoped_vertex_lock vblock(
 		*vertex_buffer_,
@@ -262,7 +262,7 @@ flakelib::marching_cubes::cpu::object::fill_index_buffer()
 				static_cast<sge::renderer::size_type>(
 					implementation_->ntrigs()) *
 				3u),
-			sge::renderer::resource_flags::none));
+			sge::renderer::resource_flags_field::null()));
 
 	sge::renderer::scoped_index_lock const iblock(
 		*index_buffer_,

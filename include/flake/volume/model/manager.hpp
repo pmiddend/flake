@@ -1,17 +1,9 @@
 #ifndef FLAKE_VOLUME_MODEL_MANAGER_HPP_INCLUDED
 #define FLAKE_VOLUME_MODEL_MANAGER_HPP_INCLUDED
 
-#include <sge/shader/context_fwd.hpp>
-#include <sge/shader/pair.hpp>
-#include <sge/shader/pixel_profile.hpp>
-#include <sge/shader/vertex_profile.hpp>
-#include <sge/shader/parameter/matrix.hpp>
-#include <sge/shader/parameter/scalar.hpp>
-#include <sge/shader/parameter/planar_texture.hpp>
-#include <sge/shader/parameter/vector.hpp>
-#include <flake/volume/model/identifier.hpp>
 #include <flake/volume/model/fog_color.hpp>
 #include <flake/volume/model/fog_density.hpp>
+#include <flake/volume/model/identifier.hpp>
 #include <flake/volume/model/object.hpp>
 #include <flake/volume/model/sun_direction.hpp>
 #include <sge/camera/base_fwd.hpp>
@@ -22,6 +14,14 @@
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
 #include <sge/renderer/texture/planar.hpp>
+#include <sge/shader/context_fwd.hpp>
+#include <sge/shader/pair.hpp>
+#include <sge/shader/pixel_profile.hpp>
+#include <sge/shader/vertex_profile.hpp>
+#include <sge/shader/parameter/matrix.hpp>
+#include <sge/shader/parameter/planar_texture.hpp>
+#include <sge/shader/parameter/scalar.hpp>
+#include <sge/shader/parameter/vector.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/intrusive/list.hpp>
