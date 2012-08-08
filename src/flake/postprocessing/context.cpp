@@ -1,6 +1,5 @@
 #include <flake/media_path_from_string.hpp>
 #include <flake/postprocessing/context.hpp>
-#include <sge/renderer/color_surface.hpp>
 #include <sge/renderer/depth_stencil_surface.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
@@ -134,6 +133,7 @@ flake::postprocessing::context::context(
 				this))),
 	rendering_result_texture_(),
 	offscreen_target_(),
+	depth_stencil_surface_(),
 	offscreen_downsampled_target_(),
 	downsampled_texture_0_(),
 	downsampled_texture_1_()
@@ -237,11 +237,14 @@ flake::postprocessing::context::viewport_callback()
 			renderer_,
 			*downsampled_texture_0_));
 
+	depth_stencil_surface_.take(
+		renderer_.create_depth_stencil_surface(
+			target_size,
+			sge::renderer::depth_stencil_format::d32));
+
 	offscreen_target_->depth_stencil_surface(
-		sge::renderer::depth_stencil_surface_shared_ptr(
-			renderer_.create_depth_stencil_surface(
-				target_size,
-				sge::renderer::depth_stencil_format::d32)));
+		sge::renderer::optional_depth_stencil_surface_ref(
+			*depth_stencil_surface_));
 }
 
 void
@@ -249,8 +252,8 @@ flake::postprocessing::context::switch_downsampled_target_texture(
 	sge::renderer::texture::planar &_new_texture)
 {
 	offscreen_downsampled_target_->color_surface(
-		sge::renderer::color_surface_shared_ptr(
-			_new_texture.surface(
+		sge::renderer::color_buffer::optional_surface_ref(
+			_new_texture.level(
 				sge::renderer::texture::mipmap::level(
 					0u))),
 		sge::renderer::target::surface_index(
@@ -269,8 +272,8 @@ flake::postprocessing::context::switch_target_texture(
 	sge::renderer::texture::planar &_new_texture)
 {
 	offscreen_target_->color_surface(
-		sge::renderer::color_surface_shared_ptr(
-			_new_texture.surface(
+		sge::renderer::color_buffer::optional_surface_ref(
+			_new_texture.level(
 				sge::renderer::texture::mipmap::level(
 					0u))),
 		sge::renderer::target::surface_index(

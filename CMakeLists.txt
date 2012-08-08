@@ -53,15 +53,6 @@ add_definitions(
 	${Fcppt_DEFINITIONS})
 # fcppt end
 
-# rucksack begin
-find_package(
-	Rucksack REQUIRED)
-include_directories(
-	${Rucksack_INCLUDE_DIR})
-add_definitions(
-	${Rucksack_DEFINITIONS})
-# rucksack end
-
 # cg begin
 find_package(
 	Cg REQUIRED)
@@ -125,11 +116,11 @@ find_package(
 	texture
 	cg
 	renderercg
+	rucksack
 	image3d
 	modelobj
-	console
 	font
-	fonttext
+	fontdraw
 	parse
 	systems
 	window
@@ -236,7 +227,6 @@ set(
 	FLAKE_FILES
 	src/flake/basic_scoped_ostream_file_redirection.cpp
 	src/flake/exception.cpp
-	src/flake/font_metrics_cache.cpp
 	src/flake/media_path.cpp
 	src/flake/media_path_from_string.cpp
 	src/flake/message_box.cpp
@@ -246,6 +236,7 @@ set(
 	src/flake/planar/cursor_splatter.cpp
 	src/flake/planar/monitor/arrows.cpp
 	src/flake/planar/monitor/child.cpp
+	src/flake/planar/monitor/font_axis_policy.cpp
 	src/flake/planar/monitor/parent.cpp
 	src/flake/planar/monitor/texture.cpp
 	src/flake/postprocessing/context.cpp
@@ -371,7 +362,6 @@ function(
 		${Fcppt_filesystem_LIBRARIES}
 		${Awl_LIBRARIES}
 		${SGE_LIBRARIES}
-		${Rucksack_LIBRARIES}
 		${OPENCL_LIBRARIES}
 		${OPENGL_gl_LIBRARY}
 		${Boost_LIBRARIES})
@@ -425,7 +415,6 @@ target_link_libraries(
 	${Cg_LIBRARIES}
 	${Awl_LIBRARIES}
 	${SGE_LIBRARIES}
-	${Rucksack_LIBRARIES}
 	${OPENCL_LIBRARIES}
 	${OPENGL_gl_LIBRARY}
 	${Boost_LIBRARIES})
@@ -452,7 +441,6 @@ target_link_libraries(
 	${Awl_LIBRARIES}
 	${Cg_LIBRARIES}
 	${SGE_LIBRARIES}
-	${Rucksack_LIBRARIES}
 	${OPENCL_LIBRARIES}
 	${OPENGL_gl_LIBRARY}
 	${Boost_LIBRARIES})

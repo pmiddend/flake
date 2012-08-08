@@ -10,11 +10,12 @@
 #include <flake/planar/monitor/parent_fwd.hpp>
 #include <flake/planar/monitor/rect.hpp>
 #include <flake/planar/monitor/dummy_sprite/object.hpp>
-#include <rucksack/widget/dummy.hpp>
-#include <rucksack/widget/box/base.hpp>
+#include <sge/font/draw/static_text.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
+#include <sge/rucksack/widget/dummy.hpp>
+#include <sge/rucksack/widget/box/base.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/math/box/object_impl.hpp>
@@ -63,7 +64,7 @@ public:
 	void
 	update();
 
-	rucksack::widget::base &
+	sge::rucksack::widget::base &
 	widget();
 
 	~arrows();
@@ -76,9 +77,10 @@ private:
 	sge::renderer::vertex_buffer_scoped_ptr const vb_;
 	sge::opencl::memory_object::buffer cl_vb_;
 	fcppt::scoped_ptr<dummy_sprite::object> sprite_;
-	rucksack::widget::box::base box_parent_;
-	rucksack::widget::dummy font_box_;
-	rucksack::widget::dummy sprite_box_;
+	sge::rucksack::widget::box::base box_parent_;
+	sge::rucksack::widget::dummy font_box_;
+	sge::rucksack::widget::dummy sprite_box_;
+	sge::font::draw::static_text font_renderable_;
 
 	void
 	render_font(

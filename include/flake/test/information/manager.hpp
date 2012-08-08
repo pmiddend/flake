@@ -2,9 +2,10 @@
 #define FLAKE_TEST_INFORMATION_MANAGER_HPP_INCLUDED
 
 #include <flake/test/information/object.hpp>
-#include <sge/font/metrics_fwd.hpp>
-#include <sge/font/text/drawer_3d.hpp>
-#include <sge/image/color/any/object_fwd.hpp>
+#include <sge/font/object_scoped_ptr.hpp>
+#include <sge/font/system_fwd.hpp>
+#include <sge/font/ttf_size.hpp>
+#include <sge/image/color/any/object.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -26,7 +27,8 @@ FCPPT_NONCOPYABLE(
 public:
 	explicit
 	manager(
-		sge::font::metrics &,
+		sge::font::system &,
+		sge::font::ttf_size,
 		sge::renderer::device &,
 		sge::image::color::any::object const &);
 
@@ -47,8 +49,8 @@ private:
 	child_sequence;
 
 	sge::renderer::device &renderer_;
-	sge::font::metrics &font_metrics_;
-	sge::font::text::drawer_3d font_drawer_;
+	sge::image::color::any::object const color_;
+	sge::font::object_scoped_ptr font_;
 	child_sequence children_;
 
 	void

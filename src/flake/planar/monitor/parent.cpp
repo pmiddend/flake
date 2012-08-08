@@ -4,6 +4,9 @@
 #include <sge/cg/parameter/named.hpp>
 #include <sge/cg/parameter/vector/set.hpp>
 #include <sge/cg/program/from_file_parameters.hpp>
+#include <sge/font/object.hpp>
+#include <sge/font/parameters.hpp>
+#include <sge/font/system.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/scoped_transform.hpp>
@@ -39,20 +42,25 @@ flake::planar::monitor::parent::parent(
 	sge::renderer::device &_renderer,
 	sge::shader::context &_shader_context,
 	sge::opencl::command_queue::object &_command_queue,
-	sge::font::metrics_shared_ptr const _font_metrics,
+	sge::font::system &_font_system,
+	sge::font::ttf_size const _ttf_size,
 	monitor::font_color const &_font_color)
 :
 	renderer_(
 		_renderer),
 	command_queue_(
 		_command_queue),
-	font_metrics_(
-		_font_metrics),
-	font_drawer_(
-		renderer_,
-		_font_color.get(),
-		sge::font::text::set_matrices(
-			false)),
+	font_system_(
+		_font_system),
+	font_color_(
+		_font_color),
+	font_(
+		font_system_.create_font(
+			sge::font::parameters()
+				.family(
+					FCPPT_TEXT("sans"))
+				.ttf_size(
+					_ttf_size))),
 	vd_(
 		renderer_.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format<arrow_vf::format>())),
@@ -122,6 +130,13 @@ flake::planar::monitor::parent::arrow_position(
 		_position);
 }
 
+flake::planar::monitor::font_color const &
+flake::planar::monitor::parent::font_color() const
+{
+	return
+		font_color_;
+}
+
 sge::renderer::device &
 flake::planar::monitor::parent::renderer() const
 {
@@ -134,16 +149,16 @@ flake::planar::monitor::parent::sprite_collection()
 	return sprite_collection_;
 }
 
-sge::font::metrics &
-flake::planar::monitor::parent::font_metrics()
+sge::font::system &
+flake::planar::monitor::parent::font_system() const
 {
-	return *font_metrics_;
+	return font_system_;
 }
 
-sge::font::text::drawer_3d &
-flake::planar::monitor::parent::font_drawer()
+sge::font::object &
+flake::planar::monitor::parent::font()
 {
-	return font_drawer_;
+	return *font_;
 }
 
 void
@@ -176,6 +191,11 @@ flake::planar::monitor::parent::render(
 				sge::renderer::matrix_mode::world,
 				sge::renderer::matrix4::identity()));
 
+		sge::sprite::render::options const render_options(
+			sge::sprite::render::matrix_options::nothing,
+			sge::sprite::render::state_options::set,
+			sge::sprite::render::vertex_options::declaration_and_buffer);
+
 		sge::sprite::process::with_options
 		<
 			sge::sprite::process::options
@@ -184,19 +204,14 @@ flake::planar::monitor::parent::render(
 				<
 					dummy_sprite::choices,
 					sge::sprite::compare::default_
-				>::value,
-				sge::sprite::render::options
-				<
-					sge::sprite::render::matrix_options::nothing,
-					sge::sprite::render::state_options::set,
-					sge::sprite::render::vertex_options::declaration_and_buffer
-				>
+				>::value
 			>
 		>(
 			_context,
 			sprite_collection_.range(),
 			sprite_system_,
-			sge::sprite::compare::default_());
+			sge::sprite::compare::default_(),
+		  render_options);
 	}
 	else
 	{

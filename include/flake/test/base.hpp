@@ -1,7 +1,6 @@
 #ifndef FLAKE_TEST_BASE_HPP_INCLUDED
 #define FLAKE_TEST_BASE_HPP_INCLUDED
 
-#include <flake/font_metrics_cache.hpp>
 #include <flake/scoped_ostream_file_redirection.hpp>
 #include <flake/scoped_wostream_file_redirection.hpp>
 #include <flake/notifications/object_fwd.hpp>
@@ -149,7 +148,6 @@ private:
 	fcppt::scoped_ptr<flakelib::buffer_pool::object> buffer_pool_;
 	flakelib::scoped_frame_limiter::fps_type desired_fps_;
 	fcppt::signal::scoped_connection viewport_connection_;
-	fcppt::scoped_ptr<flake::font_metrics_cache> font_metrics_cache_;
 	fcppt::scoped_ptr<flake::notifications::object> notifications_;
 	fcppt::scoped_ptr<flake::test::information::manager> information_manager_;
 	flake::test::information::object memory_consumption_information_;

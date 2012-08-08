@@ -23,12 +23,12 @@
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/utility/mix_buffers.hpp>
-#include <rucksack/widget/enumeration.hpp>
-#include <rucksack/widget/viewport_adaptor.hpp>
 #include <sge/camera/ortho_freelook/object.hpp>
 #include <sge/camera/ortho_freelook/projection_rectangle_from_viewport.hpp>
 #include <sge/image2d/file_unique_ptr.hpp>
 #include <sge/renderer/texture/planar_scoped_ptr.hpp>
+#include <sge/rucksack/widget/enumeration.hpp>
+#include <sge/rucksack/widget/viewport_adaptor.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
 #include <awl/main/exit_code.hpp>
@@ -87,8 +87,8 @@ private:
 	flake::planar::monitor::arrows velocity_arrows_;
 	flake::planar::monitor::texture smoke_density_texture_;
 	flake::planar::monitor::texture temperature_density_texture_;
-	rucksack::widget::viewport_adaptor rucksack_viewport_adaptor_;
-	rucksack::widget::enumeration rucksack_enumeration_;
+	sge::rucksack::widget::viewport_adaptor rucksack_viewport_adaptor_;
+	sge::rucksack::widget::enumeration rucksack_enumeration_;
 
 	// Other stuff
 	sge::camera::ortho_freelook::object freelook_camera_;

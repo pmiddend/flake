@@ -8,7 +8,7 @@
 #include <flake/volume/model/sun_direction.hpp>
 #include <sge/camera/base_fwd.hpp>
 #include <sge/image2d/system_fwd.hpp>
-#include <sge/model/obj/loader_scoped_ptr.hpp>
+	//#include <sge/model/obj/loader_scoped_ptr.hpp>
 #include <sge/renderer/device_fwd.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
@@ -95,7 +95,7 @@ private:
 
 	vertex_buffer_map identifier_to_vertex_buffer_;
 	texture_map identifier_to_texture_;
-	sge::model::obj::loader_scoped_ptr model_loader_;
+		//sge::model::obj::loader_scoped_ptr model_loader_;
 	child_sequence children_;
 
 	void

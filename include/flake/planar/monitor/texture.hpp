@@ -8,10 +8,11 @@
 #include <flake/planar/monitor/scaling_factor.hpp>
 #include <flake/planar/monitor/texture_size.hpp>
 #include <flake/planar/monitor/dummy_sprite/object.hpp>
-#include <rucksack/widget/dummy.hpp>
-#include <rucksack/widget/box/base.hpp>
+#include <sge/font/draw/static_text.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/renderer/texture/planar_unique_ptr.hpp>
+#include <sge/rucksack/widget/dummy.hpp>
+#include <sge/rucksack/widget/box/base.hpp>
 #include <sge/sprite/object.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/math/box/object_impl.hpp>
@@ -54,16 +55,16 @@ public:
 	void
 	update();
 
-	rucksack::widget::base &
+	sge::rucksack::widget::base &
 	widget();
 
-	rucksack::widget::base const &
+	sge::rucksack::widget::base const &
 	widget() const;
 
-	rucksack::widget::base &
+	sge::rucksack::widget::base &
 	content_widget();
 
-	rucksack::widget::base const &
+	sge::rucksack::widget::base const &
 	content_widget() const;
 
 	~texture();
@@ -73,9 +74,10 @@ private:
 	sge::renderer::texture::planar_unique_ptr renderer_texture_;
 	sge::opencl::memory_object::image::planar cl_texture_;
 	dummy_sprite::object sprite_;
-	rucksack::widget::box::base box_parent_;
-	rucksack::widget::dummy font_box_;
-	rucksack::widget::dummy sprite_box_;
+	sge::rucksack::widget::box::base box_parent_;
+	sge::rucksack::widget::dummy font_box_;
+	sge::rucksack::widget::dummy sprite_box_;
+	sge::font::draw::static_text font_renderable_;
 };
 }
 }

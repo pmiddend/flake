@@ -6,9 +6,11 @@
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
+	/*
 #include <sge/model/obj/create.hpp>
 #include <sge/model/obj/loader.hpp>
 #include <sge/model/obj/vb_converter/convert.hpp>
+	*/
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
@@ -111,10 +113,13 @@ flake::volume::model::manager::manager(
 		sge::shader::parameter::planar_texture::optional_value()),
 	identifier_to_vertex_buffer_(),
 	identifier_to_texture_(),
+/*
 	model_loader_(
 		sge::model::obj::create()),
+*/
 	children_()
 {
+	#if 0
 	for(
 		boost::filesystem::directory_iterator current_file(
 			flake::media_path_from_string(
@@ -173,12 +178,14 @@ flake::volume::model::manager::manager(
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags_field::null()));
 	}
+	#endif
 }
 
 void
 flake::volume::model::manager::render(
 	sge::renderer::context::object &_context)
 {
+	#if 0
 	sge::renderer::state::scoped scoped_state(
 		_context,
 		sge::renderer::state::list
@@ -263,6 +270,7 @@ flake::volume::model::manager::render(
 				current_vertex_buffer->size()),
 			sge::renderer::primitive_type::triangle_list);
 	}
+	#endif
 }
 
 flake::volume::model::manager::~manager()

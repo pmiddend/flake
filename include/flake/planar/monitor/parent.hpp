@@ -11,8 +11,9 @@
 #include <flake/planar/monitor/scaling_factor.hpp>
 #include <flake/planar/monitor/dummy_sprite/collection.hpp>
 #include <flake/planar/monitor/dummy_sprite/system.hpp>
-#include <sge/font/metrics_shared_ptr.hpp>
-#include <sge/font/text/drawer_3d.hpp>
+#include <sge/font/object_scoped_ptr.hpp>
+#include <sge/font/system_fwd.hpp>
+#include <sge/font/ttf_size.hpp>
 #include <sge/image/color/any/object_fwd.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
@@ -26,6 +27,8 @@
 #include <sge/renderer/context/object_fwd.hpp>
 #include <sge/shader/context_fwd.hpp>
 #include <sge/shader/pair.hpp>
+#include <sge/sprite/buffers/with_declaration.hpp>
+#include <sge/sprite/buffers/single.hpp>
 #include <sge/shader/parameter/matrix.hpp>
 #include <sge/shader/parameter/vector.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -61,7 +64,8 @@ public:
 		sge::renderer::device &,
 		sge::shader::context &,
 		sge::opencl::command_queue::object &,
-		sge::font::metrics_shared_ptr,
+		sge::font::system &,
+		sge::font::ttf_size,
 		monitor::font_color const &);
 
 	sge::renderer::vertex_declaration const &
@@ -81,17 +85,20 @@ public:
 	arrow_position(
 		sge::renderer::vector2 const &);
 
+	monitor::font_color const &
+	font_color() const;
+
 	sge::renderer::device &
 	renderer() const;
 
 	monitor::dummy_sprite::collection &
 	sprite_collection();
 
-	sge::font::metrics &
-	font_metrics();
+	sge::font::system &
+	font_system() const;
 
-	sge::font::text::drawer_3d &
-	font_drawer();
+	sge::font::object &
+	font();
 
 	void
 	render(
@@ -107,8 +114,9 @@ private:
 
 	sge::renderer::device &renderer_;
 	sge::opencl::command_queue::object &command_queue_;
-	sge::font::metrics_shared_ptr font_metrics_;
-	sge::font::text::drawer_3d font_drawer_;
+	sge::font::system &font_system_;
+	monitor::font_color const font_color_;
+	sge::font::object_scoped_ptr font_;
 	sge::renderer::vertex_declaration_scoped_ptr vd_;
 
 	sge::shader::pair arrow_shader_;

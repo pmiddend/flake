@@ -1,5 +1,6 @@
-#include <flake/font_metrics_cache.hpp>
 #include <flake/media_path_from_string.hpp>
+#include <sge/image/colors.hpp>
+#include <sge/image/color/any/object.hpp>
 #include <flake/notifications/object.hpp>
 #include <flake/test/base.hpp>
 #include <flake/test/update_features_from_json.hpp>
@@ -14,7 +15,6 @@
 #include <flakelib/cl/program_context.hpp>
 #include <sge/charconv/create_system.hpp>
 #include <sge/charconv/system.hpp>
-#include <sge/font/metrics.hpp>
 #include <sge/font/system.hpp>
 #include <sge/image/colors.hpp>
 #include <sge/input/keyboard/device.hpp>
@@ -27,10 +27,10 @@
 #include <sge/parse/json/parse_string_exn.hpp>
 #include <sge/parse/json/string_to_path.hpp>
 #include <sge/renderer/device.hpp>
-#include <sge/renderer/parameters/object.hpp>
-#include <sge/renderer/pixel_format/object.hpp>
 #include <sge/renderer/context/scoped.hpp>
 #include <sge/renderer/context/scoped_scoped_ptr.hpp>
+#include <sge/renderer/parameters/object.hpp>
+#include <sge/renderer/pixel_format/object.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/shader/context.hpp>
 #include <sge/systems/font.hpp>
@@ -55,6 +55,7 @@
 #include <fcppt/exception.hpp>
 #include <fcppt/format.hpp>
 #include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/optional_impl.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/to_std_string.hpp>
@@ -64,7 +65,6 @@
 #include <fcppt/io/cerr.hpp>
 #include <fcppt/log/headers.hpp>
 #include <fcppt/log/location.hpp>
-#include <fcppt/optional_impl.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/signal/connection.hpp>
 #include <fcppt/tr1/functional.hpp>
@@ -250,22 +250,16 @@ flake::test::base::base(
 			std::tr1::bind(
 				&test::base::viewport_callback,
 				this))),
-	font_metrics_cache_(
-		fcppt::make_unique_ptr<flake::font_metrics_cache>(
-			fcppt::ref(
-				systems_->font_system()))),
 	notifications_(
 		fcppt::make_unique_ptr<flake::notifications::object>(
 			fcppt::ref(
 				this->renderer()),
 			fcppt::ref(
-				font_metrics_cache_->get(
-					flake::media_path_from_string(
-						FCPPT_TEXT("fonts/notifications.ttf")),
-					sge::parse::json::find_and_convert_member<sge::font::size_type>(
-						*configuration_,
-						sge::parse::json::string_to_path(
-							FCPPT_TEXT("tests/notification-font-size"))))),
+				this->font_system()),
+			sge::parse::json::find_and_convert_member<sge::font::ttf_size>(
+				*configuration_,
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("tests/notification-font-size"))),
 			flake::notifications::time_to_live(
 				boost::chrono::milliseconds(
 					sge::parse::json::find_and_convert_member<boost::chrono::milliseconds::rep>(
@@ -275,13 +269,11 @@ flake::test::base::base(
 	information_manager_(
 		fcppt::make_unique_ptr<flake::test::information::manager>(
 			fcppt::ref(
-				font_metrics_cache_->get(
-						flake::media_path_from_string(
-							FCPPT_TEXT("fonts/notifications.ttf")),
-						sge::parse::json::find_and_convert_member<sge::font::size_type>(
-							*configuration_,
-							sge::parse::json::string_to_path(
-								FCPPT_TEXT("tests/information-font-size"))))),
+				this->font_system()),
+			sge::parse::json::find_and_convert_member<sge::font::ttf_size>(
+				*configuration_,
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("tests/information-font-size"))),
 			fcppt::ref(
 				this->renderer()),
 			sge::image::colors::white())),

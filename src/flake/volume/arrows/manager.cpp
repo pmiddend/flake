@@ -1,5 +1,4 @@
 #include <flake/media_path_from_string.hpp>
-#include <sge/shader/scoped_pair.hpp>
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/vf/format.hpp>
 #include <sge/camera/base.hpp>
@@ -16,6 +15,7 @@
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/state/source_blend_func.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
+#include <sge/shader/scoped_pair.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
 

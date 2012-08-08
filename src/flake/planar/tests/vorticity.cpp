@@ -10,8 +10,6 @@
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/camera/ortho_freelook/parameters.hpp>
-#include <sge/font/metrics.hpp>
-#include <sge/font/system.hpp>
 #include <sge/image/colors.hpp>
 #include <sge/image/view/const_object.hpp>
 #include <sge/image2d/file.hpp>
@@ -141,14 +139,11 @@ flake::planar::tests::vorticity::vorticity(
 		this->renderer(),
 		this->shader_context(),
 		this->opencl_system().command_queue(),
-		sge::font::metrics_shared_ptr(
-			this->font_system().create_font(
-				flake::media_path_from_string(
-					FCPPT_TEXT("fonts/main.ttf")),
-				sge::parse::json::find_and_convert_member<sge::font::size_type>(
-					this->configuration(),
-					sge::parse::json::string_to_path(
-						FCPPT_TEXT("monitor-font-size"))))),
+		this->font_system(),
+		sge::parse::json::find_and_convert_member<sge::font::ttf_size>(
+			this->configuration(),
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("monitor-font-size"))),
 		monitor::font_color(
 			sge::image::colors::black())),
 	planar_converter_(
@@ -269,12 +264,12 @@ flake::planar::tests::vorticity::vorticity(
 		this->viewport_manager(),
 		this->renderer()),
 	rucksack_enumeration_(
-		rucksack::padding(
-			sge::parse::json::find_and_convert_member<rucksack::scalar>(
+		sge::rucksack::padding(
+			sge::parse::json::find_and_convert_member<sge::rucksack::scalar>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("master-and-slave-padding")))),
-		rucksack::aspect(
+		sge::rucksack::aspect(
 			1,
 			1)),
 	freelook_camera_(

@@ -1,9 +1,9 @@
 {
 	"tests" :
 	{
-		"notification-font-size" : 25,
+		"notification-font-size" : 20000,
 		"notification-ttl-ms" : 2000,
-		"information-font-size" : 15,
+		"information-font-size" : 15000,
 		"window-size" : [1280,1024],
 		"desired-fps" : 60,
 		"opencl-compiler-flags" : "-cl-mad-enable -cl-fast-relaxed-math -Werror",
@@ -12,7 +12,7 @@
 			"wind-strength" : 10.0,
 			"vorticity-strength" : 0.15,
 			"jacobi-iterations" : 50,
-			"monitor-font-size" : 15,
+			"monitor-font-size" : 15000,
 			"master-and-slave-padding" : 3,
 			"boundary" : "256/zagged.png",
 			"velocity-arrow-scale" : 1.0,
@@ -30,7 +30,7 @@
 		{
 			"vorticity-strength" : 0.15,
 			"jacobi-iterations" : 50,
-			"monitor-font-size" : 15,
+			"monitor-font-size" : 15000,
 			"master-and-slave-padding" : 3,
 			"boundary" : "256/black.png",
 			"velocity-arrow-scale" : 1.0,

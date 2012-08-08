@@ -1,23 +1,25 @@
 #include <flake/planar/monitor/parent.hpp>
+#include <flake/planar/monitor/font_axis_policy.hpp>
 #include <flake/planar/monitor/texture.hpp>
 #include <flake/planar/monitor/dummy_sprite/parameters.hpp>
-#include <rucksack/axis_policy2.hpp>
-#include <sge/font/text/draw.hpp>
-#include <sge/font/text/flags_none.hpp>
-#include <sge/font/text/from_fcppt_string.hpp>
-#include <sge/font/text/part.hpp>
-#include <sge/font/text/size.hpp>
 #include <sge/opencl/memory_object/flags_field.hpp>
 #include <sge/renderer/device.hpp>
+#include <sge/font/text_parameters.hpp>
+#include <sge/image/colors.hpp>
+#include <sge/font/object.hpp>
+#include <sge/font/from_fcppt_string.hpp>
+#include <sge/font/text.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_transform.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/planar_parameters.hpp>
+#include <sge/font/dim.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
+#include <sge/rucksack/axis_policy2.hpp>
 #include <sge/sprite/parameters.hpp>
 #include <sge/sprite/projection_matrix.hpp>
-#include <sge/texture/part_raw.hpp>
+#include <sge/texture/part_raw_ref.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
@@ -32,46 +34,6 @@
 #include <limits>
 #include <fcppt/config/external_end.hpp>
 
-
-namespace
-{
-rucksack::axis_policy2 const
-font_axis_policy(
-	sge::font::metrics &_font_metrics,
-	sge::font::text::string const &_text)
-{
-	sge::font::dim const size =
-		sge::font::text::size(
-			_font_metrics,
-			_text,
-			sge::font::dim(
-				std::numeric_limits<sge::font::dim::value_type>::max(),
-				std::numeric_limits<sge::font::dim::value_type>::max()),
-			sge::font::text::flags::none).size();
-
-	return
-		rucksack::axis_policy2(
-			rucksack::axis_policy(
-				rucksack::minimum_size(
-					static_cast<rucksack::scalar>(
-						size.w())),
-				rucksack::preferred_size(
-					rucksack::optional_scalar()),
-				rucksack::is_expanding(
-					false)),
-			rucksack::axis_policy(
-				rucksack::minimum_size(
-					static_cast<rucksack::scalar>(
-						size.h())),
-				rucksack::preferred_size(
-					rucksack::optional_scalar()),
-				rucksack::is_expanding(
-					false)),
-			rucksack::aspect(
-				1,
-				1));
-}
-}
 
 FCPPT_PP_PUSH_WARNING
 FCPPT_PP_DISABLE_VC_WARNING(4355)
@@ -107,51 +69,62 @@ flake::planar::monitor::texture::texture(
 			.size(
 				_texture_size.get())
 			.texture(
-				fcppt::make_shared_ptr<sge::texture::part_raw>(
+				fcppt::make_shared_ptr<sge::texture::part_raw_ref>(
 					fcppt::ref(
 						*renderer_texture_)))
 			.connection(
 				child::parent().sprite_collection().connection(
 					0))),
 	box_parent_(
-		rucksack::axis::y,
-		rucksack::aspect(
+		sge::rucksack::axis::y,
+		sge::rucksack::aspect(
 			1,
 			1)),
 	font_box_(
-		::font_axis_policy(
-			child::parent().font_metrics(),
-			sge::font::text::from_fcppt_string(
+		flake::planar::monitor::font_axis_policy(
+			child::parent().font(),
+			sge::font::text_parameters(
+				sge::font::align_h::left),
+			sge::font::from_fcppt_string(
 				this->name()))),
 	sprite_box_(
-		rucksack::axis_policy2(
-			rucksack::axis_policy(
-				rucksack::minimum_size(
-					static_cast<rucksack::scalar>(
+		sge::rucksack::axis_policy2(
+			sge::rucksack::axis_policy(
+				sge::rucksack::minimum_size(
+					static_cast<sge::rucksack::scalar>(
 						_texture_size.get().w())),
-				rucksack::preferred_size(
-					rucksack::optional_scalar()),
-				rucksack::is_expanding(
+				sge::rucksack::preferred_size(
+					sge::rucksack::optional_scalar()),
+				sge::rucksack::is_expanding(
 					false)),
-			rucksack::axis_policy(
-				rucksack::minimum_size(
-					static_cast<rucksack::scalar>(
+			sge::rucksack::axis_policy(
+				sge::rucksack::minimum_size(
+					static_cast<sge::rucksack::scalar>(
 						_texture_size.get().h())),
-				rucksack::preferred_size(
-					rucksack::optional_scalar()),
-				rucksack::is_expanding(
+				sge::rucksack::preferred_size(
+					sge::rucksack::optional_scalar()),
+				sge::rucksack::is_expanding(
 					false)),
-			rucksack::aspect(
+			sge::rucksack::aspect(
 				1,
-				1)))
+				1))),
+	font_renderable_(
+		child::parent().renderer(),
+		child::parent().font(),
+		sge::font::from_fcppt_string(
+			this->name()),
+		sge::font::text_parameters(
+			sge::font::align_h::left),
+		sge::font::vector::null(),
+		child::parent().font_color().get())
 {
 	box_parent_.push_back_child(
 		font_box_,
-		rucksack::alignment::left_or_top);
+		sge::rucksack::alignment::left_or_top);
 
 	box_parent_.push_back_child(
 		sprite_box_,
-		rucksack::alignment::left_or_top);
+		sge::rucksack::alignment::left_or_top);
 }
 FCPPT_PP_POP_WARNING
 
@@ -187,20 +160,15 @@ flake::planar::monitor::texture::render(
 			sge::sprite::projection_matrix(
 				child::parent().renderer().onscreen_target().viewport()));
 
-	sge::font::text::draw(
+	font_renderable_.pos(
+		font_box_.position());
+
+	font_renderable_.draw_advanced(
 		_context,
-		child::parent().font_metrics(),
-		child::parent().font_drawer(),
-		sge::font::text::from_fcppt_string(
-			this->name()),
-		sge::font::rect(
-			fcppt::math::vector::structure_cast<sge::font::rect::vector>(
-				font_box_.position()),
-			fcppt::math::dim::structure_cast<sge::font::rect::dim>(
-				font_box_.size())),
-		sge::font::text::align_h::center,
-		sge::font::text::align_v::center,
-		sge::font::text::flags::none);
+		sge::font::draw::set_matrices(
+			false),
+		sge::font::draw::set_states(
+			true));
 }
 
 void
@@ -217,25 +185,25 @@ flake::planar::monitor::texture::update()
 			sprite_box_.size()));
 }
 
-rucksack::widget::base &
+sge::rucksack::widget::base &
 flake::planar::monitor::texture::widget()
 {
 	return box_parent_;
 }
 
-rucksack::widget::base const &
+sge::rucksack::widget::base const &
 flake::planar::monitor::texture::widget() const
 {
 	return box_parent_;
 }
 
-rucksack::widget::base &
+sge::rucksack::widget::base &
 flake::planar::monitor::texture::content_widget()
 {
 	return sprite_box_;
 }
 
-rucksack::widget::base const &
+sge::rucksack::widget::base const &
 flake::planar::monitor::texture::content_widget() const
 {
 	return sprite_box_;

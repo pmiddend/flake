@@ -3,8 +3,8 @@
 
 #include <flake/planar/monitor/optional_projection.hpp>
 #include <flake/planar/monitor/parent_fwd.hpp>
-#include <rucksack/widget/base_fwd.hpp>
 #include <sge/renderer/context/object_fwd.hpp>
+#include <sge/rucksack/widget/base_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/preprocessor/disable_gcc_warning.hpp>
 #include <fcppt/preprocessor/pop_warning.hpp>
@@ -45,7 +45,7 @@ public:
 	virtual void
 	update() = 0;
 
-	virtual rucksack::widget::base &
+	virtual sge::rucksack::widget::base &
 	widget() = 0;
 
 	virtual ~child() = 0;
