@@ -53,8 +53,8 @@ private:
 	flakelib::volume::unique_float_buffer_lock density_buffer_;
 
 	flake::volume::density_visualization::raycaster::object raycaster_;
-	flake::volume::model::manager models_;
-	flake::volume::model::object avz_;
+		//flake::volume::model::manager models_;
+		//flake::volume::model::object avz_;
 
 	// Timer
 	sge::timer::basic<sge::timer::clocks::standard> delta_timer_;

@@ -35,6 +35,8 @@
 #include <flakelib/volume/simulation/stam/wind_source.hpp>
 #include <sge/camera/perspective_projection_from_viewport.hpp>
 #include <sge/camera/first_person/object.hpp>
+#include <sge/scenic/scene/manager.hpp>
+#include <sge/scenic/scene/object.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>
 #include <sge/opencl/dim3.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
@@ -97,8 +99,8 @@ private:
 	flake::skydome::object skydome_;
 	flake::volume::flakes::manager flakes_;
 	flake::volume::flakes::mover flakes_mover_;
-	flake::volume::model::manager models_;
-	flake::volume::model::object model_;
+	sge::scenic::scene::manager scene_manager_;
+	sge::scenic::scene::object scene_;
 		//flakelib::volume::gradient gradient_;
 		//flakelib::scan::object scan_;
 		//flakelib::marching_cubes::gpu::manager marching_cubes_manager_;

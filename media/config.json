@@ -1,9 +1,9 @@
 {
 	"tests" :
 	{
-		"notification-font-size" : 20000,
+		"notification-font-size" : 19,
 		"notification-ttl-ms" : 2000,
-		"information-font-size" : 15000,
+		"information-font-size" : 14,
 		"window-size" : [1280,1024],
 		"desired-fps" : 60,
 		"opencl-compiler-flags" : "-cl-mad-enable -cl-fast-relaxed-math -Werror",
@@ -11,8 +11,8 @@
 		{
 			"wind-strength" : 10.0,
 			"vorticity-strength" : 0.15,
-			"jacobi-iterations" : 50,
-			"monitor-font-size" : 15000,
+			"jacobi-iterations" : 105,
+			"monitor-font-size" : 14,
 			"master-and-slave-padding" : 3,
 			"boundary" : "256/zagged.png",
 			"velocity-arrow-scale" : 1.0,
@@ -29,8 +29,8 @@
 		"planar-buoyancy" :
 		{
 			"vorticity-strength" : 0.15,
-			"jacobi-iterations" : 50,
-			"monitor-font-size" : 15000,
+			"jacobi-iterations" : 105,
+			"monitor-font-size" : 14,
 			"master-and-slave-padding" : 3,
 			"boundary" : "256/black.png",
 			"velocity-arrow-scale" : 1.0,
@@ -48,7 +48,7 @@
 		},
 		"marching-cubes" :
 		{
-			"simulation-size" : [128,128,128],
+			"simulation-size" : [64,64,64],
 			"snow-texture-size" : [64,64,64],
 			"snow-texture-repeats" : 100.0,
 			"near-plane" : 0.01,
@@ -56,6 +56,7 @@
 			"far-plane" : 1000.0,
 			"sun-direction" : [0.8804509,0.17609018,0.440225453],
 			"fov" : 60.0,
+			"voxel-file" : "current.binvox",
 			"snow-cover" :
 			{
 				"texture-repeats" : 20.0,
@@ -83,7 +84,7 @@
 			"wind-strength-minimum" : 2.0,
 			"wind-strength-maximum" : 3.0,
 			"wind-strength-frequency-seconds" : 1.0,
-			"jacobi-iterations" : 40,
+			"jacobi-iterations" : 105,
 			"near-plane" : 1.0,
 			"far-plane" : 1000.0,
 			"fov" : 60.0,
@@ -106,9 +107,7 @@
 			"iso-level" : 0.2,
 			"voxel-file" :
 			{
-				"name" : "avz.raw",
-				"size" : 64,
-				"model" : "avz"
+				"name" : "current.binvox"
 			},
 			"obstacles" :
 			[
@@ -138,8 +137,8 @@
 		{
 			"simulation-size" : [128,128,128],
 			"wind-strength-start" : 1.0,
-			"jacobi-iterations" : 40,
-			"iterations" : 10
+			"jacobi-iterations" : 105,
+			"iterations" : 200
 		},
 		"density-visualization" :
 		{
@@ -151,9 +150,7 @@
 			"sun-direction" : [0.666667,-0.333333,-0.666667],
 			"voxel-file" :
 			{
-				"name" : "avz.raw",
-				"size" : 64,
-				"model" : "avz"
+				"name" : "current.binvox"
 			},
 			"features" :
 			{
@@ -187,7 +184,7 @@
 				"ambient-temperature" : 20.0,
 				"splat-temperature" : 60.0
 			},
-			"jacobi-iterations" : 40,
+			"jacobi-iterations" : 105,
 			"near-plane" : 1.0,
 			"far-plane" : 1000.0,
 			"fov" : 60.0,

@@ -5,6 +5,7 @@
 #include <flake/volume/snow_cover/object.hpp>
 #include <flakelib/marching_cubes/cpu/object.hpp>
 #include <flakelib/marching_cubes/gpu/manager.hpp>
+#include <flakelib/volume/conversion/object.hpp>
 #include <flakelib/marching_cubes/gpu/object.hpp>
 #include <flakelib/scan/object.hpp>
 #include <flakelib/splatter/object.hpp>
@@ -54,6 +55,7 @@ private:
 
 	flakelib::utility::fill_buffer fill_buffer_;
 	flakelib::splatter::object splatter_;
+	flakelib::volume::conversion::object conversion_;
 
 	flakelib::volume::unique_float_buffer_lock boundary_buffer_;
 

@@ -26,27 +26,28 @@ flake::volume::snow_cover::object::object(
 				FCPPT_TEXT("shaders/snow_cover.cg"))),
 		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/snow_cover.cg")))),
+				FCPPT_TEXT("shaders/snow_cover.cg"))),
+		sge::shader::optional_cflags()),
 	steep_texture_(
 		_steep_texture.get()),
 	flat_texture_(
 		_flat_texture.get()),
 	steep_texture_parameter_(
-		shader_,
-		_renderer,
 		shader_.pixel_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"steep_texture")),
+		shader_,
+		_renderer,
 		sge::shader::parameter::planar_texture::optional_value(
 			*steep_texture_)),
 	flat_texture_parameter_(
-		shader_,
-		_renderer,
 		shader_.pixel_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"flat_texture")),
+		shader_,
+		_renderer,
 		sge::shader::parameter::planar_texture::optional_value(
 			*flat_texture_)),
 	mvp_parameter_(
@@ -54,6 +55,7 @@ flake::volume::snow_cover::object::object(
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"mvp")),
+		_renderer,
 		sge::shader::parameter::is_projection_matrix(
 			true),
 		sge::renderer::matrix4()),

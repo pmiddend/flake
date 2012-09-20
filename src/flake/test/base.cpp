@@ -402,6 +402,13 @@ flake::test::base::image_system()
 		systems_->image_system();
 }
 
+sge::charconv::system &
+flake::test::base::charconv_system()
+{
+	return
+		*charconv_system_;
+}
+
 flakelib::buffer_pool::object &
 flake::test::base::buffer_pool()
 {

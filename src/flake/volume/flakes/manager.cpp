@@ -113,7 +113,8 @@ flake::volume::flakes::manager::manager(
 				FCPPT_TEXT("shaders/flakes.cg"))),
 		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/flakes.cg")))),
+				FCPPT_TEXT("shaders/flakes.cg"))),
+		sge::shader::optional_cflags()),
 	camera_position_parameter_(
 		shader_.vertex_program(),
 		sge::shader::parameter::name(
@@ -139,6 +140,7 @@ flake::volume::flakes::manager::manager(
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"mvp")),
+		renderer_,
 		sge::shader::parameter::is_projection_matrix(
 			true),
 		sge::renderer::matrix4()),
@@ -152,12 +154,12 @@ flake::volume::flakes::manager::manager(
 			sge::renderer::texture::mipmap::off(),
 			sge::renderer::resource_flags_field::null())),
 	loaded_texture_(
-		shader_,
-		renderer_,
 		shader_.pixel_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"main_texture")),
+		shader_,
+		renderer_,
 		sge::shader::parameter::planar_texture::optional_value(
 			*texture_)),
 	cl_positions_buffer_(),

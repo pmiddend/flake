@@ -80,7 +80,7 @@ flakelib::cl::planar_image_view_to_float_buffer(
 			sge::image2d::view::size(
 				_view),
 			sge::image::color::format::r32f,
-			sge::image2d::view::optional_pitch()).get().get<r32f_view_type>();
+			sge::image2d::pitch::null()).get().get<r32f_view_type>();
 
 	mizuiro::image::algorithm::binary_iteration(
 		convert(),

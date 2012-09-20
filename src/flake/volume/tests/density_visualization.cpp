@@ -111,19 +111,14 @@ flake::volume::tests::density_visualization::density_visualization(
 		this->program_context()),
 		*/
 	density_buffer_(
-		conversion_.raw_voxel_file_to_buffer(
+		conversion_.binvox_file_to_buffer(
 			this->buffer_pool(),
 			flake::media_path_from_string(
 				FCPPT_TEXT("voxelized_models/")+
 				sge::parse::json::find_and_convert_member<fcppt::string>(
 					this->configuration(),
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("voxel-file/name")))),
-			flakelib::volume::conversion::raw_voxel_file_dimension(
-				sge::parse::json::find_and_convert_member<sge::opencl::size_type>(
-					this->configuration(),
-					sge::parse::json::string_to_path(
-						FCPPT_TEXT("voxel-file/size")))))
+						FCPPT_TEXT("voxel-file/name")))))
 		/*
 		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
@@ -145,6 +140,7 @@ flake::volume::tests::density_visualization::density_visualization(
 					FCPPT_TEXT("raycast-step-size")))),
 		flake::volume::density_visualization::raycaster::debug_output(
 			false)),
+/*
 	models_(
 		this->renderer(),
 		this->shader_context(),
@@ -177,6 +173,7 @@ flake::volume::tests::density_visualization::density_visualization(
 				0.0f,
 				0.0f,
 				0.0f))),
+*/
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
 			boost::chrono::seconds(1)))

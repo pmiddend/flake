@@ -102,6 +102,9 @@ protected:
 	sge::image2d::system &
 	image_system();
 
+	sge::charconv::system &
+	charconv_system();
+
 	flakelib::buffer_pool::object &
 	buffer_pool();
 

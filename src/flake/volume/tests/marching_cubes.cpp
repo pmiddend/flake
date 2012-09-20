@@ -45,6 +45,7 @@
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/deg_to_rad.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
+#include <fcppt/math/dim/output.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/chrono.hpp>
@@ -128,12 +129,23 @@ flake::volume::tests::marching_cubes::marching_cubes(
 		this->program_context()),
 	splatter_(
 		this->program_context()),
+	conversion_(
+		this->program_context()),
 	boundary_buffer_(
+		conversion_.binvox_file_to_buffer(
+			this->buffer_pool(),
+			flake::media_path_from_string(
+				FCPPT_TEXT("voxelized_models/")+
+				sge::parse::json::find_and_convert_member<fcppt::string>(
+					this->configuration(),
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("voxel-file")))))
+		/*
 		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
 			fill_buffer_,
 			simulation_size_.get(),
-			0.0f)),
+			0.0f)*/),
 	gradient_(
 		this->program_context(),
 		this->buffer_pool()),
@@ -229,6 +241,7 @@ flake::volume::tests::marching_cubes::marching_cubes(
 			boost::chrono::seconds(
 				1)))
 {
+	/*
 	splatter_.splat_volume_float(
 		boundary_buffer_->value(),
 		flakelib::splatter::pen::volume(
@@ -252,6 +265,7 @@ flake::volume::tests::marching_cubes::marching_cubes(
 				1.0f)),
 		static_cast<cl_float>(
 			1.0f));
+	*/
 
 	{
 		flakelib::timer::object t(

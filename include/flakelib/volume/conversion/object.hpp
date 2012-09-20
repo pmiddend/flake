@@ -64,6 +64,12 @@ public:
 		flakelib::volume::conversion::raw_voxel_file_dimension const &);
 
 	FLAKELIB_SYMBOL
+	flakelib::volume::unique_float_buffer_lock
+	binvox_file_to_buffer(
+		flakelib::buffer_pool::object &,
+		boost::filesystem::path const &);
+
+	FLAKELIB_SYMBOL
 	~object();
 private:
 	cl::program program_;

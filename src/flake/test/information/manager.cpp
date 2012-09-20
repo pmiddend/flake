@@ -14,6 +14,7 @@
 #include <sge/renderer/device.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <fcppt/text.hpp>
+#include <sge/font/weight/bold.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
 
 flake::test::information::manager::manager(
@@ -34,7 +35,7 @@ flake::test::information::manager::manager(
 				.ttf_size(
 					_ttf_size)
 				.weight(
-					700))),
+					sge::font::weight::bold()))),
 	children_()
 {
 }

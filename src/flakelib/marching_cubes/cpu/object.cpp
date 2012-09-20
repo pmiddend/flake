@@ -119,6 +119,21 @@ flakelib::marching_cubes::cpu::object::construct_from_raw_data(
 	is_dirty_ =
 		true;
 
+	/* DEBUG OUTPUT
+	std::cout << "construct from raw data (data size is " << data_.size() << ")\n";
+	for(sge::renderer::scalar const *it = _data; it != _data + data_.size(); ++it)
+	{
+		if((it - _data) % 64 == 0)
+			std::cout << "\n";
+		if((it - _data) % (64*64) == 0)
+		{
+			static unsigned slice_count = 1u;
+			std::cout << "slice " << ++slice_count << "\n";
+			std::cout << "\n";
+		}
+		std::cout << ((*it > 0.5f) ? 1 : 0);
+	}
+	*/
 	{
 		//		flakelib::timer::object t(std::cout,"copying float[] -> double[]");
 
@@ -134,7 +149,7 @@ flakelib::marching_cubes::cpu::object::construct_from_cl_buffer(
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::volume::float_view const &_view)
 {
-	flakelib::timer::object t(std::cout,"marching_cubes::construction");
+	//flakelib::timer::object t(std::cout,"marching_cubes::construction");
 
 
 	sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
@@ -154,7 +169,7 @@ flakelib::marching_cubes::cpu::object::construct_from_cl_buffer(
 void
 flakelib::marching_cubes::cpu::object::run()
 {
-	flakelib::timer::object t(std::cout,"marching_cubes::run");
+	//flakelib::timer::object t(std::cout,"marching_cubes::run");
 	implementation_->run(
 		static_cast<real_sequence::value_type>(
 			iso_level_.get()));
@@ -168,7 +183,7 @@ flakelib::marching_cubes::cpu::object::update_buffers()
 	if(!implementation_->ntrigs())
 		return;
 
-	flakelib::timer::object t(std::cout,"marching_cubes::buffer fill");
+	//flakelib::timer::object t(std::cout,"marching_cubes::buffer fill");
 	this->fill_vertex_buffer();
 	this->fill_index_buffer();
 }

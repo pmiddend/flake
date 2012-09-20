@@ -68,12 +68,14 @@ flake::volume::model::manager::manager(
 				FCPPT_TEXT("shaders/model.cg"))),
 		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/model.cg")))),
+				FCPPT_TEXT("shaders/model.cg"))),
+		sge::shader::optional_cflags()),
 	mvp_parameter_(
 		shader_.vertex_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"mvp")),
+		renderer_,
 		sge::shader::parameter::is_projection_matrix(
 			true),
 		sge::renderer::matrix4()),
@@ -82,6 +84,7 @@ flake::volume::model::manager::manager(
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"world")),
+		renderer_,
 		sge::shader::parameter::is_projection_matrix(
 			false),
 		sge::renderer::matrix4()),
@@ -104,12 +107,12 @@ flake::volume::model::manager::manager(
 				"fog_density")),
 		_fog_density.get()),
 	loaded_texture_(
-		shader_,
-		renderer_,
 		shader_.pixel_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"primary_texture")),
+		shader_,
+		renderer_,
 		sge::shader::parameter::planar_texture::optional_value()),
 	identifier_to_vertex_buffer_(),
 	identifier_to_texture_(),

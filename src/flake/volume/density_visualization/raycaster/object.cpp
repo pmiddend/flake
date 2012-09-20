@@ -118,12 +118,14 @@ flake::volume::density_visualization::raycaster::object::object(
 				FCPPT_TEXT("shaders/raycaster.cg"))),
 		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/raycaster.cg")))),
+				FCPPT_TEXT("shaders/raycaster.cg"))),
+		sge::shader::optional_cflags()),
 	mvp_parameter_(
 		shader_.vertex_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"mvp")),
+		renderer_,
 		sge::shader::parameter::is_projection_matrix(
 			true),
 		sge::renderer::matrix4()),
@@ -177,12 +179,12 @@ flake::volume::density_visualization::raycaster::object::object(
 				"camera_position")),
 		sge::renderer::vector3()),
 	loaded_texture_(
-		shader_,
-		renderer_,
 		shader_.pixel_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"density_texture")),
+		shader_,
+		renderer_,
 		sge::shader::parameter::planar_texture::optional_value(
 			*texture_))
 {

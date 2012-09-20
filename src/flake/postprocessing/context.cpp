@@ -58,14 +58,15 @@ flake::postprocessing::context::context(
 				FCPPT_TEXT("shaders/postprocessing/downsample.cg"))),
 		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/postprocessing/downsample.cg")))),
+				FCPPT_TEXT("shaders/postprocessing/downsample.cg"))),
+		sge::shader::optional_cflags()),
 	downsample_input_texture_parameter_(
-		downsample_shader_,
-		renderer_,
 		downsample_shader_.pixel_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"input_texture")),
+		downsample_shader_,
+		renderer_,
 		sge::shader::parameter::planar_texture::optional_value()),
 	blur_h_shader_(
 		_shader_context,
@@ -75,14 +76,15 @@ flake::postprocessing::context::context(
 				FCPPT_TEXT("shaders/postprocessing/blur_h.cg"))),
 		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/postprocessing/blur_h.cg")))),
+				FCPPT_TEXT("shaders/postprocessing/blur_h.cg"))),
+		sge::shader::optional_cflags()),
 	blur_h_input_texture_parameter_(
-		blur_h_shader_,
-		renderer_,
 		blur_h_shader_.pixel_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"input_texture")),
+		blur_h_shader_,
+		renderer_,
 		sge::shader::parameter::planar_texture::optional_value()),
 	blur_v_shader_(
 		_shader_context,
@@ -92,14 +94,15 @@ flake::postprocessing::context::context(
 				FCPPT_TEXT("shaders/postprocessing/blur_v.cg"))),
 		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/postprocessing/blur_v.cg")))),
+				FCPPT_TEXT("shaders/postprocessing/blur_v.cg"))),
+		sge::shader::optional_cflags()),
 	blur_v_input_texture_parameter_(
-		blur_v_shader_,
-		renderer_,
 		blur_v_shader_.pixel_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"input_texture")),
+		blur_v_shader_,
+		renderer_,
 		sge::shader::parameter::planar_texture::optional_value()),
 	finalize_shader_(
 		_shader_context,
@@ -109,22 +112,23 @@ flake::postprocessing::context::context(
 				FCPPT_TEXT("shaders/postprocessing/finalize.cg"))),
 		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/postprocessing/finalize.cg")))),
+				FCPPT_TEXT("shaders/postprocessing/finalize.cg"))),
+		sge::shader::optional_cflags()),
 	finalize_input_texture_parameter_(
-		finalize_shader_,
-		renderer_,
 		finalize_shader_.pixel_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"input_texture")),
-		sge::shader::parameter::planar_texture::optional_value()),
-	finalize_blurred_texture_parameter_(
 		finalize_shader_,
 		renderer_,
+		sge::shader::parameter::planar_texture::optional_value()),
+	finalize_blurred_texture_parameter_(
 		finalize_shader_.pixel_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"blurred_texture")),
+		finalize_shader_,
+		renderer_,
 		sge::shader::parameter::planar_texture::optional_value()),
 	viewport_connection_(
 		_viewport_manager.manage_callback(
@@ -222,10 +226,12 @@ flake::postprocessing::context::viewport_callback()
 					sge::renderer::texture::capabilities::render_target))));
 
 	finalize_input_texture_parameter_.set(
-		*rendering_result_texture_);
+		sge::shader::parameter::planar_texture::optional_value(
+			*rendering_result_texture_));
 
 	finalize_blurred_texture_parameter_.set(
-		*downsampled_texture_0_);
+		sge::shader::parameter::planar_texture::optional_value(
+			*downsampled_texture_0_));
 
 	offscreen_target_.take(
 		sge::renderer::target::from_texture(
@@ -298,7 +304,8 @@ flake::postprocessing::context::downsample()
 		*offscreen_downsampled_target_);
 
 	downsample_input_texture_parameter_.set(
-		*rendering_result_texture_);
+		sge::shader::parameter::planar_texture::optional_value(
+			*rendering_result_texture_));
 
 	sge::shader::scoped_pair scoped_shader(
 		scoped_block.get(),
@@ -324,7 +331,8 @@ flake::postprocessing::context::blur_h()
 		*offscreen_downsampled_target_);
 
 	blur_h_input_texture_parameter_.set(
-		*downsampled_texture_0_);
+		sge::shader::parameter::planar_texture::optional_value(
+			*downsampled_texture_0_));
 
 	sge::shader::scoped_pair scoped_shader(
 		scoped_block.get(),
@@ -356,7 +364,8 @@ flake::postprocessing::context::blur_v()
 		*offscreen_downsampled_target_);
 
 	blur_v_input_texture_parameter_.set(
-		*downsampled_texture_1_);
+		sge::shader::parameter::planar_texture::optional_value(
+			*downsampled_texture_1_));
 
 	sge::shader::scoped_pair scoped_shader(
 		scoped_block.get(),

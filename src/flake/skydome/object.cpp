@@ -123,22 +123,24 @@ flake::skydome::object::object(
 				FCPPT_TEXT("shaders/skydome.cg"))),
 		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/skydome.cg")))),
+				FCPPT_TEXT("shaders/skydome.cg"))),
+		sge::shader::optional_cflags()),
 	mvp_parameter_(
 		shader_.vertex_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"mvp")),
+		renderer_,
 		sge::shader::parameter::is_projection_matrix(
 			true),
 		sge::renderer::matrix4()),
 	texture_parameter_(
-		shader_,
-		renderer_,
 		shader_.pixel_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"sky_texture")),
+		shader_,
+		renderer_,
 		sge::shader::parameter::planar_texture::optional_value(
 			*texture_))
 {

@@ -40,12 +40,14 @@ flake::volume::arrows::manager::manager(
 				FCPPT_TEXT("shaders/volume_arrow.cg"))),
 		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/volume_arrow.cg")))),
+				FCPPT_TEXT("shaders/volume_arrow.cg"))),
+		sge::shader::optional_cflags()),
 	mvp_parameter_(
 		shader_.vertex_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"mvp")),
+		_renderer,
 		sge::shader::parameter::is_projection_matrix(
 			true),
 		sge::renderer::matrix4()),

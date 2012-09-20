@@ -109,6 +109,7 @@ find_package(
 	renderer
 	log
 	media
+	scenic
 	core
 	sprite
 	shader

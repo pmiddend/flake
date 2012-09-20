@@ -11,6 +11,8 @@
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
+#include <sge/scenic/scene/from_blender_file.hpp>
+#include <sge/scenic/scene/prototype.hpp>
 #include <sge/image/colors.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
@@ -26,6 +28,7 @@
 #include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/texture/address_mode2.hpp>
+#include <sge/scenic/render_context/base.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
 #include <sge/renderer/texture/set_address_mode2.hpp>
 #include <sge/renderer/texture/volume.hpp>
@@ -195,19 +198,14 @@ flake::volume::tests::flakes::flakes(
 	subtract_pressure_gradient_(
 		this->program_context()),
 	boundary_buffer_(
-		conversion_object_.raw_voxel_file_to_buffer(
+		conversion_object_.binvox_file_to_buffer(
 			this->buffer_pool(),
 			flake::media_path_from_string(
 				FCPPT_TEXT("voxelized_models/")+
 				sge::parse::json::find_and_convert_member<fcppt::string>(
 					this->configuration(),
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("voxel-file/name")))),
-			flakelib::volume::conversion::raw_voxel_file_dimension(
-				sge::parse::json::find_and_convert_member<sge::opencl::size_type>(
-					this->configuration(),
-					sge::parse::json::string_to_path(
-						FCPPT_TEXT("voxel-file/size")))))
+						FCPPT_TEXT("voxel-file/name")))))
 		/*
 		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
@@ -320,65 +318,27 @@ flake::volume::tests::flakes::flakes(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("iso-level"))))),
-	models_(
+	scene_manager_(
 		this->renderer(),
-		this->shader_context(),
-		this->image_system(),
+		this->image_system()),
+	scene_(
+		scene_manager_,
+		this->viewport_manager(),
+		this->charconv_system(),
 		camera_,
-		flake::volume::model::sun_direction(
-			sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("sun-direction")))),
-		flake::volume::model::fog_color(
-			sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("fog-color")))),
-		flake::volume::model::fog_density(
-			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("fog-density"))))),
-	model_(
-		models_,
-		flake::volume::model::identifier(
-			sge::parse::json::find_and_convert_member<fcppt::string>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("voxel-file/model")))),
-		flake::volume::model::position(
-			sge::renderer::vector3(
-				0.0f,
-				0.0f,
-				0.0f))),
-	/*
-	obstacles_(
-		models_,
-		sge::parse::json::find_and_convert_member<sge::parse::json::array>(
-			this->configuration(),
-			sge::parse::json::string_to_path(
-				FCPPT_TEXT("obstacles"))),
-		flakelib::volume::boundary_buffer_view(
-			boundary_buffer_->value()),
-		splatter_),
-		*/
-/*
-	gradient_(
-		this->program_context(),
-		this->buffer_pool()),
-*/
-/*
-	scan_(
-		this->program_context(),
-		this->buffer_pool()),
-	marching_cubes_manager_(
-		this->renderer(),
-		scan_,
-		gradient_,
-		this->program_context(),
-		this->buffer_pool()),
-*/
+		sge::scenic::scene::from_blender_file(
+			flake::media_path_from_string(
+				FCPPT_TEXT("scenes/landhaus/description.json")),
+			this->charconv_system()),
+		sge::scenic::scene::object::model_base_path(
+			flake::media_path_from_string(
+				FCPPT_TEXT("scenes/landhaus"))),
+		sge::scenic::scene::object::material_base_path(
+			flake::media_path_from_string(
+				FCPPT_TEXT("scenes/landhaus"))),
+		sge::scenic::scene::object::texture_base_path(
+			flake::media_path_from_string(
+				FCPPT_TEXT("scenes/landhaus")))),
 	marching_cubes_manager_(
 		this->renderer(),
 		flakelib::marching_cubes::cpu::grid_size(
@@ -539,8 +499,14 @@ flake::volume::tests::flakes::render(
 		this->feature_active(
 			test::json_identifier(
 				FCPPT_TEXT("models"))))
-		models_.render(
-			_context);
+	{
+		sge::scenic::render_context::base_unique_ptr wrapped_context(
+			scene_manager_.create_render_context(
+				_context));
+
+		scene_.render(
+			*wrapped_context);
+	}
 
 	if(
 		this->feature_active(

@@ -137,6 +137,10 @@ flake::volume::tests::solipsistic::solipsistic(
 			fill_buffer_,
 			simulation_size_.get()))
 {
+	std::cout << "Doing " << sge::parse::json::find_and_convert_member<flakelib::volume::simulation::stam::iterations::value_type>(
+				json_configuration_,
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("tests/solipsistic/jacobi-iterations"))) << " jacobi iterations\n";
 }
 
 flake::volume::tests::solipsistic::~solipsistic()
@@ -164,8 +168,8 @@ flake::volume::tests::solipsistic::run()
 	{
 		std::cout << '\r';
 		std::cout << "|";
-		std::cout << std::string(i,'-');
-		std::cout << std::string(iteration_count-i,' ');
+		std::cout << std::string(static_cast<std::string::size_type>(static_cast<double>(i)/static_cast<double>(iteration_count) * 80.0),'-');
+		std::cout << std::string(static_cast<std::string::size_type>(static_cast<double>(iteration_count-i)/static_cast<double>(iteration_count) * 80.0),' ');
 		std::cout << "|";
 
 		this->run_once();

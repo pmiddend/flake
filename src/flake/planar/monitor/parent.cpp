@@ -72,7 +72,8 @@ flake::planar::monitor::parent::parent(
 				FCPPT_TEXT("shaders/arrow.cg"))),
 		sge::shader::pixel_program_path(
 			flake::media_path_from_string(
-				FCPPT_TEXT("shaders/arrow.cg")))),
+				FCPPT_TEXT("shaders/arrow.cg"))),
+		sge::shader::optional_cflags()),
 	arrow_initial_position_parameter_(
 		arrow_shader_.vertex_program(),
 		sge::shader::parameter::name(
@@ -84,6 +85,7 @@ flake::planar::monitor::parent::parent(
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"projection")),
+		renderer_,
 		sge::shader::parameter::is_projection_matrix(
 			true),
 		sge::renderer::matrix4()),
