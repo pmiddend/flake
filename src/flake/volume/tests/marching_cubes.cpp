@@ -1,8 +1,4 @@
 #include <flake/catch_statements.hpp>
-#include <sge/renderer/state/core/rasterizer/object_scoped_ptr.hpp>
-#include <sge/renderer/state/core/rasterizer/object.hpp>
-#include <sge/renderer/state/core/rasterizer/scoped.hpp>
-#include <sge/renderer/state/core/rasterizer/parameters.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/volume/snow_cover/scoped.hpp>
 #include <flake/volume/tests/marching_cubes.hpp>
@@ -22,10 +18,14 @@
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
-#include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/clear/parameters.hpp>
 #include <sge/renderer/context/ffp.hpp>
+#include <sge/renderer/device/ffp.hpp>
+#include <sge/renderer/state/core/rasterizer/object.hpp>
+#include <sge/renderer/state/core/rasterizer/object_scoped_ptr.hpp>
+#include <sge/renderer/state/core/rasterizer/parameters.hpp>
+#include <sge/renderer/state/core/rasterizer/scoped.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/mipmap/all_levels.hpp>

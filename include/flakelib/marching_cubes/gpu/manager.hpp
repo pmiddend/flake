@@ -13,7 +13,6 @@
 #include <flakelib/marching_cubes/gpu/active_voxels.hpp>
 #include <flakelib/marching_cubes/gpu/compacted_voxel_occupation_view.hpp>
 #include <flakelib/marching_cubes/gpu/density_view.hpp>
-#include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
 #include <flakelib/marching_cubes/gpu/grid_size.hpp>
 #include <flakelib/marching_cubes/gpu/grid_size_mask.hpp>
 #include <flakelib/marching_cubes/gpu/grid_size_shift.hpp>
@@ -29,10 +28,11 @@
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/dim3.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
-#include <sge/renderer/device/core_fwd.hpp>
 #include <sge/renderer/size_type.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/context/core_fwd.hpp>
+#include <sge/renderer/device/core_fwd.hpp>
+#include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/unique_ptr.hpp>
 #include <fcppt/config/external_begin.hpp>

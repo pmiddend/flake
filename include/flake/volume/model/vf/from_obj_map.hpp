@@ -2,12 +2,13 @@
 #define FLAKE_VOLUME_MODEL_VF_FROM_OBJ_MAP_HPP_INCLUDED
 
 #include <flake/volume/model/vf/format_part.hpp>
-	//#include <sge/model/obj/vb_converter/convert.hpp>
+#include <sge/model/obj/vb_converter/convert.hpp>
 #include <fcppt/mpl/index_of.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/mpl/pair.hpp>
 #include <boost/mpl/map/map10.hpp>
 #include <fcppt/config/external_end.hpp>
+
 
 namespace flake
 {

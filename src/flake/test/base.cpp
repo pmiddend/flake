@@ -1,6 +1,4 @@
 #include <flake/media_path_from_string.hpp>
-#include <sge/image/colors.hpp>
-#include <sge/image/color/any/object.hpp>
 #include <flake/notifications/object.hpp>
 #include <flake/test/base.hpp>
 #include <flake/test/update_features_from_json.hpp>
@@ -8,10 +6,8 @@
 #include <flake/time_modifier/object.hpp>
 #include <flakelib/log.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
-#include <sge/renderer/context/scoped_core.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/buffer_pool/object.hpp>
-#include <sge/renderer/context/scoped_ffp.hpp>
 #include <flakelib/cl/cflags.hpp>
 #include <flakelib/cl/compiler_flags.hpp>
 #include <flakelib/cl/program_context.hpp>
@@ -19,6 +15,7 @@
 #include <sge/charconv/system.hpp>
 #include <sge/font/system.hpp>
 #include <sge/image/colors.hpp>
+#include <sge/image/color/any/object.hpp>
 #include <sge/input/keyboard/device.hpp>
 #include <sge/input/keyboard/key_event.hpp>
 #include <sge/log/global_context.hpp>
@@ -28,6 +25,8 @@
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/parse_string_exn.hpp>
 #include <sge/parse/json/string_to_path.hpp>
+#include <sge/renderer/context/scoped_core.hpp>
+#include <sge/renderer/context/scoped_ffp.hpp>
 #include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/parameters/object.hpp>
 #include <sge/renderer/pixel_format/object.hpp>

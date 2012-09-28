@@ -6,8 +6,8 @@
 #include <sge/font/system_fwd.hpp>
 #include <sge/font/ttf_size.hpp>
 #include <sge/image/color/any/object.hpp>
-#include <sge/renderer/device/ffp_fwd.hpp>
 #include <sge/renderer/context/ffp_fwd.hpp>
+#include <sge/renderer/device/ffp_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/intrusive/list.hpp>

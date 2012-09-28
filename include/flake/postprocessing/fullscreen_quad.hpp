@@ -1,11 +1,11 @@
 #ifndef FLAKE_POSTPROCESSING_FULLSCREEN_QUAD_HPP_INCLUDED
 #define FLAKE_POSTPROCESSING_FULLSCREEN_QUAD_HPP_INCLUDED
 
-#include <sge/renderer/device/core_fwd.hpp>
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/vertex_declaration_unique_ptr.hpp>
 #include <sge/renderer/context/core.hpp>
+#include <sge/renderer/device/core_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 
 

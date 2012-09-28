@@ -6,12 +6,12 @@
 #include <flake/volume/snow_cover/steep_texture.hpp>
 #include <flake/volume/snow_cover/sun_direction.hpp>
 #include <flake/volume/snow_cover/texture_repeats.hpp>
-#include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
 #include <sge/camera/base_fwd.hpp>
-#include <sge/renderer/device/core_fwd.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
 #include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
+#include <sge/renderer/device/core_fwd.hpp>
+#include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
 #include <sge/shader/context.hpp>
 #include <sge/shader/pair.hpp>
 #include <sge/shader/parameter/matrix.hpp>

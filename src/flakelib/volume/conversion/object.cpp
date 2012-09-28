@@ -5,27 +5,27 @@
 #include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/volume/float_buffer_lock.hpp>
-#include <fcppt/from_std_string.hpp>
 #include <flakelib/volume/conversion/object.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <fcppt/container/raw_vector.hpp>
 #include <sge/opencl/memory_object/scoped_objects.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
+#include <fcppt/from_std_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/move.hpp>
 #include <fcppt/optional.hpp>
 #include <fcppt/ref.hpp>
-#include <string>
-#include <sstream>
-#include <cstddef>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
+#include <fcppt/container/raw_vector.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/math/dim/is_quadratic.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <cstddef>
+#include <sstream>
+#include <string>
 #include <fcppt/config/external_end.hpp>
 
 

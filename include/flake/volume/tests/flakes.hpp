@@ -35,11 +35,11 @@
 #include <flakelib/volume/simulation/stam/wind_source.hpp>
 #include <sge/camera/perspective_projection_from_viewport.hpp>
 #include <sge/camera/first_person/object.hpp>
-#include <sge/scenic/scene/manager.hpp>
-#include <sge/scenic/scene/object.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>
 #include <sge/opencl/dim3.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
+#include <sge/scenic/scene/manager.hpp>
+#include <sge/scenic/scene/object.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
 #include <awl/main/exit_code.hpp>

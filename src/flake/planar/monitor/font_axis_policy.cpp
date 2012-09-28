@@ -1,9 +1,10 @@
 #include <flake/planar/monitor/font_axis_policy.hpp>
-#include <sge/font/object.hpp>
 #include <sge/font/dim.hpp>
+#include <sge/font/object.hpp>
 #include <sge/font/text.hpp>
-#include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/box/object_impl.hpp>
+#include <fcppt/math/dim/object_impl.hpp>
+
 
 sge::rucksack::axis_policy2 const
 flake::planar::monitor::font_axis_policy(

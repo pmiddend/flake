@@ -4,9 +4,10 @@
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/cg/parameter/matrix/set.hpp>
-#include <fcppt/assign/make_container.hpp>
 #include <fcppt/cref.hpp>
 #include <fcppt/assert/pre.hpp>
+#include <fcppt/assign/make_container.hpp>
+
 
 flake::volume::snow_cover::scoped::scoped(
 	flake::volume::snow_cover::object &_snow_cover,

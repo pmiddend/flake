@@ -1,10 +1,11 @@
 #ifndef FLAKE_PLANAR_MONITOR_FONT_AXIS_POLICY_HPP_INCLUDED
 #define FLAKE_PLANAR_MONITOR_FONT_AXIS_POLICY_HPP_INCLUDED
 
-#include <sge/rucksack/axis_policy2.hpp>
 #include <sge/font/object_fwd.hpp>
-#include <sge/font/text_parameters_fwd.hpp>
 #include <sge/font/string.hpp>
+#include <sge/font/text_parameters_fwd.hpp>
+#include <sge/rucksack/axis_policy2.hpp>
+
 
 namespace flake
 {

@@ -16,8 +16,8 @@
 #include <sge/input/cursor/object_fwd.hpp>
 #include <sge/input/cursor/position.hpp>
 #include <sge/opencl/clinclude.hpp>
-#include <sge/renderer/device/core_fwd.hpp>
 #include <sge/renderer/vector2.hpp>
+#include <sge/renderer/device/core_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/optional_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>

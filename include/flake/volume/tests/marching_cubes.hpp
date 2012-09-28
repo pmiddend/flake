@@ -5,7 +5,6 @@
 #include <flake/volume/snow_cover/object.hpp>
 #include <flakelib/marching_cubes/cpu/object.hpp>
 #include <flakelib/marching_cubes/gpu/manager.hpp>
-#include <flakelib/volume/conversion/object.hpp>
 #include <flakelib/marching_cubes/gpu/object.hpp>
 #include <flakelib/scan/object.hpp>
 #include <flakelib/splatter/object.hpp>
@@ -13,6 +12,7 @@
 #include <flakelib/volume/gradient.hpp>
 #include <flakelib/volume/grid_size.hpp>
 #include <flakelib/volume/unique_float_buffer_lock.hpp>
+#include <flakelib/volume/conversion/object.hpp>
 #include <sge/camera/perspective_projection_from_viewport.hpp>
 #include <sge/camera/first_person/object.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>

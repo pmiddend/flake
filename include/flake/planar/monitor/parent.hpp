@@ -9,10 +9,9 @@
 #include <flake/planar/monitor/grid_scale.hpp>
 #include <flake/planar/monitor/optional_projection.hpp>
 #include <flake/planar/monitor/scaling_factor.hpp>
+#include <flake/planar/monitor/dummy_sprite/buffers.hpp>
 #include <flake/planar/monitor/dummy_sprite/collection.hpp>
 #include <flake/planar/monitor/dummy_sprite/state_object.hpp>
-#include <flake/planar/monitor/dummy_sprite/buffers.hpp>
-#include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
 #include <sge/font/object_scoped_ptr.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <sge/font/ttf_size.hpp>
@@ -22,17 +21,18 @@
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/program/object.hpp>
-#include <sge/renderer/device/ffp_fwd.hpp>
 #include <sge/renderer/vector2.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/context/ffp_fwd.hpp>
+#include <sge/renderer/device/ffp_fwd.hpp>
+#include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
 #include <sge/shader/context_fwd.hpp>
 #include <sge/shader/pair.hpp>
-#include <sge/sprite/buffers/with_declaration.hpp>
-#include <sge/sprite/buffers/single.hpp>
 #include <sge/shader/parameter/matrix.hpp>
 #include <sge/shader/parameter/vector.hpp>
+#include <sge/sprite/buffers/single.hpp>
+#include <sge/sprite/buffers/with_declaration.hpp>
 #include <fcppt/noncopyable.hpp>
 
 

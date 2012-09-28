@@ -12,9 +12,9 @@
 #include <flakelib/volume/conversion/arrow_scale.hpp>
 #include <flakelib/volume/conversion/constant_addition.hpp>
 #include <flakelib/volume/conversion/grid_scale.hpp>
+#include <flakelib/volume/conversion/optional_height.hpp>
 #include <flakelib/volume/conversion/origin.hpp>
 #include <flakelib/volume/conversion/raw_voxel_file_dimension.hpp>
-#include <flakelib/volume/conversion/optional_height.hpp>
 #include <flakelib/volume/conversion/scaling_factor.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>

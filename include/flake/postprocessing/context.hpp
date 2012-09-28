@@ -2,14 +2,14 @@
 #define FLAKE_POSTPROCESSING_CONTEXT_HPP_INCLUDED
 
 #include <flake/postprocessing/fullscreen_quad.hpp>
-#include <sge/renderer/device/ffp_fwd.hpp>
+#include <sge/renderer/depth_stencil_surface_scoped_ptr.hpp>
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/context/scoped_ffp_unique_ptr.hpp>
+#include <sge/renderer/device/ffp_fwd.hpp>
 #include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
 #include <sge/renderer/target/offscreen_scoped_ptr.hpp>
 #include <sge/renderer/texture/planar_scoped_ptr.hpp>
-#include <sge/renderer/depth_stencil_surface_scoped_ptr.hpp>
 #include <sge/shader/context_fwd.hpp>
 #include <sge/shader/pair.hpp>
 #include <sge/shader/parameter/planar_texture.hpp>

@@ -4,11 +4,11 @@
 #include <flake/volume/arrows/vf/format_part.hpp>
 #include <flakelib/buffer/volume_view_impl.hpp>
 #include <flakelib/volume/conversion/object.hpp>
-#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/context/core.hpp>
+#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 

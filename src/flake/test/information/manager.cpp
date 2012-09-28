@@ -1,21 +1,24 @@
 #include <flake/test/information/manager.hpp>
-#include <sge/font/rect.hpp>
-#include <sge/font/vector.hpp>
-#include <sge/font/draw/static_text.hpp>
-#include <boost/next_prior.hpp>
-#include <sge/font/lit.hpp>
-#include <sge/font/from_fcppt_string.hpp>
 #include <flake/test/information/object.hpp>
-#include <sge/font/parameters.hpp>
+#include <sge/font/from_fcppt_string.hpp>
+#include <sge/font/lit.hpp>
 #include <sge/font/object.hpp>
+#include <sge/font/parameters.hpp>
+#include <sge/font/rect.hpp>
 #include <sge/font/system.hpp>
 #include <sge/font/text_parameters.hpp>
+#include <sge/font/vector.hpp>
 #include <sge/font/draw/simple.hpp>
+#include <sge/font/draw/static_text.hpp>
+#include <sge/font/weight/bold.hpp>
 #include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <fcppt/text.hpp>
-#include <sge/font/weight/bold.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <boost/next_prior.hpp>
+#include <fcppt/config/external_end.hpp>
+
 
 flake::test::information::manager::manager(
 	sge::font::system &_font_system,

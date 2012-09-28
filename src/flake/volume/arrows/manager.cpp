@@ -4,20 +4,20 @@
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
-#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/cg/loaded_program.hpp>
 #include <sge/renderer/cg/scoped_program.hpp>
+#include <sge/renderer/device/core.hpp>
+#include <sge/renderer/state/core/blend/combined.hpp>
+#include <sge/renderer/state/core/blend/object.hpp>
+#include <sge/renderer/state/core/blend/parameters.hpp>
+#include <sge/renderer/state/core/blend/scoped.hpp>
+#include <sge/renderer/state/core/blend/write_mask_all.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/shader/scoped_pair.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
-#include <sge/renderer/state/core/blend/object.hpp>
-#include <sge/renderer/state/core/blend/scoped.hpp>
-#include <sge/renderer/state/core/blend/parameters.hpp>
-#include <sge/renderer/state/core/blend/combined.hpp>
-#include <sge/renderer/state/core/blend/write_mask_all.hpp>
 
 
 flake::volume::arrows::manager::manager(

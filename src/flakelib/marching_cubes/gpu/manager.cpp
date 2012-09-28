@@ -4,10 +4,6 @@
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/marching_cubes/gpu/manager.hpp>
 #include <flakelib/marching_cubes/gpu/num_vert_table.hpp>
-#include <sge/renderer/state/core/depth_stencil/object.hpp>
-#include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
-#include <sge/renderer/state/core/depth_stencil/parameters.hpp>
-#include <sge/renderer/state/core/depth_stencil/scoped.hpp>
 #include <flakelib/marching_cubes/gpu/triangle_table.hpp>
 #include <flakelib/marching_cubes/vf/format.hpp>
 #include <flakelib/volume/gradient.hpp>
@@ -18,9 +14,13 @@
 #include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
-#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
+#include <sge/renderer/device/core.hpp>
+#include <sge/renderer/state/core/depth_stencil/object.hpp>
+#include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
+#include <sge/renderer/state/core/depth_stencil/parameters.hpp>
+#include <sge/renderer/state/core/depth_stencil/scoped.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <fcppt/insert_to_std_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>

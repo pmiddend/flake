@@ -24,8 +24,8 @@
 #include <sge/input/mouse/device_fwd.hpp>
 #include <sge/opencl/single_device_system/object_fwd.hpp>
 #include <sge/parse/json/object.hpp>
-#include <sge/renderer/device/ffp_fwd.hpp>
 #include <sge/renderer/context/ffp_fwd.hpp>
+#include <sge/renderer/device/ffp_fwd.hpp>
 #include <sge/shader/context_fwd.hpp>
 #include <sge/systems/cursor_option_field.hpp>
 #include <sge/systems/instance_fwd.hpp>

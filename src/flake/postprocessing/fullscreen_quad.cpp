@@ -1,7 +1,6 @@
 #include <flake/postprocessing/fullscreen_quad.hpp>
 #include <flake/postprocessing/vf/format.hpp>
 #include <flake/postprocessing/vf/format_part.hpp>
-#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
@@ -9,6 +8,7 @@
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/context/core.hpp>
+#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/vf/iterator.hpp>
 #include <sge/renderer/vf/vertex.hpp>
 #include <sge/renderer/vf/view.hpp>
