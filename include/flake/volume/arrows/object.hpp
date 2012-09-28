@@ -10,9 +10,9 @@
 #include <flakelib/volume/conversion/origin.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/device/core_fwd.hpp>
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
+#include <sge/renderer/context/core_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/preprocessor/disable_gcc_warning.hpp>
@@ -59,11 +59,11 @@ public:
 
 	void
 	render(
-		sge::renderer::context::object &);
+		sge::renderer::context::core &);
 
 	~object();
 private:
-	sge::renderer::device &renderer_;
+	sge::renderer::device::core &renderer_;
 	flakelib::volume::conversion::object &conversion_;
 	flakelib::volume::conversion::arrow_scale const arrow_scale_;
 	flakelib::volume::conversion::grid_scale const grid_scale_;

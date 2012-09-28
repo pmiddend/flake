@@ -10,7 +10,7 @@
 #include <sge/image/color/rgba8.hpp>
 #include <sge/font/from_fcppt_string.hpp>
 #include <sge/image/color/init.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters_impl.hpp>
@@ -20,7 +20,7 @@
 
 
 flake::notifications::object::object(
-	sge::renderer::device &_renderer,
+	sge::renderer::device::ffp &_renderer,
 	sge::font::system &_font_system,
 	sge::font::ttf_size const &_ttf_size,
 	notifications::time_to_live const &_time_to_live)
@@ -80,7 +80,7 @@ flake::notifications::object::update()
 
 void
 flake::notifications::object::render(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::ffp &_context)
 {
 	// When drawing a font, we have to specify a rectangle to draw into.
 	// Since we're not getting such a rectangle in the constructor (which
@@ -98,6 +98,9 @@ flake::notifications::object::render(
 	sge::font::rect const viewport_rect(
 		fcppt::math::box::structure_cast<sge::font::rect>(
 			renderer_.onscreen_target().viewport().get()));
+
+	if(!viewport_rect.content())
+		return;
 
 	sge::font::text_parameters const text_parameters(
 		sge::font::text_parameters(

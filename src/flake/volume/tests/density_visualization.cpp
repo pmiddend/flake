@@ -10,14 +10,9 @@
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/clear/parameters.hpp>
-#include <sge/renderer/context/object.hpp>
-#include <sge/renderer/state/color.hpp>
-#include <sge/renderer/state/draw_mode.hpp>
-#include <sge/renderer/state/float.hpp>
-#include <sge/renderer/state/list.hpp>
-#include <sge/renderer/state/scoped.hpp>
+#include <sge/renderer/context/ffp.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters.hpp>
 #include <fcppt/make_unique_ptr.hpp>
@@ -84,7 +79,6 @@ flake::volume::tests::density_visualization::density_visualization(
 			sge::camera::coordinate_system::identity())),
 	perspective_projection_from_viewport_(
 		camera_,
-		this->renderer(),
 		this->viewport_manager(),
 		sge::renderer::projection::near(
 			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
@@ -118,7 +112,8 @@ flake::volume::tests::density_visualization::density_visualization(
 				sge::parse::json::find_and_convert_member<fcppt::string>(
 					this->configuration(),
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("voxel-file/name")))))
+						FCPPT_TEXT("voxel-file/name")))),
+			flakelib::volume::conversion::optional_height())
 		/*
 		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
@@ -218,7 +213,7 @@ flake::volume::tests::density_visualization::~density_visualization()
 
 void
 flake::volume::tests::density_visualization::render(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::ffp &_context)
 {
 	_context.clear(
 		sge::renderer::clear::parameters()

@@ -10,11 +10,11 @@
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/memory_object/scoped_objects.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
-#include <sge/renderer/context/object.hpp>
+#include <sge/renderer/context/core.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
@@ -217,7 +217,7 @@ flakelib::marching_cubes::gpu::object::~object()
 
 void
 flakelib::marching_cubes::gpu::object::render(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::core &_context)
 {
 	if(!positions_buffer_)
 		return;

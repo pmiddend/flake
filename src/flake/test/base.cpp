@@ -8,8 +8,10 @@
 #include <flake/time_modifier/object.hpp>
 #include <flakelib/log.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
+#include <sge/renderer/context/scoped_core.hpp>
 #include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/buffer_pool/object.hpp>
+#include <sge/renderer/context/scoped_ffp.hpp>
 #include <flakelib/cl/cflags.hpp>
 #include <flakelib/cl/compiler_flags.hpp>
 #include <flakelib/cl/program_context.hpp>
@@ -26,9 +28,7 @@
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/parse_string_exn.hpp>
 #include <sge/parse/json/string_to_path.hpp>
-#include <sge/renderer/device.hpp>
-#include <sge/renderer/context/scoped.hpp>
-#include <sge/renderer/context/scoped_scoped_ptr.hpp>
+#include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/parameters/object.hpp>
 #include <sge/renderer/pixel_format/object.hpp>
 #include <sge/renderer/target/onscreen.hpp>
@@ -324,7 +324,7 @@ flake::test::base::update()
 
 void
 flake::test::base::render_overlay(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::ffp &_context)
 {
 	notifications_->render(
 		_context);
@@ -339,11 +339,11 @@ flake::test::base::configuration() const
 		local_configuration_;
 }
 
-sge::renderer::device &
+sge::renderer::device::ffp &
 flake::test::base::renderer()
 {
 	return
-		systems_->renderer();
+		systems_->renderer_ffp();
 }
 
 sge::shader::context &

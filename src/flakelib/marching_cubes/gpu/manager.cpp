@@ -4,6 +4,10 @@
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/marching_cubes/gpu/manager.hpp>
 #include <flakelib/marching_cubes/gpu/num_vert_table.hpp>
+#include <sge/renderer/state/core/depth_stencil/object.hpp>
+#include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
+#include <sge/renderer/state/core/depth_stencil/parameters.hpp>
+#include <sge/renderer/state/core/depth_stencil/scoped.hpp>
 #include <flakelib/marching_cubes/gpu/triangle_table.hpp>
 #include <flakelib/marching_cubes/vf/format.hpp>
 #include <flakelib/volume/gradient.hpp>
@@ -14,13 +18,9 @@
 #include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
-#include <sge/renderer/state/cull_mode.hpp>
-#include <sge/renderer/state/depth_func.hpp>
-#include <sge/renderer/state/list.hpp>
-#include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <fcppt/insert_to_std_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
@@ -42,7 +42,7 @@ sge::opencl::size_type const nthreads =
 }
 
 flakelib::marching_cubes::gpu::manager::manager(
-	sge::renderer::device &_renderer,
+	sge::renderer::device::core &_renderer,
 	flakelib::scan::object &_scan,
 	flakelib::volume::gradient &_gradient,
 	flakelib::cl::program_context const &_program_context,
@@ -60,6 +60,15 @@ flakelib::marching_cubes::gpu::manager::manager(
 			<
 				flakelib::marching_cubes::vf::format
 			>())),
+	depth_stencil_state_(
+		renderer_.create_depth_stencil_state(
+			sge::renderer::state::core::depth_stencil::parameters(
+				sge::renderer::state::core::depth_stencil::depth::variant(
+					sge::renderer::state::core::depth_stencil::depth::enabled(
+						sge::renderer::state::core::depth_stencil::depth::func::less,
+						sge::renderer::state::core::depth_stencil::depth::write_enable(
+							true))),
+				sge::renderer::state::core::depth_stencil::stencil::off()))),
 	children_(),
 	table_format_(
 		sge::opencl::memory_object::create_image_format(
@@ -176,13 +185,11 @@ flakelib::marching_cubes::gpu::manager::manager(
 
 void
 flakelib::marching_cubes::gpu::manager::render(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::core &_context)
 {
-	sge::renderer::state::scoped scoped_state(
+	sge::renderer::state::core::depth_stencil::scoped scoped_depth_stencil_state(
 		_context,
-		sge::renderer::state::list
-			(sge::renderer::state::depth_func::less)
-			(sge::renderer::state::cull_mode::off));
+		*depth_stencil_state_);
 
 	sge::renderer::scoped_vertex_declaration scoped_vertex_declaration(
 		_context,
@@ -270,7 +277,7 @@ flakelib::marching_cubes::gpu::manager::scan() const
 		scan_;
 }
 
-sge::renderer::device &
+sge::renderer::device::core &
 flakelib::marching_cubes::gpu::manager::renderer() const
 {
 	return

@@ -13,6 +13,7 @@
 #include <flakelib/marching_cubes/gpu/active_voxels.hpp>
 #include <flakelib/marching_cubes/gpu/compacted_voxel_occupation_view.hpp>
 #include <flakelib/marching_cubes/gpu/density_view.hpp>
+#include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
 #include <flakelib/marching_cubes/gpu/grid_size.hpp>
 #include <flakelib/marching_cubes/gpu/grid_size_mask.hpp>
 #include <flakelib/marching_cubes/gpu/grid_size_shift.hpp>
@@ -28,10 +29,10 @@
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/dim3.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
-#include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/device/core_fwd.hpp>
 #include <sge/renderer/size_type.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
+#include <sge/renderer/context/core_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/unique_ptr.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -52,7 +53,7 @@ FCPPT_NONCOPYABLE(
 public:
 	FLAKELIB_SYMBOL
 	manager(
-		sge::renderer::device &,
+		sge::renderer::device::core &,
 		flakelib::scan::object &,
 		flakelib::volume::gradient &,
 		flakelib::cl::program_context const &,
@@ -61,7 +62,7 @@ public:
 	FLAKELIB_SYMBOL
 	void
 	render(
-		sge::renderer::context::object &);
+		sge::renderer::context::core &);
 
 	FLAKELIB_SYMBOL
 	sge::renderer::vertex_declaration &
@@ -105,7 +106,7 @@ public:
 	scan() const;
 
 	FLAKELIB_SYMBOL
-	sge::renderer::device &
+	sge::renderer::device::core &
 	renderer() const;
 
 	FLAKELIB_SYMBOL
@@ -138,9 +139,10 @@ private:
 	unique_linear_uint_lock;
 
 	sge::opencl::command_queue::object &command_queue_;
-	sge::renderer::device &renderer_;
+	sge::renderer::device::core &renderer_;
 	flakelib::scan::object &scan_;
-	sge::renderer::vertex_declaration_scoped_ptr vertex_declaration_;
+	sge::renderer::vertex_declaration_scoped_ptr const vertex_declaration_;
+	sge::renderer::state::core::depth_stencil::object_scoped_ptr const depth_stencil_state_;
 	child_sequence children_;
 	cl_image_format table_format_;
 	cl_int triangle_table_error_code_;

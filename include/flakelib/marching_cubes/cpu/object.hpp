@@ -7,12 +7,13 @@
 #include <flakelib/marching_cubes/cpu/implementation_fwd.hpp>
 #include <flakelib/volume/float_view.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
-#include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/device/core_fwd.hpp>
 #include <sge/renderer/index_buffer_scoped_ptr.hpp>
 #include <sge/renderer/scalar.hpp>
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
+#include <sge/renderer/context/core_fwd.hpp>
+#include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/container/raw_vector.hpp>
@@ -31,14 +32,14 @@ class object
 public:
 	FLAKELIB_SYMBOL
 	object(
-		sge::renderer::device &,
+		sge::renderer::device::core &,
 		flakelib::marching_cubes::cpu::grid_size const &,
 		flakelib::marching_cubes::iso_level const &);
 
 	FLAKELIB_SYMBOL
 	void
 	render(
-		sge::renderer::context::object &);
+		sge::renderer::context::core &);
 
 	FLAKELIB_SYMBOL
 	void
@@ -74,12 +75,13 @@ private:
 	fcppt::container::raw_vector<double>
 	real_sequence;
 
-	sge::renderer::device &renderer_;
+	sge::renderer::device::core &renderer_;
 	flakelib::marching_cubes::iso_level const iso_level_;
 	sge::renderer::vertex_declaration_scoped_ptr vertex_declaration_;
 	sge::renderer::vertex_buffer_scoped_ptr vertex_buffer_;
 	sge::renderer::index_buffer_scoped_ptr index_buffer_;
-	fcppt::scoped_ptr<MarchingCubes> implementation_;
+	sge::renderer::state::core::depth_stencil::object_scoped_ptr const depth_stencil_state_;
+	fcppt::scoped_ptr<MarchingCubes> const implementation_;
 	real_sequence data_;
 	bool is_dirty_;
 

@@ -1,14 +1,14 @@
 #include <flake/postprocessing/fullscreen_quad.hpp>
 #include <flake/postprocessing/vf/format.hpp>
 #include <flake/postprocessing/vf/format_part.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/scoped_vertex_lock.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
-#include <sge/renderer/context/object.hpp>
+#include <sge/renderer/context/core.hpp>
 #include <sge/renderer/vf/iterator.hpp>
 #include <sge/renderer/vf/vertex.hpp>
 #include <sge/renderer/vf/view.hpp>
@@ -18,7 +18,7 @@
 
 
 flake::postprocessing::fullscreen_quad::fullscreen_quad(
-	sge::renderer::device &_renderer,
+	sge::renderer::device::core &_renderer,
 	sge::renderer::vertex_declaration &_vertex_declaration)
 :
 	renderer_(
@@ -95,7 +95,7 @@ flake::postprocessing::fullscreen_quad::fullscreen_quad(
 
 void
 flake::postprocessing::fullscreen_quad::render(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::core &_context)
 {
 	sge::renderer::scoped_vertex_declaration scoped_vd(
 		_context,
@@ -119,7 +119,7 @@ flake::postprocessing::fullscreen_quad::~fullscreen_quad()
 
 sge::renderer::vertex_declaration_unique_ptr
 flake::postprocessing::fullscreen_quad::create_vertex_declaration(
-	sge::renderer::device &_renderer)
+	sge::renderer::device::core &_renderer)
 {
 	return
 		_renderer.create_vertex_declaration(

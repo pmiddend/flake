@@ -13,7 +13,7 @@ namespace monitor
 namespace dummy_sprite
 {
 typedef
-sge::sprite::parameters<dummy_sprite::choices>
+sge::sprite::parameters<flake::planar::monitor::dummy_sprite::choices>
 parameters;
 }
 }

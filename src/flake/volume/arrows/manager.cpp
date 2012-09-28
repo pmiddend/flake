@@ -4,24 +4,24 @@
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/cg/loaded_program.hpp>
 #include <sge/renderer/cg/scoped_program.hpp>
-#include <sge/renderer/state/bool.hpp>
-#include <sge/renderer/state/dest_blend_func.hpp>
-#include <sge/renderer/state/list.hpp>
-#include <sge/renderer/state/scoped.hpp>
-#include <sge/renderer/state/source_blend_func.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/shader/scoped_pair.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
+#include <sge/renderer/state/core/blend/object.hpp>
+#include <sge/renderer/state/core/blend/scoped.hpp>
+#include <sge/renderer/state/core/blend/parameters.hpp>
+#include <sge/renderer/state/core/blend/combined.hpp>
+#include <sge/renderer/state/core/blend/write_mask_all.hpp>
 
 
 flake::volume::arrows::manager::manager(
-	sge::renderer::device &_renderer,
+	sge::renderer::device::core &_renderer,
 	sge::shader::context &_shader_context,
 	sge::camera::base &_camera)
 :
@@ -30,6 +30,14 @@ flake::volume::arrows::manager::manager(
 	vertex_declaration_(
 		_renderer.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format<vf::format>())),
+	blend_state_(
+		renderer_.create_blend_state(
+			sge::renderer::state::core::blend::parameters(
+				sge::renderer::state::core::blend::alpha_enabled(
+					sge::renderer::state::core::blend::combined(
+						sge::renderer::state::core::blend::source::src_alpha,
+						sge::renderer::state::core::blend::dest::inv_src_alpha)),
+				sge::renderer::state::core::blend::write_mask_all()))),
 	camera_(
 		_camera),
 	shader_(
@@ -63,14 +71,11 @@ flake::volume::arrows::manager::manager(
 
 void
 flake::volume::arrows::manager::render(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::core &_context)
 {
-	sge::renderer::state::scoped scoped_state(
+	sge::renderer::state::core::blend::scoped scoped_blend_state(
 		_context,
-		sge::renderer::state::list
-			(sge::renderer::state::bool_::enable_alpha_blending = true)
-			(sge::renderer::state::source_blend_func::src_alpha)
-			(sge::renderer::state::dest_blend_func::inv_src_alpha));
+		*blend_state_);
 
 	sge::renderer::scoped_vertex_declaration scoped_vertex_declaration(
 		_context,

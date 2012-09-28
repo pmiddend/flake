@@ -1,4 +1,7 @@
 #include <flake/media_path_from_string.hpp>
+#include <sge/renderer/state/ffp/misc/object.hpp>
+#include <sge/renderer/state/ffp/misc/parameters.hpp>
+#include <sge/renderer/state/ffp/misc/scoped.hpp>
 #include <flake/volume/flakes/manager.hpp>
 #include <flake/volume/flakes/vf/format.hpp>
 #include <flake/volume/flakes/vf/position_part.hpp>
@@ -6,21 +9,26 @@
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
+#include <sge/renderer/vector4.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration_and_buffers.hpp>
 #include <sge/renderer/scoped_vertex_lock.hpp>
 #include <sge/renderer/vector2.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
+#include <sge/renderer/state/core/depth_stencil/object.hpp>
+#include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
+#include <sge/renderer/state/core/depth_stencil/parameters.hpp>
+#include <sge/renderer/state/core/depth_stencil/scoped.hpp>
+#include <sge/renderer/state/core/blend/parameters.hpp>
+#include <sge/renderer/state/core/blend/scoped.hpp>
+#include <sge/renderer/state/core/blend/alpha_enabled.hpp>
+#include <sge/renderer/state/core/blend/object.hpp>
+#include <sge/renderer/state/core/blend/combined.hpp>
+#include <sge/renderer/state/core/blend/write_mask_all.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
-#include <sge/renderer/context/object.hpp>
-#include <sge/renderer/state/bool.hpp>
-#include <sge/renderer/state/depth_func.hpp>
-#include <sge/renderer/state/dest_blend_func.hpp>
-#include <sge/renderer/state/list.hpp>
-#include <sge/renderer/state/scoped.hpp>
-#include <sge/renderer/state/source_blend_func.hpp>
+#include <sge/renderer/context/ffp.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
@@ -46,7 +54,7 @@
 
 
 flake::volume::flakes::manager::manager(
-	sge::renderer::device &_renderer,
+	sge::renderer::device::ffp &_renderer,
 	sge::shader::context &_shader_context,
 	sge::camera::base &_camera,
 	sge::opencl::context::object &_context,
@@ -67,6 +75,32 @@ flake::volume::flakes::manager::manager(
 		_minimum_size),
 	maximum_size_(
 		_maximum_size),
+	blend_state_(
+		renderer_.create_blend_state(
+			sge::renderer::state::core::blend::parameters(
+				sge::renderer::state::core::blend::alpha_enabled(
+					sge::renderer::state::core::blend::combined(
+						sge::renderer::state::core::blend::source::src_alpha,
+						sge::renderer::state::core::blend::dest::inv_src_alpha)),
+				sge::renderer::state::core::blend::write_mask_all()))),
+	depth_stencil_state_(
+		renderer_.create_depth_stencil_state(
+			sge::renderer::state::core::depth_stencil::parameters(
+				sge::renderer::state::core::depth_stencil::depth::variant(
+					sge::renderer::state::core::depth_stencil::depth::enabled(
+						sge::renderer::state::core::depth_stencil::depth::func::less,
+						sge::renderer::state::core::depth_stencil::depth::write_enable(
+							true))),
+				sge::renderer::state::core::depth_stencil::stencil::off()))),
+	misc_state_(
+		renderer_.create_misc_state(
+			sge::renderer::state::ffp::misc::parameters(
+				sge::renderer::state::ffp::misc::enable_point_sprites(
+					true),
+				sge::renderer::state::ffp::misc::local_viewer(
+					false),
+				sge::renderer::state::ffp::misc::normalize_normals(
+					false)))),
 	vertex_declaration_(
 		renderer_.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format<vf::format>())),
@@ -188,7 +222,7 @@ flake::volume::flakes::manager::manager(
 
 void
 flake::volume::flakes::manager::render(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::ffp &_context)
 {
 	sge::shader::scoped_pair scoped_shader(
 		_context,
@@ -213,15 +247,17 @@ flake::volume::flakes::manager::render(
 			(fcppt::cref(
 				*texcoords_buffer_)));
 
-	sge::renderer::state::scoped scoped_state(
+	sge::renderer::state::ffp::misc::scoped const scoped_misc(
 		_context,
-		sge::renderer::state::list
-			(sge::renderer::state::bool_::enable_point_sprites = true)
-			(sge::renderer::state::source_blend_func::src_alpha)
-			(sge::renderer::state::dest_blend_func::inv_src_alpha)
-			(sge::renderer::state::depth_func::less)
-			(sge::renderer::state::bool_::write_to_depth_buffer = false)
-			(sge::renderer::state::bool_::enable_alpha_blending = true));
+		*misc_state_);
+
+	sge::renderer::state::core::blend::scoped scoped_blend_state(
+		_context,
+		*blend_state_);
+
+	sge::renderer::state::core::depth_stencil::scoped scoped_depth_stencil_state(
+		_context,
+		*depth_stencil_state_);
 
 	_context.render_nonindexed(
 		sge::renderer::first_vertex(

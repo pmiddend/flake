@@ -2,15 +2,18 @@
 #include <flake/planar/monitor/font_axis_policy.hpp>
 #include <flake/planar/monitor/texture.hpp>
 #include <flake/planar/monitor/dummy_sprite/parameters.hpp>
+#include <sge/renderer/state/ffp/transform/object.hpp>
+#include <sge/renderer/state/ffp/transform/object_scoped_ptr.hpp>
+#include <sge/renderer/state/ffp/transform/parameters.hpp>
+#include <sge/renderer/state/ffp/transform/scoped.hpp>
 #include <sge/opencl/memory_object/flags_field.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/ffp.hpp>
 #include <sge/font/text_parameters.hpp>
 #include <sge/image/colors.hpp>
 #include <sge/font/object.hpp>
 #include <sge/font/from_fcppt_string.hpp>
 #include <sge/font/text.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
-#include <sge/renderer/scoped_transform.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/planar_parameters.hpp>
@@ -38,13 +41,13 @@
 FCPPT_PP_PUSH_WARNING
 FCPPT_PP_DISABLE_VC_WARNING(4355)
 flake::planar::monitor::texture::texture(
-	monitor::parent &_parent,
-	monitor::name const &_name,
-	monitor::grid_dimensions const &_grid_dimensions,
-	monitor::texture_size const &_texture_size,
-	monitor::scaling_factor const &_scaling)
+	flake::planar::monitor::parent &_parent,
+	flake::planar::monitor::name const &_name,
+	flake::planar::monitor::grid_dimensions const &_grid_dimensions,
+	flake::planar::monitor::texture_size const &_texture_size,
+	flake::planar::monitor::scaling_factor const &_scaling)
 :
-	monitor::child(
+	flake::planar::monitor::child(
 		_parent),
 	name_(
 		_name.get()),
@@ -65,7 +68,7 @@ flake::planar::monitor::texture::texture(
 			sge::opencl::memory_object::flags::write),
 		*renderer_texture_),
 	sprite_(
-		dummy_sprite::parameters()
+		flake::planar::monitor::dummy_sprite::parameters()
 			.size(
 				_texture_size.get())
 			.texture(
@@ -142,23 +145,33 @@ flake::planar::monitor::texture::scaling_factor() const
 
 void
 flake::planar::monitor::texture::render(
-	sge::renderer::context::object &_context,
+	sge::renderer::context::ffp &_context,
 	monitor::optional_projection const &_projection)
 {
-	sge::renderer::scoped_transform world_transform(
-		_context,
-		sge::renderer::matrix_mode::world,
-		sge::renderer::matrix4::identity());
+	sge::renderer::state::ffp::transform::object_scoped_ptr
+		projection_state(
+			child::parent().renderer().create_transform_state(
+				sge::renderer::state::ffp::transform::parameters(
+					_projection
+					?
+						*_projection
+					:
+						*sge::sprite::projection_matrix(
+							child::parent().renderer().onscreen_target().viewport())))),
+		world_state(
+			child::parent().renderer().create_transform_state(
+				sge::renderer::state::ffp::transform::parameters(
+					sge::renderer::matrix4::identity())));
 
-	sge::renderer::scoped_transform projection_transform(
-		_context,
-		sge::renderer::matrix_mode::projection,
-		_projection
-		?
-			*_projection
-		:
-			sge::sprite::projection_matrix(
-				child::parent().renderer().onscreen_target().viewport()));
+	sge::renderer::state::ffp::transform::scoped const
+		projection_transform(
+			_context,
+			sge::renderer::state::ffp::transform::mode::projection,
+			*projection_state),
+		world_transform(
+			_context,
+			sge::renderer::state::ffp::transform::mode::world,
+			*world_state);
 
 	font_renderable_.pos(
 		font_box_.position());

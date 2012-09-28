@@ -1,14 +1,18 @@
 #include <flake/media_path_from_string.hpp>
 #include <flake/volume/snow_cover/object.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/matrix4.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/shader/load_edited_string.hpp>
+#include <sge/renderer/state/core/sampler/parameters.hpp>
+#include <sge/renderer/state/core/sampler/object.hpp>
+#include <sge/renderer/state/core/sampler/address/mode_all.hpp>
+#include <sge/renderer/state/core/sampler/filter/trilinear.hpp>
 
 
 flake::volume::snow_cover::object::object(
 	sge::camera::base &_camera,
-	sge::renderer::device &_renderer,
+	sge::renderer::device::core &_renderer,
 	sge::renderer::vertex_declaration &_vertex_declaration,
 	sge::shader::context &_shader_context,
 	flake::volume::snow_cover::texture_repeats const &_texture_repeats,
@@ -70,7 +74,13 @@ flake::volume::snow_cover::object::object(
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"sun_direction")),
-		_sun_direction.get())
+		_sun_direction.get()),
+	sampler_state_(
+		_renderer.create_sampler_state(
+			sge::renderer::state::core::sampler::parameters(
+				sge::renderer::state::core::sampler::address::mode_all(
+					sge::renderer::state::core::sampler::address::mode::repeat),
+				sge::renderer::state::core::sampler::filter::trilinear())))
 {
 }
 

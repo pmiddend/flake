@@ -10,7 +10,9 @@
 #include <flake/planar/monitor/optional_projection.hpp>
 #include <flake/planar/monitor/scaling_factor.hpp>
 #include <flake/planar/monitor/dummy_sprite/collection.hpp>
-#include <flake/planar/monitor/dummy_sprite/system.hpp>
+#include <flake/planar/monitor/dummy_sprite/state_object.hpp>
+#include <flake/planar/monitor/dummy_sprite/buffers.hpp>
+#include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
 #include <sge/font/object_scoped_ptr.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <sge/font/ttf_size.hpp>
@@ -20,11 +22,11 @@
 #include <sge/opencl/kernel/object.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/program/object.hpp>
-#include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/device/ffp_fwd.hpp>
 #include <sge/renderer/vector2.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
+#include <sge/renderer/context/ffp_fwd.hpp>
 #include <sge/shader/context_fwd.hpp>
 #include <sge/shader/pair.hpp>
 #include <sge/sprite/buffers/with_declaration.hpp>
@@ -61,7 +63,7 @@ FCPPT_NONCOPYABLE(
 	parent);
 public:
 	parent(
-		sge::renderer::device &,
+		sge::renderer::device::ffp &,
 		sge::shader::context &,
 		sge::opencl::command_queue::object &,
 		sge::font::system &,
@@ -88,7 +90,7 @@ public:
 	monitor::font_color const &
 	font_color() const;
 
-	sge::renderer::device &
+	sge::renderer::device::ffp &
 	renderer() const;
 
 	monitor::dummy_sprite::collection &
@@ -102,7 +104,7 @@ public:
 
 	void
 	render(
-		sge::renderer::context::object &,
+		sge::renderer::context::ffp &,
 		monitor::optional_projection const &);
 
 	void
@@ -112,20 +114,22 @@ public:
 private:
 	friend class monitor::child;
 
-	sge::renderer::device &renderer_;
+	sge::renderer::device::ffp &renderer_;
 	sge::opencl::command_queue::object &command_queue_;
 	sge::font::system &font_system_;
 	monitor::font_color const font_color_;
-	sge::font::object_scoped_ptr font_;
+	sge::font::object_scoped_ptr const font_;
 	sge::renderer::vertex_declaration_scoped_ptr vd_;
+	sge::renderer::state::core::sampler::object_scoped_ptr const point_sampler_;
 
 	sge::shader::pair arrow_shader_;
 	sge::shader::parameter::vector<sge::renderer::scalar,2> arrow_initial_position_parameter_;
 	sge::shader::parameter::matrix<sge::renderer::scalar,4,4> arrow_projection_parameter_;
 
-	monitor::dummy_sprite::system sprite_system_;
-	monitor::dummy_sprite::collection sprite_collection_;
-	monitor::child_list children_;
+	flake::planar::monitor::dummy_sprite::buffers sprite_buffers_;
+	flake::planar::monitor::dummy_sprite::state_object sprite_states_;
+	flake::planar::monitor::dummy_sprite::collection sprite_collection_;
+	flake::planar::monitor::child_list children_;
 
 	void
 	add_child(

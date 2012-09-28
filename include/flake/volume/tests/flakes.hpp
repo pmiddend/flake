@@ -9,7 +9,7 @@
 #include <flake/volume/flakes/manager.hpp>
 #include <flake/volume/flakes/mover.hpp>
 #include <flake/volume/flakes/snow_density_view.hpp>
-#include <flake/volume/model/manager.hpp>
+	//#include <flake/volume/model/manager.hpp>
 #include <flake/volume/model/object.hpp>
 #include <flake/volume/obstacles/manager.hpp>
 #include <flake/volume/snow_cover/object.hpp>
@@ -118,7 +118,7 @@ private:
 
 	void
 	render(
-		sge::renderer::context::object &);
+		sge::renderer::context::ffp &);
 
 	void
 	update();

@@ -1,6 +1,14 @@
 #include <flake/media_path_from_string.hpp>
+#include <sge/renderer/device/ffp.hpp>
+#include <sge/renderer/state/ffp/transform/object.hpp>
+#include <sge/renderer/state/ffp/transform/parameters.hpp>
+#include <sge/renderer/state/ffp/transform/object_scoped_ptr.hpp>
+#include <sge/renderer/state/ffp/transform/scoped.hpp>
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/arrow_vf/format.hpp>
+#include <flake/planar/monitor/dummy_sprite/state_parameters.hpp>
+#include <flake/planar/monitor/dummy_sprite/state_choices.hpp>
+#include <flake/planar/monitor/dummy_sprite/state_options.hpp>
 #include <sge/cg/parameter/named.hpp>
 #include <sge/cg/parameter/vector/set.hpp>
 #include <sge/cg/program/from_file_parameters.hpp>
@@ -8,13 +16,10 @@
 #include <sge/font/parameters.hpp>
 #include <sge/font/system.hpp>
 #include <sge/opencl/command_queue/object.hpp>
-#include <sge/renderer/device.hpp>
-#include <sge/renderer/scoped_transform.hpp>
+#include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
+#include <sge/renderer/context/ffp.hpp>
 #include <sge/renderer/cg/loaded_program.hpp>
-#include <sge/renderer/texture/stage.hpp>
-#include <sge/renderer/texture/filter/point.hpp>
-#include <sge/renderer/texture/filter/scoped.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/sprite/buffers/single.hpp>
 #include <sge/sprite/buffers/with_declaration.hpp>
@@ -23,12 +28,15 @@
 #include <sge/sprite/process/all.hpp>
 #include <sge/sprite/process/default_geometry_options.hpp>
 #include <sge/sprite/process/with_options.hpp>
-#include <sge/sprite/render/matrix_options.hpp>
-#include <sge/sprite/render/options.hpp>
-#include <sge/sprite/render/state_options.hpp>
-#include <sge/sprite/render/vertex_options.hpp>
+#include <sge/renderer/state/core/sampler/object.hpp>
+#include <sge/renderer/state/core/sampler/parameters.hpp>
+#include <sge/renderer/state/core/sampler/address/default.hpp>
+#include <sge/renderer/state/core/sampler/address/parameters.hpp>
+#include <sge/renderer/state/core/sampler/filter/point.hpp>
+#include <sge/renderer/state/core/sampler/scoped.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
+#include <fcppt/cref.hpp>
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
@@ -39,7 +47,7 @@
 
 
 flake::planar::monitor::parent::parent(
-	sge::renderer::device &_renderer,
+	sge::renderer::device::ffp &_renderer,
 	sge::shader::context &_shader_context,
 	sge::opencl::command_queue::object &_command_queue,
 	sge::font::system &_font_system,
@@ -64,6 +72,11 @@ flake::planar::monitor::parent::parent(
 	vd_(
 		renderer_.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format<arrow_vf::format>())),
+	point_sampler_(
+		renderer_.create_sampler_state(
+			sge::renderer::state::core::sampler::parameters(
+				sge::renderer::state::core::sampler::address::default_(),
+				sge::renderer::state::core::sampler::filter::point()))),
 	arrow_shader_(
 		_shader_context,
 		*vd_,
@@ -89,9 +102,12 @@ flake::planar::monitor::parent::parent(
 		sge::shader::parameter::is_projection_matrix(
 			true),
 		sge::renderer::matrix4()),
-	sprite_system_(
+	sprite_buffers_(
 		renderer_,
 		sge::sprite::buffers::option::dynamic),
+	sprite_states_(
+		renderer_,
+		flake::planar::monitor::dummy_sprite::state_parameters()),
 	sprite_collection_(),
 	children_()
 {
@@ -139,7 +155,7 @@ flake::planar::monitor::parent::font_color() const
 		font_color_;
 }
 
-sge::renderer::device &
+sge::renderer::device::ffp &
 flake::planar::monitor::parent::renderer() const
 {
 	return renderer_;
@@ -165,38 +181,35 @@ flake::planar::monitor::parent::font()
 
 void
 flake::planar::monitor::parent::render(
-	sge::renderer::context::object &_context,
+	sge::renderer::context::ffp &_context,
 	monitor::optional_projection const &_projection)
 {
-	sge::renderer::texture::filter::scoped scoped_texture_filter(
+	sge::renderer::state::core::sampler::scoped const scoped_filter(
 		_context,
-		sge::renderer::texture::stage(
-			0u),
-		sge::renderer::texture::filter::point());
-
-	fcppt::scoped_ptr<sge::renderer::scoped_transform> projection_transform;
-	fcppt::scoped_ptr<sge::renderer::scoped_transform> world_transform;
+		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
+			(fcppt::cref(*point_sampler_)));
 
 	if(_projection)
 	{
-		projection_transform.take(
-			fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
-				fcppt::ref(
-					_context),
-				sge::renderer::matrix_mode::projection,
-				*_projection));
+		sge::renderer::state::ffp::transform::object_scoped_ptr
+			projection_state(
+				renderer_.create_transform_state(
+					sge::renderer::state::ffp::transform::parameters(
+						*_projection))),
+			world_state(
+				renderer_.create_transform_state(
+					sge::renderer::state::ffp::transform::parameters(
+						sge::renderer::matrix4::identity())));
 
-		world_transform.take(
-			fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
-				fcppt::ref(
-					_context),
-				sge::renderer::matrix_mode::world,
-				sge::renderer::matrix4::identity()));
-
-		sge::sprite::render::options const render_options(
-			sge::sprite::render::matrix_options::nothing,
-			sge::sprite::render::state_options::set,
-			sge::sprite::render::vertex_options::declaration_and_buffer);
+		sge::renderer::state::ffp::transform::scoped const
+			projection_transform(
+				_context,
+				sge::renderer::state::ffp::transform::mode::projection,
+				*projection_state),
+			world_transform(
+				_context,
+				sge::renderer::state::ffp::transform::mode::world,
+				*world_state);
 
 		sge::sprite::process::with_options
 		<
@@ -204,24 +217,28 @@ flake::planar::monitor::parent::render(
 			<
 				sge::sprite::process::default_geometry_options
 				<
-					dummy_sprite::choices,
+					flake::planar::monitor::dummy_sprite::choices,
 					sge::sprite::compare::default_
 				>::value
 			>
 		>(
 			_context,
 			sprite_collection_.range(),
-			sprite_system_,
+			sprite_buffers_,
 			sge::sprite::compare::default_(),
-		  render_options);
+			sprite_states_,
+			flake::planar::monitor::dummy_sprite::state_options(
+				sge::sprite::state::vertex_options::declaration_and_buffer)
+				.no_transform_state());
 	}
 	else
 	{
 		sge::sprite::process::all(
 			_context,
 			sprite_collection_.range(),
-			sprite_system_,
-			sge::sprite::compare::default_());
+			sprite_buffers_,
+			sge::sprite::compare::default_(),
+			sprite_states_);
 	}
 
 	for(child_list::iterator it = children_.begin(); it != children_.end(); ++it)

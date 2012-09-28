@@ -1,5 +1,6 @@
 #include <flake/catch_statements.hpp>
 #include <flake/media_path.hpp>
+#include <sge/renderer/device/ffp.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/planar/tests/buoyancy.hpp>
 #include <flakelib/media_path.hpp>
@@ -21,7 +22,7 @@
 #include <sge/parse/json/string_to_path.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/clear/parameters.hpp>
-#include <sge/renderer/context/object.hpp>
+#include <sge/renderer/context/ffp.hpp>
 #include <sge/renderer/texture/create_planar_from_view.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
@@ -249,7 +250,6 @@ flake::planar::tests::buoyancy::buoyancy(
 				true))),
 	projection_rectangle_from_viewport_(
 		freelook_camera_,
-		this->renderer(),
 		this->viewport_manager()),
 	density_splatter_(
 		smoke_density_texture_,
@@ -375,7 +375,7 @@ flake::planar::tests::buoyancy::~buoyancy()
 
 void
 flake::planar::tests::buoyancy::render(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::ffp &_context)
 {
 	_context.clear(
 		sge::renderer::clear::parameters()

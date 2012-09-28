@@ -6,8 +6,9 @@
 #include <flake/volume/snow_cover/steep_texture.hpp>
 #include <flake/volume/snow_cover/sun_direction.hpp>
 #include <flake/volume/snow_cover/texture_repeats.hpp>
+#include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
 #include <sge/camera/base_fwd.hpp>
-#include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/device/core_fwd.hpp>
 #include <sge/renderer/vertex_declaration_fwd.hpp>
 #include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
 #include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
@@ -33,7 +34,7 @@ FCPPT_NONCOPYABLE(
 public:
 	object(
 		sge::camera::base &_camera,
-		sge::renderer::device &,
+		sge::renderer::device::core &,
 		sge::renderer::vertex_declaration &,
 		sge::shader::context &,
 		flake::volume::snow_cover::texture_repeats const &,
@@ -54,6 +55,7 @@ private:
 	sge::shader::parameter::matrix<sge::renderer::scalar,4u,4u> mvp_parameter_;
 	sge::shader::parameter::scalar<sge::renderer::scalar> texture_repeats_parameter_;
 	sge::shader::parameter::vector<sge::renderer::scalar,3> sun_direction_parameter_;
+	sge::renderer::state::core::sampler::object_scoped_ptr const sampler_state_;
 };
 }
 }

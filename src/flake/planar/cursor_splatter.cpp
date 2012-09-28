@@ -7,7 +7,7 @@
 #include <sge/input/cursor/button_event.hpp>
 #include <sge/input/cursor/move_event.hpp>
 #include <sge/input/cursor/object.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/vector2.hpp>
 #include <sge/renderer/vector3.hpp>
 #include <sge/renderer/target/onscreen.hpp>
@@ -116,7 +116,7 @@ unproject(
 flake::planar::cursor_splatter::cursor_splatter(
 	monitor::texture &_monitor_texture,
 	flakelib::splatter::object &_splatter,
-	sge::renderer::device &_renderer,
+	sge::renderer::device::core &_renderer,
 	sge::camera::base const &_camera,
 	sge::input::cursor::object &_cursor,
 	cl_float const _splat_value,

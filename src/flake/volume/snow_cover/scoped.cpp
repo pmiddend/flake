@@ -4,43 +4,35 @@
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/cg/parameter/matrix/set.hpp>
-#include <sge/renderer/texture/address_mode2.hpp>
-#include <sge/renderer/texture/set_address_mode2.hpp>
-#include <sge/renderer/texture/filter/trilinear.hpp>
-
+#include <fcppt/assign/make_container.hpp>
+#include <fcppt/cref.hpp>
+#include <fcppt/assert/pre.hpp>
 
 flake::volume::snow_cover::scoped::scoped(
 	flake::volume::snow_cover::object &_snow_cover,
-	sge::renderer::context::object &_context)
+	sge::renderer::context::core &_context)
 :
 	scoped_shader_(
 		_context,
 		_snow_cover.shader_),
-	steep_texture_filter_(
+	sampler_state_(
 		_context,
-		_snow_cover.steep_texture_parameter_.stage(),
-		sge::renderer::texture::filter::trilinear()),
-	flat_texture_filter_(
-		_context,
-		_snow_cover.flat_texture_parameter_.stage(),
-		sge::renderer::texture::filter::trilinear())
+		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
+			(fcppt::cref(
+				*_snow_cover.sampler_state_))
+			(fcppt::cref(
+				*_snow_cover.sampler_state_)))
 {
+	FCPPT_ASSERT_PRE(
+		_snow_cover.steep_texture_parameter_.stage().get() == 0u);
+
+	FCPPT_ASSERT_PRE(
+		_snow_cover.flat_texture_parameter_.stage().get() == 1u);
+
 	_snow_cover.mvp_parameter_.set(
 		sge::camera::matrix_conversion::world_projection(
 			_snow_cover.camera_.coordinate_system(),
 			_snow_cover.camera_.projection_matrix()));
-
-	sge::renderer::texture::set_address_mode2(
-		_context,
-		_snow_cover.steep_texture_parameter_.stage(),
-		sge::renderer::texture::address_mode2(
-			sge::renderer::texture::address_mode::repeat));
-
-	sge::renderer::texture::set_address_mode2(
-		_context,
-		_snow_cover.flat_texture_parameter_.stage(),
-		sge::renderer::texture::address_mode2(
-			sge::renderer::texture::address_mode::repeat));
 }
 
 flake::volume::snow_cover::scoped::~scoped()

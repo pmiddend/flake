@@ -1,5 +1,5 @@
-#ifndef FLAKE_PLANAR_MONITOR_DUMMY_SPRITE_SYSTEM_HPP_INCLUDED
-#define FLAKE_PLANAR_MONITOR_DUMMY_SPRITE_SYSTEM_HPP_INCLUDED
+#ifndef FLAKE_PLANAR_MONITOR_DUMMY_SPRITE_BUFFERS_HPP_INCLUDED
+#define FLAKE_PLANAR_MONITOR_DUMMY_SPRITE_BUFFERS_HPP_INCLUDED
 
 #include <flake/planar/monitor/dummy_sprite/choices.hpp>
 #include <sge/sprite/buffers/single_fwd.hpp>
@@ -19,10 +19,10 @@ sge::sprite::buffers::with_declaration
 <
 	sge::sprite::buffers::single
 	<
-		dummy_sprite::choices
+		flake::planar::monitor::dummy_sprite::choices
 	>
 >
-system;
+buffers;
 }
 }
 }

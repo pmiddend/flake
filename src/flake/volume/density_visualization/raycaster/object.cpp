@@ -1,4 +1,8 @@
 #include <flake/media_path_from_string.hpp>
+#include <sge/renderer/state/core/rasterizer/object_scoped_ptr.hpp>
+#include <sge/renderer/state/core/rasterizer/object.hpp>
+#include <sge/renderer/state/core/rasterizer/parameters.hpp>
+#include <sge/renderer/state/core/rasterizer/scoped.hpp>
 #include <flake/volume/density_visualization/raycaster/object.hpp>
 #include <flake/volume/density_visualization/raycaster/vf/format.hpp>
 #include <flake/volume/density_visualization/raycaster/vf/format_part.hpp>
@@ -14,7 +18,7 @@
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/image2d/view/object.hpp>
 #include <sge/image2d/view/to_const.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
@@ -22,22 +26,21 @@
 #include <sge/renderer/vector2.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
-#include <sge/renderer/context/object.hpp>
-#include <sge/renderer/state/bool.hpp>
-#include <sge/renderer/state/cull_mode.hpp>
-#include <sge/renderer/state/dest_blend_func.hpp>
-#include <sge/renderer/state/list.hpp>
-#include <sge/renderer/state/scoped.hpp>
-#include <sge/renderer/state/source_blend_func.hpp>
-#include <sge/renderer/texture/address_mode2.hpp>
+#include <sge/renderer/context/core.hpp>
+#include <sge/renderer/state/core/blend/object.hpp>
+#include <sge/renderer/state/core/blend/scoped.hpp>
+#include <sge/renderer/state/core/blend/parameters.hpp>
+#include <sge/renderer/state/core/blend/combined.hpp>
+#include <sge/renderer/state/core/blend/write_mask_all.hpp>
+#include <sge/renderer/state/core/sampler/object.hpp>
+#include <sge/renderer/state/core/sampler/scoped.hpp>
+#include <sge/renderer/state/core/sampler/address/mode_all.hpp>
+#include <sge/renderer/state/core/sampler/filter/linear.hpp>
+#include <sge/renderer/state/core/sampler/parameters.hpp>
 #include <sge/renderer/texture/const_scoped_planar_lock.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/planar_parameters.hpp>
 #include <sge/renderer/texture/scoped_planar_lock.hpp>
-#include <sge/renderer/texture/set_address_mode2.hpp>
-#include <sge/renderer/texture/filter/linear.hpp>
-#include <sge/renderer/texture/filter/point.hpp>
-#include <sge/renderer/texture/filter/scoped.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/renderer/vf/vertex.hpp>
 #include <sge/renderer/vf/view.hpp>
@@ -47,6 +50,7 @@
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/contains_point.hpp>
+#include <fcppt/cref.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
@@ -56,7 +60,7 @@
 
 
 flake::volume::density_visualization::raycaster::object::object(
-	sge::renderer::device &_renderer,
+	sge::renderer::device::core &_renderer,
 	sge::shader::context &_shader_context,
 	sge::opencl::context::object &_context,
 	sge::camera::base const &_camera,
@@ -74,6 +78,20 @@ flake::volume::density_visualization::raycaster::object::object(
 		_image_system),
 	conversion_(
 		_conversion),
+	blend_state_(
+		renderer_.create_blend_state(
+			sge::renderer::state::core::blend::parameters(
+				sge::renderer::state::core::blend::alpha_enabled(
+					sge::renderer::state::core::blend::combined(
+						sge::renderer::state::core::blend::source::src_alpha,
+						sge::renderer::state::core::blend::dest::inv_src_alpha)),
+				sge::renderer::state::core::blend::write_mask_all()))),
+	sampler_state_(
+		renderer_.create_sampler_state(
+			sge::renderer::state::core::sampler::parameters(
+				sge::renderer::state::core::sampler::address::mode_all(
+					sge::renderer::state::core::sampler::address::mode::clamp),
+				sge::renderer::state::core::sampler::filter::linear()))),
 	grid_size_(
 		_grid_size),
 	debug_output_(
@@ -294,12 +312,11 @@ flake::volume::density_visualization::raycaster::object::update(
 
 void
 flake::volume::density_visualization::raycaster::object::render(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::core &_context)
 {
 	sge::renderer::scoped_vertex_declaration scoped_vd(
 		_context,
 		*vertex_declaration_);
-
 
 	sge::shader::scoped_pair scoped_shader(
 		_context,
@@ -322,32 +339,31 @@ flake::volume::density_visualization::raycaster::object::render(
 			static_cast<sge::renderer::scalar>(
 				0.0f));
 
-	sge::renderer::state::scoped scoped_state(
+	sge::renderer::state::core::blend::scoped scoped_blend_state(
 		_context,
-		sge::renderer::state::list
-			(sge::renderer::state::bool_::enable_alpha_blending = true)
-			(sge::renderer::state::source_blend_func::src_alpha)
-			(sge::renderer::state::dest_blend_func::inv_src_alpha)
-			(
-			this->camera_is_inside_cube()
-			?
-				sge::renderer::state::cull_mode::counter_clockwise
-			:
-			 	sge::renderer::state::cull_mode::clockwise));
+		*blend_state_);
 
-	sge::renderer::texture::filter::scoped scoped_texture_filter(
-		_context,
-		sge::renderer::texture::stage(
-			0u),
-//		sge::renderer::texture::filter::point());
-		sge::renderer::texture::filter::linear());
+	sge::renderer::state::core::rasterizer::object_scoped_ptr const rasterizer_state(
+		renderer_.create_rasterizer_state(
+			sge::renderer::state::core::rasterizer::parameters(
+				this->camera_is_inside_cube()
+				?
+					sge::renderer::state::core::rasterizer::cull_mode::counter_clockwise
+				:
+					sge::renderer::state::core::rasterizer::cull_mode::clockwise,
+				sge::renderer::state::core::rasterizer::fill_mode::solid,
+				sge::renderer::state::core::rasterizer::enable_scissor_test(
+					false))));
 
-	sge::renderer::texture::set_address_mode2(
+	sge::renderer::state::core::rasterizer::scoped scoped_rasterizer_state(
 		_context,
-		sge::renderer::texture::stage(
-			0u),
-		sge::renderer::texture::address_mode2(
-			sge::renderer::texture::address_mode::clamp));
+		*rasterizer_state);
+
+	sge::renderer::state::core::sampler::scoped scoped_sampler_state(
+		_context,
+		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
+			(fcppt::cref(
+				*sampler_state_)));
 
 	sge::renderer::scoped_vertex_buffer scoped_vb(
 		_context,

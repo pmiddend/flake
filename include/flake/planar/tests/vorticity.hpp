@@ -97,7 +97,7 @@ private:
 
 	void
 	render(
-		sge::renderer::context::object &);
+		sge::renderer::context::ffp &);
 
 	void
 	update();

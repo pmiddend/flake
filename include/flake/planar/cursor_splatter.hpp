@@ -16,7 +16,7 @@
 #include <sge/input/cursor/object_fwd.hpp>
 #include <sge/input/cursor/position.hpp>
 #include <sge/opencl/clinclude.hpp>
-#include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/device/core_fwd.hpp>
 #include <sge/renderer/vector2.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/optional_impl.hpp>
@@ -36,7 +36,7 @@ public:
 	cursor_splatter(
 		monitor::texture &,
 		flakelib::splatter::object &,
-		sge::renderer::device &,
+		sge::renderer::device::core &,
 		sge::camera::base const &,
 		sge::input::cursor::object &,
 		cl_float,
@@ -58,7 +58,7 @@ public:
 private:
 	monitor::texture &monitor_texture_;
 	flakelib::splatter::object &splatter_;
-	sge::renderer::device &renderer_;
+	sge::renderer::device::core &renderer_;
 	sge::camera::base const &camera_;
 	fcppt::optional<flakelib::planar::float_view> optional_left_mouse_target_;
 	fcppt::optional<flakelib::planar::float_view> optional_right_mouse_target_;

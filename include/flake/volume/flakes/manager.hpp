@@ -14,10 +14,13 @@
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/state/core/blend/object_scoped_ptr.hpp>
+#include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
+#include <sge/renderer/state/ffp/misc/object_scoped_ptr.hpp>
+#include <sge/renderer/device/ffp_fwd.hpp>
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
+#include <sge/renderer/context/ffp_fwd.hpp>
 #include <sge/renderer/texture/planar_scoped_ptr.hpp>
 #include <sge/shader/context_fwd.hpp>
 #include <sge/shader/pair.hpp>
@@ -41,7 +44,7 @@ FCPPT_NONCOPYABLE(
 	manager);
 public:
 	manager(
-		sge::renderer::device &,
+		sge::renderer::device::ffp &,
 		sge::shader::context &,
 		sge::camera::base &,
 		sge::opencl::context::object &,
@@ -56,7 +59,7 @@ public:
 
 	void
 	render(
-		sge::renderer::context::object &);
+		sge::renderer::context::ffp &);
 
 	flakes::position_view const
 	cl_positions();
@@ -72,21 +75,24 @@ public:
 
 	~manager();
 private:
-	sge::renderer::device &renderer_;
+	sge::renderer::device::ffp &renderer_;
 	sge::camera::base &camera_;
 	flakes::minimum_size const minimum_size_;
 	flakes::maximum_size const maximum_size_;
-	sge::renderer::vertex_declaration_scoped_ptr vertex_declaration_;
-	sge::renderer::vertex_buffer_scoped_ptr positions_buffer_;
-	sge::renderer::vertex_buffer_scoped_ptr texcoords_buffer_;
-	sge::renderer::vertex_buffer_scoped_ptr point_sizes_buffer_;
+	sge::renderer::state::core::blend::object_scoped_ptr const blend_state_;
+	sge::renderer::state::core::depth_stencil::object_scoped_ptr const depth_stencil_state_;
+	sge::renderer::state::ffp::misc::object_scoped_ptr const misc_state_;
+	sge::renderer::vertex_declaration_scoped_ptr const vertex_declaration_;
+	sge::renderer::vertex_buffer_scoped_ptr const positions_buffer_;
+	sge::renderer::vertex_buffer_scoped_ptr const texcoords_buffer_;
+	sge::renderer::vertex_buffer_scoped_ptr const point_sizes_buffer_;
 	flakes::texture_tile_size tile_size_;
 	sge::shader::pair shader_;
 	sge::shader::parameter::vector<sge::renderer::scalar,3u> camera_position_parameter_;
 	sge::shader::parameter::scalar<sge::renderer::scalar> tile_size_parameter_;
 	sge::shader::parameter::scalar<sge::renderer::scalar> maximum_distance_parameter_;
 	sge::shader::parameter::matrix<sge::renderer::scalar,4u,4u> mvp_parameter_;
-	sge::renderer::texture::planar_scoped_ptr texture_;
+	sge::renderer::texture::planar_scoped_ptr const texture_;
 	sge::shader::parameter::planar_texture loaded_texture_;
 	fcppt::scoped_ptr<sge::opencl::memory_object::buffer> cl_positions_buffer_;
 	fcppt::scoped_ptr<sge::opencl::memory_object::buffer> cl_point_sizes_buffer_;

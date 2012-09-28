@@ -1,34 +1,36 @@
 #include <flake/media_path_from_string.hpp>
 #include <flake/postprocessing/context.hpp>
 #include <sge/renderer/depth_stencil_surface.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
-#include <sge/renderer/context/object.hpp>
-#include <sge/renderer/context/scoped.hpp>
+#include <sge/renderer/context/ffp.hpp>
+#include <sge/renderer/context/scoped_ffp.hpp>
 #include <sge/renderer/target/from_texture.hpp>
 #include <sge/renderer/target/offscreen.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/target/viewport.hpp>
 #include <sge/renderer/target/viewport_size.hpp>
-#include <sge/renderer/texture/address_mode.hpp>
-#include <sge/renderer/texture/address_mode2.hpp>
+#include <sge/renderer/state/core/sampler/object.hpp>
+#include <sge/renderer/state/core/sampler/scoped.hpp>
+#include <sge/renderer/state/core/sampler/parameters.hpp>
+#include <sge/renderer/state/core/sampler/address/mode_all.hpp>
+#include <sge/renderer/state/core/sampler/filter/linear.hpp>
+#include <sge/renderer/state/core/sampler/filter/point.hpp>
 #include <sge/renderer/texture/capabilities_field.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/planar_parameters.hpp>
-#include <sge/renderer/texture/set_address_mode2.hpp>
-#include <sge/renderer/texture/filter/linear.hpp>
-#include <sge/renderer/texture/filter/point.hpp>
-#include <sge/renderer/texture/filter/scoped.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/shader/scoped_pair.hpp>
 #include <sge/viewport/manager.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/move.hpp>
+#include <fcppt/assign/make_container.hpp>
 #include <fcppt/optional_impl.hpp>
 #include <fcppt/ref.hpp>
+#include <fcppt/cref.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
@@ -38,7 +40,7 @@
 
 
 flake::postprocessing::context::context(
-	sge::renderer::device &_renderer,
+	sge::renderer::device::ffp &_renderer,
 	sge::viewport::manager &_viewport_manager,
 	sge::shader::context &_shader_context)
 :
@@ -47,6 +49,18 @@ flake::postprocessing::context::context(
 	quad_vertex_declaration_(
 		flake::postprocessing::fullscreen_quad::create_vertex_declaration(
 			renderer_)),
+	linear_clamping_texture_state_(
+		renderer_.create_sampler_state(
+			sge::renderer::state::core::sampler::parameters(
+				sge::renderer::state::core::sampler::address::mode_all(
+					sge::renderer::state::core::sampler::address::mode::clamp),
+				sge::renderer::state::core::sampler::filter::linear()))),
+	point_clamping_texture_state_(
+		renderer_.create_sampler_state(
+			sge::renderer::state::core::sampler::parameters(
+				sge::renderer::state::core::sampler::address::mode_all(
+					sge::renderer::state::core::sampler::address::mode::clamp),
+				sge::renderer::state::core::sampler::filter::point()))),
 	fullscreen_quad_(
 		renderer_,
 		*quad_vertex_declaration_),
@@ -144,7 +158,7 @@ flake::postprocessing::context::context(
 {
 }
 
-sge::renderer::context::scoped_unique_ptr
+sge::renderer::context::scoped_ffp_unique_ptr
 flake::postprocessing::context::create_render_context()
 {
 	FCPPT_ASSERT_PRE(
@@ -157,7 +171,7 @@ flake::postprocessing::context::create_render_context()
 		*rendering_result_texture_);
 
 	return
-		fcppt::make_unique_ptr<sge::renderer::context::scoped>(
+		fcppt::make_unique_ptr<sge::renderer::context::scoped_ffp>(
 			fcppt::ref(
 				renderer_),
 			fcppt::ref(
@@ -170,7 +184,7 @@ flake::postprocessing::context::render()
 	this->render_and_return_overlay();
 }
 
-sge::renderer::context::scoped_unique_ptr
+sge::renderer::context::scoped_ffp_unique_ptr
 flake::postprocessing::context::render_and_return_overlay()
 {
 	this->downsample();
@@ -299,7 +313,7 @@ flake::postprocessing::context::downsample()
 	this->switch_downsampled_target_texture(
 		*downsampled_texture_0_);
 
-	sge::renderer::context::scoped const scoped_block(
+	sge::renderer::context::scoped_ffp const scoped_block(
 		renderer_,
 		*offscreen_downsampled_target_);
 
@@ -311,10 +325,14 @@ flake::postprocessing::context::downsample()
 		scoped_block.get(),
 		downsample_shader_);
 
-	sge::renderer::texture::filter::scoped scoped_texture_filter(
+	FCPPT_ASSERT_PRE(
+		downsample_input_texture_parameter_.stage().get() == 0u);
+
+	sge::renderer::state::core::sampler::scoped scoped_address_mode(
 		scoped_block.get(),
-		downsample_input_texture_parameter_.stage(),
-		sge::renderer::texture::filter::linear());
+		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
+			(fcppt::cref(
+				*linear_clamping_texture_state_)));
 
 	fullscreen_quad_.render(
 		scoped_block.get());
@@ -326,7 +344,7 @@ flake::postprocessing::context::blur_h()
 	this->switch_downsampled_target_texture(
 		*downsampled_texture_1_);
 
-	sge::renderer::context::scoped const scoped_block(
+	sge::renderer::context::scoped_ffp const scoped_block(
 		renderer_,
 		*offscreen_downsampled_target_);
 
@@ -338,16 +356,14 @@ flake::postprocessing::context::blur_h()
 		scoped_block.get(),
 		blur_h_shader_);
 
-	sge::renderer::texture::set_address_mode2(
-		scoped_block.get(),
-		blur_h_input_texture_parameter_.stage(),
-		sge::renderer::texture::address_mode2(
-			sge::renderer::texture::address_mode::clamp));
+	FCPPT_ASSERT_PRE(
+		blur_h_input_texture_parameter_.stage().get() == 0u);
 
-	sge::renderer::texture::filter::scoped scoped_texture_filter(
+	sge::renderer::state::core::sampler::scoped scoped_address_mode(
 		scoped_block.get(),
-		blur_h_input_texture_parameter_.stage(),
-		sge::renderer::texture::filter::point());
+		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
+			(fcppt::cref(
+				*point_clamping_texture_state_)));
 
 	fullscreen_quad_.render(
 		scoped_block.get());
@@ -359,7 +375,7 @@ flake::postprocessing::context::blur_v()
 	this->switch_downsampled_target_texture(
 		*downsampled_texture_0_);
 
-	sge::renderer::context::scoped const scoped_block(
+	sge::renderer::context::scoped_ffp const scoped_block(
 		renderer_,
 		*offscreen_downsampled_target_);
 
@@ -371,16 +387,14 @@ flake::postprocessing::context::blur_v()
 		scoped_block.get(),
 		blur_v_shader_);
 
-	sge::renderer::texture::set_address_mode2(
-		scoped_block.get(),
-		blur_v_input_texture_parameter_.stage(),
-		sge::renderer::texture::address_mode2(
-			sge::renderer::texture::address_mode::clamp));
+	FCPPT_ASSERT_PRE(
+		blur_v_input_texture_parameter_.stage().get() == 0u);
 
-	sge::renderer::texture::filter::scoped scoped_texture_filter(
+	sge::renderer::state::core::sampler::scoped scoped_address_mode(
 		scoped_block.get(),
-		blur_v_input_texture_parameter_.stage(),
-		sge::renderer::texture::filter::point());
+		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
+			(fcppt::cref(
+				*point_clamping_texture_state_)));
 
 	fullscreen_quad_.render(
 		scoped_block.get());
@@ -398,11 +412,11 @@ flake::postprocessing::context::blur()
 	}
 }
 
-sge::renderer::context::scoped_unique_ptr
+sge::renderer::context::scoped_ffp_unique_ptr
 flake::postprocessing::context::finalize()
 {
-	sge::renderer::context::scoped_unique_ptr result(
-		fcppt::make_unique_ptr<sge::renderer::context::scoped>(
+	sge::renderer::context::scoped_ffp_unique_ptr result(
+		fcppt::make_unique_ptr<sge::renderer::context::scoped_ffp>(
 			fcppt::ref(
 				renderer_),
 			fcppt::ref(
@@ -412,15 +426,19 @@ flake::postprocessing::context::finalize()
 		result->get(),
 		finalize_shader_);
 
-	sge::renderer::texture::filter::scoped scoped_texture_filter_0(
-		result->get(),
-		finalize_input_texture_parameter_.stage(),
-		sge::renderer::texture::filter::point());
+	FCPPT_ASSERT_PRE(
+		finalize_input_texture_parameter_.stage().get() == 0u);
 
-	sge::renderer::texture::filter::scoped scoped_texture_filter_1(
+	FCPPT_ASSERT_PRE(
+		finalize_blurred_texture_parameter_.stage().get() == 1u);
+
+	sge::renderer::state::core::sampler::scoped scoped_address_mode(
 		result->get(),
-		finalize_blurred_texture_parameter_.stage(),
-		sge::renderer::texture::filter::linear());
+		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
+			(fcppt::cref(
+				*point_clamping_texture_state_))
+			(fcppt::cref(
+				*linear_clamping_texture_state_)));
 
 	fullscreen_quad_.render(
 		result->get());

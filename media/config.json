@@ -48,7 +48,7 @@
 		},
 		"marching-cubes" :
 		{
-			"simulation-size" : [64,64,64],
+			"simulation-size" : [128,64,128],
 			"snow-texture-size" : [64,64,64],
 			"snow-texture-repeats" : 100.0,
 			"near-plane" : 0.01,
@@ -56,7 +56,7 @@
 			"far-plane" : 1000.0,
 			"sun-direction" : [0.8804509,0.17609018,0.440225453],
 			"fov" : 60.0,
-			"voxel-file" : "current.binvox",
+			"scene-name" : "cone",
 			"snow-cover" :
 			{
 				"texture-repeats" : 20.0,
@@ -71,7 +71,7 @@
 		},
 		"flakes" :
 		{
-			"simulation-size" : [64,64,64],
+			"simulation-size" : [128,64,128],
 			"snow-cover" :
 			{
 				"texture-repeats" : 20.0,
@@ -84,13 +84,13 @@
 			"wind-strength-minimum" : 2.0,
 			"wind-strength-maximum" : 3.0,
 			"wind-strength-frequency-seconds" : 1.0,
-			"jacobi-iterations" : 105,
+			"jacobi-iterations" : 20,
 			"near-plane" : 1.0,
 			"far-plane" : 1000.0,
 			"fov" : 60.0,
 			"flakes" :
 			{
-				"count" : 131072,
+				"count" : 32768,
 				"minimum-size" : 10.0,
 				"maximum-size" : 30.0,
 				"texture" : "flakes.png",
@@ -105,10 +105,7 @@
 		        "fog-color" : [0.3,0.3,0.3],
 		        "fog-density" : 0.01,
 			"iso-level" : 0.2,
-			"voxel-file" :
-			{
-				"name" : "current.binvox"
-			},
+			"scene-name" : "cone",
 			"obstacles" :
 			[
 				{

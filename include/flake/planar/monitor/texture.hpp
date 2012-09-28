@@ -49,7 +49,7 @@ public:
 
 	void
 	render(
-		sge::renderer::context::object &,
+		sge::renderer::context::ffp &,
 		monitor::optional_projection const &);
 
 	void

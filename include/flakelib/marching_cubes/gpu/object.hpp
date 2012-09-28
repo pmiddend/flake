@@ -17,7 +17,7 @@
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
+#include <sge/renderer/context/core_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
@@ -81,7 +81,7 @@ private:
 
 	void
 	render(
-		sge::renderer::context::object &);
+		sge::renderer::context::core &);
 
 	void
 	resize_gl_buffers();

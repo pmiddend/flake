@@ -2,10 +2,11 @@
 #define FLAKE_POSTPROCESSING_CONTEXT_HPP_INCLUDED
 
 #include <flake/postprocessing/fullscreen_quad.hpp>
-#include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/device/ffp_fwd.hpp>
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
-#include <sge/renderer/context/scoped_unique_ptr.hpp>
+#include <sge/renderer/context/scoped_ffp_unique_ptr.hpp>
+#include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
 #include <sge/renderer/target/offscreen_scoped_ptr.hpp>
 #include <sge/renderer/texture/planar_scoped_ptr.hpp>
 #include <sge/renderer/depth_stencil_surface_scoped_ptr.hpp>
@@ -28,23 +29,25 @@ FCPPT_NONCOPYABLE(
 	context);
 public:
 	context(
-		sge::renderer::device &,
+		sge::renderer::device::ffp &,
 		sge::viewport::manager &,
 		sge::shader::context &);
 
-	sge::renderer::context::scoped_unique_ptr
+	sge::renderer::context::scoped_ffp_unique_ptr
 	create_render_context();
 
 	void
 	render();
 
-	sge::renderer::context::scoped_unique_ptr
+	sge::renderer::context::scoped_ffp_unique_ptr
 	render_and_return_overlay();
 
 	~context();
 private:
-	sge::renderer::device &renderer_;
+	sge::renderer::device::ffp &renderer_;
 	sge::renderer::vertex_declaration_scoped_ptr const quad_vertex_declaration_;
+	sge::renderer::state::core::sampler::object_scoped_ptr const linear_clamping_texture_state_;
+	sge::renderer::state::core::sampler::object_scoped_ptr const point_clamping_texture_state_;
 	flake::postprocessing::fullscreen_quad fullscreen_quad_;
 	sge::shader::pair downsample_shader_;
 	sge::shader::parameter::planar_texture downsample_input_texture_parameter_;
@@ -86,7 +89,7 @@ private:
 	void
 	blur();
 
-	sge::renderer::context::scoped_unique_ptr
+	sge::renderer::context::scoped_ffp_unique_ptr
 	finalize();
 };
 }

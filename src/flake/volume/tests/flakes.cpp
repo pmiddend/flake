@@ -1,4 +1,8 @@
 #include <flake/catch_statements.hpp>
+#include <sge/renderer/state/core/rasterizer/object_scoped_ptr.hpp>
+#include <sge/renderer/state/core/rasterizer/object.hpp>
+#include <sge/renderer/state/core/rasterizer/scoped.hpp>
+#include <sge/renderer/state/core/rasterizer/parameters.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/test/information/string_conversion_adapter.hpp>
 #include <flake/volume/snow_cover/scoped.hpp>
@@ -17,23 +21,13 @@
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/clear/parameters.hpp>
-#include <sge/renderer/context/object.hpp>
-#include <sge/renderer/state/color.hpp>
-#include <sge/renderer/state/draw_mode.hpp>
-#include <sge/renderer/state/float.hpp>
-#include <sge/renderer/state/list.hpp>
-#include <sge/renderer/state/scoped.hpp>
+#include <sge/renderer/context/ffp.hpp>
 #include <sge/renderer/target/onscreen.hpp>
-#include <sge/renderer/texture/address_mode2.hpp>
 #include <sge/scenic/render_context/base.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
-#include <sge/renderer/texture/set_address_mode2.hpp>
-#include <sge/renderer/texture/volume.hpp>
-#include <sge/renderer/texture/filter/scoped.hpp>
-#include <sge/renderer/texture/filter/trilinear.hpp>
 #include <sge/renderer/texture/mipmap/all_levels.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters.hpp>
@@ -127,7 +121,6 @@ flake::volume::tests::flakes::flakes(
 			sge::camera::coordinate_system::identity())),
 	perspective_projection_from_viewport_(
 		camera_,
-		this->renderer(),
 		this->viewport_manager(),
 		sge::renderer::projection::near(
 			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
@@ -201,11 +194,14 @@ flake::volume::tests::flakes::flakes(
 		conversion_object_.binvox_file_to_buffer(
 			this->buffer_pool(),
 			flake::media_path_from_string(
-				FCPPT_TEXT("voxelized_models/")+
+				FCPPT_TEXT("scenes/")+
 				sge::parse::json::find_and_convert_member<fcppt::string>(
 					this->configuration(),
 					sge::parse::json::string_to_path(
-						FCPPT_TEXT("voxel-file/name")))))
+						FCPPT_TEXT("scene-name")))+
+				FCPPT_TEXT("/scene.binvox")),
+			flakelib::volume::conversion::optional_height(
+				simulation_size_.get().h()))
 		/*
 		flakelib::volume::retrieve_filled_float_buffer(
 			this->buffer_pool(),
@@ -328,17 +324,13 @@ flake::volume::tests::flakes::flakes(
 		camera_,
 		sge::scenic::scene::from_blender_file(
 			flake::media_path_from_string(
-				FCPPT_TEXT("scenes/landhaus/description.json")),
-			this->charconv_system()),
-		sge::scenic::scene::object::model_base_path(
-			flake::media_path_from_string(
-				FCPPT_TEXT("scenes/landhaus"))),
-		sge::scenic::scene::object::material_base_path(
-			flake::media_path_from_string(
-				FCPPT_TEXT("scenes/landhaus"))),
-		sge::scenic::scene::object::texture_base_path(
-			flake::media_path_from_string(
-				FCPPT_TEXT("scenes/landhaus")))),
+				FCPPT_TEXT("scenes/")+
+				sge::parse::json::find_and_convert_member<fcppt::string>(
+					this->configuration(),
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("scene-name")))+
+				FCPPT_TEXT("/description.json")),
+			this->charconv_system())),
 	marching_cubes_manager_(
 		this->renderer(),
 		flakelib::marching_cubes::cpu::grid_size(
@@ -473,16 +465,23 @@ flake::volume::tests::flakes::~flakes()
 
 void
 flake::volume::tests::flakes::render(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::ffp &_context)
 {
-	sge::renderer::state::scoped scoped_state(
+	sge::renderer::state::core::rasterizer::object_scoped_ptr const rasterizer_state(
+		this->renderer().create_rasterizer_state(
+			sge::renderer::state::core::rasterizer::parameters(
+				sge::renderer::state::core::rasterizer::cull_mode::off,
+				this->feature_active(test::json_identifier(FCPPT_TEXT("wireframe")))
+				?
+					sge::renderer::state::core::rasterizer::fill_mode::line
+				:
+					sge::renderer::state::core::rasterizer::fill_mode::solid,
+				sge::renderer::state::core::rasterizer::enable_scissor_test(
+					false))));
+
+	sge::renderer::state::core::rasterizer::scoped scoped_rasterizer_state(
 		_context,
-		sge::renderer::state::list
-			(this->feature_active(test::json_identifier(FCPPT_TEXT("wireframe")))
-			?
-			 	sge::renderer::state::draw_mode::line
-			:
-			 	sge::renderer::state::draw_mode::fill));
+		*rasterizer_state);
 
 	_context.clear(
 		sge::renderer::clear::parameters()
@@ -492,8 +491,10 @@ flake::volume::tests::flakes::render(
 				sge::renderer::clear::depth_buffer_value(
 					1.0f)));
 
+	/*
 	skydome_.render(
 		_context);
+	*/
 
 	if(
 		this->feature_active(

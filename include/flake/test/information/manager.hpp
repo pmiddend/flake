@@ -6,8 +6,8 @@
 #include <sge/font/system_fwd.hpp>
 #include <sge/font/ttf_size.hpp>
 #include <sge/image/color/any/object.hpp>
-#include <sge/renderer/device_fwd.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
+#include <sge/renderer/device/ffp_fwd.hpp>
+#include <sge/renderer/context/ffp_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/intrusive/list.hpp>
@@ -29,12 +29,12 @@ public:
 	manager(
 		sge::font::system &,
 		sge::font::ttf_size,
-		sge::renderer::device &,
+		sge::renderer::device::ffp &,
 		sge::image::color::any::object const &);
 
 	void
 	render(
-		sge::renderer::context::object &);
+		sge::renderer::context::ffp &);
 
 	~manager();
 private:
@@ -48,7 +48,7 @@ private:
 	>
 	child_sequence;
 
-	sge::renderer::device &renderer_;
+	sge::renderer::device::ffp &renderer_;
 	sge::image::color::any::object const color_;
 	sge::font::object_scoped_ptr font_;
 	child_sequence children_;

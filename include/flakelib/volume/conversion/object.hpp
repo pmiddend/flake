@@ -14,6 +14,7 @@
 #include <flakelib/volume/conversion/grid_scale.hpp>
 #include <flakelib/volume/conversion/origin.hpp>
 #include <flakelib/volume/conversion/raw_voxel_file_dimension.hpp>
+#include <flakelib/volume/conversion/optional_height.hpp>
 #include <flakelib/volume/conversion/scaling_factor.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
@@ -67,7 +68,8 @@ public:
 	flakelib::volume::unique_float_buffer_lock
 	binvox_file_to_buffer(
 		flakelib::buffer_pool::object &,
-		boost::filesystem::path const &);
+		boost::filesystem::path const &,
+		flakelib::volume::conversion::optional_height const &);
 
 	FLAKELIB_SYMBOL
 	~object();

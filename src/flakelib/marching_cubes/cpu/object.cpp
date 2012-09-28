@@ -1,12 +1,18 @@
 #include <flakelib/buffer/volume_view.hpp>
+#include <sge/renderer/state/core/depth_stencil/object.hpp>
+#include <sge/renderer/state/core/depth_stencil/parameters.hpp>
+#include <sge/renderer/state/core/depth_stencil/scoped.hpp>
+#include <sge/renderer/state/core/depth_stencil/depth/enabled.hpp>
+#include <sge/renderer/state/core/depth_stencil/stencil/off.hpp>
 #include <flakelib/marching_cubes/cpu/implementation.hpp>
 #include <flakelib/marching_cubes/cpu/object.hpp>
 #include <flakelib/marching_cubes/vf/interleaved.hpp>
+#include <fcppt/math/vector/object_impl.hpp>
 #include <flakelib/marching_cubes/vf/interleaved_part.hpp>
 #include <flakelib/timer/object.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/index_buffer.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scoped_index_lock.hpp>
@@ -15,15 +21,11 @@
 #include <sge/renderer/scoped_vertex_lock.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
-#include <sge/renderer/context/object.hpp>
+#include <sge/renderer/context/core.hpp>
 #include <sge/renderer/index/format_32.hpp>
 #include <sge/renderer/index/iterator.hpp>
 #include <sge/renderer/index/view.hpp>
 #include <sge/renderer/index/dynamic/make_format.hpp>
-#include <sge/renderer/state/cull_mode.hpp>
-#include <sge/renderer/state/depth_func.hpp>
-#include <sge/renderer/state/list.hpp>
-#include <sge/renderer/state/scoped.hpp>
 #include <sge/renderer/vf/iterator.hpp>
 #include <sge/renderer/vf/vertex.hpp>
 #include <sge/renderer/vf/view.hpp>
@@ -39,7 +41,7 @@
 
 
 flakelib::marching_cubes::cpu::object::object(
-	sge::renderer::device &_renderer,
+	sge::renderer::device::core &_renderer,
 	flakelib::marching_cubes::cpu::grid_size const &_grid_size,
 	flakelib::marching_cubes::iso_level const &_iso_level)
 :
@@ -52,6 +54,15 @@ flakelib::marching_cubes::cpu::object::object(
 			sge::renderer::vf::dynamic::make_format<flakelib::marching_cubes::vf::interleaved>())),
 	vertex_buffer_(),
 	index_buffer_(),
+	depth_stencil_state_(
+		renderer_.create_depth_stencil_state(
+			sge::renderer::state::core::depth_stencil::parameters(
+				sge::renderer::state::core::depth_stencil::depth::variant(
+					sge::renderer::state::core::depth_stencil::depth::enabled(
+						sge::renderer::state::core::depth_stencil::depth::func::less,
+						sge::renderer::state::core::depth_stencil::depth::write_enable(
+							true))),
+				sge::renderer::state::core::depth_stencil::stencil::off()))),
 	implementation_(
 		fcppt::make_unique_ptr<MarchingCubes>(
 			static_cast<int>(
@@ -73,7 +84,7 @@ flakelib::marching_cubes::cpu::object::object(
 
 void
 flakelib::marching_cubes::cpu::object::render(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::core &_context)
 {
 	if(!vertex_buffer_)
 	{
@@ -85,11 +96,9 @@ flakelib::marching_cubes::cpu::object::render(
 	FCPPT_ASSERT_PRE(
 		index_buffer_);
 
-	sge::renderer::state::scoped scoped_state(
+	sge::renderer::state::core::depth_stencil::scoped const depth_transform(
 		_context,
-		sge::renderer::state::list
-			(sge::renderer::state::cull_mode::off)
-			(sge::renderer::state::depth_func::less));
+		*depth_stencil_state_);
 
 	sge::renderer::scoped_vertex_declaration scoped_vertex_declaration(
 		_context,

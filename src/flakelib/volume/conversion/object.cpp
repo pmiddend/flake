@@ -241,7 +241,8 @@ flakelib::volume::conversion::object::~object()
 flakelib::volume::unique_float_buffer_lock
 flakelib::volume::conversion::object::binvox_file_to_buffer(
 	flakelib::buffer_pool::object &_buffer_pool,
-	boost::filesystem::path const &_path)
+	boost::filesystem::path const &_path,
+	flakelib::volume::conversion::optional_height const &_optional_height)
 {
 	std::cout << "binvox_file_to_buffer\n";
 	boost::filesystem::fstream input_file(
@@ -409,14 +410,16 @@ flakelib::volume::conversion::object::binvox_file_to_buffer(
 					_path)+
 				FCPPT_TEXT("\": Data section not multiple of two long"));
 
+	sge::opencl::dim3 const real_grid_size(
+		dimension,
+		_optional_height ? *_optional_height : dimension,
+		dimension);
+
 	flakelib::volume::unique_float_buffer_lock result(
 		fcppt::make_unique_ptr<flakelib::volume::float_buffer_lock>(
 			fcppt::ref(
 				_buffer_pool),
-			sge::opencl::dim3(
-				dimension,
-				dimension,
-				dimension)));
+			real_grid_size));
 
 	sge::opencl::command_queue::scoped_buffer_mapping scoped_mapping(
 		to_arrow_vb_kernel_->command_queue(),
@@ -459,11 +462,14 @@ flakelib::volume::conversion::object::binvox_file_to_buffer(
 				x =
 					current_index / (dimension * dimension);
 
-			// Remap z
-			fptr[(dimension * dimension) * (dimension - 1u - z) + dimension * y + x] =
-				value;
-
 			current_index++;
+
+			if(y >= real_grid_size.h())
+				continue;
+
+			// Remap z
+			fptr[(real_grid_size.w() * real_grid_size.h()) * (real_grid_size.d() - 1u - z) + real_grid_size.w() * y + x] =
+				value;
 
 			/* DEBUG OUTPUT
 			fptr[current_index] = value;

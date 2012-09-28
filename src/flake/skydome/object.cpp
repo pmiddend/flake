@@ -7,10 +7,15 @@
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/core.hpp>
 #include <sge/renderer/index_buffer.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scalar.hpp>
+#include <sge/renderer/state/core/sampler/object.hpp>
+#include <sge/renderer/state/core/sampler/scoped.hpp>
+#include <sge/renderer/state/core/sampler/parameters.hpp>
+#include <sge/renderer/state/core/sampler/address/mode_all.hpp>
+#include <sge/renderer/state/core/sampler/filter/linear.hpp>
 #include <sge/renderer/scoped_index_lock.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
@@ -18,18 +23,14 @@
 #include <sge/renderer/vector3.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_declaration.hpp>
-#include <sge/renderer/context/object.hpp>
+#include <sge/renderer/context/core.hpp>
 #include <sge/renderer/index/iterator.hpp>
 #include <sge/renderer/index/view.hpp>
 #include <sge/renderer/index/dynamic/make_format.hpp>
-#include <sge/renderer/state/depth_func.hpp>
-#include <sge/renderer/state/list.hpp>
-#include <sge/renderer/state/scoped.hpp>
-#include <sge/renderer/texture/address_mode2.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
+#include <fcppt/assign/make_container.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/planar_scoped_ptr.hpp>
-#include <sge/renderer/texture/set_address_mode2.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/renderer/vf/iterator.hpp>
 #include <sge/renderer/vf/vertex.hpp>
@@ -39,6 +40,8 @@
 #include <sge/shader/scoped_pair.hpp>
 #include <fcppt/math/pi.hpp>
 #include <fcppt/math/twopi.hpp>
+#include <fcppt/ref.hpp>
+#include <fcppt/cref.hpp>
 #include <fcppt/math/matrix/arithmetic.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
@@ -66,7 +69,7 @@ sphere_point(
 }
 
 flake::skydome::object::object(
-	sge::renderer::device &_renderer,
+	sge::renderer::device::core &_renderer,
 	sge::shader::context &_shader_context,
 	sge::image2d::system &_image_system,
 	flake::skydome::texture_path const &_texture_path,
@@ -142,7 +145,13 @@ flake::skydome::object::object(
 		shader_,
 		renderer_,
 		sge::shader::parameter::planar_texture::optional_value(
-			*texture_))
+			*texture_)),
+	texture_state_(
+		renderer_.create_sampler_state(
+			sge::renderer::state::core::sampler::parameters(
+				sge::renderer::state::core::sampler::address::mode_all(
+					sge::renderer::state::core::sampler::address::mode::repeat),
+				sge::renderer::state::core::sampler::filter::linear())))
 {
 	sge::renderer::scoped_vertex_lock vblock(
 		*vertex_buffer_,
@@ -312,13 +321,8 @@ flake::skydome::object::object(
 
 void
 flake::skydome::object::render(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::core &_context)
 {
-	sge::renderer::state::scoped scoped_state(
-		_context,
-		sge::renderer::state::list
-			(sge::renderer::state::depth_func::off));
-
 	sge::renderer::scoped_vertex_declaration scoped_vd(
 		_context,
 		*vertex_declaration_);
@@ -344,11 +348,14 @@ flake::skydome::object::render(
 						y_translation_.get(),
 						0.0f)))));
 
-	sge::renderer::texture::set_address_mode2(
+	FCPPT_ASSERT_PRE(
+		texture_parameter_.stage().get() == 0u);
+
+	sge::renderer::state::core::sampler::scoped scoped_address_mode(
 		_context,
-		texture_parameter_.stage(),
-		sge::renderer::texture::address_mode2(
-			sge::renderer::texture::address_mode::repeat));
+		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
+			(fcppt::cref(
+				*texture_state_)));
 
 	_context.render_indexed(
 		*index_buffer_,

@@ -11,7 +11,7 @@
 #include <sge/font/system.hpp>
 #include <sge/font/text_parameters.hpp>
 #include <sge/font/draw/simple.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <fcppt/text.hpp>
 #include <sge/font/weight/bold.hpp>
@@ -20,7 +20,7 @@
 flake::test::information::manager::manager(
 	sge::font::system &_font_system,
 	sge::font::ttf_size const _ttf_size,
-	sge::renderer::device &_renderer,
+	sge::renderer::device::ffp &_renderer,
 	sge::image::color::any::object const &_color)
 :
 	renderer_(
@@ -42,7 +42,7 @@ flake::test::information::manager::manager(
 
 void
 flake::test::information::manager::render(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::ffp &_context)
 {
 	sge::font::string result;
 

@@ -192,14 +192,6 @@ set(
 	src/flakelib/marching_cubes/gpu/object.cpp
 	src/flakelib/media_path.cpp
 	src/flakelib/media_path_from_string.cpp
-	src/flakelib/planar/simulation/stam/buissnesq/object.cpp
-	src/flakelib/planar/simulation/stam/divergence.cpp
-	src/flakelib/planar/simulation/stam/jacobi.cpp
-	src/flakelib/planar/simulation/stam/outflow_boundaries.cpp
-	src/flakelib/planar/simulation/stam/semilagrangian_advection.cpp
-	src/flakelib/planar/simulation/stam/subtract_pressure_gradient.cpp
-	src/flakelib/planar/simulation/stam/vorticity.cpp
-	src/flakelib/planar/simulation/stam/wind_source.cpp
 	src/flakelib/scan.cpp
 	src/flakelib/scan/object.cpp
 	src/flakelib/scoped_frame_limiter.cpp
@@ -214,7 +206,6 @@ set(
 	src/flakelib/volume/gradient.cpp
 	src/flakelib/volume/retrieve_filled_float_buffer.cpp
 	src/flakelib/volume/retrieve_zero_float4_buffer.cpp
-	src/flakelib/volume/simulation/stam/buissnesq/object.cpp
 	src/flakelib/volume/simulation/stam/divergence.cpp
 	src/flakelib/volume/simulation/stam/jacobi.cpp
 	src/flakelib/volume/simulation/stam/outflow_boundaries.cpp
@@ -222,6 +213,29 @@ set(
 	src/flakelib/volume/simulation/stam/subtract_pressure_gradient.cpp
 	src/flakelib/volume/simulation/stam/vorticity.cpp
 	src/flakelib/volume/simulation/stam/wind_source.cpp
+)
+
+set(
+	FLAKELIB_PLANAR_FILES
+	src/flakelib/planar/simulation/stam/buissnesq/object.cpp
+	src/flakelib/planar/simulation/stam/divergence.cpp
+	src/flakelib/planar/simulation/stam/jacobi.cpp
+	src/flakelib/planar/simulation/stam/outflow_boundaries.cpp
+	src/flakelib/planar/simulation/stam/semilagrangian_advection.cpp
+	src/flakelib/planar/simulation/stam/subtract_pressure_gradient.cpp
+	src/flakelib/planar/simulation/stam/vorticity.cpp
+	src/flakelib/planar/simulation/stam/wind_source.cpp
+)
+
+set(
+	FLAKE_PLANAR_FILES
+	src/flake/planar/conversion/object.cpp
+	src/flake/planar/cursor_splatter.cpp
+	src/flake/planar/monitor/arrows.cpp
+	src/flake/planar/monitor/child.cpp
+	src/flake/planar/monitor/font_axis_policy.cpp
+	src/flake/planar/monitor/parent.cpp
+	src/flake/planar/monitor/texture.cpp
 )
 
 set(
@@ -233,13 +247,6 @@ set(
 	src/flake/message_box.cpp
 	src/flake/notifications/message.cpp
 	src/flake/notifications/object.cpp
-	src/flake/planar/conversion/object.cpp
-	src/flake/planar/cursor_splatter.cpp
-	src/flake/planar/monitor/arrows.cpp
-	src/flake/planar/monitor/child.cpp
-	src/flake/planar/monitor/font_axis_policy.cpp
-	src/flake/planar/monitor/parent.cpp
-	src/flake/planar/monitor/texture.cpp
 	src/flake/postprocessing/context.cpp
 	src/flake/postprocessing/fullscreen_quad.cpp
 	src/flake/save_l8_texture_to_file.cpp
@@ -256,8 +263,6 @@ set(
 	src/flake/volume/density_visualization/raycaster/object.cpp
 	src/flake/volume/flakes/manager.cpp
 	src/flake/volume/flakes/mover.cpp
-	src/flake/volume/model/manager.cpp
-	src/flake/volume/model/object.cpp
 	src/flake/volume/obstacles/manager.cpp
 	src/flake/volume/snow_cover/object.cpp
 	src/flake/volume/snow_cover/parallel_update.cpp
@@ -268,7 +273,35 @@ fcppt_utils_add_source_groups(
 	"${FLAKELIB_FILES}")
 
 fcppt_utils_add_source_groups(
+	"${FLAKELIB_PLANAR_FILES}")
+
+fcppt_utils_add_source_groups(
 	"${FLAKE_FILES}")
+
+fcppt_utils_add_source_groups(
+	"${FLAKE_PLANAR_FILES}")
+
+option(
+	ENABLE_PLANAR
+	"Build planar flake"
+	FALSE
+)
+
+if(
+	ENABLE_PLANAR
+)
+	set(
+		FLAKELIB_FILES
+		${FLAKELIB_FILES}
+		${FLAKELIB_PLANAR_FILES}
+	)
+
+	set(
+		FLAKE_FILES
+		${FLAKE_FILES}
+		${FLAKE_PLANAR_FILES}
+	)
+endif()
 
 option(
 	ENABLE_SHARED
@@ -402,55 +435,63 @@ add_definitions(
 	${FLAKELIB_CONFIG_LINK_MACROS})
 
 # vorticity begin
-awl_utils_add_portable_executable(
-	tests_vorticity
-	"custom_main"
-	src/flake/planar/tests/vorticity.cpp)
+if(
+	ENABLE_PLANAR
+)
+    awl_utils_add_portable_executable(
+	    tests_vorticity
+	    "custom_main"
+	    src/flake/planar/tests/vorticity.cpp)
 
-target_link_libraries(
-	tests_vorticity
-	${FLAKELIB_DEFAULT_LINK_TARGET}
-	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${Cg_LIBRARIES}
-	${Awl_LIBRARIES}
-	${SGE_LIBRARIES}
-	${OPENCL_LIBRARIES}
-	${OPENGL_gl_LIBRARY}
-	${Boost_LIBRARIES})
+    target_link_libraries(
+	    tests_vorticity
+	    ${FLAKELIB_DEFAULT_LINK_TARGET}
+	    flake_helper_library
+	    ${Fcppt_core_LIBRARIES}
+	    ${Fcppt_filesystem_LIBRARIES}
+	    ${Cg_LIBRARIES}
+	    ${Awl_LIBRARIES}
+	    ${SGE_LIBRARIES}
+	    ${OPENCL_LIBRARIES}
+	    ${OPENGL_gl_LIBRARY}
+	    ${Boost_LIBRARIES})
 
-install(
-	TARGETS
-	tests_vorticity
-	DESTINATION
-	${INSTALL_BINARY_DIR})
+    install(
+	    TARGETS
+	    tests_vorticity
+	    DESTINATION
+	    ${INSTALL_BINARY_DIR})
+endif()
 # vorticity end
 
 # buoyancy begin
-awl_utils_add_portable_executable(
-	tests_buoyancy
-	"custom_main"
-	src/flake/planar/tests/buoyancy.cpp)
+if(
+	ENABLE_PLANAR
+)
+    awl_utils_add_portable_executable(
+	    tests_buoyancy
+	    "custom_main"
+	    src/flake/planar/tests/buoyancy.cpp)
 
-target_link_libraries(
-	tests_buoyancy
-	${FLAKELIB_DEFAULT_LINK_TARGET}
-	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${Awl_LIBRARIES}
-	${Cg_LIBRARIES}
-	${SGE_LIBRARIES}
-	${OPENCL_LIBRARIES}
-	${OPENGL_gl_LIBRARY}
-	${Boost_LIBRARIES})
+    target_link_libraries(
+	    tests_buoyancy
+	    ${FLAKELIB_DEFAULT_LINK_TARGET}
+	    flake_helper_library
+	    ${Fcppt_core_LIBRARIES}
+	    ${Fcppt_filesystem_LIBRARIES}
+	    ${Awl_LIBRARIES}
+	    ${Cg_LIBRARIES}
+	    ${SGE_LIBRARIES}
+	    ${OPENCL_LIBRARIES}
+	    ${OPENGL_gl_LIBRARY}
+	    ${Boost_LIBRARIES})
 
-install(
-	TARGETS
-	tests_buoyancy
-	DESTINATION
-	${INSTALL_BINARY_DIR})
+    install(
+	    TARGETS
+	    tests_buoyancy
+	    DESTINATION
+	    ${INSTALL_BINARY_DIR})
+endif()
 # buoyancy end
 #
 # flakes begin

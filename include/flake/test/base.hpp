@@ -24,8 +24,8 @@
 #include <sge/input/mouse/device_fwd.hpp>
 #include <sge/opencl/single_device_system/object_fwd.hpp>
 #include <sge/parse/json/object.hpp>
-#include <sge/renderer/device_fwd.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
+#include <sge/renderer/device/ffp_fwd.hpp>
+#include <sge/renderer/context/ffp_fwd.hpp>
 #include <sge/shader/context_fwd.hpp>
 #include <sge/systems/cursor_option_field.hpp>
 #include <sge/systems/instance_fwd.hpp>
@@ -66,16 +66,16 @@ protected:
 
 	virtual void
 	render(
-		sge::renderer::context::object &) = 0;
+		sge::renderer::context::ffp &) = 0;
 
 	virtual void
 	render_overlay(
-		sge::renderer::context::object &);
+		sge::renderer::context::ffp &);
 
 	sge::parse::json::object const &
 	configuration() const;
 
-	sge::renderer::device &
+	sge::renderer::device::ffp &
 	renderer();
 
 	sge::shader::context &

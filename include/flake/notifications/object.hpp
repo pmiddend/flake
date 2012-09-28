@@ -7,8 +7,8 @@
 #include <sge/font/object_scoped_ptr.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <sge/font/ttf_size.hpp>
-#include <sge/renderer/device_fwd.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
+#include <sge/renderer/device/ffp_fwd.hpp>
+#include <sge/renderer/context/ffp_fwd.hpp>
 #include <sge/timer/basic_impl.hpp>
 #include <sge/timer/clocks/standard.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -35,7 +35,7 @@ public:
 	// metrics. However, a ref might be inconvenient, too, if we have a
 	// single font just for the notifications.
 	object(
-		sge::renderer::device &,
+		sge::renderer::device::ffp &,
 		sge::font::system &,
 		sge::font::ttf_size const &,
 		notifications::time_to_live const &);
@@ -49,7 +49,7 @@ public:
 
 	void
 	render(
-		sge::renderer::context::object &);
+		sge::renderer::context::ffp &);
 
 	~object();
 private:
@@ -58,7 +58,7 @@ private:
 	message_sequence;
 
 	notifications::time_to_live const time_to_live_;
-	sge::renderer::device &renderer_;
+	sge::renderer::device::ffp &renderer_;
 	sge::font::object_scoped_ptr font_;
 	message_sequence messages_;
 	sge::timer::basic<sge::timer::clocks::standard> second_timer_;

@@ -12,13 +12,15 @@
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
-#include <sge/renderer/device_fwd.hpp>
+#include <sge/renderer/device/core_fwd.hpp>
 #include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
 #include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
 #include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
-#include <sge/renderer/context/object_fwd.hpp>
+#include <sge/renderer/context/core_fwd.hpp>
 #include <sge/renderer/texture/planar_shared_ptr.hpp>
+#include <sge/renderer/state/core/blend/object_scoped_ptr.hpp>
+#include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
 #include <sge/shader/pair.hpp>
 #include <sge/shader/parameter/matrix.hpp>
 #include <sge/shader/parameter/planar_texture.hpp>
@@ -41,7 +43,7 @@ FCPPT_NONCOPYABLE(
 	object);
 public:
 	object(
-		sge::renderer::device &,
+		sge::renderer::device::core &,
 		sge::shader::context &,
 		sge::opencl::context::object &,
 		sge::camera::base const &,
@@ -59,14 +61,16 @@ public:
 
 	void
 	render(
-		sge::renderer::context::object &);
+		sge::renderer::context::core &);
 
 	~object();
 private:
-	sge::renderer::device &renderer_;
+	sge::renderer::device::core &renderer_;
 	sge::camera::base const &camera_;
 	sge::image2d::system &image_system_;
 	flakelib::volume::conversion::object &conversion_;
+	sge::renderer::state::core::blend::object_scoped_ptr const blend_state_;
+	sge::renderer::state::core::sampler::object_scoped_ptr const sampler_state_;
 	flakelib::volume::grid_size grid_size_;
 	flake::volume::density_visualization::raycaster::debug_output const debug_output_;
 	sge::renderer::vertex_declaration_scoped_ptr vertex_declaration_;

@@ -8,19 +8,22 @@
 #include <sge/font/from_fcppt_string.hpp>
 #include <sge/font/text_parameters.hpp>
 #include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
-#include <sge/renderer/device.hpp>
+#include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/first_index.hpp>
 #include <sge/renderer/primitive_type.hpp>
 #include <sge/renderer/resource_flags.hpp>
-#include <sge/renderer/scoped_transform.hpp>
 #include <sge/renderer/scoped_vertex_buffer.hpp>
 #include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/size_type.hpp>
 #include <sge/renderer/vector2.hpp>
 #include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/vertex_count.hpp>
-#include <sge/renderer/context/object.hpp>
+#include <sge/renderer/context/ffp.hpp>
 #include <sge/renderer/projection/dim.hpp>
+#include <sge/renderer/state/ffp/transform/object_scoped_ptr.hpp>
+#include <sge/renderer/state/ffp/transform/object.hpp>
+#include <sge/renderer/state/ffp/transform/parameters.hpp>
+#include <sge/renderer/state/ffp/transform/scoped.hpp>
 #include <sge/renderer/projection/far.hpp>
 #include <sge/renderer/projection/near.hpp>
 #include <sge/renderer/projection/orthogonal_wh.hpp>
@@ -35,7 +38,6 @@
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
-#include <fcppt/scoped_ptr.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/object_impl.hpp>
@@ -180,7 +182,7 @@ flake::planar::monitor::arrows::name() const
 
 void
 flake::planar::monitor::arrows::render(
-	sge::renderer::context::object &_context,
+	sge::renderer::context::ffp &_context,
 	monitor::optional_projection const &_projection)
 {
 	this->render_font(
@@ -219,27 +221,33 @@ flake::planar::monitor::arrows::~arrows()
 
 void
 flake::planar::monitor::arrows::render_font(
-	sge::renderer::context::object &_context,
+	sge::renderer::context::ffp &_context,
 	monitor::optional_projection const &_projection)
 {
-	sge::renderer::scoped_transform world_transform(
+	sge::renderer::state::ffp::transform::object_scoped_ptr const world_state(
+		child::parent().renderer().create_transform_state(
+			sge::renderer::state::ffp::transform::parameters(
+				sge::renderer::matrix4::identity())));
+
+	sge::renderer::state::ffp::transform::scoped const world_transform(
 		_context,
-		sge::renderer::matrix_mode::world,
-		sge::renderer::matrix4::identity());
+		sge::renderer::state::ffp::transform::mode::world,
+		*world_state);
 
-	fcppt::scoped_ptr<sge::renderer::scoped_transform> projection_transform;
+	sge::renderer::state::ffp::transform::object_scoped_ptr const projection_state(
+		child::parent().renderer().create_transform_state(
+			sge::renderer::state::ffp::transform::parameters(
+				_projection
+				?
+					*_projection
+				:
+					*sge::sprite::projection_matrix(
+						child::parent().renderer().onscreen_target().viewport()))));
 
-	projection_transform.take(
-		fcppt::make_unique_ptr<sge::renderer::scoped_transform>(
-			fcppt::ref(
-				_context),
-			sge::renderer::matrix_mode::projection,
-			_projection
-			?
-				*_projection
-			:
-				sge::sprite::projection_matrix(
-					child::parent().renderer().onscreen_target().viewport())));
+	sge::renderer::state::ffp::transform::scoped const projection_transform(
+		_context,
+		sge::renderer::state::ffp::transform::mode::projection,
+		*projection_state);
 
 	font_renderable_.pos(
 		font_box_.position());
@@ -254,7 +262,7 @@ flake::planar::monitor::arrows::render_font(
 
 void
 flake::planar::monitor::arrows::render_arrows(
-	sge::renderer::context::object &_context,
+	sge::renderer::context::ffp &_context,
 	monitor::optional_projection const &_projection)
 {
 	sge::shader::scoped_pair scoped_shader(

@@ -21,7 +21,8 @@
 #include <sge/parse/json/string_to_path.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/clear/parameters.hpp>
-#include <sge/renderer/context/object.hpp>
+#include <sge/renderer/context/ffp.hpp>
+#include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/texture/create_planar_from_view.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
@@ -284,7 +285,6 @@ flake::planar::tests::vorticity::vorticity(
 				true))),
 	projection_rectangle_from_viewport_(
 		freelook_camera_,
-		this->renderer(),
 		this->viewport_manager()),
 	cursor_splatter_(
 		smoke_density_texture_,
@@ -378,7 +378,7 @@ flake::planar::tests::vorticity::~vorticity()
 
 void
 flake::planar::tests::vorticity::render(
-	sge::renderer::context::object &_context)
+	sge::renderer::context::ffp &_context)
 {
 	_context.clear(
 		sge::renderer::clear::parameters()
