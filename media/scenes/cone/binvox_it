@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm -i *.binvox
+../../binvox -t binvox -d 128 Cone.obj && cp Cone.binvox scene.binvox

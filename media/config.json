@@ -147,7 +147,7 @@
 			"sun-direction" : [0.666667,-0.333333,-0.666667],
 			"voxel-file" :
 			{
-				"name" : "current.binvox"
+				"name" : "landhaus_skaliert.binvox"
 			},
 			"features" :
 			{
