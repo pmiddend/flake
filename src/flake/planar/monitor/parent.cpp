@@ -39,7 +39,7 @@
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
-#include <fcppt/assign/make_container.hpp>
+#include <fcppt/assign/make_map.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
@@ -185,8 +185,12 @@ flake::planar::monitor::parent::render(
 {
 	sge::renderer::state::core::sampler::scoped const scoped_filter(
 		_context,
-		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
-			(fcppt::cref(*point_sampler_)));
+		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
+		(
+			sge::renderer::texture::stage(
+				0u),
+			fcppt::cref(
+				*point_sampler_)));
 
 	if(_projection)
 	{

@@ -90,7 +90,7 @@ flake::volume::flakes::manager::manager(
 					sge::renderer::state::core::depth_stencil::depth::enabled(
 						sge::renderer::state::core::depth_stencil::depth::func::less,
 						sge::renderer::state::core::depth_stencil::depth::write_enable(
-							true))),
+							false))),
 				sge::renderer::state::core::depth_stencil::stencil::off()))),
 	misc_state_(
 		renderer_.create_misc_state(

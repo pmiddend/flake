@@ -23,7 +23,6 @@ FCPPT_NONCOPYABLE(
 	object);
 public:
 	FLAKELIB_SYMBOL
-	explicit
 	object(
 		value_modulator::value_modify_callback const &,
 		value_modulator::minimum const &,

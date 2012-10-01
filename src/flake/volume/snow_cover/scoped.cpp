@@ -5,8 +5,7 @@
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/cg/parameter/matrix/set.hpp>
 #include <fcppt/cref.hpp>
-#include <fcppt/assert/pre.hpp>
-#include <fcppt/assign/make_container.hpp>
+#include <fcppt/assign/make_map.hpp>
 
 
 flake::volume::snow_cover::scoped::scoped(
@@ -18,18 +17,16 @@ flake::volume::snow_cover::scoped::scoped(
 		_snow_cover.shader_),
 	sampler_state_(
 		_context,
-		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
-			(fcppt::cref(
-				*_snow_cover.sampler_state_))
-			(fcppt::cref(
-				*_snow_cover.sampler_state_)))
+		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
+			(
+				_snow_cover.steep_texture_parameter_.stage(),
+				fcppt::cref(
+					   *_snow_cover.sampler_state_))
+			(
+				_snow_cover.flat_texture_parameter_.stage(),
+				fcppt::cref(
+					*_snow_cover.sampler_state_)))
 {
-	FCPPT_ASSERT_PRE(
-		_snow_cover.steep_texture_parameter_.stage().get() == 0u);
-
-	FCPPT_ASSERT_PRE(
-		_snow_cover.flat_texture_parameter_.stage().get() == 1u);
-
 	_snow_cover.mvp_parameter_.set(
 		sge::camera::matrix_conversion::world_projection(
 			_snow_cover.camera_.coordinate_system(),

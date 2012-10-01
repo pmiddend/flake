@@ -31,7 +31,7 @@
 #include <fcppt/optional_impl.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/assert/pre.hpp>
-#include <fcppt/assign/make_container.hpp>
+#include <fcppt/assign/make_map.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
@@ -325,14 +325,13 @@ flake::postprocessing::context::downsample()
 		scoped_block.get(),
 		downsample_shader_);
 
-	FCPPT_ASSERT_PRE(
-		downsample_input_texture_parameter_.stage().get() == 0u);
-
 	sge::renderer::state::core::sampler::scoped scoped_address_mode(
 		scoped_block.get(),
-		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
-			(fcppt::cref(
-				*linear_clamping_texture_state_)));
+		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
+			(
+				downsample_input_texture_parameter_.stage(),
+				fcppt::cref(
+					*linear_clamping_texture_state_)));
 
 	fullscreen_quad_.render(
 		scoped_block.get());
@@ -356,14 +355,13 @@ flake::postprocessing::context::blur_h()
 		scoped_block.get(),
 		blur_h_shader_);
 
-	FCPPT_ASSERT_PRE(
-		blur_h_input_texture_parameter_.stage().get() == 0u);
-
 	sge::renderer::state::core::sampler::scoped scoped_address_mode(
 		scoped_block.get(),
-		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
-			(fcppt::cref(
-				*point_clamping_texture_state_)));
+		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
+		(
+			blur_h_input_texture_parameter_.stage(),
+			fcppt::cref(
+				   *point_clamping_texture_state_)));
 
 	fullscreen_quad_.render(
 		scoped_block.get());
@@ -387,14 +385,13 @@ flake::postprocessing::context::blur_v()
 		scoped_block.get(),
 		blur_v_shader_);
 
-	FCPPT_ASSERT_PRE(
-		blur_v_input_texture_parameter_.stage().get() == 0u);
-
 	sge::renderer::state::core::sampler::scoped scoped_address_mode(
 		scoped_block.get(),
-		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
-			(fcppt::cref(
-				*point_clamping_texture_state_)));
+		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
+			(
+				blur_v_input_texture_parameter_.stage(),
+				fcppt::cref(
+					*point_clamping_texture_state_)));
 
 	fullscreen_quad_.render(
 		scoped_block.get());
@@ -434,11 +431,15 @@ flake::postprocessing::context::finalize()
 
 	sge::renderer::state::core::sampler::scoped scoped_address_mode(
 		result->get(),
-		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
-			(fcppt::cref(
-				*point_clamping_texture_state_))
-			(fcppt::cref(
-				*linear_clamping_texture_state_)));
+		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
+			(
+				finalize_input_texture_parameter_.stage(),
+				fcppt::cref(
+					*point_clamping_texture_state_))
+			(
+				finalize_blurred_texture_parameter_.stage(),
+				fcppt::cref(
+					*linear_clamping_texture_state_)));
 
 	fullscreen_quad_.render(
 		result->get());

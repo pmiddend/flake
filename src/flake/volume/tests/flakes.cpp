@@ -316,7 +316,9 @@ flake::volume::tests::flakes::flakes(
 					FCPPT_TEXT("iso-level"))))),
 	scene_manager_(
 		this->renderer(),
-		this->image_system()),
+		this->image_system(),
+		sge::scenic::scene::prefer_cg_context(
+			true)),
 	scene_(
 		scene_manager_,
 		this->viewport_manager(),
@@ -543,16 +545,17 @@ flake::volume::tests::flakes::update()
 	test::base::update();
 
 	flakelib::duration const
-		raw_delta =
+		raw_delta(
+			0.25f *
 			sge::timer::elapsed_and_reset<flakelib::duration>(
-				delta_timer_),
-		delta =
+				delta_timer_)),
+		delta(
 			boost::rational_cast<flakelib::duration::rep>(
 				this->current_multiplier().get()) *
-			raw_delta;
+			raw_delta);
 
 	camera_.update(
-		10.0f * raw_delta);
+		40.0f * raw_delta);
 
 	if(this->current_multiplier().get())
 	{

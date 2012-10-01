@@ -48,7 +48,7 @@
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <sge/shader/scoped_pair.hpp>
 #include <fcppt/cref.hpp>
-#include <fcppt/assign/make_container.hpp>
+#include <fcppt/assign/make_map.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/contains_point.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
@@ -361,9 +361,12 @@ flake::volume::density_visualization::raycaster::object::render(
 
 	sge::renderer::state::core::sampler::scoped scoped_sampler_state(
 		_context,
-		fcppt::assign::make_container<sge::renderer::state::core::sampler::const_object_ref_vector>
-			(fcppt::cref(
-				*sampler_state_)));
+		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
+			(
+				sge::renderer::texture::stage(
+					0u),
+				fcppt::cref(
+					*sampler_state_)));
 
 	sge::renderer::scoped_vertex_buffer scoped_vb(
 		_context,
