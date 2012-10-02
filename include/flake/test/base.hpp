@@ -130,6 +130,10 @@ protected:
 protected:
 	virtual void
 	viewport_callback();
+
+	virtual void
+	key_down_callback(
+		sge::input::keyboard::key_code::type);
 private:
 #ifdef FCPPT_CONFIG_WINDOWS_PLATFORM
 	flake::scoped_ostream_file_redirection error_redirection_;

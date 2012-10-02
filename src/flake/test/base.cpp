@@ -471,6 +471,12 @@ flake::test::base::viewport_callback()
 {
 }
 
+void
+flake::test::base::key_down_callback(
+	sge::input::keyboard::key_code::type)
+{
+}
+
 namespace
 {
 fcppt::string const
@@ -498,7 +504,7 @@ flake::test::base::key_callback(
 		dump_this_frame_ =
 			true;
 		this->post_notification(
-			notifications::text(
+			flake::notifications::text(
 				FCPPT_TEXT("Dumped status...")));
 		return;
 	}
@@ -524,4 +530,7 @@ flake::test::base::key_callback(
 			break;
 		}
 	}
+
+	this->key_down_callback(
+		e.key_code());
 }

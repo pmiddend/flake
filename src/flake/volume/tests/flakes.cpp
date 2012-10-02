@@ -32,6 +32,7 @@
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters.hpp>
 #include <sge/timer/reset_when_expired.hpp>
+#include <fcppt/insert_to_fcppt_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
 #include <fcppt/assign/make_container.hpp>
@@ -117,7 +118,10 @@ flake::volume::tests::flakes::flakes(
 			sge::camera::first_person::is_active(
 				true),
 			sge::camera::first_person::movement_speed(
-				1.0f),
+				sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
+					this->configuration(),
+					sge::parse::json::string_to_path(
+						FCPPT_TEXT("camera-movement-speed")))),
 			sge::camera::coordinate_system::identity())),
 	perspective_projection_from_viewport_(
 		camera_,
@@ -416,16 +420,16 @@ flake::volume::tests::flakes::flakes(
 			&flakelib::volume::simulation::stam::wind_source::wind_strength,
 			&wind_source_,
 			std::tr1::placeholders::_1),
-		flakelib::value_modulator::minimum(
+		flakelib::value_modulator::mean(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("wind-strength-minimum")))),
-		flakelib::value_modulator::maximum(
+					FCPPT_TEXT("wind-strength-mean")))),
+		flakelib::value_modulator::variance(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("wind-strength-maximum")))),
+					FCPPT_TEXT("wind-strength-variance")))),
 		flakelib::value_modulator::frequency(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
@@ -493,10 +497,8 @@ flake::volume::tests::flakes::render(
 				sge::renderer::clear::depth_buffer_value(
 					1.0f)));
 
-	/*
 	skydome_.render(
 		_context);
-	*/
 
 	if(
 		this->feature_active(
@@ -631,4 +633,37 @@ flake::volume::tests::flakes::update()
 				FCPPT_TEXT("arrows"))))
 		velocity_arrows_.update(
 			velocity_buffer_->value());
+}
+
+void
+flake::volume::tests::flakes::key_down_callback(
+	sge::input::keyboard::key_code::type const _key)
+{
+	switch(_key)
+	{
+	case sge::input::keyboard::key_code::period:
+		wind_strength_modulator_.mean(
+			wind_strength_modulator_.mean() +
+			flakelib::value_modulator::mean(
+				1.0f));
+		this->post_notification(
+			flake::notifications::text(
+				FCPPT_TEXT("Wind speed mean: ")+
+				fcppt::insert_to_fcppt_string(
+					wind_strength_modulator_.mean().get())));
+		break;
+	case sge::input::keyboard::key_code::comma:
+		wind_strength_modulator_.mean(
+			wind_strength_modulator_.mean() -
+			flakelib::value_modulator::mean(
+				1.0f));
+		this->post_notification(
+			flake::notifications::text(
+				FCPPT_TEXT("Wind speed mean: ")+
+				fcppt::insert_to_fcppt_string(
+					wind_strength_modulator_.mean().get())));
+		break;
+	default:
+		break;
+	}
 }

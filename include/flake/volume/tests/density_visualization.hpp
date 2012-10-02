@@ -3,8 +3,6 @@
 
 #include <flake/test/base.hpp>
 #include <flake/volume/density_visualization/raycaster/object.hpp>
-	//#include <flake/volume/model/manager.hpp>
-#include <flake/volume/model/object.hpp>
 #include <flakelib/splatter/object.hpp>
 #include <flakelib/utility/fill_buffer.hpp>
 #include <flakelib/volume/grid_size.hpp>

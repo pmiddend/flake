@@ -121,6 +121,10 @@ private:
 
 	void
 	update();
+
+	void
+	key_down_callback(
+		sge::input::keyboard::key_code::type);
 };
 }
 }

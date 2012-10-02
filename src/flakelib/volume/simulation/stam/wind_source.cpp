@@ -5,6 +5,10 @@
 #include <flakelib/volume/simulation/stam/wind_source.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <cmath>
+#include <iostream>
+#include <fcppt/config/external_end.hpp>
 
 
 flakelib::volume::simulation::stam::wind_source::wind_source(
@@ -31,7 +35,10 @@ flakelib::volume::simulation::stam::wind_source::wind_strength(
 {
 	kernel_->numerical_argument(
 		"wind_strength",
-		_wind_strength);
+		std::max(
+			static_cast<cl_float>(
+				0.0f),
+			_wind_strength));
 }
 
 void

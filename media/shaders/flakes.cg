@@ -1,10 +1,12 @@
 struct vertex_outputs
 {
 	float4 position : POSITION;
+	// This somehow doesn't work. TEXCOORD is always equal to the "frag coord" inside the point sprite
+	//float2 texture_coordinates : TEXCOORD0;
+	// This works, though.
 	float2 texture_coordinates;
 	float point_size : PSIZE;
-	// 3 is arbitrary
-	float alpha_value : TEXCOORD3;
+	float alpha_value : COLOR0;
 };
 
 float
@@ -51,37 +53,18 @@ vertex_main(
 			de,
 			3.0 * point_size);
 
+	outs.alpha_value = 1.0;
+	/*
 	outs.alpha_value =
 		min(
 			1.0,
 			perspective_distance_formula(
 				0.1,
-				0.15,
+				0.05,
 				0.0,
 				de,
 				1.0));
-
-	/*
-        float
-                distance_camera_point =
-                        distance(
-                                        position.xyz,
-                                        camera_position),
-                unnormalized_distance =
-                        maximum_distance -
-                        min(
-                                maximum_distance,
-                                distance_camera_point),
-                normalized_distance =
-                        unnormalized_distance / maximum_distance,
-                maxed_distance =
-                        max(
-                                normalized_distance,
-                                0.01);
-
-        outs.point_size =
-                maxed_distance * point_size;
-		*/
+	*/
 
 	outs.position =
 		mul(

@@ -80,14 +80,15 @@
 			},
 			"arrow-scale" : 1.0,
 			"grid-scale" : 1.0,
-			"wind-strength-start" : 1.0,
-			"wind-strength-minimum" : 2.0,
-			"wind-strength-maximum" : 3.0,
+			"wind-strength-start" : 0.0,
+			"wind-strength-mean" : -3.0,
+			"wind-strength-variance" : 3.0,
 			"wind-strength-frequency-seconds" : 1.0,
 			"jacobi-iterations" : 20,
 			"near-plane" : 1.0,
 			"far-plane" : 1000.0,
 			"fov" : 60.0,
+			"camera-movement-speed" : 6.0,
 			"flakes" :
 			{
 				"count" : 32768,
@@ -105,7 +106,7 @@
 		        "fog-color" : [0.3,0.3,0.3],
 		        "fog-density" : 0.01,
 			"iso-level" : 0.2,
-			"scene-name" : "cone",
+			"scene-name" : "house",
 			"obstacles" :
 			[
 				{
@@ -171,7 +172,7 @@
 				}
 			],
 			"vorticity-strength" : 10.0,
-			"camera-movement-speed" : 10.0,
+			"camera-movement-speed" : 400.0,
 			"raycast-step-size" : 0.5,
 			"model-name" : "avz",
 			"buissnesq" :
