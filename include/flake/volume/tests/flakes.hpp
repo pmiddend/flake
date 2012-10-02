@@ -96,6 +96,7 @@ private:
 	flakelib::volume::unique_float4_buffer_lock velocity_buffer_;
 
 	flake::skydome::object skydome_;
+	flake::volume::flakes::count current_flake_count_;
 	flake::volume::flakes::manager flakes_;
 	flake::volume::flakes::mover flakes_mover_;
 	sge::scenic::scene::manager scene_manager_;

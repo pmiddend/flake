@@ -92,13 +92,19 @@ gravity_force(
 	float const gravity_magnitude,
 	float const normalized_size)
 {
+	float const
+		mass_scaling_min =
+			0.5f,
+		mass_scaling_max =
+			1.5f;
+
 	return
 		(float4)(
 			0.0f,
 			-FLAKELIB_SCALE_NORMALIZED_VALUE(
 				1.0f - normalized_size,
-				0.5f,
-				1.5f) *
+				mass_scaling_min,
+				mass_scaling_max) *
 			gravity_magnitude,
 			0.0f,
 			0.0f);
@@ -117,12 +123,56 @@ drag_force(
 		fluid_velocity * fluid_velocity / (umax*umax);
 }
 
+float4
+lift_force(
+    float const normalized_size,
+	float4 const fluid_velocity,
+	float4 const flake_velocity,
+	float const time)
+{
+	float const
+		radius_min =
+			0.1f,
+		radius_max =
+			1.0f,
+		velocity =
+			1.0f;
+
+	float const influence =
+		1.0f -
+		clamp(
+			flake_velocity.y +
+			flake_initial_velocity_magnitude(
+			    normalized_size),
+			0.0f,
+			1.0f);
+
+	float const radius =
+		FLAKELIB_SCALE_NORMALIZED_VALUE(
+			normalized_size,
+			radius_min,
+			radius_max);
+
+	return
+		radius *
+		influence *
+		velocity *
+		(float4)(
+		         -sin(
+		              velocity * time),
+		         0.0f,
+		         cos(
+		             velocity * time),
+		         0.0f);
+}
+
 kernel void
 FLAKELIB_KERNEL_NAME(move)(
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(positions),
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(velocities),
 	global float *FLAKELIB_KERNEL_ARGUMENT(sizes),
 	global float4 *FLAKELIB_KERNEL_ARGUMENT(fluid_velocity),
+	float const FLAKELIB_KERNEL_ARGUMENT(time),
 	float const FLAKELIB_KERNEL_ARGUMENT(time_delta),
 	float const FLAKELIB_KERNEL_ARGUMENT(collision_increment),
 	int const FLAKELIB_KERNEL_ARGUMENT(bounding_volume_width),
@@ -143,7 +193,6 @@ FLAKELIB_KERNEL_NAME(move)(
 			sizes[get_global_id(0)],
 			minimum_size,
 			maximum_size);
-
 
 	int4 const bounding_rect =
 		(int4)(
@@ -244,13 +293,17 @@ FLAKELIB_KERNEL_NAME(move)(
 		velocities[get_global_id(0)] +=
 			time_delta *
 			(
-			 /*
 				gravity_force(
 					gravity_magnitude,
-					normalized_size) +*/
+					normalized_size) +
 				drag_force(
 					normalized_size,
-					current_fluid_velocity)
+					current_fluid_velocity) +
+				lift_force(
+				    normalized_size,
+				    current_fluid_velocity,
+				    velocities[get_global_id(0)],
+				    time)
 			);
 
 		positions[get_global_id(0)] +=

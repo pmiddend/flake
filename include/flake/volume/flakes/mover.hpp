@@ -8,6 +8,7 @@
 #include <flake/volume/flakes/minimum_size.hpp>
 #include <flake/volume/flakes/point_size_view.hpp>
 #include <flake/volume/flakes/position_view.hpp>
+#include <flake/volume/flakes/count.hpp>
 #include <flake/volume/flakes/snow_density_view.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
@@ -23,7 +24,6 @@
 #include <flakelib/volume/unique_float4_buffer_lock.hpp>
 #include <flakelib/volume/velocity_buffer_view.hpp>
 #include <sge/opencl/clinclude.hpp>
-#include <sge/opencl/size_type.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 
@@ -42,21 +42,22 @@ public:
 	mover(
 		flakelib::cl::program_context const &,
 		flakelib::buffer_pool::object &,
-		flakes::position_view const &,
-		flakes::point_size_view const &,
-		flakes::snow_density_view const &,
-		flakes::collision_increment const &,
-		flakes::activity_view const &,
-		flakes::minimum_size const &,
-		flakes::maximum_size const &,
-		flakes::gravity_magnitude const &,
+		flake::volume::flakes::position_view const &,
+		flake::volume::flakes::point_size_view const &,
+		flake::volume::flakes::snow_density_view const &,
+		flake::volume::flakes::collision_increment const &,
+		flake::volume::flakes::activity_view const &,
+		flake::volume::flakes::minimum_size const &,
+		flake::volume::flakes::maximum_size const &,
+		flake::volume::flakes::gravity_magnitude const &,
 		flakelib::marching_cubes::iso_level const &);
 
 	void
 	update(
 		flakelib::duration const &,
 		flakelib::volume::velocity_buffer_view const &,
-		flakelib::volume::boundary_buffer_view const &);
+		flakelib::volume::boundary_buffer_view const &,
+		flake::volume::flakes::count const &);
 
 	~mover();
 private:
@@ -76,16 +77,16 @@ private:
 	flakelib::cl::kernel_scoped_ptr initialize_velocities_kernel_;
 	flakelib::cl::kernel_scoped_ptr move_kernel_;
 	flakelib::cl::kernel_scoped_ptr update_activity_kernel_;
-	flakes::position_view positions_;
-	flakes::point_size_view point_sizes_;
-	flakes::activity_view activity_;
+	flake::volume::flakes::position_view positions_;
+	flake::volume::flakes::point_size_view point_sizes_;
+	flake::volume::flakes::activity_view activity_;
 	unique_linear_float4_lock velocities_;
-	sge::opencl::size_type const vertex_count_;
+	cl_float time_;
 
 	void
 	initialize_velocities(
-		flakes::minimum_size const &,
-		flakes::maximum_size const &);
+		flake::volume::flakes::minimum_size const &,
+		flake::volume::flakes::maximum_size const &);
 
 	void
 	update_activity(

@@ -59,12 +59,12 @@ flake::volume::flakes::manager::manager(
 	sge::camera::base &_camera,
 	sge::opencl::context::object &_context,
 	sge::image2d::system &_image_system,
-	flakes::count const &_flake_count,
-	flakes::minimum_size const &_minimum_size,
-	flakes::maximum_size const &_maximum_size,
-	flakes::texture const &_texture,
-	flakes::texture_tile_size const &_tile_size,
-	flakes::texture_tile_count const &_tile_count,
+	flake::volume::flakes::count const &_flake_count,
+	flake::volume::flakes::minimum_size const &_minimum_size,
+	flake::volume::flakes::maximum_size const &_maximum_size,
+	flake::volume::flakes::texture const &_texture,
+	flake::volume::flakes::texture_tile_size const &_tile_size,
+	flake::volume::flakes::texture_tile_count const &_tile_count,
 	flakelib::volume::grid_size const &_grid_size)
 :
 	renderer_(
@@ -222,7 +222,8 @@ flake::volume::flakes::manager::manager(
 
 void
 flake::volume::flakes::manager::render(
-	sge::renderer::context::ffp &_context)
+	sge::renderer::context::ffp &_context,
+	flake::volume::flakes::count const &_count)
 {
 	sge::shader::scoped_pair scoped_shader(
 		_context,
@@ -263,7 +264,7 @@ flake::volume::flakes::manager::render(
 		sge::renderer::first_vertex(
 			0u),
 		sge::renderer::vertex_count(
-			positions_buffer_->size()),
+			_count.get()),
 		sge::renderer::primitive_type::point_list);
 }
 
@@ -285,18 +286,26 @@ flake::volume::flakes::manager::cl_point_sizes()
 				*cl_point_sizes_buffer_));
 }
 
-flake::volume::flakes::minimum_size const &
+flake::volume::flakes::minimum_size
 flake::volume::flakes::manager::minimum_size() const
 {
 	return
 		minimum_size_;
 }
 
-flake::volume::flakes::maximum_size const &
+flake::volume::flakes::maximum_size
 flake::volume::flakes::manager::maximum_size() const
 {
 	return
 		maximum_size_;
+}
+
+flake::volume::flakes::count
+flake::volume::flakes::manager::maximum_count() const
+{
+	return
+		flake::volume::flakes::count(
+			positions_buffer_->size().get());
 }
 
 flake::volume::flakes::manager::~manager()
@@ -412,7 +421,6 @@ flake::volume::flakes::manager::generate_particles(
 				renderer_scalar_distribution::sup(
 					static_cast<sge::renderer::scalar>(
 						_grid_size.get().d()-1u))));
-
 
 	for(
 		sge::renderer::vertex_count i(

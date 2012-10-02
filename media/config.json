@@ -91,7 +91,8 @@
 			"camera-movement-speed" : 6.0,
 			"flakes" :
 			{
-				"count" : 32768,
+				"start-count" : 1024,
+				"maximum-count" : 32768,
 				"minimum-size" : 10.0,
 				"maximum-size" : 30.0,
 				"texture" : "flakes.png",

@@ -49,36 +49,40 @@ public:
 		sge::camera::base &,
 		sge::opencl::context::object &,
 		sge::image2d::system &,
-		flakes::count const &,
-		flakes::minimum_size const &,
-		flakes::maximum_size const &,
-		flakes::texture const &,
-		flakes::texture_tile_size const &,
-		flakes::texture_tile_count const &,
+		flake::volume::flakes::count const &,
+		flake::volume::flakes::minimum_size const &,
+		flake::volume::flakes::maximum_size const &,
+		flake::volume::flakes::texture const &,
+		flake::volume::flakes::texture_tile_size const &,
+		flake::volume::flakes::texture_tile_count const &,
 		flakelib::volume::grid_size const &);
 
 	void
 	render(
-		sge::renderer::context::ffp &);
+		sge::renderer::context::ffp &,
+		flake::volume::flakes::count const &);
 
-	flakes::position_view const
+	flake::volume::flakes::position_view const
 	cl_positions();
 
-	flakes::point_size_view const
+	flake::volume::flakes::point_size_view const
 	cl_point_sizes();
 
-	flakes::minimum_size const &
+	flake::volume::flakes::minimum_size
 	minimum_size() const;
 
-	flakes::maximum_size const &
+	flake::volume::flakes::maximum_size
 	maximum_size() const;
+
+	flake::volume::flakes::count
+	maximum_count() const;
 
 	~manager();
 private:
 	sge::renderer::device::ffp &renderer_;
 	sge::camera::base &camera_;
-	flakes::minimum_size const minimum_size_;
-	flakes::maximum_size const maximum_size_;
+	flake::volume::flakes::minimum_size const minimum_size_;
+	flake::volume::flakes::maximum_size const maximum_size_;
 	sge::renderer::state::core::blend::object_scoped_ptr const blend_state_;
 	sge::renderer::state::core::depth_stencil::object_scoped_ptr const depth_stencil_state_;
 	sge::renderer::state::ffp::misc::object_scoped_ptr const misc_state_;
@@ -86,7 +90,7 @@ private:
 	sge::renderer::vertex_buffer_scoped_ptr const positions_buffer_;
 	sge::renderer::vertex_buffer_scoped_ptr const texcoords_buffer_;
 	sge::renderer::vertex_buffer_scoped_ptr const point_sizes_buffer_;
-	flakes::texture_tile_size tile_size_;
+	flake::volume::flakes::texture_tile_size tile_size_;
 	sge::shader::pair shader_;
 	sge::shader::parameter::vector<sge::renderer::scalar,3u> camera_position_parameter_;
 	sge::shader::parameter::scalar<sge::renderer::scalar> tile_size_parameter_;
@@ -100,7 +104,7 @@ private:
 	void
 	generate_particles(
 		flakelib::volume::grid_size const &,
-		flakes::texture_tile_count const &);
+		flake::volume::flakes::texture_tile_count const &);
 };
 }
 }

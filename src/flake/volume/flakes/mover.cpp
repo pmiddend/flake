@@ -54,8 +54,8 @@ flake::volume::flakes::mover::mover(
 				_buffer_pool),
 			sge::opencl::dim1(
 				_positions.get().size().w()))),
-	vertex_count_(
-		_positions.get().size().w())
+	time_(
+		0.0f)
 {
 	this->initialize_velocities(
 		_minimum_size,
@@ -119,10 +119,18 @@ void
 flake::volume::flakes::mover::update(
 	flakelib::duration const &_delta,
 	flakelib::volume::velocity_buffer_view const &_velocity,
-	flakelib::volume::boundary_buffer_view const &_boundary)
+	flakelib::volume::boundary_buffer_view const &_boundary,
+	flake::volume::flakes::count const &_count)
 {
+	time_ +=
+		_delta.count();
+
 	this->update_activity(
 		_boundary);
+
+	move_kernel_->numerical_argument(
+		"time",
+		time_);
 
 	move_kernel_->numerical_argument(
 		"time_delta",
@@ -161,7 +169,7 @@ flake::volume::flakes::mover::update(
 	move_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim1(
 			sge::opencl::dim1(
-				vertex_count_)));
+				_count.get())));
 }
 
 flake::volume::flakes::mover::~mover()

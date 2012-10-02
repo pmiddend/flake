@@ -44,6 +44,7 @@
 #include <fcppt/tr1/functional.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/chrono.hpp>
+#include <cstdlib>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -256,6 +257,11 @@ flake::volume::tests::flakes::flakes(
 			20u),
 		flake::skydome::y_translation(
 			-0.2f)),
+	current_flake_count_(
+		sge::parse::json::find_and_convert_member<flake::volume::flakes::count::value_type>(
+				this->configuration(),
+				sge::parse::json::string_to_path(
+					FCPPT_TEXT("flakes/start-count")))),
 	flakes_(
 		this->renderer(),
 		this->shader_context(),
@@ -266,7 +272,7 @@ flake::volume::tests::flakes::flakes(
 			sge::parse::json::find_and_convert_member<flake::volume::flakes::count::value_type>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("flakes/count")))),
+					FCPPT_TEXT("flakes/maximum-count")))),
 		flake::volume::flakes::minimum_size(
 			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
 				this->configuration(),
@@ -531,7 +537,8 @@ flake::volume::tests::flakes::render(
 			test::json_identifier(
 				FCPPT_TEXT("flakes"))))
 		flakes_.render(
-			_context);
+			_context,
+			current_flake_count_);
 
 	if(
 		this->feature_active(
@@ -610,7 +617,8 @@ flake::volume::tests::flakes::update()
 			flakelib::volume::velocity_buffer_view(
 				velocity_buffer_->value()),
 			flakelib::volume::boundary_buffer_view(
-				boundary_buffer_->value()));
+				boundary_buffer_->value()),
+			current_flake_count_);
 
 		if(sge::timer::reset_when_expired(snow_cover_update_) && this->feature_active(test::json_identifier(FCPPT_TEXT("marchingcubes"))))
 			snow_cover_parallel_update_.restart_if_finished();
@@ -662,6 +670,33 @@ flake::volume::tests::flakes::key_down_callback(
 				FCPPT_TEXT("Wind speed mean: ")+
 				fcppt::insert_to_fcppt_string(
 					wind_strength_modulator_.mean().get())));
+		break;
+	case sge::input::keyboard::key_code::_1:
+		current_flake_count_ =
+			std::max(
+				static_cast<flake::volume::flakes::count::value_type>(
+					1),
+				static_cast<flake::volume::flakes::count::value_type>(
+					current_flake_count_.get() / 2u));
+
+		this->post_notification(
+			flake::notifications::text(
+				FCPPT_TEXT("Flake count: ")+
+				fcppt::insert_to_fcppt_string(
+					current_flake_count_)));
+		break;
+	case sge::input::keyboard::key_code::_2:
+		current_flake_count_ =
+			std::min(
+				flakes_.maximum_count().get(),
+				static_cast<flake::volume::flakes::count::value_type>(
+					current_flake_count_.get() * 2u));
+
+		this->post_notification(
+			flake::notifications::text(
+				FCPPT_TEXT("Flake count: ")+
+				fcppt::insert_to_fcppt_string(
+					current_flake_count_)));
 		break;
 	default:
 		break;
