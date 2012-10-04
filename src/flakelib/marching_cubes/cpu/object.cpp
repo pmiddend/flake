@@ -1,4 +1,5 @@
 #include <flakelib/buffer/volume_view.hpp>
+#include <fcppt/math/next_power_of_2.hpp>
 #include <flakelib/marching_cubes/cpu/implementation.hpp>
 #include <flakelib/marching_cubes/cpu/object.hpp>
 #include <flakelib/marching_cubes/vf/interleaved.hpp>
@@ -32,10 +33,12 @@
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/assert/pre.hpp>
+#include <fcppt/insert_to_std_string.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <algorithm>
+#include <cstring>
 #include <iostream>
 #include <fcppt/config/external_end.hpp>
 
@@ -47,13 +50,19 @@ flakelib::marching_cubes::cpu::object::object(
 :
 	renderer_(
 		_renderer),
+	grid_size_(
+		_grid_size),
 	iso_level_(
 		_iso_level),
 	vertex_declaration_(
 		renderer_.create_vertex_declaration(
 			sge::renderer::vf::dynamic::make_format<flakelib::marching_cubes::vf::interleaved>())),
 	vertex_buffer_(),
+	vertex_buffer_size_(
+		0u),
 	index_buffer_(),
+	index_buffer_size_(
+		0u),
 	depth_stencil_state_(
 		renderer_.create_depth_stencil_state(
 			sge::renderer::state::core::depth_stencil::parameters(
@@ -66,30 +75,31 @@ flakelib::marching_cubes::cpu::object::object(
 	implementation_(
 		fcppt::make_unique_ptr<MarchingCubes>(
 			static_cast<int>(
-				_grid_size.get().w()),
+				grid_size_.get().w()),
 			static_cast<int>(
-				_grid_size.get().h()),
+				grid_size_.get().h()),
 			static_cast<int>(
-				_grid_size.get().d()))),
+				grid_size_.get().d()))),
 	data_(
 		static_cast<real_sequence::size_type>(
 			_grid_size.get().content())),
+	vertex_buffer_data_(),
+	index_data_(),
 	is_dirty_(
 		false)
 {
 	implementation_->set_ext_data(
 		data_.data());
-	implementation_->init_all();
 }
 
 void
 flakelib::marching_cubes::cpu::object::render(
 	sge::renderer::context::core &_context)
 {
-	if(!vertex_buffer_)
+	if(!vertex_buffer_size_.get())
 	{
 		FCPPT_ASSERT_PRE(
-			!index_buffer_);
+			!index_buffer_size_.get());
 		return;
 	}
 
@@ -112,13 +122,11 @@ flakelib::marching_cubes::cpu::object::render(
 		*index_buffer_,
 		sge::renderer::first_vertex(
 			0u),
-		sge::renderer::vertex_count(
-			vertex_buffer_->size()),
+		vertex_buffer_size_,
 		sge::renderer::primitive_type::triangle_list,
 		sge::renderer::first_index(
 			0u),
-		sge::renderer::index_count(
-			index_buffer_->size()));
+		index_buffer_size_);
 }
 
 void
@@ -144,7 +152,11 @@ flakelib::marching_cubes::cpu::object::construct_from_raw_data(
 	}
 	*/
 	{
-		//		flakelib::timer::object t(std::cout,"copying float[] -> double[]");
+		/*
+		flakelib::timer::object t(
+			std::cout,
+			"copying float[] -> double[]");
+		*/
 
 		std::copy(
 			_data,
@@ -158,8 +170,11 @@ flakelib::marching_cubes::cpu::object::construct_from_cl_buffer(
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::volume::float_view const &_view)
 {
-	//flakelib::timer::object t(std::cout,"marching_cubes::construction");
-
+	/*
+	flakelib::timer::object t(
+		std::cout,
+		"marching_cubes::construction");
+	*/
 
 	sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
 		_command_queue,
@@ -178,12 +193,88 @@ flakelib::marching_cubes::cpu::object::construct_from_cl_buffer(
 void
 flakelib::marching_cubes::cpu::object::run()
 {
+	implementation_->clean_all();
+	implementation_->set_resolution(
+		static_cast<int>(
+			grid_size_.get().w()),
+		static_cast<int>(
+			grid_size_.get().h()),
+		static_cast<int>(
+			grid_size_.get().d()));
+	implementation_->init_all();
+
 	//flakelib::timer::object t(std::cout,"marching_cubes::run");
 	implementation_->run(
 		static_cast<real_sequence::value_type>(
 			iso_level_.get()));
+
 	is_dirty_ =
 		false;
+
+	{
+		vertex_buffer_data_.resize(
+			static_cast<renderer_scalar_sequence::size_type>(
+				implementation_->nverts()) *
+			static_cast<renderer_scalar_sequence::size_type>(
+				8u));
+
+		renderer_scalar_sequence::iterator it =
+			vertex_buffer_data_.begin();
+
+		for(
+			Vertex const *v =
+				implementation_->vertices();
+			v != implementation_->vertices() + implementation_->nverts();
+			++v)
+		{
+			*it++ = static_cast<sge::renderer::scalar>(v->x);
+			*it++ = static_cast<sge::renderer::scalar>(v->y);
+			*it++ = static_cast<sge::renderer::scalar>(v->z);
+			*it++ = static_cast<sge::renderer::scalar>(1.0f);
+
+			*it++ = static_cast<sge::renderer::scalar>(v->nx);
+			*it++ = static_cast<sge::renderer::scalar>(v->ny);
+			*it++ = static_cast<sge::renderer::scalar>(v->nz);
+			*it++ = static_cast<sge::renderer::scalar>(1.0f);
+		}
+	}
+
+	{
+		index_data_.resize(
+			static_cast<sge::renderer::size_type>(
+				implementation_->ntrigs()) *
+			3u);
+
+		index_sequence::iterator it =
+			index_data_.begin();
+
+		for(
+			Triangle *t = implementation_->triangles();
+			t != implementation_->triangles() + implementation_->ntrigs();
+			++t)
+		{
+			*it++ =
+				static_cast<index_sequence::value_type>(
+					t->v1);
+			*it++ =
+				static_cast<index_sequence::value_type>(
+					t->v2);
+			*it++ =
+				static_cast<index_sequence::value_type>(
+					t->v3);
+			/*
+			(*it++).set(
+				static_cast<index_view::value_type>(
+					t->v1));
+			(*it++).set(
+				static_cast<index_view::value_type>(
+					t->v2));
+			(*it++).set(
+				static_cast<index_view::value_type>(
+					t->v3));
+			*/
+		}
+	}
 }
 
 void
@@ -192,7 +283,7 @@ flakelib::marching_cubes::cpu::object::update_buffers()
 	if(!implementation_->ntrigs())
 		return;
 
-	//flakelib::timer::object t(std::cout,"marching_cubes::buffer fill");
+	//flakelib::timer::object t(std::cout,"marching_cubes::buffer fill total");
 	this->fill_vertex_buffer();
 	this->fill_index_buffer();
 }
@@ -219,23 +310,56 @@ flakelib::marching_cubes::cpu::object::~object()
 void
 flakelib::marching_cubes::cpu::object::fill_vertex_buffer()
 {
-	vertex_buffer_.take(
-		renderer_.create_vertex_buffer(
-			*vertex_declaration_,
-			sge::renderer::vf::dynamic::make_part_index
-			<
-				flakelib::marching_cubes::vf::interleaved,
-				flakelib::marching_cubes::vf::interleaved_part
-			>(),
-			sge::renderer::vertex_count(
-				static_cast<sge::renderer::size_type>(
-					implementation_->nverts())),
-			sge::renderer::resource_flags_field::null()));
+	vertex_buffer_size_ =
+		sge::renderer::vertex_count(
+			static_cast<sge::renderer::size_type>(implementation_->nverts()));
+
+	if(
+		!vertex_buffer_ ||
+		vertex_buffer_->size() < vertex_buffer_size_)
+	{
+		sge::renderer::vertex_count const vertex_buffer_capacity(
+			fcppt::math::next_power_of_2(
+				vertex_buffer_size_.get()));
+
+		std::cout << "Reallocating vertex buffer (size " << vertex_buffer_size_.get() << ", capacity " << vertex_buffer_capacity.get() << ")\n";
+
+		vertex_buffer_.take(
+			renderer_.create_vertex_buffer(
+				*vertex_declaration_,
+				sge::renderer::vf::dynamic::make_part_index
+				<
+					flakelib::marching_cubes::vf::interleaved,
+					flakelib::marching_cubes::vf::interleaved_part
+				>(),
+				vertex_buffer_capacity,
+				sge::renderer::resource_flags_field::null()));
+	}
 
 	sge::renderer::scoped_vertex_lock vblock(
 		*vertex_buffer_,
 		sge::renderer::lock_mode::writeonly);
 
+	/*
+	FCPPT_ASSERT_PRE(
+		vblock.value().size().get() ==
+		vertex_buffer_data_.size() * sizeof(renderer_scalar_sequence::value_type));
+	*/
+
+	/*
+	flakelib::timer::object t(
+		std::cout,
+		"marching_cubes::vertex buffer fill: "+
+		fcppt::insert_to_std_string(
+			vblock.value().size().get() / 1024));
+	*/
+	std::memcpy(
+		vblock.value().data(),
+		reinterpret_cast<sge::renderer::raw_pointer>(
+			vertex_buffer_data_.data()),
+		vertex_buffer_size_.get() * 8u * sizeof(sge::renderer::scalar));
+
+	/*
 	sge::renderer::vf::view<flakelib::marching_cubes::vf::interleaved_part> vertices(
 		vblock.value());
 
@@ -270,28 +394,66 @@ flakelib::marching_cubes::cpu::object::fill_vertex_buffer()
 				static_cast<sge::renderer::scalar>(
 					1.0f)));
 	}
+	*/
 }
 
 void
 flakelib::marching_cubes::cpu::object::fill_index_buffer()
 {
+	if(!implementation_->ntrigs())
+		return;
+
 	typedef
 	sge::renderer::index::format_32
 	index_format;
 
-	index_buffer_.take(
-		renderer_.create_index_buffer(
-			sge::renderer::index::dynamic::make_format<index_format>(),
-			sge::renderer::index_count(
-				static_cast<sge::renderer::size_type>(
-					implementation_->ntrigs()) *
-				3u),
-			sge::renderer::resource_flags_field::null()));
+	index_buffer_size_ =
+		sge::renderer::index_count(
+			static_cast<sge::renderer::size_type>(
+				implementation_->ntrigs()) *
+			3u);
+
+	if(
+		!index_buffer_ ||
+		index_buffer_->size() < index_buffer_size_)
+	{
+		sge::renderer::index_count const index_buffer_capacity(
+			fcppt::math::next_power_of_2(
+				index_buffer_size_.get()));
+
+		std::cerr << "Reallocating index buffer (size " << index_buffer_size_.get() << ", capacity " << index_buffer_capacity.get() << ")\n";
+
+		index_buffer_.take(
+			renderer_.create_index_buffer(
+				sge::renderer::index::dynamic::make_format<index_format>(),
+				index_buffer_capacity,
+				sge::renderer::resource_flags_field::null()));
+	}
+
+	/*
+	flakelib::timer::object index_timer(
+		std::cout,
+		"marching_cubes::index buffer fill: "+
+		fcppt::insert_to_std_string(
+			(static_cast<sge::renderer::size_type>(implementation_->ntrigs()) * 3u * 4u)/1024u));
+	*/
 
 	sge::renderer::scoped_index_lock const iblock(
 		*index_buffer_,
 		sge::renderer::lock_mode::writeonly);
 
+	FCPPT_ASSERT_PRE(
+		index_buffer_size_.get() == index_data_.size());
+
+	#if 1
+	std::memcpy(
+		iblock.value().data(),
+		reinterpret_cast<sge::renderer::raw_pointer>(
+			index_data_.data()),
+		index_buffer_size_.get() * sizeof(index_sequence::value_type));
+	#endif
+
+	#if 0
 	typedef
 	sge::renderer::index::view<index_format>
 	index_view;
@@ -317,4 +479,5 @@ flakelib::marching_cubes::cpu::object::fill_index_buffer()
 			static_cast<index_view::value_type>(
 				t->v3));
 	}
+	#endif
 }

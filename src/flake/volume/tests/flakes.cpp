@@ -305,16 +305,16 @@ flake::volume::tests::flakes::flakes(
 		flakes_.cl_positions(),
 		flakes_.cl_point_sizes(),
 		snow_density_view_,
-		volume::flakes::collision_increment(
+		flake::volume::flakes::collision_increment(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("collision-increment")))),
-		volume::flakes::activity_view(
+		flake::volume::flakes::activity_view(
 			activity_buffer_->value()),
 		flakes_.minimum_size(),
 		flakes_.maximum_size(),
-		volume::flakes::gravity_magnitude(
+		flake::volume::flakes::gravity_magnitude(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
@@ -420,7 +420,12 @@ flake::volume::tests::flakes::flakes(
 	snow_cover_parallel_update_(
 		marching_cubes_manager_,
 		this->opencl_system().command_queue(),
-		snow_density_view_),
+			snow_density_view_),
+/*
+		flake::volume::flakes::snow_density_view(
+			flakelib::volume::float_view(
+				activity_buffer_->value()))),
+*/
 	wind_strength_modulator_(
 		std::tr1::bind(
 			&flakelib::volume::simulation::stam::wind_source::wind_strength,
@@ -491,10 +496,6 @@ flake::volume::tests::flakes::render(
 				sge::renderer::state::core::rasterizer::enable_scissor_test(
 					false))));
 
-	sge::renderer::state::core::rasterizer::scoped scoped_rasterizer_state(
-		_context,
-		*rasterizer_state);
-
 	_context.clear(
 		sge::renderer::clear::parameters()
 			.back_buffer(
@@ -503,8 +504,14 @@ flake::volume::tests::flakes::render(
 				sge::renderer::clear::depth_buffer_value(
 					1.0f)));
 
-	skydome_.render(
-		_context);
+	{
+		sge::renderer::state::core::rasterizer::scoped scoped_rasterizer_state(
+			_context,
+			*rasterizer_state);
+
+		skydome_.render(
+			_context);
+	}
 
 	if(
 		this->feature_active(
@@ -514,6 +521,10 @@ flake::volume::tests::flakes::render(
 		sge::scenic::render_context::base_unique_ptr wrapped_context(
 			scene_manager_.create_render_context(
 				_context));
+
+		sge::renderer::state::core::rasterizer::scoped scoped_rasterizer_state(
+			_context,
+			*rasterizer_state);
 
 		scene_.render(
 			*wrapped_context);
@@ -527,6 +538,10 @@ flake::volume::tests::flakes::render(
 		flake::volume::snow_cover::scoped scoped_snow_cover(
 			snow_cover_,
 			_context);
+
+		sge::renderer::state::core::rasterizer::scoped scoped_rasterizer_state(
+			_context,
+			*rasterizer_state);
 
 		marching_cubes_manager_.render(
 			_context);

@@ -15,7 +15,8 @@ template
 <
 	typename Char,
 	typename CharTraits = std::char_traits<Char>,
-	typename ClockType = boost::chrono::process_real_cpu_clock
+//	typename ClockType = boost::chrono::process_real_cpu_clock
+	typename ClockType = boost::chrono::high_resolution_clock
 >
 class basic;
 }

@@ -159,10 +159,10 @@ lift_force(
 		velocity *
 		(float4)(
 		         -sin(
-		              velocity * time),
+		              velocity * time * normalized_size),
 		         0.0f,
 		         cos(
-		             velocity * time),
+		             velocity * time * normalized_size),
 		         0.0f);
 }
 

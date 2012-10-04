@@ -1,6 +1,8 @@
 #ifndef FLAKELIB_MARCHING_CUBES_CPU_IMPLEMENTATION_HPP_INCLUDED
 #define FLAKELIB_MARCHING_CUBES_CPU_IMPLEMENTATION_HPP_INCLUDED
 
+
+#include <flakelib/marching_cubes/cpu/scalar.hpp>
 #include <fcppt/noncopyable.hpp>
 
 /**
@@ -23,7 +25,8 @@ typedef unsigned char uchar ;
 /** signed char alias */
 typedef   signed char schar ;
 /** isovalue alias */
-typedef        double real  ;
+//typedef        double real  ;
+typedef        flakelib::marching_cubes::cpu::scalar real  ;
 
 //-----------------------------------------------------------------------------
 // Vertex structure
