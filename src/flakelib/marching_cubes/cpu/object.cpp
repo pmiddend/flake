@@ -7,6 +7,7 @@
 #include <flakelib/marching_cubes/vf/interleaved_part.hpp>
 #include <flakelib/timer/object.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
+#include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/renderer/index_buffer.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
@@ -563,12 +564,11 @@ flakelib::marching_cubes::cpu::object::construct_from_cl_buffer(
 	sge::opencl::command_queue::object &_command_queue,
 	flakelib::volume::float_view const &_view)
 {
-	/*
 	flakelib::timer::object t(
 		std::cout,
 		"marching_cubes::construction");
-	*/
 
+	#if 0
 	sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
 		_command_queue,
 		_view.buffer(),
@@ -581,6 +581,19 @@ flakelib::marching_cubes::cpu::object::construct_from_cl_buffer(
 	this->construct_from_raw_data(
 		static_cast<cl_float const *>(
 			buffer_mapping.ptr()));
+	#endif
+	#if 1
+	clEnqueueReadBuffer(
+		_command_queue.impl(),
+		_view.buffer().impl(),
+		CL_TRUE,
+		0,
+		_view.buffer().byte_size().get(),
+		data_.data(),
+		0,
+		0,
+		0);
+	#endif
 }
 
 void
