@@ -2,6 +2,7 @@
 #include <fcppt/math/next_power_of_2.hpp>
 #include <flakelib/marching_cubes/cpu/implementation.hpp>
 #include <flakelib/marching_cubes/cpu/object.hpp>
+#include <flakelib/marching_cubes/cpu/size_type.hpp>
 #include <flakelib/marching_cubes/vf/interleaved.hpp>
 #include <flakelib/marching_cubes/vf/interleaved_part.hpp>
 #include <flakelib/timer/object.hpp>
@@ -36,17 +37,224 @@
 #include <fcppt/insert_to_std_string.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
+#include <fcppt/math/dim/output.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <algorithm>
 #include <cstring>
 #include <iostream>
 #include <fcppt/config/external_end.hpp>
 
+namespace
+{
+template<typename T>
+T const &
+volume_index(
+	T const * const input,
+	flakelib::marching_cubes::cpu::dim3 const &_position,
+	flakelib::marching_cubes::cpu::grid_size const &_grid_size)
+{
+	return
+		input[
+			_grid_size.get().h() * _grid_size.get().w() * _position.d() +
+			_grid_size.get().w() * _position.h() +
+			_position.w()];
+}
+
+template<typename T>
+T &
+volume_index(
+	T * const input,
+	flakelib::marching_cubes::cpu::dim3 const &_position,
+	flakelib::marching_cubes::cpu::grid_size const &_grid_size)
+{
+	return
+		input[
+			_grid_size.get().h() * _grid_size.get().w() * _position.d() +
+			_grid_size.get().w() * _position.h() +
+			_position.w()];
+}
+
+bool
+filled_with_snow(
+	flakelib::marching_cubes::cpu::scalar const _snow)
+{
+	flakelib::marching_cubes::cpu::scalar const
+		snow_active_threshold =
+			0.1f;
+
+	return
+		_snow > snow_active_threshold;
+}
+
+bool
+filled_with_boundary(
+	cl_float const _boundary)
+{
+	flakelib::marching_cubes::cpu::scalar const
+		boundary_threshold =
+			0.5f;
+
+	return
+		_boundary > boundary_threshold;
+}
+
+unsigned
+stability_height(
+	flakelib::marching_cubes::cpu::dim3 _position,
+	flakelib::marching_cubes::cpu::scalar const * const _input,
+	cl_float const * const _boundary,
+	flakelib::marching_cubes::cpu::grid_size const &_grid_size)
+{
+	unsigned result =
+		0u;
+
+	flakelib::marching_cubes::cpu::scalar const
+		snow_active_threshold =
+			0.1f,
+		boundary_threshold =
+			0.5f;
+
+	while(
+		_position.h() != 0u &&
+		volume_index(_input,_position,_grid_size) < snow_active_threshold &&
+		volume_index(_boundary,_position,_grid_size) < boundary_threshold)
+	{
+		result++;
+		_position.h() -= 1u;
+	}
+
+	return
+		result;
+}
+
+flakelib::marching_cubes::cpu::dim3 const
+determine_deposit_place(
+	flakelib::marching_cubes::cpu::dim3 _position,
+	flakelib::marching_cubes::cpu::scalar const * const _input,
+	cl_float const * const _boundary,
+	flakelib::marching_cubes::cpu::grid_size const &_grid_size)
+{
+	while(
+		// Entweder am Boden angekommen
+		_position.h() != 0u &&
+		// Oder das Feld dadrunter ist mit Schnee gefüllt
+		!filled_with_snow(
+			volume_index(
+				_input,
+				flakelib::marching_cubes::cpu::dim3(
+					_position.w(),
+					_position.h()-1u,
+					_position.d()),
+				_grid_size)) &&
+		// Oder das Feld dadrunter ist mit einem Hindernis gefüllt
+		!filled_with_boundary(
+			volume_index(
+				_boundary,
+				flakelib::marching_cubes::cpu::dim3(
+					_position.w(),
+					_position.h()-1u,
+					_position.d()),
+				_grid_size)))
+		_position.h() -= 1u;
+
+	return
+		_position;
+}
+
+void
+apply_stability_conditions_single_cell(
+	flakelib::marching_cubes::cpu::dim3 const &_position,
+	flakelib::marching_cubes::cpu::scalar * const _snow_density,
+	cl_float const * const _boundary,
+	flakelib::marching_cubes::cpu::grid_size const &_grid_size)
+{
+	flakelib::marching_cubes::cpu::dim3 const bottom_position(
+		_position.w(),
+		_position.h()-1u,
+		_position.d());
+
+	flakelib::marching_cubes::cpu::scalar &bottom_snow_value =
+		volume_index(
+			_snow_density,
+			bottom_position,
+			_grid_size);
+
+	flakelib::marching_cubes::cpu::scalar &current_snow_value =
+		volume_index(
+			_snow_density,
+			_position,
+			_grid_size);
+
+	flakelib::marching_cubes::cpu::scalar const snow_threshold =
+		0.01f;
+
+	if(
+		current_snow_value > snow_threshold &&
+		!filled_with_snow(
+			bottom_snow_value) &&
+		!filled_with_boundary(
+			volume_index(
+				_boundary,
+				bottom_position,
+				_grid_size)))
+	{
+		flakelib::marching_cubes::cpu::dim3 const deposit_position(
+			determine_deposit_place(
+				_position,
+				_snow_density,
+				_boundary,
+				_grid_size));
+
+		/*
+		if(deposit_position.h() != 0u)
+			std::cout << deposit_position << "\n";
+		*/
+
+		flakelib::marching_cubes::cpu::scalar &deposit_snow_value =
+			volume_index(
+				_snow_density,
+				deposit_position,
+				_grid_size);
+
+//		std::cout << "Depositing " << current_snow_value << " from " <<  _position << " to " << deposit_position << "\n";
+
+		deposit_snow_value += current_snow_value;
+		current_snow_value = 0.0f;
+	}
+}
+
+void
+apply_stability_conditions_whole_view(
+	flakelib::marching_cubes::cpu::scalar * const _input,
+	cl_float const * const _boundary,
+	flakelib::marching_cubes::cpu::grid_size const &_grid_size)
+{
+	for(flakelib::marching_cubes::cpu::size_type y = 1u; y < _grid_size.get().h(); ++y)
+	{
+		for(flakelib::marching_cubes::cpu::size_type x = 0u; x < _grid_size.get().w(); ++x)
+		{
+			for(flakelib::marching_cubes::cpu::size_type z = 0u; z < _grid_size.get().d(); ++z)
+			{
+				apply_stability_conditions_single_cell(
+					flakelib::marching_cubes::cpu::dim3(
+						x,
+						y,
+						z),
+					_input,
+					_boundary,
+					_grid_size);
+			}
+		}
+	}
+}
+}
 
 flakelib::marching_cubes::cpu::object::object(
 	sge::renderer::device::core &_renderer,
+	sge::opencl::command_queue::object &_command_queue,
 	flakelib::marching_cubes::cpu::grid_size const &_grid_size,
-	flakelib::marching_cubes::iso_level const &_iso_level)
+	flakelib::marching_cubes::iso_level const &_iso_level,
+	flakelib::volume::boundary_buffer_view const &_boundary)
 :
 	renderer_(
 		_renderer),
@@ -86,10 +294,29 @@ flakelib::marching_cubes::cpu::object::object(
 	vertex_buffer_data_(),
 	index_data_(),
 	is_dirty_(
-		false)
+		false),
+	boundary_(
+		static_cast<cl_float_sequence::size_type>(
+			_boundary.get().size().content()))
 {
 	implementation_->set_ext_data(
 		data_.data());
+
+	sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
+		_command_queue,
+		_boundary.get().buffer(),
+		sge::opencl::command_queue::map_flags::read,
+		sge::opencl::memory_object::byte_offset(
+			0u),
+		_boundary.get().buffer().byte_size(),
+		sge::opencl::event::sequence());
+
+	std::copy(
+		static_cast<cl_float const *>(
+			buffer_mapping.ptr()),
+		static_cast<cl_float const *>(
+			buffer_mapping.ptr()) + _boundary.get().size().content(),
+		boundary_.begin());
 }
 
 void
@@ -186,13 +413,19 @@ flakelib::marching_cubes::cpu::object::construct_from_cl_buffer(
 		sge::opencl::event::sequence());
 
 	this->construct_from_raw_data(
-		static_cast<sge::renderer::scalar const *>(
+		static_cast<cl_float const *>(
 			buffer_mapping.ptr()));
 }
 
 void
 flakelib::marching_cubes::cpu::object::run()
 {
+	std::cout << "Applying stability conditions\n";
+	apply_stability_conditions_whole_view(
+		data_.data(),
+		boundary_.data(),
+		grid_size_);
+
 	implementation_->clean_all();
 	implementation_->set_resolution(
 		static_cast<int>(

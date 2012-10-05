@@ -48,7 +48,7 @@
 		},
 		"marching-cubes" :
 		{
-			"simulation-size" : [128,64,128],
+			"simulation-size" : [128,128,128],
 			"snow-texture-size" : [64,64,64],
 			"snow-texture-repeats" : 100.0,
 			"near-plane" : 0.01,
@@ -56,7 +56,7 @@
 			"far-plane" : 1000.0,
 			"sun-direction" : [0.8804509,0.17609018,0.440225453],
 			"fov" : 60.0,
-			"scene-name" : "cone",
+			"scene-name" : "sphere",
 			"snow-cover" :
 			{
 				"texture-repeats" : 20.0,

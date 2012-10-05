@@ -58,6 +58,7 @@ private:
 	flakelib::volume::conversion::object conversion_;
 
 	flakelib::volume::unique_float_buffer_lock boundary_buffer_;
+	flakelib::volume::unique_float_buffer_lock input_buffer_;
 
 	flakelib::volume::gradient gradient_;
 	flakelib::scan::object scan_;

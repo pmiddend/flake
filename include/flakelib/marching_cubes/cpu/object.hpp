@@ -7,7 +7,9 @@
 #include <flakelib/marching_cubes/cpu/scalar.hpp>
 #include <flakelib/marching_cubes/cpu/implementation_fwd.hpp>
 #include <flakelib/volume/float_view.hpp>
+#include <flakelib/volume/boundary_buffer_view.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
+#include <sge/opencl/clinclude.hpp>
 #include <sge/renderer/index_buffer_scoped_ptr.hpp>
 #include <sge/renderer/scalar.hpp>
 #include <sge/renderer/vertex_count.hpp>
@@ -37,8 +39,10 @@ public:
 	FLAKELIB_SYMBOL
 	object(
 		sge::renderer::device::core &,
+		sge::opencl::command_queue::object &,
 		flakelib::marching_cubes::cpu::grid_size const &,
-		flakelib::marching_cubes::iso_level const &);
+		flakelib::marching_cubes::iso_level const &,
+		flakelib::volume::boundary_buffer_view const &);
 
 	FLAKELIB_SYMBOL
 	void
@@ -84,11 +88,15 @@ private:
 	renderer_scalar_sequence;
 
 	typedef
+	fcppt::container::raw_vector<cl_float>
+	cl_float_sequence;
+
+	typedef
 	fcppt::container::raw_vector<sge::renderer::index::i32>
 	index_sequence;
 
 	sge::renderer::device::core &renderer_;
-	flakelib::marching_cubes::cpu::grid_size grid_size_;
+	flakelib::marching_cubes::cpu::grid_size const grid_size_;
 	flakelib::marching_cubes::iso_level const iso_level_;
 	sge::renderer::vertex_declaration_scoped_ptr vertex_declaration_;
 	sge::renderer::vertex_buffer_scoped_ptr vertex_buffer_;
@@ -101,6 +109,7 @@ private:
 	renderer_scalar_sequence vertex_buffer_data_;
 	index_sequence index_data_;
 	bool is_dirty_;
+	cl_float_sequence boundary_;
 
 	void
 	fill_vertex_buffer();

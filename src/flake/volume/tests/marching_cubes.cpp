@@ -123,6 +123,12 @@ flake::volume::tests::marching_cubes::marching_cubes(
 	conversion_(
 		this->program_context()),
 	boundary_buffer_(
+		flakelib::volume::retrieve_filled_float_buffer(
+			this->buffer_pool(),
+			fill_buffer_,
+			simulation_size_.get(),
+			0.0f)),
+	input_buffer_(
 		conversion_.binvox_file_to_buffer(
 			this->buffer_pool(),
 			flake::media_path_from_string(
@@ -133,13 +139,7 @@ flake::volume::tests::marching_cubes::marching_cubes(
 						FCPPT_TEXT("scene-name")))+
 				FCPPT_TEXT("/scene.binvox")),
 			flakelib::volume::conversion::optional_height(
-				simulation_size_.get().h()))
-		/*
-		flakelib::volume::retrieve_filled_float_buffer(
-			this->buffer_pool(),
-			fill_buffer_,
-			simulation_size_.get(),
-			0.0f)*/),
+				simulation_size_.get().h()))),
 	gradient_(
 		this->program_context(),
 		this->buffer_pool()),
@@ -148,6 +148,7 @@ flake::volume::tests::marching_cubes::marching_cubes(
 		this->buffer_pool()),
 	marching_cubes_manager_(
 		this->renderer(),
+		this->opencl_system().command_queue(),
 		flakelib::marching_cubes::cpu::grid_size(
 			sge::renderer::dim3(
 				static_cast<sge::renderer::size_type>(
@@ -157,15 +158,9 @@ flake::volume::tests::marching_cubes::marching_cubes(
 				static_cast<sge::renderer::size_type>(
 					simulation_size_.get().d()))),
 		flakelib::marching_cubes::iso_level(
-			0.4f)),
-/*
-	marching_cubes_manager_(
-		this->renderer(),
-		scan_,
-		gradient_,
-		this->program_context(),
-		this->buffer_pool()),
-*/
+			0.4f),
+		flakelib::volume::boundary_buffer_view(
+			boundary_buffer_->value())),
 	snow_cover_(
 		camera_,
 		this->renderer(),
@@ -268,7 +263,7 @@ flake::volume::tests::marching_cubes::marching_cubes(
 
 		marching_cubes_manager_.construct_from_cl_buffer(
 			this->opencl_system().command_queue(),
-			boundary_buffer_->value());
+			input_buffer_->value());
 
 		marching_cubes_manager_.run();
 

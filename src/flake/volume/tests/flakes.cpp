@@ -345,6 +345,7 @@ flake::volume::tests::flakes::flakes(
 			this->charconv_system())),
 	marching_cubes_manager_(
 		this->renderer(),
+		this->opencl_system().command_queue(),
 		flakelib::marching_cubes::cpu::grid_size(
 			fcppt::math::dim::structure_cast<sge::renderer::dim3>(
 				simulation_size_.get())),
@@ -352,7 +353,9 @@ flake::volume::tests::flakes::flakes(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("iso-level"))))),
+					FCPPT_TEXT("iso-level")))),
+		flakelib::volume::boundary_buffer_view(
+			boundary_buffer_->value())),
 	snow_cover_(
 		camera_,
 		this->renderer(),
