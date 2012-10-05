@@ -583,6 +583,8 @@ flakelib::marching_cubes::cpu::object::construct_from_cl_buffer(
 			buffer_mapping.ptr()));
 	#endif
 	#if 1
+	is_dirty_ = true;
+
 	clEnqueueReadBuffer(
 		_command_queue.impl(),
 		_view.buffer().impl(),
@@ -695,7 +697,7 @@ flakelib::marching_cubes::cpu::object::update_buffers()
 	if(!implementation_->ntrigs())
 		return;
 
-	//flakelib::timer::object t(std::cout,"marching_cubes::buffer fill total");
+	flakelib::timer::object t(std::cout,"marching_cubes::buffer fill total");
 	this->fill_vertex_buffer();
 	this->fill_index_buffer();
 }
