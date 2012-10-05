@@ -35,6 +35,7 @@
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/insert_to_std_string.hpp>
+#include <fcppt/container/array.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
@@ -162,7 +163,7 @@ determine_deposit_place(
 }
 
 void
-apply_stability_conditions_single_cell(
+apply_fall_stability_condition_single_cell(
 	flakelib::marching_cubes::cpu::dim3 const &_position,
 	flakelib::marching_cubes::cpu::scalar * const _snow_density,
 	cl_float const * const _boundary,
@@ -224,6 +225,153 @@ apply_stability_conditions_single_cell(
 }
 
 void
+apply_erosion_stability_condition_single_cell(
+	flakelib::marching_cubes::cpu::dim3 const &_position,
+	flakelib::marching_cubes::cpu::scalar * const _snow_density,
+	cl_float const * const _boundary,
+	flakelib::marching_cubes::cpu::grid_size const &_grid_size)
+{
+	unsigned const steepness =
+		3u;
+
+	flakelib::marching_cubes::cpu::scalar &current_snow_value =
+		volume_index(
+			_snow_density,
+			_position,
+			_grid_size);
+
+	if(!filled_with_snow(current_snow_value))
+		return;
+
+	flakelib::marching_cubes::cpu::scalar const neighbor_fractions =
+		1.0f;
+
+	// Has right neighbor
+	if(_position.w() < _grid_size.get().w()-1u)
+	{
+		flakelib::marching_cubes::cpu::dim3 const neighbor_position(
+			_position.w()+1u,
+			_position.h(),
+			_position.d());
+
+		flakelib::marching_cubes::cpu::dim3 const deposit_position(
+			determine_deposit_place(
+				neighbor_position,
+				_snow_density,
+				_boundary,
+				_grid_size));
+
+		flakelib::marching_cubes::cpu::size_type const height =
+			neighbor_position.h() - deposit_position.h();
+
+		if(height > steepness)
+		{
+			flakelib::marching_cubes::cpu::scalar &deposit_snow_value =
+				volume_index(
+					_snow_density,
+					deposit_position,
+					_grid_size);
+
+			deposit_snow_value += current_snow_value * neighbor_fractions;
+			current_snow_value -= current_snow_value * neighbor_fractions;
+		}
+	}
+
+	// Has left neighbor
+	if(_position.w() > 0u)
+	{
+		flakelib::marching_cubes::cpu::dim3 const neighbor_position(
+			_position.w()-1u,
+			_position.h(),
+			_position.d());
+
+		flakelib::marching_cubes::cpu::dim3 const deposit_position(
+			determine_deposit_place(
+				neighbor_position,
+				_snow_density,
+				_boundary,
+				_grid_size));
+
+		flakelib::marching_cubes::cpu::size_type const height =
+			neighbor_position.h() - deposit_position.h();
+
+		if(height > steepness)
+		{
+			flakelib::marching_cubes::cpu::scalar &deposit_snow_value =
+				volume_index(
+					_snow_density,
+					deposit_position,
+					_grid_size);
+
+			deposit_snow_value += current_snow_value * neighbor_fractions;
+			current_snow_value -= current_snow_value * neighbor_fractions;
+		}
+	}
+
+	// Has backward neighbor
+	if(_position.d() > 0u)
+	{
+		flakelib::marching_cubes::cpu::dim3 const neighbor_position(
+			_position.w(),
+			_position.h(),
+			_position.d()-1u);
+
+		flakelib::marching_cubes::cpu::dim3 const deposit_position(
+			determine_deposit_place(
+				neighbor_position,
+				_snow_density,
+				_boundary,
+				_grid_size));
+
+		flakelib::marching_cubes::cpu::size_type const height =
+			neighbor_position.h() - deposit_position.h();
+
+		if(height > steepness)
+		{
+			flakelib::marching_cubes::cpu::scalar &deposit_snow_value =
+				volume_index(
+					_snow_density,
+					deposit_position,
+					_grid_size);
+
+			deposit_snow_value += current_snow_value * neighbor_fractions;
+			current_snow_value -= current_snow_value * neighbor_fractions;
+		}
+	}
+
+	// Has right neighbor
+	if(_position.d() < _grid_size.get().d()-1u)
+	{
+		flakelib::marching_cubes::cpu::dim3 const neighbor_position(
+			_position.w(),
+			_position.h(),
+			_position.d()+1u);
+
+		flakelib::marching_cubes::cpu::dim3 const deposit_position(
+			determine_deposit_place(
+				neighbor_position,
+				_snow_density,
+				_boundary,
+				_grid_size));
+
+		flakelib::marching_cubes::cpu::size_type const height =
+			neighbor_position.h() - deposit_position.h();
+
+		if(height > steepness)
+		{
+			flakelib::marching_cubes::cpu::scalar &deposit_snow_value =
+				volume_index(
+					_snow_density,
+					deposit_position,
+					_grid_size);
+
+			deposit_snow_value += current_snow_value * neighbor_fractions;
+			current_snow_value -= current_snow_value * neighbor_fractions;
+		}
+	}
+}
+
+void
 apply_stability_conditions_whole_view(
 	flakelib::marching_cubes::cpu::scalar * const _input,
 	cl_float const * const _boundary,
@@ -235,7 +383,25 @@ apply_stability_conditions_whole_view(
 		{
 			for(flakelib::marching_cubes::cpu::size_type z = 0u; z < _grid_size.get().d(); ++z)
 			{
-				apply_stability_conditions_single_cell(
+				apply_fall_stability_condition_single_cell(
+					flakelib::marching_cubes::cpu::dim3(
+						x,
+						y,
+						z),
+					_input,
+					_boundary,
+					_grid_size);
+			}
+		}
+	}
+
+	for(flakelib::marching_cubes::cpu::size_type y = _grid_size.get().h(); y > 0u; --y)
+	{
+		for(flakelib::marching_cubes::cpu::size_type x = 0u; x < _grid_size.get().w(); ++x)
+		{
+			for(flakelib::marching_cubes::cpu::size_type z = 0u; z < _grid_size.get().d(); ++z)
+			{
+				apply_erosion_stability_condition_single_cell(
 					flakelib::marching_cubes::cpu::dim3(
 						x,
 						y,
