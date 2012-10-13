@@ -33,6 +33,7 @@
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/shader/context.hpp>
 #include <sge/systems/font.hpp>
+#include <sge/systems/make_list.hpp>
 #include <sge/systems/image2d.hpp>
 #include <sge/systems/input.hpp>
 #include <sge/systems/instance.hpp>
@@ -156,7 +157,7 @@ flake::test::base::base(
 					flakelib::utf8_file_to_fcppt_string(
 						*charconv_system_,
 						flake::media_path_from_string(
-							FCPPT_TEXT("config.json"))))))),
+							FCPPT_TEXT("config.json")))).object()))),
 	local_configuration_(
 		sge::parse::json::find_and_convert_member<sge::parse::json::object const>(
 			*configuration_,
@@ -170,39 +171,33 @@ flake::test::base::base(
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("features"))))),
 	systems_(
-		fcppt::make_unique_ptr<sge::systems::instance>(
-			fcppt::cref(
-				sge::systems::list()
-					(sge::systems::image2d(
-						sge::image::capabilities_field::null(),
-						sge::media::all_extensions))
-						(sge::systems::window(
-							sge::window::parameters(
-								_window_title,
-								sge::parse::json::find_and_convert_member<sge::window::dim>(
-									*configuration_,
-									sge::parse::json::string_to_path(
-										FCPPT_TEXT("tests/window-size"))))).dont_show())
-						(sge::systems::renderer(
-							sge::renderer::parameters::object(
-								sge::renderer::pixel_format::object(
-									sge::renderer::pixel_format::color::depth32,
-									sge::renderer::pixel_format::depth_stencil::off,
-									sge::renderer::pixel_format::optional_multi_samples(),
-									sge::renderer::pixel_format::srgb::no),
-								sge::renderer::parameters::vsync::on,
-								sge::renderer::display_mode::optional_object()),
-							sge::viewport::fill_on_resize())
-						 	.caps(
-								sge::renderer::caps::system_field(
-									sge::renderer::caps::system::opengl)))
-						(sge::systems::font())
-						(sge::systems::input(
-							sge::systems::input_helper_field(
-								sge::systems::input_helper::keyboard_collector)
-								| sge::systems::input_helper::cursor_demuxer
-								| sge::systems::input_helper::mouse_collector,
-							_cursor_options))))),
+		fcppt::make_unique_ptr<systems_instance>(
+			sge::systems::make_list
+				(sge::systems::image2d(
+					sge::image::capabilities_field::null(),
+					sge::media::all_extensions))
+				(sge::systems::window(
+					sge::window::parameters(
+						_window_title,
+						sge::parse::json::find_and_convert_member<sge::window::dim>(
+							*configuration_,
+							sge::parse::json::string_to_path(
+								FCPPT_TEXT("tests/window-size"))))).dont_show())
+				(sge::systems::renderer(
+					sge::renderer::parameters::object(
+						sge::renderer::pixel_format::object(
+							sge::renderer::pixel_format::color::depth32,
+							sge::renderer::pixel_format::depth_stencil::off,
+							sge::renderer::pixel_format::optional_multi_samples(),
+							sge::renderer::pixel_format::srgb::no),
+						sge::renderer::parameters::vsync::on,
+						sge::renderer::display_mode::optional_object()),
+					sge::viewport::fill_on_resize())
+					.caps(
+						sge::renderer::caps::system_field(
+							sge::renderer::caps::system::opengl)))
+				(sge::systems::input(
+					_cursor_options)))),
 	quit_connection_(
 		sge::systems::quit_on_escape(
 			*systems_)),

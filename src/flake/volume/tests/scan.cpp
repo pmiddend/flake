@@ -72,7 +72,7 @@ flake::volume::tests::scan::scan(
 			flakelib::utf8_file_to_fcppt_string(
 				*charconv_system_,
 				flake::media_path_from_string(
-					FCPPT_TEXT("config.json"))))),
+					FCPPT_TEXT("config.json")))).object()),
 	program_context_(
 		opencl_system_.command_queue(),
 		flakelib::cl::compiler_flags(

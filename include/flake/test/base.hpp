@@ -29,6 +29,15 @@
 #include <sge/shader/context_fwd.hpp>
 #include <sge/systems/cursor_option_field.hpp>
 #include <sge/systems/instance_fwd.hpp>
+#include <sge/systems/with_renderer.hpp>
+#include <sge/systems/with_charconv.hpp>
+#include <sge/systems/with_image2d.hpp>
+#include <sge/systems/with_font.hpp>
+#include <sge/systems/with_window.hpp>
+#include <sge/systems/with_input.hpp>
+#include <sge/systems/keyboard_collector.hpp>
+#include <sge/systems/mouse_collector.hpp>
+#include <sge/systems/cursor_demuxer.hpp>
 #include <sge/viewport/manager_fwd.hpp>
 #include <sge/window/title.hpp>
 #include <awl/main/exit_code.hpp>
@@ -37,7 +46,7 @@
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/config/platform.hpp>
 #include <fcppt/signal/scoped_connection.hpp>
-#include <fcppt/signal/scoped_connection.hpp>
+#include <boost/mpl/vector/vector10.hpp>
 
 
 namespace flake
@@ -135,6 +144,29 @@ protected:
 	key_down_callback(
 		sge::input::keyboard::key_code::type);
 private:
+	typedef
+	sge::systems::instance
+	<
+		boost::mpl::vector6
+		<
+			sge::systems::with_renderer<sge::systems::renderer_caps::ffp>,
+			sge::systems::with_window,
+			sge::systems::with_charconv,
+			sge::systems::with_font,
+			sge::systems::with_image2d,
+			sge::systems::with_input
+			<
+				boost::mpl::vector3
+				<
+					sge::systems::keyboard_collector,
+					sge::systems::mouse_collector,
+					sge::systems::cursor_demuxer
+				>
+			>
+		>
+	>
+	systems_instance;
+
 #ifdef FCPPT_CONFIG_WINDOWS_PLATFORM
 	flake::scoped_ostream_file_redirection error_redirection_;
 	flake::scoped_ostream_file_redirection log_redirection_;
@@ -143,22 +175,22 @@ private:
 	flake::scoped_wostream_file_redirection wlog_redirection_;
 	flake::scoped_wostream_file_redirection woutput_redirection_;
 #endif
-	fcppt::scoped_ptr<sge::charconv::system> charconv_system_;
-	fcppt::scoped_ptr<sge::parse::json::object> configuration_;
+	fcppt::scoped_ptr<sge::charconv::system> const charconv_system_;
+	fcppt::scoped_ptr<sge::parse::json::object> const configuration_;
 	sge::parse::json::object const local_configuration_;
 	test::feature_sequence features_;
-	fcppt::scoped_ptr<sge::systems::instance> systems_;
+	fcppt::scoped_ptr<systems_instance> const systems_;
 	fcppt::signal::scoped_connection quit_connection_;
-	fcppt::scoped_ptr<sge::shader::context> shader_context_;
-	fcppt::scoped_ptr<sge::opencl::single_device_system::object> opencl_system_;
-	fcppt::scoped_ptr<flakelib::cl::program_context> program_context_;
-	fcppt::scoped_ptr<flakelib::buffer_pool::object> buffer_pool_;
+	fcppt::scoped_ptr<sge::shader::context> const shader_context_;
+	fcppt::scoped_ptr<sge::opencl::single_device_system::object> const opencl_system_;
+	fcppt::scoped_ptr<flakelib::cl::program_context> const program_context_;
+	fcppt::scoped_ptr<flakelib::buffer_pool::object> const buffer_pool_;
 	flakelib::scoped_frame_limiter::fps_type desired_fps_;
 	fcppt::signal::scoped_connection viewport_connection_;
-	fcppt::scoped_ptr<flake::notifications::object> notifications_;
-	fcppt::scoped_ptr<flake::test::information::manager> information_manager_;
+	fcppt::scoped_ptr<flake::notifications::object> const notifications_;
+	fcppt::scoped_ptr<flake::test::information::manager> const information_manager_;
 	flake::test::information::object memory_consumption_information_;
-	fcppt::scoped_ptr<flake::time_modifier::object> time_modifier_;
+	fcppt::scoped_ptr<flake::time_modifier::object> const time_modifier_;
 	fcppt::signal::scoped_connection key_callback_connection_;
 	flake::postprocessing::context postprocessing_;
 	bool dump_this_frame_;
