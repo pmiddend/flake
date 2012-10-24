@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm -i *.binvox
+../../binvox -t binvox -d 128 binvox_export.obj && cp binvox_export.binvox scene.binvox

@@ -1,0 +1,43 @@
+struct vertex_outputs
+{
+	float4 position : POSITION;
+	float4 color : COLOR;
+	float3 camera_distance : TEXCOORD0;
+};
+
+vertex_outputs
+vertex_main(
+	in float4 position : POSITION,
+	in float4 color : COLOR,
+	uniform float4x4 mvp,
+	uniform float3 camera_position)
+{
+	vertex_outputs outs;
+
+	outs.position =
+		mul(
+			mvp,
+			position);
+
+	outs.color =
+		color;
+
+	outs.camera_distance =
+		length(
+			position.xyz - camera_position);
+
+	return
+		outs;
+}
+
+float4
+pixel_main(
+	in float3 camera_distance : TEXCOORD0,
+	in float4 color : COLOR)
+	: COLOR
+{
+	return
+		float4(
+			color.xyz,
+			1.0 - camera_distance / 16.0);
+}

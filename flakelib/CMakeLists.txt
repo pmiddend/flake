@@ -1,0 +1,381 @@
+include_directories(
+	${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+set(
+	FLAKELIB_FILES
+	flakelib/include/flakelib/buffer/linear_view.hpp
+	flakelib/include/flakelib/buffer/linear_view_decl.hpp
+	flakelib/include/flakelib/buffer/linear_view_fwd.hpp
+	flakelib/include/flakelib/buffer/linear_view_impl.hpp
+	flakelib/include/flakelib/buffer/planar_view.hpp
+	flakelib/include/flakelib/buffer/planar_view_decl.hpp
+	flakelib/include/flakelib/buffer/planar_view_fwd.hpp
+	flakelib/include/flakelib/buffer/planar_view_impl.hpp
+	flakelib/include/flakelib/buffer/volume_view.hpp
+	flakelib/include/flakelib/buffer/volume_view_decl.hpp
+	flakelib/include/flakelib/buffer/volume_view_fwd.hpp
+	flakelib/include/flakelib/buffer/volume_view_impl.hpp
+	flakelib/include/flakelib/buffer_pool/linear_lock.hpp
+	flakelib/include/flakelib/buffer_pool/linear_lock_decl.hpp
+	flakelib/include/flakelib/buffer_pool/linear_lock_fwd.hpp
+	flakelib/include/flakelib/buffer_pool/linear_lock_impl.hpp
+	flakelib/include/flakelib/buffer_pool/object.hpp
+	flakelib/include/flakelib/buffer_pool/object_fwd.hpp
+	flakelib/include/flakelib/buffer_pool/planar_lock.hpp
+	flakelib/include/flakelib/buffer_pool/planar_lock_decl.hpp
+	flakelib/include/flakelib/buffer_pool/planar_lock_fwd.hpp
+	flakelib/include/flakelib/buffer_pool/planar_lock_impl.hpp
+	flakelib/include/flakelib/buffer_pool/volume_lock.hpp
+	flakelib/include/flakelib/buffer_pool/volume_lock_decl.hpp
+	flakelib/include/flakelib/buffer_pool/volume_lock_fwd.hpp
+	flakelib/include/flakelib/buffer_pool/volume_lock_impl.hpp
+	flakelib/include/flakelib/build_options.hpp
+	flakelib/include/flakelib/cl/cflags.hpp
+	flakelib/include/flakelib/cl/compiler_flags.hpp
+	flakelib/include/flakelib/cl/float2.hpp
+	flakelib/include/flakelib/cl/kernel.hpp
+	flakelib/include/flakelib/cl/kernel_fwd.hpp
+	flakelib/include/flakelib/cl/kernel_parameters.hpp
+	flakelib/include/flakelib/cl/kernel_scoped_ptr.hpp
+	flakelib/include/flakelib/cl/kernel_shared_ptr.hpp
+	flakelib/include/flakelib/cl/kernel_unique_ptr.hpp
+	flakelib/include/flakelib/cl/planar_image_view_to_cl_image.hpp
+	flakelib/include/flakelib/cl/planar_image_view_to_float_buffer.hpp
+	flakelib/include/flakelib/cl/program.hpp
+	flakelib/include/flakelib/cl/program_context.hpp
+	flakelib/include/flakelib/cl/program_context_fwd.hpp
+	flakelib/include/flakelib/cl/uint4.hpp
+	flakelib/include/flakelib/class_symbol.hpp
+	flakelib/include/flakelib/console_percent_bar.hpp
+	flakelib/include/flakelib/duration.hpp
+	flakelib/include/flakelib/exception.hpp
+	flakelib/include/flakelib/linear/uint_view.hpp
+	flakelib/include/flakelib/log.hpp
+	flakelib/include/flakelib/log_context.hpp
+	flakelib/include/flakelib/log_location.hpp
+	flakelib/include/flakelib/log_parameters.hpp
+	flakelib/include/flakelib/map_key_sequence.hpp
+	flakelib/include/flakelib/marching_cubes/cpu/dim3.hpp
+	flakelib/include/flakelib/marching_cubes/cpu/grid_size.hpp
+	flakelib/include/flakelib/marching_cubes/cpu/implementation.hpp
+	flakelib/include/flakelib/marching_cubes/cpu/implementation_fwd.hpp
+	flakelib/include/flakelib/marching_cubes/cpu/object.hpp
+	flakelib/include/flakelib/marching_cubes/cpu/object_fwd.hpp
+	flakelib/include/flakelib/marching_cubes/cpu/scalar.hpp
+	flakelib/include/flakelib/marching_cubes/cpu/size_type.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/active_voxels.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/compacted_voxel_occupation_view.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/density_view.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/grid_size.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/grid_size_mask.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/grid_size_shift.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/manager.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/manager_fwd.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/normals_buffer.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/num_vert_table.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/object.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/object_fwd.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/positions_buffer.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/summed_vertices_for_voxel_view.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/summed_voxel_occupation_view.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/triangle_table.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/vertex_count.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/vertices_for_voxel_view.hpp
+	flakelib/include/flakelib/marching_cubes/gpu/voxel_occupation_view.hpp
+	flakelib/include/flakelib/marching_cubes/iso_level.hpp
+	flakelib/include/flakelib/marching_cubes/vf/format.hpp
+	flakelib/include/flakelib/marching_cubes/vf/interleaved.hpp
+	flakelib/include/flakelib/marching_cubes/vf/interleaved_part.hpp
+	flakelib/include/flakelib/marching_cubes/vf/normal.hpp
+	flakelib/include/flakelib/marching_cubes/vf/normal_part.hpp
+	flakelib/include/flakelib/marching_cubes/vf/position.hpp
+	flakelib/include/flakelib/marching_cubes/vf/position_part.hpp
+	flakelib/include/flakelib/media_path.hpp
+	flakelib/include/flakelib/media_path_from_string.hpp
+	flakelib/include/flakelib/planar/boundary_buffer_view.hpp
+	flakelib/include/flakelib/planar/boundary_image_view.hpp
+	flakelib/include/flakelib/planar/float2_buffer_lock.hpp
+	flakelib/include/flakelib/planar/float2_view.hpp
+	flakelib/include/flakelib/planar/float_buffer_lock.hpp
+	flakelib/include/flakelib/planar/float_view.hpp
+	flakelib/include/flakelib/planar/simulation/stam/buissnesq/ambient_temperature.hpp
+	flakelib/include/flakelib/planar/simulation/stam/buissnesq/density_strength.hpp
+	flakelib/include/flakelib/planar/simulation/stam/buissnesq/density_view.hpp
+	flakelib/include/flakelib/planar/simulation/stam/buissnesq/object.hpp
+	flakelib/include/flakelib/planar/simulation/stam/buissnesq/object_fwd.hpp
+	flakelib/include/flakelib/planar/simulation/stam/buissnesq/temperature_strength.hpp
+	flakelib/include/flakelib/planar/simulation/stam/buissnesq/temperature_view.hpp
+	flakelib/include/flakelib/planar/simulation/stam/divergence.hpp
+	flakelib/include/flakelib/planar/simulation/stam/initial_guess_buffer_view.hpp
+	flakelib/include/flakelib/planar/simulation/stam/iterations.hpp
+	flakelib/include/flakelib/planar/simulation/stam/jacobi.hpp
+	flakelib/include/flakelib/planar/simulation/stam/outflow_boundaries.hpp
+	flakelib/include/flakelib/planar/simulation/stam/pressure.hpp
+	flakelib/include/flakelib/planar/simulation/stam/pressure_buffer_view.hpp
+	flakelib/include/flakelib/planar/simulation/stam/rhs.hpp
+	flakelib/include/flakelib/planar/simulation/stam/rhs_buffer_view.hpp
+	flakelib/include/flakelib/planar/simulation/stam/semilagrangian_advection.hpp
+	flakelib/include/flakelib/planar/simulation/stam/solution.hpp
+	flakelib/include/flakelib/planar/simulation/stam/subtract_pressure_gradient.hpp
+	flakelib/include/flakelib/planar/simulation/stam/velocity.hpp
+	flakelib/include/flakelib/planar/simulation/stam/vorticity.hpp
+	flakelib/include/flakelib/planar/simulation/stam/vorticity_strength.hpp
+	flakelib/include/flakelib/planar/simulation/stam/wind_source.hpp
+	flakelib/include/flakelib/planar/simulation/stam/wind_source_fwd.hpp
+	flakelib/include/flakelib/planar/simulation/stam/wind_strength.hpp
+	flakelib/include/flakelib/planar/unique_float2_buffer_lock.hpp
+	flakelib/include/flakelib/planar/unique_float_buffer_lock.hpp
+	flakelib/include/flakelib/planar/velocity_buffer_view.hpp
+	flakelib/include/flakelib/scan.hpp
+	flakelib/include/flakelib/scan/batch_size.hpp
+	flakelib/include/flakelib/scan/linear_view.hpp
+	flakelib/include/flakelib/scan/object.hpp
+	flakelib/include/flakelib/scan/object_fwd.hpp
+	flakelib/include/flakelib/scan/value_type.hpp
+	flakelib/include/flakelib/scoped_frame_limiter.hpp
+	flakelib/include/flakelib/splatter/box/object.hpp
+	flakelib/include/flakelib/splatter/box/object_fwd.hpp
+	flakelib/include/flakelib/splatter/box/position.hpp
+	flakelib/include/flakelib/splatter/box/size.hpp
+	flakelib/include/flakelib/splatter/object.hpp
+	flakelib/include/flakelib/splatter/object_fwd.hpp
+	flakelib/include/flakelib/splatter/pen/blend_factor.hpp
+	flakelib/include/flakelib/splatter/pen/draw_mode.hpp
+	flakelib/include/flakelib/splatter/pen/is_round.hpp
+	flakelib/include/flakelib/splatter/pen/is_smooth.hpp
+	flakelib/include/flakelib/splatter/pen/object.hpp
+	flakelib/include/flakelib/splatter/pen/object_decl.hpp
+	flakelib/include/flakelib/splatter/pen/object_fwd.hpp
+	flakelib/include/flakelib/splatter/pen/object_impl.hpp
+	flakelib/include/flakelib/splatter/pen/planar.hpp
+	flakelib/include/flakelib/splatter/pen/volume.hpp
+	flakelib/include/flakelib/splatter/rectangle/object.hpp
+	flakelib/include/flakelib/splatter/rectangle/object_fwd.hpp
+	flakelib/include/flakelib/splatter/rectangle/position.hpp
+	flakelib/include/flakelib/splatter/rectangle/size.hpp
+	flakelib/include/flakelib/timer/basic.hpp
+	flakelib/include/flakelib/timer/basic_decl.hpp
+	flakelib/include/flakelib/timer/basic_fwd.hpp
+	flakelib/include/flakelib/timer/basic_impl.hpp
+	flakelib/include/flakelib/timer/description.hpp
+	flakelib/include/flakelib/timer/object.hpp
+	flakelib/include/flakelib/timer/wobject.hpp
+	flakelib/include/flakelib/utf8_file_to_fcppt_string.hpp
+	flakelib/include/flakelib/utility/fill_buffer.hpp
+	flakelib/include/flakelib/utility/fill_buffer_fwd.hpp
+	flakelib/include/flakelib/utility/mix_buffers.hpp
+	flakelib/include/flakelib/value_modulator/frequency.hpp
+	flakelib/include/flakelib/value_modulator/maximum.hpp
+	flakelib/include/flakelib/value_modulator/mean.hpp
+	flakelib/include/flakelib/value_modulator/minimum.hpp
+	flakelib/include/flakelib/value_modulator/object.hpp
+	flakelib/include/flakelib/value_modulator/object_fwd.hpp
+	flakelib/include/flakelib/value_modulator/value_modify_callback.hpp
+	flakelib/include/flakelib/value_modulator/value_modify_callback_fn.hpp
+	flakelib/include/flakelib/value_modulator/variance.hpp
+	flakelib/include/flakelib/volume/boundary_buffer_view.hpp
+	flakelib/include/flakelib/volume/conversion/arrow_scale.hpp
+	flakelib/include/flakelib/volume/conversion/constant_addition.hpp
+	flakelib/include/flakelib/volume/conversion/gl_buffer.hpp
+	flakelib/include/flakelib/volume/conversion/grid_scale.hpp
+	flakelib/include/flakelib/volume/conversion/object.hpp
+	flakelib/include/flakelib/volume/conversion/object_fwd.hpp
+	flakelib/include/flakelib/volume/conversion/optional_height.hpp
+	flakelib/include/flakelib/volume/conversion/origin.hpp
+	flakelib/include/flakelib/volume/conversion/planar_size_from_volume_size.hpp
+	flakelib/include/flakelib/volume/conversion/raw_voxel_file_dimension.hpp
+	flakelib/include/flakelib/volume/conversion/scaling_factor.hpp
+	flakelib/include/flakelib/volume/float4_buffer_lock.hpp
+	flakelib/include/flakelib/volume/float4_view.hpp
+	flakelib/include/flakelib/volume/float_buffer_lock.hpp
+	flakelib/include/flakelib/volume/float_view.hpp
+	flakelib/include/flakelib/volume/gradient.hpp
+	flakelib/include/flakelib/volume/gradient_fwd.hpp
+	flakelib/include/flakelib/volume/grid_size.hpp
+	flakelib/include/flakelib/volume/retrieve_filled_float_buffer.hpp
+	flakelib/include/flakelib/volume/retrieve_zero_float4_buffer.hpp
+	flakelib/include/flakelib/volume/simulation/stam/buissnesq/ambient_temperature.hpp
+	flakelib/include/flakelib/volume/simulation/stam/buissnesq/density_strength.hpp
+	flakelib/include/flakelib/volume/simulation/stam/buissnesq/density_view.hpp
+	flakelib/include/flakelib/volume/simulation/stam/buissnesq/object.hpp
+	flakelib/include/flakelib/volume/simulation/stam/buissnesq/object_fwd.hpp
+	flakelib/include/flakelib/volume/simulation/stam/buissnesq/temperature_strength.hpp
+	flakelib/include/flakelib/volume/simulation/stam/buissnesq/temperature_view.hpp
+	flakelib/include/flakelib/volume/simulation/stam/divergence.hpp
+	flakelib/include/flakelib/volume/simulation/stam/initial_guess_buffer_view.hpp
+	flakelib/include/flakelib/volume/simulation/stam/iterations.hpp
+	flakelib/include/flakelib/volume/simulation/stam/jacobi.hpp
+	flakelib/include/flakelib/volume/simulation/stam/outflow_boundaries.hpp
+	flakelib/include/flakelib/volume/simulation/stam/pressure_buffer_view.hpp
+	flakelib/include/flakelib/volume/simulation/stam/rhs_buffer_view.hpp
+	flakelib/include/flakelib/volume/simulation/stam/semilagrangian_advection.hpp
+	flakelib/include/flakelib/volume/simulation/stam/subtract_pressure_gradient.hpp
+	flakelib/include/flakelib/volume/simulation/stam/velocity.hpp
+	flakelib/include/flakelib/volume/simulation/stam/vorticity.hpp
+	flakelib/include/flakelib/volume/simulation/stam/vorticity_fwd.hpp
+	flakelib/include/flakelib/volume/simulation/stam/vorticity_strength.hpp
+	flakelib/include/flakelib/volume/simulation/stam/wind_source.hpp
+	flakelib/include/flakelib/volume/simulation/stam/wind_strength.hpp
+	flakelib/include/flakelib/volume/uint_buffer_lock.hpp
+	flakelib/include/flakelib/volume/uint_view.hpp
+	flakelib/include/flakelib/volume/unique_float4_buffer_lock.hpp
+	flakelib/include/flakelib/volume/unique_float_buffer_lock.hpp
+	flakelib/include/flakelib/volume/unique_uint_buffer_lock.hpp
+	flakelib/include/flakelib/volume/velocity_buffer_view.hpp
+	flakelib/src/buffer_pool/object.cpp
+	flakelib/src/cl/cflags.cpp
+	flakelib/src/cl/kernel.cpp
+	flakelib/src/cl/planar_image_view_to_cl_image.cpp
+	flakelib/src/cl/planar_image_view_to_float_buffer.cpp
+	flakelib/src/cl/program.cpp
+	flakelib/src/cl/program_context.cpp
+	flakelib/src/console_percent_bar.cpp
+	flakelib/src/exception.cpp
+	flakelib/src/log.cpp
+	flakelib/src/log_context.cpp
+	flakelib/src/log_location.cpp
+	flakelib/src/log_parameters.cpp
+	flakelib/src/marching_cubes/cpu/implementation.cpp
+	flakelib/src/marching_cubes/cpu/object.cpp
+	flakelib/src/marching_cubes/gpu/manager.cpp
+	flakelib/src/marching_cubes/gpu/object.cpp
+	flakelib/src/media_path.cpp
+	flakelib/src/media_path_from_string.cpp
+	flakelib/src/planar/simulation/stam/buissnesq/object.cpp
+	flakelib/src/planar/simulation/stam/divergence.cpp
+	flakelib/src/planar/simulation/stam/jacobi.cpp
+	flakelib/src/planar/simulation/stam/outflow_boundaries.cpp
+	flakelib/src/planar/simulation/stam/semilagrangian_advection.cpp
+	flakelib/src/planar/simulation/stam/subtract_pressure_gradient.cpp
+	flakelib/src/planar/simulation/stam/vorticity.cpp
+	flakelib/src/planar/simulation/stam/wind_source.cpp
+	flakelib/src/scan.cpp
+	flakelib/src/scan/object.cpp
+	flakelib/src/scoped_frame_limiter.cpp
+	flakelib/src/splatter/box/object_fwd.cpp
+	flakelib/src/splatter/object.cpp
+	flakelib/src/splatter/rectangle/object.cpp
+	flakelib/src/utf8_file_to_fcppt_string.cpp
+	flakelib/src/utility/fill_buffer.cpp
+	flakelib/src/utility/mix_buffers.cpp
+	flakelib/src/value_modulator/object.cpp
+	flakelib/src/volume/conversion/object.cpp
+	flakelib/src/volume/gradient.cpp
+	flakelib/src/volume/retrieve_filled_float_buffer.cpp
+	flakelib/src/volume/retrieve_zero_float4_buffer.cpp
+	flakelib/src/volume/simulation/stam/buissnesq/object.cpp
+	flakelib/src/volume/simulation/stam/divergence.cpp
+	flakelib/src/volume/simulation/stam/jacobi.cpp
+	flakelib/src/volume/simulation/stam/outflow_boundaries.cpp
+	flakelib/src/volume/simulation/stam/semilagrangian_advection.cpp
+	flakelib/src/volume/simulation/stam/subtract_pressure_gradient.cpp
+	flakelib/src/volume/simulation/stam/vorticity.cpp
+	flakelib/src/volume/simulation/stam/wind_source.cpp
+)
+
+fcppt_utils_append_source_dir_and_make_groups(
+	"${FLAKELIB_FILES}"
+	FLAKELIB_FILES_ABS)
+
+if(
+	NOT ENABLE_SHARED AND NOT ENABLE_STATIC)
+	message(
+		FATAL_ERROR
+		"You disabled both STATIC and SHARED")
+endif()
+
+
+include(
+	FcpptSymbol)
+
+fcppt_generate_symbol_header(
+	FLAKELIB_STATIC_LINK
+	flakelib
+	FLAKELIB
+	flakelib)
+
+include_directories(
+	${CMAKE_BINARY_DIR}/include)
+
+function(
+	MAKE_FLAKELIB_LIBRARY
+	TARGETNAME
+	VARIANT)
+
+	add_library(
+		${TARGETNAME}
+		${VARIANT}
+		${FLAKELIB_FILES_ABS})
+
+	if(
+		NOT MSVC)
+		target_link_libraries(
+			${TARGETNAME}
+			${Boost_SYSTEM_LIBRARY})
+	endif()
+
+	if(
+		${VARIANT} STREQUAL "STATIC")
+		set_target_properties(
+			${TARGETNAME}
+			PROPERTIES
+			COMPILE_DEFINITIONS
+			"FLAKELIB_STATIC_LINK")
+	endif()
+
+	if(
+		UNIX)
+
+		target_link_libraries(
+			${TARGETNAME}
+			ncurses)
+
+	endif()
+
+	# This is, of course, extremely overlinked
+	target_link_libraries(
+		${TARGETNAME}
+		${Fcppt_core_LIBRARIES}
+		${Fcppt_filesystem_LIBRARIES}
+		${Awl_LIBRARIES}
+		${SGE_LIBRARIES}
+		${OPENCL_LIBRARIES}
+		${OPENGL_gl_LIBRARY}
+		${Boost_LIBRARIES})
+
+	install(
+		TARGETS
+		${TARGETNAME}
+		DESTINATION
+		${INSTALL_LIBRARY_DIR})
+endfunction()
+
+if(
+	ENABLE_STATIC)
+	make_flakelib_library(
+		flakelib_static
+		STATIC)
+endif()
+
+if(
+	ENABLE_SHARED)
+	make_flakelib_library(
+		flakelib
+		SHARED)
+endif()
+
+set(
+	INSTALL_MEDIA_DIR
+	${INSTALL_DATA_DIR}/flakelib_media)
+
+include(
+	SGECustomPath)
+
+sge_config_add_custom_path(
+	flakelib
+	flakelib_media
+	${CMAKE_SOURCE_DIR}/flakelib/flakelib_media
+	${INSTALL_MEDIA_DIR})
+
+add_definitions(
+	${FLAKELIB_CONFIG_LINK_MACROS})

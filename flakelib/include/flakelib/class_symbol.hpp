@@ -1,0 +1,9 @@
+#ifndef FLAKELIB_CLASS_SYMBOL_HPP_INCLUDED
+#define FLAKELIB_CLASS_SYMBOL_HPP_INCLUDED
+
+#include <fcppt/class_symbol.hpp>
+
+#define FLAKELIB_CLASS_SYMBOL FCPPT_CLASS_SYMBOL
+
+#endif
+

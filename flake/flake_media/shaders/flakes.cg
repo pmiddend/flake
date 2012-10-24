@@ -1,0 +1,101 @@
+struct vertex_outputs
+{
+	float4 position : POSITION;
+	// This somehow doesn't work. TEXCOORD is always equal to the "frag coord" inside the point sprite
+	//float2 texture_coordinates : TEXCOORD0;
+	// This works, though.
+	float2 texture_coordinates;
+	float point_size : PSIZE;
+	float alpha_value : COLOR0;
+};
+
+float
+perspective_distance_formula(
+	float A,
+	float B,
+	float C,
+	float de,
+	float baseSize)
+{
+	return
+		baseSize *
+		rsqrt(
+			A + B * de + B * de * de);
+}
+
+vertex_outputs
+vertex_main(
+	in float4 position : POSITION,
+	in float2 texture_coordinates : TEXCOORD0,
+	in float point_size : $8$,
+	uniform float3 camera_position,
+	uniform float maximum_distance,
+	uniform float4x4 mvp)
+{
+	vertex_outputs outs;
+
+	float
+		A = 0.96,
+		B = 0.19,
+		C = 0.06;
+
+	float
+		de =
+			distance(
+				position.xyz,
+				camera_position);
+
+	outs.point_size =
+		perspective_distance_formula(
+			0.96,
+			0.19,
+			0.06,
+			de,
+			3.0 * point_size);
+
+	outs.alpha_value = 1.0;
+	/*
+	outs.alpha_value =
+		min(
+			1.0,
+			perspective_distance_formula(
+				0.1,
+				0.05,
+				0.0,
+				de,
+				1.0));
+	*/
+
+	outs.position =
+		mul(
+			mvp,
+			float4(
+				position.xyz,
+				1.0));
+
+	outs.texture_coordinates =
+		texture_coordinates;
+
+	return
+		outs;
+}
+
+float4
+pixel_main(
+	vertex_outputs vertex_data,
+	float2 texcoord : TEXCOORD0,
+	uniform sampler2D main_texture : TEX0,
+	uniform float tile_size)
+	: COLOR
+{
+	float4 texture_value =
+		tex2D(
+			main_texture,
+			vertex_data.texture_coordinates + texcoord * float2(tile_size,1.0));
+
+	return
+		float4(
+			texture_value.xyz,
+			texture_value.w * vertex_data.alpha_value);
+
+}

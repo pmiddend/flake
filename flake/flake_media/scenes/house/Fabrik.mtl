@@ -1,0 +1,74 @@
+# Blender MTL File: 'house.blend'
+# Material Count: 6
+newmtl Bricks
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+Ke 0.000000
+map_Kd bricks.png
+
+
+newmtl Bricks_bricks.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+Ke 0.000000
+map_Kd bricks.png
+
+
+newmtl Concrete2
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+Ke 0.000000
+map_Kd concrete_more_brown.png
+
+
+newmtl Concrete2_concrete.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+Ke 0.000000
+map_Kd concrete.png
+
+
+newmtl Concrete_concrete.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+Ke 0.000000
+map_Kd concrete.png
+
+
+newmtl Windows_industrial_window.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd industrial_window.png
+
+

@@ -1,0 +1,258 @@
+# Blender MTL File: 'house1.blend'
+# Material Count: 20
+newmtl lit_window
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.636803 0.440970
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+Ke 1.000000
+
+
+newmtl material_306-effect_WoodPlanksBare0002_1_S.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd WoodPlanksBare0002_1_S.png
+
+
+
+newmtl material_312-effect_out_0_6E339CC8.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 50.000000 50.000000 50.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd out_0_6E339CC8.png
+
+
+
+newmtl material_318-effect_RooftilesWood0005_2_S.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd RooftilesWood0005_2_S.png
+
+
+
+newmtl material_324-effect_WoodRough0106_2_S.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd WoodRough0106_2_S.png
+
+
+
+newmtl material_336-effect_RooftilesWood0005_2_S.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd RooftilesWood0005_2_S.png
+
+
+
+newmtl material_367-effect_WoodRough0106_2_S.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd WoodRough0106_2_S.png
+
+
+
+newmtl material_373-effect_RooftilesWood0005_2_S.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd RooftilesWood0005_2_S.png
+
+
+
+newmtl material_379-effect_WoodPlanksBare0002_1_S.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 50.000000 50.000000 50.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd WoodPlanksBare0002_1_S.png
+
+
+
+newmtl material_385-effect_out_0_6E339CC8.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 50.000000 50.000000 50.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd out_0_6E339CC8.png
+
+
+
+newmtl material_529-effect_WoodRough0106_2_S.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd WoodRough0106_2_S.png
+
+
+
+newmtl material_535-effect_out_0_6E339CC8.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 50.000000 50.000000 50.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd out_0_6E339CC8.png
+
+
+
+newmtl material_547-effect_WoodPlanksBare0002_1_S.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd WoodPlanksBare0002_1_S.png
+
+
+
+newmtl material_553-effect_WoodRough0106_2_S.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd WoodRough0106_2_S.png
+
+
+
+newmtl material_559-effect_RooftilesWood0005_2_S.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd RooftilesWood0005_2_S.png
+
+
+
+newmtl material_565-effect_out_0_6E339CC8.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 50.000000 50.000000 50.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd out_0_6E339CC8.png
+
+
+
+newmtl material_571-effect_WoodRough0106_2_S.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 50.000000 50.000000 50.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd WoodRough0106_2_S.png
+
+
+
+newmtl material_577-effect_WoodRough0106_2_S.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 50.000000 50.000000 50.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd WoodRough0106_2_S.png
+
+
+
+newmtl ns649_Material_003_60-effect_panneau_col.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd panneau_col.png
+
+
+newmtl ns651_Material_002_52-effect_WoodRough0106_2_S.png
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd WoodRough0106_2_S.png
+
+

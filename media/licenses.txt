@@ -1,7 +1,0 @@
-sounds/pop.wav is an edited version of
-
-http://www.freesound.org/people/Ch0cchi/sounds/15349/
-
-fonts/notifications.ttf is "Averia", downloaded from
-
-http://openfontlibrary.org/font/averia
