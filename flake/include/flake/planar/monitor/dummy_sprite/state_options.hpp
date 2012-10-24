@@ -1,7 +1,7 @@
 #ifndef FLAKE_PLANAR_MONITOR_DUMMY_SPRITE_STATE_OPTIONS_HPP_INCLUDED
 #define FLAKE_PLANAR_MONITOR_DUMMY_SPRITE_STATE_OPTIONS_HPP_INCLUDED
 
-#include <flake/planar/monitor/dummy_sprite/choices.hpp>
+#include <flake/planar/monitor/dummy_sprite/state_choices.hpp>
 #include <sge/sprite/state/options.hpp>
 
 
