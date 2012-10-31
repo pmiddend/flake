@@ -238,7 +238,7 @@ flake::postprocessing::context::viewport_callback()
 			sge::renderer::texture::planar_parameters(
 				target_size,
 				sge::renderer::texture::color_format(
-					sge::image::color::format::r32f,
+					sge::image::color::format::rgba32f,
 					sge::renderer::texture::emulate_srgb::no),
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags_field::null(),
