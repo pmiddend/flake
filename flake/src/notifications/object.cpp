@@ -141,7 +141,8 @@ flake::notifications::object::render(
 			text_content,
 			text_parameters,
 			sge::font::vector::null(),
-			text_color);
+			text_color,
+			sge::renderer::texture::emulate_srgb::no);
 
 		static_text.pos(
 			sge::font::vector(

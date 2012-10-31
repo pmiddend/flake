@@ -117,7 +117,8 @@ flake::skydome::object::object(
 			renderer_,
 			_image_system,
 			sge::renderer::texture::mipmap::off(),
-			sge::renderer::resource_flags_field::null())),
+			sge::renderer::resource_flags_field::null(),
+			sge::renderer::texture::emulate_srgb::no)),
 	shader_(
 		_shader_context,
 		*vertex_declaration_,

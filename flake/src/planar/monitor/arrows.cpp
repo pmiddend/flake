@@ -130,7 +130,8 @@ flake::planar::monitor::arrows::arrows(
 		sge::font::text_parameters(
 			sge::font::align_h::left),
 		sge::font::vector::null(),
-		child::parent().font_color().get())
+		child::parent().font_color().get(),
+		sge::renderer::texture::emulate_srgb::no)
 {
 	box_parent_.push_back_child(
 		font_box_,

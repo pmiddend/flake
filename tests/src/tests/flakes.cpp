@@ -380,7 +380,8 @@ flake::tests::flakes::flakes(
 					this->image_system(),
 					sge::renderer::texture::mipmap::all_levels(
 						sge::renderer::texture::mipmap::auto_generate::yes),
-					sge::renderer::resource_flags_field::null()))),
+					sge::renderer::resource_flags_field::null(),
+					sge::renderer::texture::emulate_srgb::no))),
 		flake::volume::snow_cover::flat_texture(
 			sge::renderer::texture::planar_shared_ptr(
 				sge::renderer::texture::create_planar_from_path(
@@ -395,7 +396,8 @@ flake::tests::flakes::flakes(
 					this->image_system(),
 					sge::renderer::texture::mipmap::all_levels(
 						sge::renderer::texture::mipmap::auto_generate::yes),
-					sge::renderer::resource_flags_field::null()))),
+					sge::renderer::resource_flags_field::null(),
+					sge::renderer::texture::emulate_srgb::no))),
 		flake::volume::snow_cover::sun_direction(
 			sge::parse::json::find_and_convert_member<sge::renderer::vector3>(
 				this->configuration(),

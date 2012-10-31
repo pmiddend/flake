@@ -245,8 +245,9 @@ flakelib::volume::conversion::object::binvox_file_to_buffer(
 	flakelib::volume::conversion::optional_height const &_optional_height)
 {
 	std::cout << "binvox_file_to_buffer\n";
-	boost::filesystem::fstream input_file(
-		_path);
+	boost::filesystem::ifstream input_file(
+		_path,
+		std::ios::binary);
 
 	if(!input_file.is_open())
 		throw

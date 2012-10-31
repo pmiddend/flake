@@ -80,7 +80,8 @@ flake::test::information::manager::render(
 		sge::font::text_parameters(
 			sge::font::align_h::left),
 		sge::font::vector::null(),
-		color_);
+		color_,
+		sge::renderer::texture::emulate_srgb::no);
 
 	text.pos(
 		sge::font::vector(

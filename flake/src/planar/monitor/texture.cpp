@@ -58,7 +58,9 @@ flake::planar::monitor::texture::texture(
 			sge::renderer::texture::planar_parameters(
 				fcppt::math::dim::structure_cast<sge::renderer::dim2>(
 					_grid_dimensions.get()),
-				sge::image::color::format::rgba32f,
+				sge::renderer::texture::color_format(
+					sge::image::color::format::rgba32f,
+					sge::renderer::texture::emulate_srgb::no),
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags_field::null(),
 				sge::renderer::texture::capabilities_field::null()))),
@@ -119,7 +121,8 @@ flake::planar::monitor::texture::texture(
 		sge::font::text_parameters(
 			sge::font::align_h::left),
 		sge::font::vector::null(),
-		child::parent().font_color().get())
+		child::parent().font_color().get(),
+		sge::renderer::texture::emulate_srgb::no)
 {
 	box_parent_.push_back_child(
 		font_box_,

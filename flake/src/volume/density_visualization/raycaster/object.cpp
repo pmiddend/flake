@@ -116,7 +116,9 @@ flake::volume::density_visualization::raycaster::object::object(
 				fcppt::math::dim::structure_cast<sge::renderer::dim2>(
 					flakelib::volume::conversion::planar_size_from_volume_size(
 						_grid_size.get())),
-				sge::image::color::format::r32f,
+				sge::renderer::texture::color_format(
+					sge::image::color::format::r32f,
+					sge::renderer::texture::emulate_srgb::no),
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags_field(
 			//		sge::renderer::resource_flags_field::null()),

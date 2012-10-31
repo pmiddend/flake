@@ -213,7 +213,9 @@ flake::postprocessing::context::viewport_callback()
 		renderer_.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
 				target_size / downsample_factor,
-				sge::image::color::format::r32f,
+				sge::renderer::texture::color_format(
+					sge::image::color::format::r32f,
+					sge::renderer::texture::emulate_srgb::no),
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags_field::null(),
 				sge::renderer::texture::capabilities_field(
@@ -223,7 +225,9 @@ flake::postprocessing::context::viewport_callback()
 		renderer_.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
 				target_size / downsample_factor,
-				sge::image::color::format::r32f,
+				sge::renderer::texture::color_format(
+					sge::image::color::format::r32f,
+					sge::renderer::texture::emulate_srgb::no),
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags_field::null(),
 				sge::renderer::texture::capabilities_field(
@@ -233,7 +237,9 @@ flake::postprocessing::context::viewport_callback()
 		renderer_.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
 				target_size,
-				sge::image::color::format::rgba32f,
+				sge::renderer::texture::color_format(
+					sge::image::color::format::r32f,
+					sge::renderer::texture::emulate_srgb::no),
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags_field::null(),
 				sge::renderer::texture::capabilities_field(

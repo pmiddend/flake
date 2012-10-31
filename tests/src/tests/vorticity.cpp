@@ -135,7 +135,8 @@ flake::tests::vorticity::vorticity(
 			boundary_image_file_->view(),
 			sge::renderer::texture::mipmap::off(),
 			sge::renderer::resource_flags_field(
-				sge::renderer::resource_flags_field::null()))),
+				sge::renderer::resource_flags_field::null()),
+			sge::renderer::texture::emulate_srgb::no)),
 	monitor_parent_(
 		this->renderer(),
 		this->shader_context(),
