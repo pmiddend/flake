@@ -71,7 +71,7 @@ flake::tests::flakes::flakes(
 	flake::test::base(
 		_function_context,
 		sge::window::title(
-			FCPPT_TEXT("Flakes test")),
+			FCPPT_TEXT("flake: Flakes test")),
 		flake::test::json_identifier(
 			FCPPT_TEXT("flakes")),
 		fcppt::assign::make_container<test::feature_sequence>

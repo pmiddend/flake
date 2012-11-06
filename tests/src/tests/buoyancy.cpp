@@ -61,7 +61,7 @@ flake::tests::buoyancy::buoyancy(
 	flake::test::base(
 		_function_context,
 		sge::window::title(
-			FCPPT_TEXT("buoyancy 2D Stam simulation")),
+			FCPPT_TEXT("flake: buoyancy 2D Stam simulation")),
 		flake::test::json_identifier(
 			FCPPT_TEXT("planar-buoyancy")),
 		flake::test::feature_sequence(),

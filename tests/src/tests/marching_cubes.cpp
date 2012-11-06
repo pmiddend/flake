@@ -67,7 +67,7 @@ flake::tests::marching_cubes::marching_cubes(
 	flake::test::base(
 		_function_context,
 		sge::window::title(
-			FCPPT_TEXT("marching_cubes test")),
+			FCPPT_TEXT("flake: marching_cubes test")),
 		flake::test::json_identifier(
 			FCPPT_TEXT("marching-cubes")),
 		fcppt::assign::make_container<flake::test::feature_sequence>

@@ -61,7 +61,7 @@ flake::tests::vorticity::vorticity(
 	flake::test::base(
 		_function_context,
 		sge::window::title(
-			FCPPT_TEXT("vorticity 2D Stam simulation")),
+			FCPPT_TEXT("flake: vorticity 2D Stam simulation")),
 		flake::test::json_identifier(
 			FCPPT_TEXT("planar-vorticity")),
 		flake::test::feature_sequence(),

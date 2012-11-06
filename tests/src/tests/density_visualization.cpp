@@ -50,7 +50,7 @@ flake::tests::density_visualization::density_visualization(
 	flake::test::base(
 		_function_context,
 		sge::window::title(
-			FCPPT_TEXT("density_visualization test")),
+			FCPPT_TEXT("flake: density visualization test")),
 		flake::test::json_identifier(
 			FCPPT_TEXT("density-visualization")),
 		test::feature_sequence(),

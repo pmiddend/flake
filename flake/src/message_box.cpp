@@ -1,11 +1,9 @@
 #include <flake/message_box.hpp>
 #include <fcppt/config/platform.hpp>
 #include <fcppt/text.hpp>
-
-#ifdef FCPPT_CONFIG_WINDOWS_PLATFORM
-#include <fcppt/config/include_windows.hpp>
-#endif
-
+#include <fcppt/config/external_begin.hpp>
+#include <windows.h>
+#include <fcppt/config/external_end.hpp>
 #include <fcppt/io/cerr.hpp>
 
 void
