@@ -116,7 +116,7 @@ flake::tests::flakes::flakes(
 		sge::camera::first_person::parameters(
 			this->keyboard(),
 			this->mouse(),
-			sge::camera::first_person::is_active(
+			sge::camera::is_active(
 				true),
 			sge::camera::first_person::movement_speed(
 				sge::parse::json::find_and_convert_member<sge::renderer::scalar>(

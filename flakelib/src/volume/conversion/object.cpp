@@ -175,8 +175,9 @@ flakelib::volume::conversion::object::raw_voxel_file_to_buffer(
 				_raw_voxel_file_dimension.get(),
 				_raw_voxel_file_dimension.get())));
 
-	boost::filesystem::fstream input_file(
-		_path);
+	boost::filesystem::ifstream input_file(
+		_path,
+		std::ios::binary);
 
 	if(!input_file.is_open())
 		throw

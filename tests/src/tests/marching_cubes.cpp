@@ -92,7 +92,7 @@ flake::tests::marching_cubes::marching_cubes(
 		sge::camera::first_person::parameters(
 			this->keyboard(),
 			this->mouse(),
-			sge::camera::first_person::is_active(
+			sge::camera::is_active(
 				true),
 			sge::camera::first_person::movement_speed(
 				1.0f),

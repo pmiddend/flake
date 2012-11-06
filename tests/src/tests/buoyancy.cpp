@@ -247,7 +247,7 @@ flake::tests::buoyancy::buoyancy(
 				0.0f),
 			sge::renderer::projection::far(
 				10.0f),
-			sge::camera::ortho_freelook::is_active(
+			sge::camera::is_active(
 				true))),
 	projection_rectangle_from_viewport_(
 		freelook_camera_,

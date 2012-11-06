@@ -100,21 +100,14 @@
 				"texture-tile-count" : 4
 			},
 			"gravity-magnitude" : 2.0,
-			"collision-increment-real" : 1.0,
+			"collision-increment-real" : 0.01,
 			"collision-increment-test" : 1.0,
-			"collision-increment" : 0.1,
+			"collision-increment" : 0.001,
 			"sun-direction" : [0.666667,-0.333333,-0.666667],
-		        "fog-color" : [0.3,0.3,0.3],
-		        "fog-density" : 0.01,
+		    "fog-color" : [0.3,0.3,0.3],
+		    "fog-density" : 0.01,
 			"iso-level" : 0.2,
-			"scene-name" : "house",
-			"obstacles" :
-			[
-				{
-					"left-bottom-back-position" : [30,0,30],
-					"bounding-box-size" : [10,10,10]
-				}
-			],
+			"scene-name" : "avz_lowpoly",
 			"features" :
 			{
 				"paused" : false,

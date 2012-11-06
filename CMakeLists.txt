@@ -29,6 +29,9 @@ if(
 		-D BOOST_FUSION_DONT_USE_PREPROCESSED_FILES
 	)
 endif()
+
+add_definitions(
+	-DBOOST_THREAD_VERSION=3)
 # boost end
 
 if(MSVC)
