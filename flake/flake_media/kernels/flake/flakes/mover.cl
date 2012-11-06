@@ -293,9 +293,11 @@ FLAKELIB_KERNEL_NAME(move)(
 		velocities[get_global_id(0)] +=
 			time_delta *
 			(
+			 /*
 				gravity_force(
 					gravity_magnitude,
 					normalized_size) +
+					*/
 				drag_force(
 					normalized_size,
 					current_fluid_velocity) +
