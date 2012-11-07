@@ -1,1 +1,50 @@
-../../../../modelling/avz_lowpoly/AVZ.mtl
+# Blender MTL File: 'avz_lowpoly.blend'
+# Material Count: 4
+newmtl _fensterfront.png_fensterfront.png.002
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.507317 0.507317 0.507317
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd fensterfront.png
+
+
+newmtl _gravel.jpg
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+Ke 0.000000
+map_Kd gravel.png
+
+
+newmtl _kachel_grau.png_kachel_grau.png.002
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.800000 0.800000 0.800000
+Ni 1.000000
+d 1.000000
+illum 2
+Ke 0.000000
+map_Kd kachel_grau.png
+
+
+newmtl _wandsegment.png_wandsegment.png.002
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+Ke 0.000000
+map_Kd wandsegment.png
+
+
