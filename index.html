@@ -1,1 +1,159 @@
-My GitHub Page
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+       "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+	<link rel="stylesheet" type="text/css" href="stylesheet.css">
+
+	<style type="text/css">
+.picture { background-color: #F9F9F9;
+border: 1px solid #CCCCCC; padding: 3px;
+font: 11px/1.4em Arial, sans-serif; }
+.picture img { border: 1px solid #CCCCCC;
+vertical-align:middle; margin-bottom: 3px; }
+.right { margin: 0.5em 0pt 0.5em 0.8em; float:right;clear:right;; }
+.left { margin: 0.5em 0.8em 0.5em 0; float:left;clear:left; }
+</style>
+
+    <title>Flake: Echtzeit-Simulation von Windfeldern mit OpenCL zur Modellierung von Schneefall</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </head>
+  <body>
+	<img src="uni_logo.svg" width="300px" alt="Universität Osnabrück">
+	<hr>
+	<table>
+	  <tr>
+	  <td>
+		<img src="profilfoto.jpg" width="150px" style="margin:0.2em" alt="Philipp Middendorf">
+	  </td>
+	  <td style="vertical-align:top">
+		<span style="font-weight:bold;font-size:2em">Flake: Echtzeit-Simulation von Windfeldern mit OpenCL zur Modellierung von Schneefall</span><br>
+		Diplomarbeit von <em><a href="mailto:pmidden@gmx.net">Philipp Middendorf</a></em><br>
+		Betreuer: <a href="http://www.inf.uos.de/oliver/"><em>Prof. Dr. Oliver Vornberger</em></a><br>
+		<a href="http://pmiddend.github.com/flake/flake.pdf">PDF-Version der Arbeit</a>
+	  </td>
+	  </tr>
+	  </table>
+	  <hr>
+	<h2>Zusammenfassung</h2>
+	<p>
+		Die Diplomarbeit entstand in der Arbeitsgruppe Medieninformatik
+		an der Universität Osnabrück im Bereich Computergrafik und beschäftigt
+		sich mit der Simulation von Schneefall.
+	</p>
+	<p style="text-align:center;">
+		<div class="picture" style="width:400px;margin-left:auto;margin-right:auto;"> <img src="heftiger_schneefall.jpg" width="400" alt="Heftiger Schneefall"> <br>Heftiger Schneefall in Atlanta, Georgia.</div>
+	</p>
+	<table>
+	  <tr>
+		<td style="vertical-align:top;text-align:justify;">
+		Um Schneeflocken realistische Flugbahnen zu geben, wird mit Hilfe des
+		OpenCL-Frameworks ein Verfahren aus der numerischen
+		Strömungsmechanik auf der Grafikkarte umgesetzt.<br>Das Verfahren erzeugt
+		ein Feld, welches Richtung und Stärke des Windes an jedem Punkt im
+		Simulationsbereich enthält. Mit Hilfe dieses Feldes wird der Einfluss
+		des Windes auf die Schneeflocken berechnet (siehe
+		rechts). <br>Das Feld wird in Echtzeit während des
+		Simulationsverlaufs
+		neu berechnet. Dadurch lassen sich Parameter wie die
+		Windrichtung dynamisch anpassen und könnten auch aus einer
+		Wetterdatenbank den aktuellen Gegebenheiten angepasst
+		werden.<br>Das verwendete Verfahren ist rechnerisch sehr
+		aufwändig, es wird daher eine aktuelle Grafikkarte
+		benötigt, um eine flüssige Simulation zu erhalten. Die
+		Rechengenauigkeit ist jedoch an die Performancecharakteristik
+		der verwendeten Grafikkarte anpassbar.
+		</td>
+	  <td>
+<div class="picture right" style="width:300px"> <img src="wind_field.png" width="300" alt="Ein zweidimensionales Windfeld">Ein zweidimensionales Windfeld, welches um ein Hindernis strömt</div>
+  </td>
+</tr>
+	  </table>
+	<table>
+	  <tr>
+	  <td>
+		<div class="picture left" style="width:300px"> <img src="partikelkraefte.png" width="300" alt="Kräfte, die auf ein Partikel wirken"> <br>Die auf eine einzelne Flocke wirkenden Kräfte</div>
+		</td>
+	  <td style="vertical-align:top;text-align:justify;">
+		Die Schneeflocken werden als Partikelsystem modelliert,
+		d.h. jede Flocke wird mit ihren Eigenschaften einzeln
+		modelliert und bewegt. Die Partikel werden mit Hilfe des
+		OpenGL-Frameworks dargestellt. Geschwindigkeit und Position
+		der Schneeflocken werden direkt auf der Grafikkarte mit Hilfe
+		von OpenCL verändert. In die Berechnung der auf die Flocken
+		wirkenden Kräfte fließen Schwerkraft, Windgeschwindigkeit und
+		Auftrieb ein.<br>Die Schneeflocken beeinflussen sich
+		gegenseitig nicht und lassen sich so unabhängig voneinander
+		parallel abarbeiten. Dies ermöglicht es, eine große Anzahl von
+		Partikeln (bis zu 1.000.000 Objekte) gleichzeitig im Raum zu
+		verteilen und darzustellen.
+		</div>
+		</td>
+	  </tr>
+	  </table>
+	<table>
+	  <tr><td style="vertical-align:top;text-align:justify;">
+		Durch das Auftreffen der Flocken auf ein Hindernis wird zudem
+		die dynamische Generierung einer Schneedecke angestoßen. Es
+		werden die Kollisionen von Flocken mit Hindernissen wie dem
+		Boden gezählt. Diese Statistik wird mit Hilfe des
+		Marching-Cube-Algorithmus in ein geschlossenes Dreiecksmesh
+		umgewandelt. Dieses Dreiecksmesh wird mit Hilfe triplanarer
+		Texturierung mit einer optisch ansprechenden Oberfläche
+		versehen.
+		</td>
+		<td>
+		<div class="picture right" style="width:400px"> <img src="triplanar_mountain.jpg" width="400" alt="Die triplanare Texturierung"> <br>Triplanare Texturierung sorgt dafür, dass steilere Oberflächen eine rauere Textur bekommen</div>
+		</td>
+		</tr>
+	  </table>
+	<hr>
+	<h1>Screenshots</h1>
+	<p>
+	  Klicken, um die Bilder zu vergrößern.
+	</p>
+	<p>
+	  <a href="ingame_many_flakes.jpg"><img src="ingame_many_flakes_thumb.jpg" alt="Screenshot 1"></a>
+	  <a href="ingame_snow_cover.jpg"><img src="ingame_snow_cover_thumb.jpg" alt="Screenshot 2"></a>
+	</p>
+	<hr>
+	<h1>Video</h1>
+	<p>
+	  Kommt noch.
+	</p>
+	<hr>
+	<h1>Code</h1>
+	<p>
+	  Der Code steht öffentlich
+	  bei <a href="http://github.com">github</a> zur Verfügung. Die
+	  strömungsmechanischen Verfahren wurden in eine eigene
+	  Bibliothek, flakelib, ausgelagert, um sie einfach in andere
+	  Anwendungen integrieren zu können.
+    </p>
+	<p>
+	  <table cellpadding="3">
+		<tr><td><strong>Lizenz:</strong></td><td>GPLv3</td></tr>
+		<tr><td><strong>Betriebssysteme:</strong></td><td>Windows, Linux</td></tr>
+		<tr>
+		  <td>
+			<strong>Link zum git-Repository</strong>:
+		  </td>
+		  <td>
+			<a href="http://github.com/pmiddend/flake">
+			http://github.com/pmiddend/flake
+			</a>
+			</td>
+		</tr>
+		<tr>
+		  <td>
+			<strong>Windows-Binärpaket als zip-Datei (26MB):</strong><br>
+			<span style="font-size:0.8em"><em>Voraussetzungen: Windows 7 64-Bit, OpenCL-fähige Grafikkarte</em></span>
+		  </td>
+		  <td style="vertical-align:top;">
+			<a href="http://pmiddend.github.com/flake/flake_release_107.zip">Version 107</a>
+		  </td>
+		</tr>
+	  </table>
+	</p>
+  </body>
+</html>
+
