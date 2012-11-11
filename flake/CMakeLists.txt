@@ -92,6 +92,7 @@ set(
 	flake/include/flake/skydome/vf/texcoord.hpp
 	flake/include/flake/skydome/y_translation.hpp
 	flake/include/flake/test/base.hpp
+#	flake/include/flake/test/camera_manager.hpp
 	flake/include/flake/test/feature.hpp
 	flake/include/flake/test/feature_fwd.hpp
 	flake/include/flake/test/feature_sequence.hpp
@@ -179,6 +180,7 @@ set(
 	flake/src/save_l8_texture_to_file.cpp
 	flake/src/skydome/object.cpp
 	flake/src/test/base.cpp
+#	flake/src/test/camera_manager.cpp
 	flake/src/test/feature.cpp
 	flake/src/test/information/manager.cpp
 	flake/src/test/information/object.cpp
