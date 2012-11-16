@@ -1,8 +1,9 @@
 #include <flake/catch_statements.hpp>
+#include <flake/volume/snow_cover/parallel_update.hpp>
 #include <flake/media_path_from_string.hpp>
 #include <flake/test/information/string_conversion_adapter.hpp>
-#include <flake/volume/snow_cover/scoped.hpp>
 #include <flake/tests/flakes.hpp>
+#include <flake/volume/snow_cover/scoped.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <flakelib/marching_cubes/vf/format.hpp>
@@ -35,6 +36,7 @@
 #include <fcppt/insert_to_fcppt_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/ref.hpp>
+#include <fcppt/cref.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/deg_to_rad.hpp>
@@ -112,37 +114,14 @@ flake::tests::flakes::flakes(
 			this->configuration(),
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("simulation-size")))),
-	camera_(
-		sge::camera::first_person::parameters(
-			this->keyboard(),
-			this->mouse(),
-			sge::camera::is_active(
-				true),
-			sge::camera::first_person::movement_speed(
-				sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
-					this->configuration(),
-					sge::parse::json::string_to_path(
-						FCPPT_TEXT("camera-movement-speed")))),
-			sge::camera::coordinate_system::identity())),
-	perspective_projection_from_viewport_(
-		camera_,
-		this->viewport_manager(),
-		sge::renderer::projection::near(
-			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("near-plane")))),
-		sge::renderer::projection::far(
-			sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
-				this->configuration(),
-				sge::parse::json::string_to_path(
-					FCPPT_TEXT("far-plane")))),
-		sge::renderer::projection::fov(
-			fcppt::math::deg_to_rad(
-				sge::parse::json::find_and_convert_member<sge::renderer::scalar>(
-					this->configuration(),
-					sge::parse::json::string_to_path(
-						FCPPT_TEXT("fov")))))),
+	camera_manager_(
+		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
+			this->configuration(),
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("camera"))),
+		this->keyboard(),
+		this->mouse(),
+		this->viewport_manager()),
 	fill_buffer_(
 		this->program_context()),
 	splatter_(
@@ -152,7 +131,7 @@ flake::tests::flakes::flakes(
 	arrows_manager_(
 		this->renderer(),
 		this->shader_context(),
-		camera_),
+		camera_manager_.camera()),
 	velocity_arrows_(
 		this->opencl_system().context(),
 		arrows_manager_,
@@ -250,7 +229,7 @@ flake::tests::flakes::flakes(
 		flake::skydome::texture_path(
 			flake::media_path_from_string(
 				FCPPT_TEXT("textures/sky.png"))),
-		camera_,
+		camera_manager_.camera(),
 		flake::skydome::longitude(
 			40u),
 		flake::skydome::latitude(
@@ -265,7 +244,7 @@ flake::tests::flakes::flakes(
 	flakes_(
 		this->renderer(),
 		this->shader_context(),
-		camera_,
+		camera_manager_.camera(),
 		this->opencl_system().context(),
 		this->image_system(),
 		flake::volume::flakes::count(
@@ -333,7 +312,7 @@ flake::tests::flakes::flakes(
 		scene_manager_,
 		this->viewport_manager(),
 		this->charconv_system(),
-		camera_,
+		camera_manager_.camera(),
 		sge::scenic::scene::from_blender_file(
 			flake::media_path_from_string(
 				FCPPT_TEXT("scenes/")+
@@ -357,7 +336,7 @@ flake::tests::flakes::flakes(
 		flakelib::volume::boundary_buffer_view(
 			boundary_buffer_->value())),
 	snow_cover_(
-		camera_,
+		camera_manager_.camera(),
 		this->renderer(),
 		marching_cubes_manager_.vertex_declaration(),
 		this->shader_context(),
@@ -423,9 +402,20 @@ flake::tests::flakes::flakes(
 					FCPPT_TEXT("iso-level"))))),
 */
 	snow_cover_parallel_update_(
-		marching_cubes_manager_,
-		this->opencl_system().command_queue(),
-			snow_density_view_),
+		sge::parse::json::find_and_convert_member<bool>(
+			this->configuration(),
+			sge::parse::json::string_to_path(
+				FCPPT_TEXT("update-snow-cover")))
+		?
+			fcppt::make_unique_ptr<flake::volume::snow_cover::parallel_update>(
+				fcppt::ref(
+					marching_cubes_manager_),
+				fcppt::ref(
+					this->opencl_system().command_queue()),
+				fcppt::cref(
+					snow_density_view_))
+		:
+			fcppt::unique_ptr<flake::volume::snow_cover::parallel_update>()),
 /*
 		flake::volume::flakes::snow_density_view(
 			flakelib::volume::float_view(
@@ -583,7 +573,7 @@ flake::tests::flakes::update()
 				this->current_multiplier().get()) *
 			raw_delta);
 
-	camera_.update(
+	camera_manager_.update(
 		40.0f * raw_delta);
 
 	if(this->current_multiplier().get())
@@ -640,8 +630,11 @@ flake::tests::flakes::update()
 				boundary_buffer_->value()),
 			current_flake_count_);
 
-		if(sge::timer::reset_when_expired(snow_cover_update_) && this->feature_active(test::json_identifier(FCPPT_TEXT("marchingcubes"))))
-			snow_cover_parallel_update_.restart_if_finished();
+		if(
+			snow_cover_parallel_update_ &&
+			sge::timer::reset_when_expired(snow_cover_update_) &&
+			this->feature_active(test::json_identifier(FCPPT_TEXT("marchingcubes"))))
+			snow_cover_parallel_update_->restart_if_finished();
 		/*
 		{
 			snow_cover_vertices_ =

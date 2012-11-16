@@ -3,6 +3,7 @@
 
 #include <flake/skydome/object.hpp>
 #include <flake/test/base.hpp>
+#include <flake/test/camera_manager.hpp>
 #include <flake/test/information/object.hpp>
 #include <flake/volume/arrows/manager.hpp>
 #include <flake/volume/arrows/object.hpp>
@@ -10,7 +11,7 @@
 #include <flake/volume/flakes/mover.hpp>
 #include <flake/volume/flakes/snow_density_view.hpp>
 #include <flake/volume/snow_cover/object.hpp>
-#include <flake/volume/snow_cover/parallel_update.hpp>
+#include <flake/volume/snow_cover/parallel_update_fwd.hpp>
 #include <flakelib/marching_cubes/cpu/object.hpp>
 #include <flakelib/marching_cubes/gpu/manager.hpp>
 #include <flakelib/marching_cubes/gpu/object.hpp>
@@ -30,8 +31,6 @@
 #include <flakelib/volume/simulation/stam/semilagrangian_advection.hpp>
 #include <flakelib/volume/simulation/stam/subtract_pressure_gradient.hpp>
 #include <flakelib/volume/simulation/stam/wind_source.hpp>
-#include <sge/camera/perspective_projection_from_viewport.hpp>
-#include <sge/camera/first_person/object.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>
 #include <sge/opencl/dim3.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
@@ -67,8 +66,7 @@ public:
 	~flakes();
 private:
 	flakelib::volume::grid_size const simulation_size_;
-	sge::camera::first_person::object camera_;
-	sge::camera::perspective_projection_from_viewport perspective_projection_from_viewport_;
+	flake::test::camera_manager camera_manager_;
 	flakelib::utility::fill_buffer fill_buffer_;
 	flakelib::splatter::object splatter_;
 	flakelib::volume::conversion::object conversion_object_;
@@ -102,7 +100,7 @@ private:
 		//flakelib::marching_cubes::gpu::manager marching_cubes_manager_;
 	flakelib::marching_cubes::cpu::object marching_cubes_manager_;
 	flake::volume::snow_cover::object snow_cover_;
-	flake::volume::snow_cover::parallel_update snow_cover_parallel_update_;
+	fcppt::scoped_ptr<flake::volume::snow_cover::parallel_update> snow_cover_parallel_update_;
 		//flakelib::marching_cubes::gpu::object marching_cubes_;
 	flakelib::value_modulator::object wind_strength_modulator_;
 

@@ -4,7 +4,7 @@
 		"notification-font-size" : 19,
 		"notification-ttl-ms" : 2000,
 		"information-font-size" : 14,
-		"window-size" : [1280,1024],
+		"window-size" : [854,480],
 		"desired-fps" : 60,
 		"opencl-compiler-flags" : "-cl-mad-enable -cl-fast-relaxed-math -Werror",
 		"planar-vorticity" :
@@ -78,20 +78,27 @@
 				"steep-texture" : "snow_rough",
 				"flat-texture" : "snow_calm"
 			},
+			"update-snow-cover" : false,
+			"camera" : {
+				"keyframe-import-path" : null,
+				"loop-keyframes" : true,
+				"camera-movement-speed" : 1.0,
+				"near-plane" : 1.0,
+				"far-plane" : 1000.0,
+				"fov" : 60.0,
+				"keyframe-export-path" : null,
+				"keyframe-interval" : 0.25
+			},
 			"arrow-scale" : 1.0,
 			"grid-scale" : 1.0,
-			"wind-strength-start" : 0.0,
-			"wind-strength-mean" : -3.0,
+			"wind-strength-start" : 4.0,
+			"wind-strength-mean" : 4.0,
 			"wind-strength-variance" : 3.0,
 			"wind-strength-frequency-seconds" : 1.0,
 			"jacobi-iterations" : 20,
-			"near-plane" : 1.0,
-			"far-plane" : 1000.0,
-			"fov" : 60.0,
-			"camera-movement-speed" : 6.0,
 			"flakes" :
 			{
-				"start-count" : 1024,
+				"start-count" : 32768,
 				"maximum-count" : 32768,
 				"minimum-size" : 10.0,
 				"maximum-size" : 30.0,
@@ -166,7 +173,7 @@
 				}
 			],
 			"vorticity-strength" : 10.0,
-			"camera-movement-speed" : 400.0,
+			"camera-movement-speed" : 100.0,
 			"raycast-step-size" : 0.5,
 			"model-name" : "avz",
 			"buissnesq" :
