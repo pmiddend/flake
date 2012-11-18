@@ -335,10 +335,10 @@ function(
 	# This is, of course, extremely overlinked
 	target_link_libraries(
 		${TARGETNAME}
-		${Fcppt_core_LIBRARIES}
-		${Fcppt_filesystem_LIBRARIES}
-		${Awl_LIBRARIES}
-		${SGE_LIBRARIES}
+		${fcppt_core_TARGET}
+		${fcppt_filesystem_TARGET}
+		${awl_TARGET}
+		${sge_TARGETS}
 		${OPENCL_LIBRARIES}
 		${OPENGL_gl_LIBRARY}
 		${Boost_LIBRARIES})

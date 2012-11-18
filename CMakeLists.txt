@@ -48,11 +48,11 @@ endif()
 
 # fcppt begin
 find_package(
-	Fcppt REQUIRED)
+	fcppt REQUIRED)
 include_directories(
-	${Fcppt_INCLUDE_DIRS})
+	${fcppt_INCLUDE_DIRS})
 add_definitions(
-	${Fcppt_DEFINITIONS})
+	${fcppt_DEFINITIONS})
 # fcppt end
 
 # cg begin
@@ -92,16 +92,16 @@ add_definitions(
 
 # awl begin
 find_package(
-	Awl REQUIRED)
+	awl REQUIRED)
 include_directories(
-	${Awl_INCLUDE_DIR})
+	${awl_INCLUDE_DIR})
 add_definitions(
-	${Awl_DEFINITIONS})
+	${awl_DEFINITIONS})
 # awl end
 
 # sge begin
 find_package(
-	SGE REQUIRED COMPONENTS
+	sge REQUIRED COMPONENTS
 	opencl
 	config
 	image
@@ -134,9 +134,9 @@ find_package(
 )
 
 include_directories(
-  ${SGE_INCLUDE_DIRS})
+  ${sge_INCLUDE_DIRS})
 add_definitions(
-  ${SGE_DEFINITIONS})
+  ${sge_DEFINITIONS})
 # sge end
 
 # get rid of a pretty useless warning

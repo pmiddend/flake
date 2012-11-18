@@ -20,11 +20,11 @@ target_link_libraries(
 	tests_vorticity
 	${FLAKELIB_DEFAULT_LINK_TARGET}
 	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
+	${fcppt_core_TARGET}
+	${fcppt_filesystem_TARGET}
 	${Cg_LIBRARIES}
-	${Awl_LIBRARIES}
-	${SGE_LIBRARIES}
+	${awl_TARGET}
+	${sge_TARGETS}
 	${OPENCL_LIBRARIES}
 	${OPENGL_gl_LIBRARY}
 	${Boost_LIBRARIES})
@@ -46,11 +46,11 @@ target_link_libraries(
 	tests_buoyancy
 	${FLAKELIB_DEFAULT_LINK_TARGET}
 	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${Awl_LIBRARIES}
+	${fcppt_core_TARGET}
+	${fcppt_filesystem_TARGET}
+	${awl_TARGET}
 	${Cg_LIBRARIES}
-	${SGE_LIBRARIES}
+	${sge_TARGETS}
 	${OPENCL_LIBRARIES}
 	${OPENGL_gl_LIBRARY}
 	${Boost_LIBRARIES})
@@ -72,13 +72,13 @@ target_link_libraries(
 	tests_flakes
 	${FLAKELIB_DEFAULT_LINK_TARGET}
 	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
+	${fcppt_core_TARGET}
+	${fcppt_filesystem_TARGET}
 	${Cg_LIBRARIES}
 	${OPENCL_LIBRARIES}
-	${Awl_LIBRARIES}
+	${awl_TARGET}
 	${OPENGL_gl_LIBRARY}
-	${SGE_LIBRARIES}
+	${sge_TARGETS}
 	${Boost_LIBRARIES})
 
 install(
@@ -98,11 +98,11 @@ target_link_libraries(
 	tests_marching_cubes
 	${FLAKELIB_DEFAULT_LINK_TARGET}
 	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
+	${fcppt_core_TARGET}
+	${fcppt_filesystem_TARGET}
 	${Cg_LIBRARIES}
-	${Awl_LIBRARIES}
-	${SGE_LIBRARIES}
+	${awl_TARGET}
+	${sge_TARGETS}
 	${OPENGL_gl_LIBRARY}
 	${OPENCL_LIBRARIES}
 	${Boost_LIBRARIES})
@@ -124,11 +124,11 @@ target_link_libraries(
 	tests_density_visualization
 	${FLAKELIB_DEFAULT_LINK_TARGET}
 	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
+	${fcppt_core_TARGET}
+	${fcppt_filesystem_TARGET}
 	${Cg_LIBRARIES}
-	${Awl_LIBRARIES}
-	${SGE_LIBRARIES}
+	${awl_TARGET}
+	${sge_TARGETS}
 	${OPENCL_LIBRARIES}
 	${OPENGL_gl_LIBRARY}
 	${Boost_LIBRARIES})
@@ -151,13 +151,13 @@ target_link_libraries(
 	tests_solipsistic
 	${FLAKELIB_DEFAULT_LINK_TARGET}
 	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
+	${fcppt_core_TARGET}
+	${fcppt_filesystem_TARGET}
 	${Cg_LIBRARIES}
-	${Awl_LIBRARIES}
+	${awl_TARGET}
 	${OPENCL_LIBRARIES}
 	${OPENGL_gl_LIBRARY}
-	${SGE_LIBRARIES}
+	${sge_TARGETS}
 	${Boost_LIBRARIES})
 
 install(
@@ -177,12 +177,12 @@ target_link_libraries(
 	tests_scan
 	${FLAKELIB_DEFAULT_LINK_TARGET}
 	flake_helper_library
-	${Fcppt_core_LIBRARIES}
-	${Fcppt_filesystem_LIBRARIES}
-	${Awl_LIBRARIES}
+	${fcppt_core_TARGET}
+	${fcppt_filesystem_TARGET}
+	${awl_TARGET}
 	${OPENGL_gl_LIBRARY}
 	${OPENCL_LIBRARIES}
-	${SGE_LIBRARIES}
+	${sge_TARGETS}
 	${Cg_LIBRARIES}
 	${Boost_LIBRARIES})
 
