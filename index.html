@@ -1,5 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-       "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
   <head>
 	<link rel="stylesheet" type="text/css" href="stylesheet.css">
@@ -18,7 +17,15 @@ vertical-align:middle; margin-bottom: 3px; }
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   </head>
   <body>
-	<img src="uni_logo.svg" width="300px" alt="Universität Osnabrück">
+	<table border=0 bgcolor="#c9dcff" width="100%" cellspacing=0 cellpadding=6>
+<tr><td rowspan=2><a href="http://www.uni-osnabrueck.de/">
+<img border=0 alt="Uni-Logo" src="unilogo.png"></a></td>
+<td align=center><font color="#0d0a60">
+<a href="/">Institut f&uuml;r Informatik</a>
+</font></td>
+</tr><tr><td align=center width="100%">
+<h1><font color="#0d0a60">Philipp Middendorf</font></h1></td></tr>
+</table>
 	<hr>
 	<table>
 	  <tr>
@@ -46,22 +53,32 @@ vertical-align:middle; margin-bottom: 3px; }
 	<table>
 	  <tr>
 		<td style="vertical-align:top;text-align:justify;">
+		<p>
 		Um Schneeflocken realistische Flugbahnen zu geben, wird mit Hilfe des
 		OpenCL-Frameworks ein Verfahren aus der numerischen
-		Strömungsmechanik auf der Grafikkarte umgesetzt.<br>Das Verfahren erzeugt
+		Strömungsmechanik auf der Grafikkarte umgesetzt.
+		</p>
+		<p>
+		Das Verfahren erzeugt
 		ein Feld, welches Richtung und Stärke des Windes an jedem Punkt im
 		Simulationsbereich enthält. Mit Hilfe dieses Feldes wird der Einfluss
 		des Windes auf die Schneeflocken berechnet (siehe
-		rechts). <br>Das Feld wird in Echtzeit während des
+		rechts).
+		</p>
+		<p>
+		Das Feld wird in Echtzeit während des
 		Simulationsverlaufs
 		neu berechnet. Dadurch lassen sich Parameter wie die
 		Windrichtung dynamisch anpassen und könnten auch aus einer
 		Wetterdatenbank den aktuellen Gegebenheiten angepasst
-		werden.<br>Das verwendete Verfahren ist rechnerisch sehr
+		werden.
+		</p>
+		<p>Das verwendete Verfahren ist rechnerisch sehr
 		aufwändig, es wird daher eine aktuelle Grafikkarte
 		benötigt, um eine flüssige Simulation zu erhalten. Die
 		Rechengenauigkeit ist jedoch an die Performancecharakteristik
 		der verwendeten Grafikkarte anpassbar.
+		</p>
 		</td>
 	  <td>
 <div class="picture right" style="width:300px"> <img src="wind_field.png" width="300" alt="Ein zweidimensionales Windfeld">Ein zweidimensionales Windfeld, welches um ein Hindernis strömt</div>
@@ -74,6 +91,7 @@ vertical-align:middle; margin-bottom: 3px; }
 		<div class="picture left" style="width:300px"> <img src="partikelkraefte.png" width="300" alt="Kräfte, die auf ein Partikel wirken"> <br>Die auf eine einzelne Flocke wirkenden Kräfte</div>
 		</td>
 	  <td style="vertical-align:top;text-align:justify;">
+	  <p>
 		Die Schneeflocken werden als Partikelsystem modelliert,
 		d.h. jede Flocke wird mit ihren Eigenschaften einzeln
 		modelliert und bewegt. Die Partikel werden mit Hilfe des
@@ -81,11 +99,15 @@ vertical-align:middle; margin-bottom: 3px; }
 		der Schneeflocken werden direkt auf der Grafikkarte mit Hilfe
 		von OpenCL verändert. In die Berechnung der auf die Flocken
 		wirkenden Kräfte fließen Schwerkraft, Windgeschwindigkeit und
-		Auftrieb ein.<br>Die Schneeflocken beeinflussen sich
+		Auftrieb ein.
+		</p>
+		<p>
+		Die Schneeflocken beeinflussen sich
 		gegenseitig nicht und lassen sich so unabhängig voneinander
 		parallel abarbeiten. Dies ermöglicht es, eine große Anzahl von
 		Partikeln (bis zu 1.000.000 Objekte) gleichzeitig im Raum zu
 		verteilen und darzustellen.
+		</p>
 		</div>
 		</td>
 	  </tr>
@@ -117,12 +139,16 @@ vertical-align:middle; margin-bottom: 3px; }
 	</p>
 	<hr>
 	<h1>Video</h1>
-	<p>
+	<!--
 	  <video controls>
 		<source src="video.webm" type="video/webm; codecs=vp8"></source>
 		<p><a href="video.webm">Download (als webm)</a></p>
 	  </video>
-	</p>
+	  -->
+<!-- copy and paste. Modify height and width if desired. --><iframe class="tscplayer_inline embeddedObject" name="tsc_player" scrolling="no" frameborder="0" type="text/html" style="overflow:hidden;" src="http://www.screencast.com/users/pimiddy/folders/Camtasia Studio/media/dd6818df-a198-4e5e-bd47-64c453ef3021/embed" height="480" width="854" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<p>
+<em>Es wird Flash benötigt. Auf "CC" klicken für Erläuterungen.</em>
+</p>
 	<hr>
 	<h1>Code</h1>
 	<p>
@@ -157,7 +183,10 @@ vertical-align:middle; margin-bottom: 3px; }
 		</tr>
 	  </table>
 	</p>
+	<hr>
+	<div>Weitere Informationen: [ <a href="http://www.informatik.uni-osnabrueck.de/prakt/">Medieninformatik</a> | <a href="http://www.informatik.uni-osnabrueck.de/">Informatik</a> | <a href="http://www.uni-osnabrueck.de/">Universit&auml;t Osnabr&uuml;ck</a> ]</div>
   </body>
 </html>
+
 
 

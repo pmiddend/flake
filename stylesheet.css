@@ -1,5 +1,23 @@
 body
 {
 	font-family: Arial, sans-serif;
-	margin-right:15%;
+	margin-right:0%;
+}
+
+.table {
+    width: 100%;
+}
+
+.th {
+    background: #0d0a60;
+    color: white;
+    /* font-weight: bold; */
+}
+
+.h4 {
+    font-weight: bold;
+}
+
+.portrait {
+    margin-left: 2cm;
 }
