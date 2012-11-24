@@ -210,6 +210,10 @@ add_library(
 	STATIC
 	${FLAKE_FILES_ABS})
 
+target_link_libraries(
+	flake_helper_library
+	${FLAKELIB_DEFAULT_LINK_TARGET})
+
 include(
 	SGECustomPath)
 
