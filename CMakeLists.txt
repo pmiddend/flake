@@ -114,6 +114,7 @@ find_package(
 	scenic
 	core
 	sprite
+	imagecolor
 	shader
 	camera
 	texture

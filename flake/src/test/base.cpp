@@ -14,7 +14,7 @@
 #include <sge/charconv/create_system.hpp>
 #include <sge/charconv/system.hpp>
 #include <sge/font/system.hpp>
-#include <sge/image/colors.hpp>
+#include <sge/image/color/predef.hpp>
 #include <sge/image/color/any/object.hpp>
 #include <sge/input/keyboard/device.hpp>
 #include <sge/input/keyboard/key_event.hpp>
@@ -270,7 +270,7 @@ flake::test::base::base(
 					FCPPT_TEXT("tests/information-font-size"))),
 			fcppt::ref(
 				this->renderer()),
-			sge::image::colors::white())),
+			sge::image::color::predef::white())),
 	memory_consumption_information_(
 		*information_manager_,
 		information::identifier(

@@ -7,7 +7,7 @@
 #include <sge/font/object.hpp>
 #include <sge/font/text.hpp>
 #include <sge/font/text_parameters.hpp>
-#include <sge/image/colors.hpp>
+#include <sge/image/color/predef.hpp>
 #include <sge/opencl/memory_object/flags_field.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/device/ffp.hpp>

@@ -6,7 +6,7 @@
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
-#include <sge/image/colors.hpp>
+#include <sge/image/color/predef.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
@@ -221,7 +221,7 @@ flake::tests::density_visualization::render(
 				sge::renderer::clear::depth_buffer_value(
 					1.0f))
 			.back_buffer(
-				sge::image::colors::black()));
+				sge::image::color::predef::black()));
 
 	raycaster_.render(
 		_context);

@@ -13,7 +13,7 @@
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/charconv/create_system.hpp>
 #include <sge/charconv/system.hpp>
-#include <sge/image/colors.hpp>
+#include <sge/image/color/predef.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/opencl/single_device_system/parameters.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>

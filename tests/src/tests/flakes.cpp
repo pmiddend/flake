@@ -12,7 +12,7 @@
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
-#include <sge/image/colors.hpp>
+#include <sge/image/color/predef.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
@@ -494,7 +494,7 @@ flake::tests::flakes::render(
 	_context.clear(
 		sge::renderer::clear::parameters()
 			.back_buffer(
-				sge::image::colors::grey())
+				sge::image::color::predef::grey())
 			.depth_buffer(
 				sge::renderer::clear::depth_buffer_value(
 					1.0f)));

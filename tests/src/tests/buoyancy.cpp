@@ -10,7 +10,7 @@
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/camera/ortho_freelook/parameters.hpp>
-#include <sge/image/colors.hpp>
+#include <sge/image/color/predef.hpp>
 #include <sge/image/view/const_object.hpp>
 #include <sge/image2d/file.hpp>
 #include <sge/image2d/system.hpp>
@@ -168,7 +168,7 @@ flake::tests::buoyancy::buoyancy(
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("monitor-font-size"))),
 		flake::planar::monitor::font_color(
-			sge::image::colors::black())),
+			sge::image::color::predef::black())),
 	planar_converter_(
 		this->program_context()),
 	velocity_arrows_(
@@ -381,7 +381,7 @@ flake::tests::buoyancy::render(
 	_context.clear(
 		sge::renderer::clear::parameters()
 			.back_buffer(
-				sge::image::colors::grey()));
+				sge::image::color::predef::grey()));
 
 	monitor_parent_.render(
 		_context,
