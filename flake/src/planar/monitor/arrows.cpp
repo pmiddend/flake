@@ -9,17 +9,13 @@
 #include <sge/font/text.hpp>
 #include <sge/font/text_parameters.hpp>
 #include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
-#include <sge/renderer/first_index.hpp>
 #include <sge/renderer/primitive_type.hpp>
 #include <sge/renderer/resource_flags.hpp>
-#include <sge/renderer/scoped_vertex_buffer.hpp>
-#include <sge/renderer/scoped_vertex_declaration.hpp>
 #include <sge/renderer/size_type.hpp>
 #include <sge/renderer/vector2.hpp>
-#include <sge/renderer/vertex_buffer.hpp>
-#include <sge/renderer/vertex_count.hpp>
 #include <sge/renderer/context/ffp.hpp>
 #include <sge/renderer/device/ffp.hpp>
+#include <sge/renderer/index/first.hpp>
 #include <sge/renderer/projection/dim.hpp>
 #include <sge/renderer/projection/far.hpp>
 #include <sge/renderer/projection/near.hpp>
@@ -29,7 +25,14 @@
 #include <sge/renderer/state/ffp/transform/parameters.hpp>
 #include <sge/renderer/state/ffp/transform/scoped.hpp>
 #include <sge/renderer/target/onscreen.hpp>
+#include <sge/renderer/texture/emulate_srgb.hpp>
+#include <sge/renderer/vertex/buffer.hpp>
+#include <sge/renderer/vertex/buffer_parameters.hpp>
+#include <sge/renderer/vertex/count.hpp>
+#include <sge/renderer/vertex/scoped_buffer.hpp>
+#include <sge/renderer/vertex/scoped_declaration.hpp>
 #include <sge/renderer/vf/dynamic/part_index.hpp>
+#include <sge/rucksack/axis.hpp>
 #include <sge/rucksack/axis_policy2.hpp>
 #include <sge/shader/scoped_pair.hpp>
 #include <sge/sprite/parameters.hpp>
@@ -37,7 +40,6 @@
 #include <sge/texture/part_raw_ref.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/object_impl.hpp>
@@ -72,14 +74,15 @@ flake::planar::monitor::arrows::arrows(
 	position_(),
 	vb_(
 		child::parent().renderer().create_vertex_buffer(
-			child::parent().arrow_vertex_declaration(),
-			sge::renderer::vf::dynamic::part_index(
-				0u),
-			sge::renderer::vertex_count(
-				static_cast<sge::renderer::size_type>(
-					dimensions_.content() * 6)),
-			sge::renderer::resource_flags_field(
-				sge::renderer::resource_flags::readable))),
+			sge::renderer::vertex::buffer_parameters(
+				child::parent().arrow_vertex_declaration(),
+				sge::renderer::vf::dynamic::part_index(
+					0u),
+				sge::renderer::vertex::count(
+					static_cast<sge::renderer::size_type>(
+						dimensions_.content() * 6)),
+				sge::renderer::resource_flags_field(
+					sge::renderer::resource_flags::readable)))),
 	cl_vb_(
 		child::parent().cl_context(),
 		*vb_,
@@ -148,8 +151,7 @@ flake::planar::monitor::arrows::arrows(
 				dummy_sprite::parameters()
 					.texture(
 						fcppt::make_shared_ptr<sge::texture::part_raw_ref>(
-							fcppt::ref(
-								*_optional_texture)))
+							*_optional_texture))
 					.connection(
 						child::parent().sprite_collection().connection(
 							0))));
@@ -270,11 +272,11 @@ flake::planar::monitor::arrows::render_arrows(
 		_context,
 		child::parent().arrow_shader());
 
-	sge::renderer::scoped_vertex_declaration scoped_vertex_declaration(
+	sge::renderer::vertex::scoped_declaration scoped_vertex_declaration(
 		_context,
 		child::parent().arrow_vertex_declaration());
 
-	sge::renderer::scoped_vertex_buffer scoped_vb(
+	sge::renderer::vertex::scoped_buffer scoped_vb(
 		_context,
 		*vb_);
 
@@ -295,9 +297,9 @@ flake::planar::monitor::arrows::render_arrows(
 			sprite_box_.position()));
 
 	_context.render_nonindexed(
-		sge::renderer::first_vertex(
+		sge::renderer::vertex::first(
 			0u),
-		sge::renderer::vertex_count(
+		sge::renderer::vertex::count(
 			vb_->size()),
 		sge::renderer::primitive_type::line_list);
 }

@@ -7,20 +7,18 @@
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world.hpp>
-#include <sge/renderer/index_buffer.hpp>
+#include <sge/renderer/lock_mode.hpp>
+#include <sge/renderer/primitive_type.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/scalar.hpp>
-#include <sge/renderer/scoped_index_lock.hpp>
-#include <sge/renderer/scoped_vertex_buffer.hpp>
-#include <sge/renderer/scoped_vertex_declaration.hpp>
-#include <sge/renderer/scoped_vertex_lock.hpp>
 #include <sge/renderer/vector3.hpp>
-#include <sge/renderer/vertex_buffer.hpp>
-#include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/context/core.hpp>
 #include <sge/renderer/device/core.hpp>
+#include <sge/renderer/index/buffer.hpp>
+#include <sge/renderer/index/buffer_parameters.hpp>
 #include <sge/renderer/index/iterator.hpp>
 #include <sge/renderer/index/view.hpp>
+#include <sge/renderer/index/scoped_lock.hpp>
 #include <sge/renderer/index/dynamic/make_format.hpp>
 #include <sge/renderer/state/core/sampler/object.hpp>
 #include <sge/renderer/state/core/sampler/parameters.hpp>
@@ -28,17 +26,24 @@
 #include <sge/renderer/state/core/sampler/address/mode_all.hpp>
 #include <sge/renderer/state/core/sampler/filter/linear.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
+#include <sge/renderer/texture/emulate_srgb.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/planar_scoped_ptr.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
+#include <sge/renderer/vertex/buffer.hpp>
+#include <sge/renderer/vertex/buffer_parameters.hpp>
+#include <sge/renderer/vertex/declaration.hpp>
+#include <sge/renderer/vertex/declaration_parameters.hpp>
+#include <sge/renderer/vertex/scoped_buffer.hpp>
+#include <sge/renderer/vertex/scoped_declaration.hpp>
+#include <sge/renderer/vertex/scoped_lock.hpp>
 #include <sge/renderer/vf/iterator.hpp>
 #include <sge/renderer/vf/vertex.hpp>
 #include <sge/renderer/vf/view.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <sge/shader/scoped_pair.hpp>
-#include <fcppt/cref.hpp>
-#include <fcppt/ref.hpp>
+#include <fcppt/make_cref.hpp>
 #include <fcppt/assign/make_map.hpp>
 #include <fcppt/math/pi.hpp>
 #include <fcppt/math/twopi.hpp>
@@ -86,31 +91,34 @@ flake::skydome::object::object(
 		_camera),
 	vertex_declaration_(
 		renderer_.create_vertex_declaration(
-			sge::renderer::vf::dynamic::make_format<flake::skydome::vf::format>())),
+			sge::renderer::vertex::declaration_parameters(
+				sge::renderer::vf::dynamic::make_format<flake::skydome::vf::format>()))),
 	vertex_buffer_(
 		renderer_.create_vertex_buffer(
-			*vertex_declaration_,
-			sge::renderer::vf::dynamic::make_part_index
-			<
-				flake::skydome::vf::format,
-				flake::skydome::vf::format_part
-			>(),
-			sge::renderer::vertex_count(
-				1u + _latitude.get() * _longitude.get()),
-			sge::renderer::resource_flags_field::null())),
+			sge::renderer::vertex::buffer_parameters(
+				*vertex_declaration_,
+				sge::renderer::vf::dynamic::make_part_index
+				<
+					flake::skydome::vf::format,
+					flake::skydome::vf::format_part
+				>(),
+				sge::renderer::vertex::count(
+					1u + _latitude.get() * _longitude.get()),
+				sge::renderer::resource_flags_field::null()))),
 	index_buffer_(
 		renderer_.create_index_buffer(
-			sge::renderer::index::dynamic::make_format<flake::skydome::index_format>(),
-			sge::renderer::index_count(
-				// For each pair of rings we have "it_lon" quads. We have
-				// "it_lat-1" rings and "it_lat-2" pairs of rings.  This makes for
-				// "it_lat-2" quads, each having 2 triangles and each triangle has
-				// 3 indices.
-				// the quads
-				(_latitude.get()-1) * _longitude.get() * 2u * 3u +
-				// the triangles
-				_longitude.get() * 3u),
-			sge::renderer::resource_flags_field::null())),
+			sge::renderer::index::buffer_parameters(
+				sge::renderer::index::dynamic::make_format<flake::skydome::index_format>(),
+				sge::renderer::index::count(
+					// For each pair of rings we have "it_lon" quads. We have
+					// "it_lat-1" rings and "it_lat-2" pairs of rings.  This makes for
+					// "it_lat-2" quads, each having 2 triangles and each triangle has
+					// 3 indices.
+					// the quads
+					(_latitude.get()-1) * _longitude.get() * 2u * 3u +
+					// the triangles
+					_longitude.get() * 3u),
+				sge::renderer::resource_flags_field::null()))),
 	texture_(
 		sge::renderer::texture::create_planar_from_path(
 			_texture_path.get(),
@@ -154,7 +162,7 @@ flake::skydome::object::object(
 					sge::renderer::state::core::sampler::address::mode::repeat),
 				sge::renderer::state::core::sampler::filter::linear())))
 {
-	sge::renderer::scoped_vertex_lock vblock(
+	sge::renderer::vertex::scoped_lock vblock(
 		*vertex_buffer_,
 		sge::renderer::lock_mode::writeonly);
 
@@ -222,7 +230,7 @@ flake::skydome::object::object(
 		lat += increment_lat;
 	}
 
-	sge::renderer::scoped_index_lock const iblock(
+	sge::renderer::index::scoped_lock const iblock(
 		*index_buffer_,
 		sge::renderer::lock_mode::writeonly);
 
@@ -324,7 +332,7 @@ void
 flake::skydome::object::render(
 	sge::renderer::context::core &_context)
 {
-	sge::renderer::scoped_vertex_declaration scoped_vd(
+	sge::renderer::vertex::scoped_declaration scoped_vd(
 		_context,
 		*vertex_declaration_);
 
@@ -332,7 +340,7 @@ flake::skydome::object::render(
 		_context,
 		shader_);
 
-	sge::renderer::scoped_vertex_buffer scoped_vb(
+	sge::renderer::vertex::scoped_buffer scoped_vb(
 		_context,
 		*vertex_buffer_);
 
@@ -354,19 +362,19 @@ flake::skydome::object::render(
 		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
 			(
 				texture_parameter_.stage(),
-				fcppt::cref(
+				fcppt::make_cref(
 					*texture_state_)));
 
 	_context.render_indexed(
 		*index_buffer_,
-		sge::renderer::first_vertex(
+		sge::renderer::vertex::first(
 			0u),
-		sge::renderer::vertex_count(
+		sge::renderer::vertex::count(
 			vertex_buffer_->size()),
 		sge::renderer::primitive_type::triangle_list,
-		sge::renderer::first_index(
+		sge::renderer::index::first(
 			0u),
-		sge::renderer::index_count(
+		sge::renderer::index::count(
 			index_buffer_->size()));
 }
 

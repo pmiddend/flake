@@ -3,7 +3,6 @@
 
 #include <flake/test/information/pull_function.hpp>
 #include <fcppt/insert_to_fcppt_string.hpp>
-#include <fcppt/tr1/functional.hpp>
 
 namespace flake
 {
@@ -56,7 +55,7 @@ string_conversion_adapter(
 {
 	return
 		flake::test::information::pull_function(
-			std::tr1::bind(
+			std::bind(
 				static_cast<fcppt::string const (*)(T const &,std::locale const &)>(
 					&fcppt::insert_to_fcppt_string),
 				_input,

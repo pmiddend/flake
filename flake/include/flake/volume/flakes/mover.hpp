@@ -26,6 +26,9 @@
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <memory>
+#include <fcppt/config/external_end.hpp>
 
 
 namespace flake
@@ -70,7 +73,7 @@ private:
 	linear_float4_lock;
 
 	typedef
-	fcppt::unique_ptr<linear_float4_lock>
+	std::unique_ptr<linear_float4_lock>
 	unique_linear_float4_lock;
 
 	flakelib::cl::program program_;

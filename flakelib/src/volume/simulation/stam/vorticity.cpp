@@ -8,11 +8,12 @@
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/move.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/dim/comparison.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <utility>
+#include <fcppt/config/external_end.hpp>
 
 
 flakelib::volume::simulation::stam::vorticity::vorticity(
@@ -47,8 +48,7 @@ flakelib::volume::simulation::stam::vorticity::apply_vorticity(
 
 	flakelib::volume::unique_float4_buffer_lock result(
 		fcppt::make_unique_ptr<flakelib::volume::float4_buffer_lock>(
-			fcppt::ref(
-				buffer_pool_),
+			buffer_pool_,
 			_velocity.get().size()));
 
 	vorticity_kernel_->buffer_argument(
@@ -73,7 +73,7 @@ flakelib::volume::simulation::stam::vorticity::apply_vorticity(
 			_velocity.get().size()));
 
 	return
-		fcppt::move(
+		std::move(
 			result);
 }
 
@@ -86,8 +86,7 @@ flakelib::volume::simulation::stam::vorticity::apply_confinement(
 {
 	flakelib::volume::unique_float4_buffer_lock result(
 		fcppt::make_unique_ptr<flakelib::volume::float4_buffer_lock>(
-			fcppt::ref(
-				buffer_pool_),
+			buffer_pool_,
 			_vorticity.size()));
 
 	confinement_kernel_->numerical_argument(
@@ -121,7 +120,7 @@ flakelib::volume::simulation::stam::vorticity::apply_confinement(
 			_vorticity.size()));
 
 	return
-		fcppt::move(
+		std::move(
 			result);
 }
 

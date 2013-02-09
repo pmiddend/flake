@@ -2,14 +2,13 @@
 #define FLAKE_POSTPROCESSING_CONTEXT_HPP_INCLUDED
 
 #include <flake/postprocessing/fullscreen_quad.hpp>
-#include <sge/renderer/depth_stencil_surface_scoped_ptr.hpp>
-#include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
-#include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/context/scoped_ffp_unique_ptr.hpp>
+#include <sge/renderer/depth_stencil_buffer/surface_scoped_ptr.hpp>
 #include <sge/renderer/device/ffp_fwd.hpp>
 #include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
 #include <sge/renderer/target/offscreen_scoped_ptr.hpp>
 #include <sge/renderer/texture/planar_scoped_ptr.hpp>
+#include <sge/renderer/vertex/declaration_scoped_ptr.hpp>
 #include <sge/shader/context_fwd.hpp>
 #include <sge/shader/pair.hpp>
 #include <sge/shader/parameter/planar_texture.hpp>
@@ -45,7 +44,7 @@ public:
 	~context();
 private:
 	sge::renderer::device::ffp &renderer_;
-	sge::renderer::vertex_declaration_scoped_ptr const quad_vertex_declaration_;
+	sge::renderer::vertex::declaration_scoped_ptr const quad_vertex_declaration_;
 	sge::renderer::state::core::sampler::object_scoped_ptr const linear_clamping_texture_state_;
 	sge::renderer::state::core::sampler::object_scoped_ptr const point_clamping_texture_state_;
 	flake::postprocessing::fullscreen_quad fullscreen_quad_;
@@ -61,7 +60,7 @@ private:
 	fcppt::signal::scoped_connection viewport_connection_;
 	sge::renderer::texture::planar_scoped_ptr rendering_result_texture_;
 	sge::renderer::target::offscreen_scoped_ptr offscreen_target_;
-	sge::renderer::depth_stencil_surface_scoped_ptr depth_stencil_surface_;
+	sge::renderer::depth_stencil_buffer::surface_scoped_ptr depth_stencil_surface_;
 	sge::renderer::target::offscreen_scoped_ptr offscreen_downsampled_target_;
 	sge::renderer::texture::planar_scoped_ptr downsampled_texture_0_;
 	sge::renderer::texture::planar_scoped_ptr downsampled_texture_1_;

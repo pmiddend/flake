@@ -8,11 +8,12 @@
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/move.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/dim/comparison.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <utility>
+#include <fcppt/config/external_end.hpp>
 
 
 flakelib::volume::gradient::gradient(
@@ -39,8 +40,7 @@ flakelib::volume::gradient::update(
 {
 	flakelib::volume::unique_float4_buffer_lock result(
 		fcppt::make_unique_ptr<flakelib::volume::float4_buffer_lock>(
-			fcppt::ref(
-				buffer_pool_),
+			buffer_pool_,
 			_buffer.size()));
 
 	kernel_->buffer_argument(
@@ -61,7 +61,7 @@ flakelib::volume::gradient::update(
 			_buffer.size()));
 
 	return
-		fcppt::move(
+		std::move(
 			result);
 }
 

@@ -12,6 +12,7 @@
 #include <sge/image/color/any/object.hpp>
 #include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/target/onscreen.hpp>
+#include <sge/renderer/texture/emulate_srgb.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters_impl.hpp>
 #include <fcppt/math/box/object_impl.hpp>

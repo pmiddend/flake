@@ -6,14 +6,12 @@
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
+#include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
+#include <sge/renderer/lock_mode.hpp>
+#include <sge/renderer/primitive_type.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
-#include <sge/renderer/scoped_vertex_buffer.hpp>
-#include <sge/renderer/scoped_vertex_declaration_and_buffers.hpp>
-#include <sge/renderer/scoped_vertex_lock.hpp>
 #include <sge/renderer/vector2.hpp>
 #include <sge/renderer/vector4.hpp>
-#include <sge/renderer/vertex_buffer.hpp>
-#include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/context/ffp.hpp>
 #include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/state/core/blend/alpha_enabled.hpp>
@@ -30,8 +28,15 @@
 #include <sge/renderer/state/ffp/misc/parameters.hpp>
 #include <sge/renderer/state/ffp/misc/scoped.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
+#include <sge/renderer/texture/emulate_srgb.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
+#include <sge/renderer/vertex/buffer.hpp>
+#include <sge/renderer/vertex/buffer_parameters.hpp>
+#include <sge/renderer/vertex/declaration.hpp>
+#include <sge/renderer/vertex/declaration_parameters.hpp>
+#include <sge/renderer/vertex/scoped_declaration_and_buffers.hpp>
+#include <sge/renderer/vertex/scoped_lock.hpp>
 #include <sge/renderer/vf/iterator.hpp>
 #include <sge/renderer/vf/vertex.hpp>
 #include <sge/renderer/vf/view.hpp>
@@ -39,9 +44,8 @@
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <sge/shader/load_edited_string.hpp>
 #include <sge/shader/scoped_pair.hpp>
-#include <fcppt/cref.hpp>
+#include <fcppt/make_cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
@@ -103,40 +107,44 @@ flake::volume::flakes::manager::manager(
 					false)))),
 	vertex_declaration_(
 		renderer_.create_vertex_declaration(
-			sge::renderer::vf::dynamic::make_format<vf::format>())),
+			sge::renderer::vertex::declaration_parameters(
+				sge::renderer::vf::dynamic::make_format<vf::format>()))),
 	positions_buffer_(
 		renderer_.create_vertex_buffer(
-			*vertex_declaration_,
-			sge::renderer::vf::dynamic::make_part_index
-			<
-				vf::format,
-				vf::position_part
-			>(),
-			sge::renderer::vertex_count(
-				_flake_count.get()),
-			sge::renderer::resource_flags_field::null())),
+			sge::renderer::vertex::buffer_parameters(
+				*vertex_declaration_,
+				sge::renderer::vf::dynamic::make_part_index
+				<
+					vf::format,
+					vf::position_part
+				>(),
+				sge::renderer::vertex::count(
+					_flake_count.get()),
+				sge::renderer::resource_flags_field::null()))),
 	texcoords_buffer_(
 		renderer_.create_vertex_buffer(
-			*vertex_declaration_,
-			sge::renderer::vf::dynamic::make_part_index
-			<
-				vf::format,
-				vf::texcoord_part
-			>(),
-			sge::renderer::vertex_count(
-				_flake_count.get()),
-			sge::renderer::resource_flags_field::null())),
+			sge::renderer::vertex::buffer_parameters(
+				*vertex_declaration_,
+				sge::renderer::vf::dynamic::make_part_index
+				<
+					vf::format,
+					vf::texcoord_part
+				>(),
+				sge::renderer::vertex::count(
+					_flake_count.get()),
+				sge::renderer::resource_flags_field::null()))),
 	point_sizes_buffer_(
 		renderer_.create_vertex_buffer(
-			*vertex_declaration_,
-			sge::renderer::vf::dynamic::make_part_index
-			<
-				vf::format,
-				vf::point_size_part
-			>(),
-			sge::renderer::vertex_count(
-				_flake_count.get()),
-			sge::renderer::resource_flags_field::null())),
+			sge::renderer::vertex::buffer_parameters(
+				*vertex_declaration_,
+				sge::renderer::vf::dynamic::make_part_index
+				<
+					vf::format,
+					vf::point_size_part
+				>(),
+				sge::renderer::vertex::count(
+					_flake_count.get()),
+				sge::renderer::resource_flags_field::null()))),
 	tile_size_(
 		_tile_size),
 	shader_(
@@ -206,18 +214,14 @@ flake::volume::flakes::manager::manager(
 
 	cl_positions_buffer_.take(
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
-			fcppt::ref(
-				_context),
-			fcppt::ref(
-				*positions_buffer_),
+			_context,
+			*positions_buffer_,
 			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
 
 	cl_point_sizes_buffer_.take(
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
-			fcppt::ref(
-				_context),
-			fcppt::ref(
-				*point_sizes_buffer_),
+			_context,
+			*point_sizes_buffer_,
 			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
 }
 
@@ -238,15 +242,15 @@ flake::volume::flakes::manager::render(
 	camera_position_parameter_.set(
 		-camera_.coordinate_system().position().get());
 
-	sge::renderer::scoped_vertex_declaration_and_buffers scoped_vf(
+	sge::renderer::vertex::scoped_declaration_and_buffers scoped_vf(
 		_context,
 		*vertex_declaration_,
-		fcppt::assign::make_container<sge::renderer::const_vertex_buffer_ref_container>
-			(fcppt::cref(
+		fcppt::assign::make_container<sge::renderer::vertex::const_buffer_ref_container>
+			(fcppt::make_cref(
 				*positions_buffer_))
-			(fcppt::cref(
+			(fcppt::make_cref(
 				*point_sizes_buffer_))
-			(fcppt::cref(
+			(fcppt::make_cref(
 				*texcoords_buffer_)));
 
 	sge::renderer::state::ffp::misc::scoped const scoped_misc(
@@ -262,9 +266,9 @@ flake::volume::flakes::manager::render(
 		*depth_stencil_state_);
 
 	_context.render_nonindexed(
-		sge::renderer::first_vertex(
+		sge::renderer::vertex::first(
 			0u),
-		sge::renderer::vertex_count(
+		sge::renderer::vertex::count(
 			_count.get()),
 		sge::renderer::primitive_type::point_list);
 }
@@ -318,15 +322,15 @@ flake::volume::flakes::manager::generate_particles(
 	flakelib::volume::grid_size const &_grid_size,
 	flakes::texture_tile_count const &_number_of_textures)
 {
-	sge::renderer::scoped_vertex_lock const positions_vblock(
+	sge::renderer::vertex::scoped_lock const positions_vblock(
 		*positions_buffer_,
 		sge::renderer::lock_mode::writeonly);
 
-	sge::renderer::scoped_vertex_lock const texcoords_vblock(
+	sge::renderer::vertex::scoped_lock const texcoords_vblock(
 		*texcoords_buffer_,
 		sge::renderer::lock_mode::writeonly);
 
-	sge::renderer::scoped_vertex_lock const point_sizes_vblock(
+	sge::renderer::vertex::scoped_lock const point_sizes_vblock(
 		*point_sizes_buffer_,
 		sge::renderer::lock_mode::writeonly);
 
@@ -424,7 +428,7 @@ flake::volume::flakes::manager::generate_particles(
 						_grid_size.get().d()-1u))));
 
 	for(
-		sge::renderer::vertex_count i(
+		sge::renderer::vertex::count i(
 			0u);
 		i != positions_buffer_->size();
 		++i)

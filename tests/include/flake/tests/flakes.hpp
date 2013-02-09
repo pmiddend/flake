@@ -119,7 +119,7 @@ private:
 
 	void
 	key_down_callback(
-		sge::input::keyboard::key_code::type);
+		sge::input::keyboard::key_code);
 };
 }
 }

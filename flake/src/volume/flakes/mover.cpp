@@ -7,7 +7,6 @@
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/scoped_objects.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/math/dim/output.hpp>
 
@@ -50,8 +49,7 @@ flake::volume::flakes::mover::mover(
 		_activity),
 	velocities_(
 		fcppt::make_unique_ptr<linear_float4_lock>(
-			fcppt::ref(
-				_buffer_pool),
+			_buffer_pool,
 			sge::opencl::dim1(
 				_positions.get().size().w()))),
 	time_(

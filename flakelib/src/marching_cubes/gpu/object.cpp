@@ -7,17 +7,20 @@
 #include <flakelib/volume/unique_uint_buffer_lock.hpp>
 #include <sge/opencl/dim3.hpp>
 #include <sge/opencl/size_type.hpp>
+#include <sge/opencl/command_queue/map_flags.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
+#include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
 #include <sge/opencl/memory_object/scoped_objects.hpp>
+#include <sge/renderer/primitive_type.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
-#include <sge/renderer/scoped_vertex_buffer.hpp>
-#include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/context/core.hpp>
 #include <sge/renderer/device/core.hpp>
+#include <sge/renderer/vertex/buffer.hpp>
+#include <sge/renderer/vertex/buffer_parameters.hpp>
+#include <sge/renderer/vertex/scoped_buffer.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/assert/error.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_container.hpp>
@@ -101,13 +104,11 @@ flakelib::marching_cubes::gpu::object::update(
 	flakelib::volume::unique_uint_buffer_lock
 		vertices_for_voxel(
 			fcppt::make_unique_ptr<flakelib::volume::uint_buffer_lock>(
-				fcppt::ref(
-					buffer_pool_),
+				buffer_pool_,
 				grid_size_dim)),
 		voxel_occupation(
 			fcppt::make_unique_ptr<flakelib::volume::uint_buffer_lock>(
-				fcppt::ref(
-					buffer_pool_),
+				buffer_pool_,
 				grid_size_dim));
 
 	manager_.classify_voxels(
@@ -142,8 +143,7 @@ flakelib::marching_cubes::gpu::object::update(
 	flakelib::volume::unique_uint_buffer_lock
 		compacted_voxel_occupation(
 			fcppt::make_unique_ptr<flakelib::volume::uint_buffer_lock>(
-				fcppt::ref(
-					buffer_pool_),
+				buffer_pool_,
 				grid_size_dim));
 
 	manager_.compact_voxels(
@@ -228,7 +228,7 @@ flakelib::marching_cubes::gpu::object::render(
 	FCPPT_ASSERT_PRE(
 		positions_buffer_->size() == normals_buffer_->size());
 
-	sge::renderer::scoped_vertex_buffer
+	sge::renderer::vertex::scoped_buffer
 		scoped_positions(
 			_context,
 			*positions_buffer_),
@@ -244,9 +244,9 @@ flakelib::marching_cubes::gpu::object::render(
 		vertex_count_.get() <= positions_buffer_->size().get());
 
 	_context.render_nonindexed(
-		sge::renderer::first_vertex(
+		sge::renderer::vertex::first(
 			0u),
-		sge::renderer::vertex_count(
+		sge::renderer::vertex::count(
 			static_cast<sge::renderer::size_type>(
 				vertex_count_.get())),
 		sge::renderer::primitive_type::triangle_list);
@@ -261,46 +261,44 @@ flakelib::marching_cubes::gpu::object::resize_gl_buffers()
 	if(positions_buffer_ && vertex_count_.get() < positions_buffer_->size().get())
 		return;
 
-	sge::renderer::vertex_count const real_vertex_count(
+	sge::renderer::vertex::count const real_vertex_count(
 		static_cast<sge::renderer::size_type>(
 			2u * vertex_count_.get()));
 
 	positions_buffer_.take(
 		manager_.renderer().create_vertex_buffer(
-			manager_.vertex_declaration(),
-			sge::renderer::vf::dynamic::make_part_index
-			<
-				flakelib::marching_cubes::vf::format,
-				flakelib::marching_cubes::vf::position_part
-			>(),
-			real_vertex_count,
-			sge::renderer::resource_flags_field::null()));
+			sge::renderer::vertex::buffer_parameters(
+				manager_.vertex_declaration(),
+				sge::renderer::vf::dynamic::make_part_index
+				<
+					flakelib::marching_cubes::vf::format,
+					flakelib::marching_cubes::vf::position_part
+				>(),
+				real_vertex_count,
+				sge::renderer::resource_flags_field::null())));
 
 	normals_buffer_.take(
 		manager_.renderer().create_vertex_buffer(
-			manager_.vertex_declaration(),
-			sge::renderer::vf::dynamic::make_part_index
-			<
-				flakelib::marching_cubes::vf::format,
-				flakelib::marching_cubes::vf::normal_part
-			>(),
-			real_vertex_count,
-			sge::renderer::resource_flags_field::null()));
+			sge::renderer::vertex::buffer_parameters(
+				manager_.vertex_declaration(),
+				sge::renderer::vf::dynamic::make_part_index
+				<
+					flakelib::marching_cubes::vf::format,
+					flakelib::marching_cubes::vf::normal_part
+				>(),
+				real_vertex_count,
+				sge::renderer::resource_flags_field::null())));
 
 	positions_buffer_cl_.take(
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
-			fcppt::ref(
-				command_queue_.context()),
-			fcppt::ref(
-				*positions_buffer_),
+			command_queue_.context(),
+			*positions_buffer_,
 			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
 
 	normals_buffer_cl_.take(
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
-			fcppt::ref(
-				command_queue_.context()),
-			fcppt::ref(
-				*normals_buffer_),
+			command_queue_.context(),
+			*normals_buffer_,
 			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
 }
 

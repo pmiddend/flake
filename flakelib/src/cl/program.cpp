@@ -6,12 +6,10 @@
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
-#include <fcppt/cref.hpp>
 #include <fcppt/exception.hpp>
 #include <fcppt/from_std_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/optional_impl.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/algorithm/contains.hpp>
 #include <fcppt/algorithm/shortest_levenshtein.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
@@ -110,13 +108,10 @@ flakelib::cl::program::create_kernel(
 
 	return
 		fcppt::make_unique_ptr<cl::kernel>(
-			fcppt::ref(
-				program_),
-			fcppt::ref(
-				command_queue_),
+			program_,
+			command_queue_,
 			_kernel_name,
-			fcppt::cref(
-				kernel_name_it->second));
+			kernel_name_it->second);
 }
 
 sge::opencl::program::object &

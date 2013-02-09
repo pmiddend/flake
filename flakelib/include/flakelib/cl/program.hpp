@@ -10,7 +10,6 @@
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/unique_ptr_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/filesystem/path.hpp>
 #include <map>

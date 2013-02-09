@@ -13,6 +13,7 @@
 #include <sge/font/weight/bold.hpp>
 #include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/target/onscreen.hpp>
+#include <sge/renderer/texture/emulate_srgb.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
 #include <fcppt/config/external_begin.hpp>

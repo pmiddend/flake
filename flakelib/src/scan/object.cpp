@@ -5,15 +5,17 @@
 #include <flakelib/scan/object.hpp>
 #include <fcppt/insert_to_std_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/move.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/is_power_of_2.hpp>
-
+#include <fcppt/config/external_begin.hpp>
+#include <utility>
+#ifdef FLAKELIB_SCAN_DEBUG
 // Debug
 #include <iostream>
 #include <cstdlib>
+#endif
+#include <fcppt/config/external_end.hpp>
 
 namespace
 {
@@ -73,15 +75,13 @@ flakelib::scan::object::object(
 				"uniform_update"))),
 	buffer_(
 		fcppt::make_unique_ptr<linear_uint_lock>(
-			fcppt::ref(
-				buffer_pool_),
+			buffer_pool_,
 			sge::opencl::dim1(
 				static_cast<sge::opencl::size_type>(
 					(MAX_BATCH_ELEMENTS / (4u * WORKGROUP_SIZE)) * sizeof(cl_uint))))),
 	debug_buffer_(
 		fcppt::make_unique_ptr<linear_uint_lock>(
-			fcppt::ref(
-				buffer_pool_),
+			buffer_pool_,
 			sge::opencl::dim1(
 				sizeof(
 					cl_uint))))
@@ -149,8 +149,7 @@ flakelib::scan::object::update(
 
 	unique_linear_uint_lock destination_buffer(
 		fcppt::make_unique_ptr<linear_uint_lock>(
-			fcppt::ref(
-				buffer_pool_),
+			buffer_pool_,
 			_source.size()));
 
 	this->exclusive_local1(
@@ -182,7 +181,7 @@ flakelib::scan::object::update(
 				(_batch_size.get() * _source.size().w()) / (4u * WORKGROUP_SIZE))));
 
 	return
-		fcppt::move(
+		std::move(
 			destination_buffer);
 }
 

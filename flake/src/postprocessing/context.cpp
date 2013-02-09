@@ -1,12 +1,13 @@
 #include <flake/media_path_from_string.hpp>
 #include <flake/postprocessing/context.hpp>
-#include <sge/renderer/depth_stencil_surface.hpp>
+#include <sge/image/ds/format.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
-#include <sge/renderer/scoped_vertex_buffer.hpp>
-#include <sge/renderer/scoped_vertex_declaration.hpp>
-#include <sge/renderer/vertex_declaration.hpp>
+#include <sge/renderer/color_buffer/optional_surface_ref.hpp>
 #include <sge/renderer/context/ffp.hpp>
 #include <sge/renderer/context/scoped_ffp.hpp>
+#include <sge/renderer/depth_stencil_buffer/optional_surface_ref.hpp>
+#include <sge/renderer/depth_stencil_buffer/surface.hpp>
+#include <sge/renderer/depth_stencil_buffer/surface_parameters.hpp>
 #include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/state/core/sampler/object.hpp>
 #include <sge/renderer/state/core/sampler/parameters.hpp>
@@ -23,20 +24,21 @@
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/planar_parameters.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
+#include <sge/renderer/vertex/declaration.hpp>
 #include <sge/shader/scoped_pair.hpp>
 #include <sge/viewport/manager.hpp>
-#include <fcppt/cref.hpp>
+#include <fcppt/make_cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/move.hpp>
-#include <fcppt/optional_impl.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_map.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/signal/connection.hpp>
-#include <fcppt/tr1/functional.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <functional>
+#include <utility>
+#include <fcppt/config/external_end.hpp>
 
 
 flake::postprocessing::context::context(
@@ -146,7 +148,7 @@ flake::postprocessing::context::context(
 		sge::shader::parameter::planar_texture::optional_value()),
 	viewport_connection_(
 		_viewport_manager.manage_callback(
-			std::tr1::bind(
+			std::bind(
 				&flake::postprocessing::context::viewport_callback,
 				this))),
 	rendering_result_texture_(),
@@ -172,10 +174,8 @@ flake::postprocessing::context::create_render_context()
 
 	return
 		fcppt::make_unique_ptr<sge::renderer::context::scoped_ffp>(
-			fcppt::ref(
-				renderer_),
-			fcppt::ref(
-				*offscreen_target_));
+			renderer_,
+			*offscreen_target_);
 }
 
 void
@@ -265,11 +265,12 @@ flake::postprocessing::context::viewport_callback()
 
 	depth_stencil_surface_.take(
 		renderer_.create_depth_stencil_surface(
-			target_size,
-			sge::renderer::depth_stencil_format::d32));
+			sge::renderer::depth_stencil_buffer::surface_parameters(
+				target_size,
+				sge::image::ds::format::d32)));
 
 	offscreen_target_->depth_stencil_surface(
-		sge::renderer::optional_depth_stencil_surface_ref(
+		sge::renderer::depth_stencil_buffer::optional_surface_ref(
 			*depth_stencil_surface_));
 }
 
@@ -336,7 +337,7 @@ flake::postprocessing::context::downsample()
 		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
 			(
 				downsample_input_texture_parameter_.stage(),
-				fcppt::cref(
+				fcppt::make_cref(
 					*linear_clamping_texture_state_)));
 
 	fullscreen_quad_.render(
@@ -366,7 +367,7 @@ flake::postprocessing::context::blur_h()
 		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
 		(
 			blur_h_input_texture_parameter_.stage(),
-			fcppt::cref(
+			fcppt::make_cref(
 				   *point_clamping_texture_state_)));
 
 	fullscreen_quad_.render(
@@ -396,7 +397,7 @@ flake::postprocessing::context::blur_v()
 		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
 			(
 				blur_v_input_texture_parameter_.stage(),
-				fcppt::cref(
+				fcppt::make_cref(
 					*point_clamping_texture_state_)));
 
 	fullscreen_quad_.render(
@@ -420,10 +421,8 @@ flake::postprocessing::context::finalize()
 {
 	sge::renderer::context::scoped_ffp_unique_ptr result(
 		fcppt::make_unique_ptr<sge::renderer::context::scoped_ffp>(
-			fcppt::ref(
-				renderer_),
-			fcppt::ref(
-				renderer_.onscreen_target())));
+			renderer_,
+			renderer_.onscreen_target()));
 
 	sge::shader::scoped_pair scoped_shader(
 		result->get(),
@@ -440,18 +439,18 @@ flake::postprocessing::context::finalize()
 		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
 			(
 				finalize_input_texture_parameter_.stage(),
-				fcppt::cref(
+				fcppt::make_cref(
 					*point_clamping_texture_state_))
 			(
 				finalize_blurred_texture_parameter_.stage(),
-				fcppt::cref(
+				fcppt::make_cref(
 					*linear_clamping_texture_state_)));
 
 	fullscreen_quad_.render(
 		result->get());
 
 	return
-		fcppt::move(
+		std::move(
 			result);
 }
 

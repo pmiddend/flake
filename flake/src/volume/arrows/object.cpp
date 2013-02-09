@@ -4,11 +4,14 @@
 #include <flake/volume/arrows/vf/format_part.hpp>
 #include <flakelib/buffer/volume_view_impl.hpp>
 #include <flakelib/volume/conversion/object.hpp>
+#include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
+#include <sge/renderer/primitive_type.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
-#include <sge/renderer/scoped_vertex_buffer.hpp>
-#include <sge/renderer/vertex_buffer.hpp>
 #include <sge/renderer/context/core.hpp>
 #include <sge/renderer/device/core.hpp>
+#include <sge/renderer/vertex/buffer.hpp>
+#include <sge/renderer/vertex/buffer_parameters.hpp>
+#include <sge/renderer/vertex/scoped_buffer.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 
@@ -34,15 +37,16 @@ flake::volume::arrows::object::object(
 		_origin),
 	vb_(
 		renderer_.create_vertex_buffer(
-			*_arrows_manager.vertex_declaration_,
-			sge::renderer::vf::dynamic::make_part_index
-			<
-				vf::format,
-				vf::format_part
-			>(),
-			sge::renderer::vertex_count(
-				_grid_size.get().content() * 2u),
-			sge::renderer::resource_flags_field::null())),
+			sge::renderer::vertex::buffer_parameters(
+				*_arrows_manager.vertex_declaration_,
+				sge::renderer::vf::dynamic::make_part_index
+				<
+					vf::format,
+					vf::format_part
+				>(),
+				sge::renderer::vertex::count(
+					_grid_size.get().content() * 2u),
+				sge::renderer::resource_flags_field::null()))),
 	gl_buffer_(
 		_context,
 		*vb_,
@@ -68,14 +72,14 @@ void
 flake::volume::arrows::object::render(
 	sge::renderer::context::core &_context)
 {
-	sge::renderer::scoped_vertex_buffer scoped_vb(
+	sge::renderer::vertex::scoped_buffer scoped_vb(
 		_context,
 		*vb_);
 
 	_context.render_nonindexed(
-		sge::renderer::first_vertex(
+		sge::renderer::vertex::first(
 			0u),
-		sge::renderer::vertex_count(
+		sge::renderer::vertex::count(
 			vb_->size()),
 		sge::renderer::primitive_type::line_list);
 }

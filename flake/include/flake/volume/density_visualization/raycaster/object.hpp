@@ -12,8 +12,6 @@
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
-#include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
-#include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
 #include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
 #include <sge/renderer/context/core_fwd.hpp>
@@ -21,6 +19,8 @@
 #include <sge/renderer/state/core/blend/object_scoped_ptr.hpp>
 #include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
 #include <sge/renderer/texture/planar_shared_ptr.hpp>
+#include <sge/renderer/vertex/buffer_scoped_ptr.hpp>
+#include <sge/renderer/vertex/declaration_scoped_ptr.hpp>
 #include <sge/shader/pair.hpp>
 #include <sge/shader/parameter/matrix.hpp>
 #include <sge/shader/parameter/planar_texture.hpp>
@@ -73,8 +73,8 @@ private:
 	sge::renderer::state::core::sampler::object_scoped_ptr const sampler_state_;
 	flakelib::volume::grid_size grid_size_;
 	flake::volume::density_visualization::raycaster::debug_output const debug_output_;
-	sge::renderer::vertex_declaration_scoped_ptr vertex_declaration_;
-	sge::renderer::vertex_buffer_scoped_ptr vertex_buffer_;
+	sge::renderer::vertex::declaration_scoped_ptr vertex_declaration_;
+	sge::renderer::vertex::buffer_scoped_ptr vertex_buffer_;
 	sge::renderer::texture::planar_shared_ptr texture_;
 	sge::opencl::memory_object::image::planar cl_texture_;
 

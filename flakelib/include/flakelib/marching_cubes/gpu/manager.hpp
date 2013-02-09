@@ -29,14 +29,14 @@
 #include <sge/opencl/dim3.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <sge/renderer/size_type.hpp>
-#include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/context/core_fwd.hpp>
 #include <sge/renderer/device/core_fwd.hpp>
 #include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
+#include <sge/renderer/vertex/declaration_scoped_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/unique_ptr.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/intrusive/list.hpp>
+#include <memory>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -65,7 +65,7 @@ public:
 		sge::renderer::context::core &);
 
 	FLAKELIB_SYMBOL
-	sge::renderer::vertex_declaration &
+	sge::renderer::vertex::declaration &
 	vertex_declaration();
 
 	FLAKELIB_SYMBOL
@@ -110,7 +110,7 @@ public:
 	renderer() const;
 
 	FLAKELIB_SYMBOL
-	sge::renderer::vertex_declaration const &
+	sge::renderer::vertex::declaration const &
 	vertex_declaration() const;
 
 	FLAKELIB_SYMBOL
@@ -135,13 +135,13 @@ private:
 	linear_uint_lock;
 
 	typedef
-	fcppt::unique_ptr<linear_uint_lock>
+	std::unique_ptr<linear_uint_lock>
 	unique_linear_uint_lock;
 
 	sge::opencl::command_queue::object &command_queue_;
 	sge::renderer::device::core &renderer_;
 	flakelib::scan::object &scan_;
-	sge::renderer::vertex_declaration_scoped_ptr const vertex_declaration_;
+	sge::renderer::vertex::declaration_scoped_ptr const vertex_declaration_;
 	sge::renderer::state::core::depth_stencil::object_scoped_ptr const depth_stencil_state_;
 	child_sequence children_;
 	cl_image_format table_format_;

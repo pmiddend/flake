@@ -1,6 +1,8 @@
 #include <flake/volume/snow_cover/parallel_update.hpp>
 #include <flakelib/marching_cubes/cpu/object.hpp>
-#include <fcppt/tr1/functional.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <functional>
+#include <fcppt/config/external_end.hpp>
 
 flake::volume::snow_cover::parallel_update::parallel_update(
 	flakelib::marching_cubes::cpu::object &_marching_cubes,
@@ -19,7 +21,7 @@ flake::volume::snow_cover::parallel_update::parallel_update(
 		true),
 	not_dirty_(),
 	thread_(
-		std::tr1::bind(
+		std::bind(
 			&flake::volume::snow_cover::parallel_update::thread,
 			this))
 {

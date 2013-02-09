@@ -19,13 +19,13 @@
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/planar_parameters.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
+#include <sge/rucksack/axis.hpp>
 #include <sge/rucksack/axis_policy2.hpp>
 #include <sge/sprite/parameters.hpp>
 #include <sge/sprite/projection_matrix.hpp>
 #include <sge/texture/part_raw_ref.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
@@ -75,8 +75,7 @@ flake::planar::monitor::texture::texture(
 				_texture_size.get())
 			.texture(
 				fcppt::make_shared_ptr<sge::texture::part_raw_ref>(
-					fcppt::ref(
-						*renderer_texture_)))
+					*renderer_texture_))
 			.connection(
 				child::parent().sprite_collection().connection(
 					0))),

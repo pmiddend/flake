@@ -4,7 +4,7 @@
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/cg/parameter/matrix/set.hpp>
-#include <fcppt/cref.hpp>
+#include <fcppt/make_cref.hpp>
 #include <fcppt/assign/make_map.hpp>
 
 
@@ -20,11 +20,11 @@ flake::volume::snow_cover::scoped::scoped(
 		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
 			(
 				_snow_cover.steep_texture_parameter_.stage(),
-				fcppt::cref(
+				fcppt::make_cref(
 					   *_snow_cover.sampler_state_))
 			(
 				_snow_cover.flat_texture_parameter_.stage(),
-				fcppt::cref(
+				fcppt::make_cref(
 					*_snow_cover.sampler_state_)))
 {
 	_snow_cover.mvp_parameter_.set(

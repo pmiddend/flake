@@ -15,6 +15,7 @@
 #include <sge/camera/matrix_conversion/world.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/image/color/predef.hpp>
+#include <sge/input/keyboard/optional_key_code.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
@@ -27,12 +28,12 @@
 #include <sge/renderer/state/core/rasterizer/parameters.hpp>
 #include <sge/renderer/state/core/rasterizer/scoped.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
+#include <sge/renderer/texture/emulate_srgb.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/mipmap/all_levels.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/deg_to_rad.hpp>
@@ -74,12 +75,12 @@ flake::tests::marching_cubes::marching_cubes(
 			(flake::test::feature(
 			 	flake::test::json_identifier(
 					FCPPT_TEXT("wireframe")),
-				flake::test::optional_key_code(
+				sge::input::keyboard::optional_key_code(
 					sge::input::keyboard::key_code::f2)))
 			(flake::test::feature(
 			 	flake::test::json_identifier(
 					FCPPT_TEXT("frameupdate")),
-				flake::test::optional_key_code(
+				sge::input::keyboard::optional_key_code(
 					sge::input::keyboard::key_code::f3))),
 		sge::systems::cursor_option_field(
 			sge::systems::cursor_option::exclusive)),

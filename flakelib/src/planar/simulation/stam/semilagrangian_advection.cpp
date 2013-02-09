@@ -8,10 +8,11 @@
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/move.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/dim/comparison.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <utility>
+#include <fcppt/config/external_end.hpp>
 
 
 flakelib::planar::simulation::stam::semilagrangian_advection::semilagrangian_advection(
@@ -51,8 +52,7 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update_float2(
 
 	flakelib::planar::unique_float2_buffer_lock result(
 		fcppt::make_unique_ptr<flakelib::planar::float2_buffer_lock>(
-			fcppt::ref(
-				buffer_pool_),
+			buffer_pool_,
 			_buffer.size()));
 
 	planar_kernel_->buffer_argument(
@@ -86,7 +86,7 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update_float2(
 			_buffer.size()));
 
 	return
-		fcppt::move(
+		std::move(
 			result);
 }
 
@@ -105,8 +105,7 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update_float(
 
 	flakelib::planar::unique_float_buffer_lock result(
 		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
-			fcppt::ref(
-				buffer_pool_),
+			buffer_pool_,
 			_buffer.size()));
 
 	scalar_kernel_->buffer_argument(
@@ -140,7 +139,7 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update_float(
 			_buffer.size()));
 
 	return
-		fcppt::move(
+		std::move(
 			result);
 }
 

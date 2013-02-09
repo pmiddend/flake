@@ -6,7 +6,9 @@
 #include <fcppt/text.hpp>
 #include <fcppt/signal/auto_connection.hpp>
 #include <fcppt/signal/connection.hpp>
-#include <fcppt/tr1/functional.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <functional>
+#include <fcppt/config/external_end.hpp>
 
 
 flake::time_modifier::object::object(
@@ -18,10 +20,10 @@ flake::time_modifier::object::object(
 		_is_paused),
 	key_connection_(
 		_keyboard.key_callback(
-			std::tr1::bind(
+			std::bind(
 				&object::key_callback,
 				this,
-				std::tr1::placeholders::_1))),
+				std::placeholders::_1))),
 	notifications_(
 		_notifications)
 {

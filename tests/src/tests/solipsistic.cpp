@@ -25,7 +25,6 @@
 #include <sge/timer/reset_when_expired.hpp>
 #include <awl/main/exit_success.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/to_std_string.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_container.hpp>
@@ -34,7 +33,6 @@
 #include <fcppt/math/deg_to_rad.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
-#include <fcppt/tr1/functional.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/chrono.hpp>
 #include <fcppt/config/external_end.hpp>
@@ -208,8 +206,7 @@ flake::tests::solipsistic::run_once()
 
 	flakelib::volume::unique_float_buffer_lock initial_guess_buffer_lock(
 		fcppt::make_unique_ptr<flakelib::volume::float_buffer_lock>(
-			fcppt::ref(
-				buffer_pool_),
+			buffer_pool_,
 			velocity_buffer_->value().size()));
 
 	fill_buffer_.apply(

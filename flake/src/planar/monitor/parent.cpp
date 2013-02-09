@@ -11,7 +11,6 @@
 #include <sge/font/parameters.hpp>
 #include <sge/font/system.hpp>
 #include <sge/opencl/command_queue/object.hpp>
-#include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/cg/loaded_program.hpp>
 #include <sge/renderer/context/ffp.hpp>
 #include <sge/renderer/device/ffp.hpp>
@@ -25,6 +24,8 @@
 #include <sge/renderer/state/ffp/transform/object_scoped_ptr.hpp>
 #include <sge/renderer/state/ffp/transform/parameters.hpp>
 #include <sge/renderer/state/ffp/transform/scoped.hpp>
+#include <sge/renderer/vertex/declaration.hpp>
+#include <sge/renderer/vertex/declaration_parameters.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/sprite/buffers/single.hpp>
 #include <sge/sprite/buffers/with_declaration.hpp>
@@ -33,9 +34,8 @@
 #include <sge/sprite/process/all.hpp>
 #include <sge/sprite/process/default_geometry_options.hpp>
 #include <sge/sprite/process/with_options.hpp>
-#include <fcppt/cref.hpp>
+#include <fcppt/make_cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
@@ -70,7 +70,8 @@ flake::planar::monitor::parent::parent(
 					_ttf_size))),
 	vd_(
 		renderer_.create_vertex_declaration(
-			sge::renderer::vf::dynamic::make_format<arrow_vf::format>())),
+			sge::renderer::vertex::declaration_parameters(
+				sge::renderer::vf::dynamic::make_format<arrow_vf::format>()))),
 	point_sampler_(
 		renderer_.create_sampler_state(
 			sge::renderer::state::core::sampler::parameters(
@@ -112,7 +113,7 @@ flake::planar::monitor::parent::parent(
 {
 }
 
-sge::renderer::vertex_declaration const &
+sge::renderer::vertex::declaration const &
 flake::planar::monitor::parent::arrow_vertex_declaration() const
 {
 	return *vd_;
@@ -189,7 +190,7 @@ flake::planar::monitor::parent::render(
 		(
 			sge::renderer::texture::stage(
 				0u),
-			fcppt::cref(
+			fcppt::make_cref(
 				*point_sampler_)));
 
 	if(_projection)

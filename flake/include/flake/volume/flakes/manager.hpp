@@ -14,14 +14,14 @@
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
-#include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/context/ffp_fwd.hpp>
 #include <sge/renderer/device/ffp_fwd.hpp>
 #include <sge/renderer/state/core/blend/object_scoped_ptr.hpp>
 #include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
 #include <sge/renderer/state/ffp/misc/object_scoped_ptr.hpp>
 #include <sge/renderer/texture/planar_scoped_ptr.hpp>
+#include <sge/renderer/vertex/buffer_scoped_ptr.hpp>
+#include <sge/renderer/vertex/declaration_scoped_ptr.hpp>
 #include <sge/shader/context_fwd.hpp>
 #include <sge/shader/pair.hpp>
 #include <sge/shader/parameter/matrix.hpp>
@@ -86,10 +86,10 @@ private:
 	sge::renderer::state::core::blend::object_scoped_ptr const blend_state_;
 	sge::renderer::state::core::depth_stencil::object_scoped_ptr const depth_stencil_state_;
 	sge::renderer::state::ffp::misc::object_scoped_ptr const misc_state_;
-	sge::renderer::vertex_declaration_scoped_ptr const vertex_declaration_;
-	sge::renderer::vertex_buffer_scoped_ptr const positions_buffer_;
-	sge::renderer::vertex_buffer_scoped_ptr const texcoords_buffer_;
-	sge::renderer::vertex_buffer_scoped_ptr const point_sizes_buffer_;
+	sge::renderer::vertex::declaration_scoped_ptr const vertex_declaration_;
+	sge::renderer::vertex::buffer_scoped_ptr const positions_buffer_;
+	sge::renderer::vertex::buffer_scoped_ptr const texcoords_buffer_;
+	sge::renderer::vertex::buffer_scoped_ptr const point_sizes_buffer_;
 	flake::volume::flakes::texture_tile_size tile_size_;
 	sge::shader::pair shader_;
 	sge::shader::parameter::vector<sge::renderer::scalar,3u> camera_position_parameter_;

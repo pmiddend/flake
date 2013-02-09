@@ -4,8 +4,6 @@
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
-#include <sge/renderer/scoped_vertex_declaration.hpp>
-#include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/cg/loaded_program.hpp>
 #include <sge/renderer/cg/scoped_program.hpp>
 #include <sge/renderer/device/core.hpp>
@@ -14,6 +12,9 @@
 #include <sge/renderer/state/core/blend/parameters.hpp>
 #include <sge/renderer/state/core/blend/scoped.hpp>
 #include <sge/renderer/state/core/blend/write_mask_all.hpp>
+#include <sge/renderer/vertex/declaration.hpp>
+#include <sge/renderer/vertex/declaration_parameters.hpp>
+#include <sge/renderer/vertex/scoped_declaration.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/shader/scoped_pair.hpp>
 #include <fcppt/assign/make_container.hpp>
@@ -29,7 +30,8 @@ flake::volume::arrows::manager::manager(
 		_renderer),
 	vertex_declaration_(
 		_renderer.create_vertex_declaration(
-			sge::renderer::vf::dynamic::make_format<vf::format>())),
+			sge::renderer::vertex::declaration_parameters(
+				sge::renderer::vf::dynamic::make_format<vf::format>()))),
 	blend_state_(
 		renderer_.create_blend_state(
 			sge::renderer::state::core::blend::parameters(
@@ -77,7 +79,7 @@ flake::volume::arrows::manager::render(
 		_context,
 		*blend_state_);
 
-	sge::renderer::scoped_vertex_declaration scoped_vertex_declaration(
+	sge::renderer::vertex::scoped_declaration scoped_vertex_declaration(
 		_context,
 		*vertex_declaration_);
 

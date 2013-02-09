@@ -3,24 +3,28 @@
 #include <sge/image2d/algorithm/copy_and_convert.hpp>
 #include <sge/image2d/view/format.hpp>
 #include <sge/image2d/view/size.hpp>
+#include <sge/opencl/command_queue/map_flags.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/command_queue/scoped_planar_mapping.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/memory_object/image/sge_color_format_to_opencl.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <memory>
+#include <utility>
+#include <fcppt/config/external_end.hpp>
 
-fcppt::unique_ptr<sge::opencl::memory_object::image::planar>
+
+std::unique_ptr<sge::opencl::memory_object::image::planar>
 flakelib::cl::planar_image_view_to_cl_image(
 	sge::image2d::view::const_object const &_planar_image,
 	sge::opencl::command_queue::object &_command_queue)
 {
-	fcppt::unique_ptr<sge::opencl::memory_object::image::planar> result(
+	std::unique_ptr<sge::opencl::memory_object::image::planar> result(
 		fcppt::make_unique_ptr<sge::opencl::memory_object::image::planar>(
-			fcppt::ref(
-				_command_queue.context()),
+			_command_queue.context(),
 			sge::opencl::memory_object::flags_field(
 				sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
 			sge::opencl::memory_object::image::sge_color_format_to_opencl(
@@ -49,6 +53,6 @@ flakelib::cl::planar_image_view_to_cl_image(
 		sge::image::algorithm::may_overlap::no);
 
 	return
-		fcppt::move(
+		std::move(
 			result);
 }

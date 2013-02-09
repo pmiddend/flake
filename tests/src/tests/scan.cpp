@@ -14,6 +14,7 @@
 #include <sge/charconv/create_system.hpp>
 #include <sge/charconv/system.hpp>
 #include <sge/image/color/predef.hpp>
+#include <sge/opencl/command_queue/map_flags.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/opencl/single_device_system/parameters.hpp>
@@ -26,7 +27,6 @@
 #include <sge/timer/reset_when_expired.hpp>
 #include <awl/main/exit_success.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/to_std_string.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_container.hpp>
@@ -35,7 +35,6 @@
 #include <fcppt/math/deg_to_rad.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
-#include <fcppt/tr1/functional.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/chrono.hpp>
 #include <fcppt/config/external_end.hpp>
@@ -104,8 +103,7 @@ flake::tests::scan::run()
 {
 	flakelib::scan::object::unique_linear_uint_lock source_buffer(
 		fcppt::make_unique_ptr<flakelib::scan::object::linear_uint_lock>(
-			fcppt::ref(
-				buffer_pool_),
+			buffer_pool_,
 			sge::opencl::dim1(
 				64u * 128u * 128u)));
 

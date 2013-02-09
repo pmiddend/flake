@@ -1,7 +1,6 @@
 #include <flakelib/buffer_pool/object.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/container/ptr/push_back_unique_ptr.hpp>
@@ -49,8 +48,7 @@ flakelib::buffer_pool::object::get_and_lock(
 	fcppt::container::ptr::push_back_unique_ptr(
 		pool_,
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
-			fcppt::ref(
-				context_),
+			context_,
 			sge::opencl::memory_object::flags_field(
 				sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
 			_byte_size));

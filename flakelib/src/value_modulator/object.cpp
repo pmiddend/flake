@@ -1,6 +1,5 @@
 #include <flakelib/value_modulator/object.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/math/interpolation/trigonometric.hpp>
 #include <fcppt/random/generator/seed_from_chrono.hpp>
 
@@ -23,8 +22,7 @@ flakelib::value_modulator::object::object(
 		fcppt::random::generator::seed_from_chrono<random_generator::seed>()),
 	next_control_point_rng_(
 		fcppt::make_unique_ptr<variate>(
-			fcppt::ref(
-				number_generator_),
+			number_generator_,
 			distribution(
 				distribution::min(
 					_mean.get() - _variance.get()),
@@ -83,8 +81,7 @@ flakelib::value_modulator::object::mean(
 
 	next_control_point_rng_.take(
 		fcppt::make_unique_ptr<variate>(
-			fcppt::ref(
-				number_generator_),
+			number_generator_,
 			distribution(
 				distribution::min(
 					_mean.get() - variance_.get()),

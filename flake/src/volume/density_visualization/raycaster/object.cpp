@@ -8,19 +8,17 @@
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/image/store.hpp>
+#include <sge/image/algorithm/may_overlap.hpp>
 #include <sge/image2d/l8.hpp>
 #include <sge/image2d/save_from_view.hpp>
 #include <sge/image2d/algorithm/copy_and_convert.hpp>
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/image2d/view/object.hpp>
 #include <sge/image2d/view/to_const.hpp>
+#include <sge/renderer/lock_mode.hpp>
+#include <sge/renderer/primitive_type.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
-#include <sge/renderer/scoped_vertex_buffer.hpp>
-#include <sge/renderer/scoped_vertex_declaration.hpp>
-#include <sge/renderer/scoped_vertex_lock.hpp>
 #include <sge/renderer/vector2.hpp>
-#include <sge/renderer/vertex_buffer.hpp>
-#include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/context/core.hpp>
 #include <sge/renderer/device/core.hpp>
 #include <sge/renderer/state/core/blend/combined.hpp>
@@ -42,12 +40,19 @@
 #include <sge/renderer/texture/planar_parameters.hpp>
 #include <sge/renderer/texture/scoped_planar_lock.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
+#include <sge/renderer/vertex/buffer.hpp>
+#include <sge/renderer/vertex/buffer_parameters.hpp>
+#include <sge/renderer/vertex/declaration.hpp>
+#include <sge/renderer/vertex/declaration_parameters.hpp>
+#include <sge/renderer/vertex/scoped_buffer.hpp>
+#include <sge/renderer/vertex/scoped_declaration.hpp>
+#include <sge/renderer/vertex/scoped_lock.hpp>
 #include <sge/renderer/vf/vertex.hpp>
 #include <sge/renderer/vf/view.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <sge/shader/scoped_pair.hpp>
-#include <fcppt/cref.hpp>
+#include <fcppt/make_cref.hpp>
 #include <fcppt/assign/make_map.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/contains_point.hpp>
@@ -98,18 +103,20 @@ flake::volume::density_visualization::raycaster::object::object(
 		_debug_output),
 	vertex_declaration_(
 		_renderer.create_vertex_declaration(
-			sge::renderer::vf::dynamic::make_format<vf::format>())),
+			sge::renderer::vertex::declaration_parameters(
+				sge::renderer::vf::dynamic::make_format<vf::format>()))),
 	vertex_buffer_(
 		renderer_.create_vertex_buffer(
-			*vertex_declaration_,
-			sge::renderer::vf::dynamic::make_part_index
-			<
-				vf::format,
-				vf::format_part
-			>(),
-			sge::renderer::vertex_count(
-				36u),
-			sge::renderer::resource_flags_field::null())),
+			sge::renderer::vertex::buffer_parameters(
+				*vertex_declaration_,
+				sge::renderer::vf::dynamic::make_part_index
+				<
+					vf::format,
+					vf::format_part
+				>(),
+				sge::renderer::vertex::count(
+					36u),
+				sge::renderer::resource_flags_field::null()))),
 	texture_(
 		renderer_.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
@@ -208,7 +215,7 @@ flake::volume::density_visualization::raycaster::object::object(
 		sge::shader::parameter::planar_texture::optional_value(
 			*texture_))
 {
-	sge::renderer::scoped_vertex_lock vblock(
+	sge::renderer::vertex::scoped_lock vblock(
 		*vertex_buffer_,
 		sge::renderer::lock_mode::writeonly);
 
@@ -316,7 +323,7 @@ void
 flake::volume::density_visualization::raycaster::object::render(
 	sge::renderer::context::core &_context)
 {
-	sge::renderer::scoped_vertex_declaration scoped_vd(
+	sge::renderer::vertex::scoped_declaration scoped_vd(
 		_context,
 		*vertex_declaration_);
 
@@ -367,17 +374,17 @@ flake::volume::density_visualization::raycaster::object::render(
 			(
 				sge::renderer::texture::stage(
 					0u),
-				fcppt::cref(
+				fcppt::make_cref(
 					*sampler_state_)));
 
-	sge::renderer::scoped_vertex_buffer scoped_vb(
+	sge::renderer::vertex::scoped_buffer scoped_vb(
 		_context,
 		*vertex_buffer_);
 
 	_context.render_nonindexed(
-		sge::renderer::first_vertex(
+		sge::renderer::vertex::first(
 			0u),
-		sge::renderer::vertex_count(
+		sge::renderer::vertex::count(
 			36u),
 		sge::renderer::primitive_type::triangle_list);
 }

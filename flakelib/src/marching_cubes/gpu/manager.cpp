@@ -14,17 +14,17 @@
 #include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
-#include <sge/renderer/scoped_vertex_declaration.hpp>
-#include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/device/core.hpp>
 #include <sge/renderer/state/core/depth_stencil/object.hpp>
 #include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
 #include <sge/renderer/state/core/depth_stencil/parameters.hpp>
 #include <sge/renderer/state/core/depth_stencil/scoped.hpp>
+#include <sge/renderer/vertex/declaration.hpp>
+#include <sge/renderer/vertex/declaration_parameters.hpp>
+#include <sge/renderer/vertex/scoped_declaration.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <fcppt/insert_to_std_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/error.hpp>
 #include <fcppt/assert/pre.hpp>
@@ -56,10 +56,11 @@ flakelib::marching_cubes::gpu::manager::manager(
 		_scan),
 	vertex_declaration_(
 		renderer_.create_vertex_declaration(
-			sge::renderer::vf::dynamic::make_format
-			<
-				flakelib::marching_cubes::vf::format
-			>())),
+			sge::renderer::vertex::declaration_parameters(
+				sge::renderer::vf::dynamic::make_format
+				<
+					flakelib::marching_cubes::vf::format
+				>()))),
 	depth_stencil_state_(
 		renderer_.create_depth_stencil_state(
 			sge::renderer::state::core::depth_stencil::parameters(
@@ -129,8 +130,7 @@ flakelib::marching_cubes::gpu::manager::manager(
 		_gradient),
 	debug_buffer_(
 		fcppt::make_unique_ptr<linear_uint_lock>(
-			fcppt::ref(
-				_buffer_pool),
+			_buffer_pool,
 			sge::opencl::dim1(
 				sizeof(
 					cl_uint))))
@@ -191,7 +191,7 @@ flakelib::marching_cubes::gpu::manager::render(
 		_context,
 		*depth_stencil_state_);
 
-	sge::renderer::scoped_vertex_declaration scoped_vertex_declaration(
+	sge::renderer::vertex::scoped_declaration scoped_vertex_declaration(
 		_context,
 		*vertex_declaration_);
 
@@ -204,7 +204,7 @@ flakelib::marching_cubes::gpu::manager::render(
 			_context);
 }
 
-sge::renderer::vertex_declaration &
+sge::renderer::vertex::declaration &
 flakelib::marching_cubes::gpu::manager::vertex_declaration()
 {
 	return
@@ -284,7 +284,7 @@ flakelib::marching_cubes::gpu::manager::renderer() const
 		renderer_;
 }
 
-sge::renderer::vertex_declaration const &
+sge::renderer::vertex::declaration const &
 flakelib::marching_cubes::gpu::manager::vertex_declaration() const
 {
 	return

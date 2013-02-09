@@ -13,7 +13,7 @@
 flake::volume::snow_cover::object::object(
 	sge::camera::base &_camera,
 	sge::renderer::device::core &_renderer,
-	sge::renderer::vertex_declaration &_vertex_declaration,
+	sge::renderer::vertex::declaration &_vertex_declaration,
 	sge::shader::context &_shader_context,
 	flake::volume::snow_cover::texture_repeats const &_texture_repeats,
 	flake::volume::snow_cover::steep_texture const &_steep_texture,

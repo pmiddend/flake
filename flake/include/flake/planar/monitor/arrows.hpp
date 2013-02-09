@@ -13,7 +13,7 @@
 #include <sge/font/draw/static_text.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
-#include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
+#include <sge/renderer/vertex/buffer_scoped_ptr.hpp>
 #include <sge/rucksack/widget/dummy.hpp>
 #include <sge/rucksack/widget/box/base.hpp>
 #include <fcppt/noncopyable.hpp>
@@ -74,7 +74,7 @@ private:
 	monitor::arrow_scale const arrow_scale_;
 	monitor::grid_scale const grid_scale_;
 	monitor::rect::vector position_;
-	sge::renderer::vertex_buffer_scoped_ptr const vb_;
+	sge::renderer::vertex::buffer_scoped_ptr const vb_;
 	sge::opencl::memory_object::buffer cl_vb_;
 	fcppt::scoped_ptr<dummy_sprite::object> sprite_;
 	sge::rucksack::widget::box::base box_parent_;

@@ -24,12 +24,12 @@
 #include <sge/renderer/context/ffp.hpp>
 #include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/texture/create_planar_from_view.hpp>
+#include <sge/renderer/texture/emulate_srgb.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
@@ -116,18 +116,15 @@ flake::tests::vorticity::vorticity(
 				boundary_image_file_->view()))),
 	velocity_buffer_(
 		fcppt::make_unique_ptr<flakelib::planar::float2_buffer_lock>(
-			fcppt::ref(
-				this->buffer_pool()),
+			this->buffer_pool(),
 			boundary_buffer_.value().size())),
 	smoke_density_buffer_(
 		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
-			fcppt::ref(
-				this->buffer_pool()),
+			this->buffer_pool(),
 			boundary_buffer_.value().size())),
 	smoke_density_source_buffer_(
 		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
-			fcppt::ref(
-				this->buffer_pool()),
+			this->buffer_pool(),
 			boundary_buffer_.value().size())),
 	boundary_texture_(
 		sge::renderer::texture::create_planar_from_view(
@@ -514,8 +511,7 @@ flake::tests::vorticity::update()
 
 		flakelib::planar::unique_float_buffer_lock initial_guess_buffer_lock(
 			fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
-				fcppt::ref(
-					this->buffer_pool()),
+				this->buffer_pool(),
 				velocity_buffer_->value().size()));
 
 		fill_buffer_.apply(

@@ -2,14 +2,16 @@
 #define FLAKELIB_PLANAR_UNIQUE_FLOAT_BUFFER_LOCK_HPP_INCLUDED
 
 #include <flakelib/planar/float_buffer_lock.hpp>
-#include <fcppt/unique_ptr.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <memory>
+#include <fcppt/config/external_end.hpp>
 
 namespace flakelib
 {
 namespace planar
 {
 typedef
-fcppt::unique_ptr<planar::float_buffer_lock>
+std::unique_ptr<planar::float_buffer_lock>
 unique_float_buffer_lock;
 }
 }

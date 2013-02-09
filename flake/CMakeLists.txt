@@ -105,7 +105,6 @@ set(
 	flake/include/flake/test/information/pull_function_fn.hpp
 	flake/include/flake/test/information/string_conversion_adapter.hpp
 	flake/include/flake/test/json_identifier.hpp
-	flake/include/flake/test/optional_key_code.hpp
 	flake/include/flake/test/update_features_from_json.hpp
 	flake/include/flake/time_modifier/kernel.hpp
 	flake/include/flake/time_modifier/multiplier.hpp

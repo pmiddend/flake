@@ -24,9 +24,9 @@
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/math/vector/structure_cast.hpp>
 #include <fcppt/signal/connection.hpp>
-#include <fcppt/tr1/functional.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
+#include <functional>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -40,7 +40,7 @@ namespace
 \tparam M1 The matrix's row dimension type
 \tparam M2 The matrix's row dimension type
 \tparam S2 The matrix's storage type
-\param viewport_coordiantes Three-dimensional viewport-relative coordinates. You can pass a depth which specifies the distance from the viewing plane (the unprojected point is, of course, not unique)
+\param viewport_coordinates Three-dimensional viewport-relative coordinates. You can pass a depth which specifies the distance from the viewing plane (the unprojected point is, of course, not unique)
 \param inverse_mvp The already-inverted model-view-projection matrix. This is a performance improvement over gluUnproject since you might only calculate this matrix once and then reuse it
 \param viewport The viewport
 
@@ -138,16 +138,16 @@ flake::planar::cursor_splatter::cursor_splatter(
 		_pen),
 	button_connection_(
 		_cursor.button_callback(
-			std::tr1::bind(
+			std::bind(
 				&cursor_splatter::button_callback,
 				this,
-				std::tr1::placeholders::_1))),
+				std::placeholders::_1))),
 	move_connection_(
 		_cursor.move_callback(
-			std::tr1::bind(
+			std::bind(
 				&cursor_splatter::move_callback,
 				this,
-				std::tr1::placeholders::_1))),
+				std::placeholders::_1))),
 	left_button_pushed_down_(
 		false),
 	right_button_pushed_down_(

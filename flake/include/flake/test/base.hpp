@@ -20,6 +20,7 @@
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/input/cursor/object_fwd.hpp>
 #include <sge/input/keyboard/device_fwd.hpp>
+#include <sge/input/keyboard/key_code_fwd.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>
 #include <sge/input/mouse/device_fwd.hpp>
 #include <sge/opencl/single_device_system/object_fwd.hpp>
@@ -32,6 +33,7 @@
 #include <sge/systems/instance_fwd.hpp>
 #include <sge/systems/keyboard_collector.hpp>
 #include <sge/systems/mouse_collector.hpp>
+#include <sge/systems/renderer_caps.hpp>
 #include <sge/systems/with_charconv.hpp>
 #include <sge/systems/with_font.hpp>
 #include <sge/systems/with_image2d.hpp>
@@ -144,7 +146,7 @@ protected:
 
 	virtual void
 	key_down_callback(
-		sge::input::keyboard::key_code::type);
+		sge::input::keyboard::key_code);
 private:
 	typedef
 	sge::systems::instance

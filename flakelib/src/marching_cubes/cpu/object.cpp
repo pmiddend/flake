@@ -5,21 +5,20 @@
 #include <flakelib/marching_cubes/vf/interleaved.hpp>
 #include <flakelib/marching_cubes/vf/interleaved_part.hpp>
 #include <flakelib/timer/object.hpp>
+#include <sge/opencl/command_queue/map_flags.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <sge/renderer/index_buffer.hpp>
+#include <sge/renderer/lock_mode.hpp>
+#include <sge/renderer/primitive_type.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
-#include <sge/renderer/scoped_index_lock.hpp>
-#include <sge/renderer/scoped_vertex_buffer.hpp>
-#include <sge/renderer/scoped_vertex_declaration.hpp>
-#include <sge/renderer/scoped_vertex_lock.hpp>
-#include <sge/renderer/vertex_buffer.hpp>
-#include <sge/renderer/vertex_declaration.hpp>
 #include <sge/renderer/context/core.hpp>
 #include <sge/renderer/device/core.hpp>
+#include <sge/renderer/index/buffer.hpp>
+#include <sge/renderer/index/buffer_parameters.hpp>
 #include <sge/renderer/index/format_32.hpp>
 #include <sge/renderer/index/iterator.hpp>
+#include <sge/renderer/index/scoped_lock.hpp>
 #include <sge/renderer/index/view.hpp>
 #include <sge/renderer/index/dynamic/make_format.hpp>
 #include <sge/renderer/state/core/depth_stencil/object.hpp>
@@ -27,6 +26,13 @@
 #include <sge/renderer/state/core/depth_stencil/scoped.hpp>
 #include <sge/renderer/state/core/depth_stencil/depth/enabled.hpp>
 #include <sge/renderer/state/core/depth_stencil/stencil/off.hpp>
+#include <sge/renderer/vertex/buffer.hpp>
+#include <sge/renderer/vertex/buffer_parameters.hpp>
+#include <sge/renderer/vertex/declaration.hpp>
+#include <sge/renderer/vertex/declaration_parameters.hpp>
+#include <sge/renderer/vertex/scoped_buffer.hpp>
+#include <sge/renderer/vertex/scoped_declaration.hpp>
+#include <sge/renderer/vertex/scoped_lock.hpp>
 #include <sge/renderer/vf/iterator.hpp>
 #include <sge/renderer/vf/vertex.hpp>
 #include <sge/renderer/vf/view.hpp>
@@ -35,7 +41,6 @@
 #include <fcppt/insert_to_std_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/assert/pre.hpp>
-#include <fcppt/container/array.hpp>
 #include <fcppt/math/next_power_of_2.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
@@ -432,7 +437,8 @@ flakelib::marching_cubes::cpu::object::object(
 		_iso_level),
 	vertex_declaration_(
 		renderer_.create_vertex_declaration(
-			sge::renderer::vf::dynamic::make_format<flakelib::marching_cubes::vf::interleaved>())),
+			sge::renderer::vertex::declaration_parameters(
+				sge::renderer::vf::dynamic::make_format<flakelib::marching_cubes::vf::interleaved>()))),
 	vertex_buffer_(),
 	vertex_buffer_size_(
 		0u),
@@ -505,21 +511,21 @@ flakelib::marching_cubes::cpu::object::render(
 		_context,
 		*depth_stencil_state_);
 
-	sge::renderer::scoped_vertex_declaration scoped_vertex_declaration(
+	sge::renderer::vertex::scoped_declaration scoped_vertex_declaration(
 		_context,
 		*vertex_declaration_);
 
-	sge::renderer::scoped_vertex_buffer scoped_vertex_buffer(
+	sge::renderer::vertex::scoped_buffer scoped_vertex_buffer(
 		_context,
 		*vertex_buffer_);
 
 	_context.render_indexed(
 		*index_buffer_,
-		sge::renderer::first_vertex(
+		sge::renderer::vertex::first(
 			0u),
 		vertex_buffer_size_,
 		sge::renderer::primitive_type::triangle_list,
-		sge::renderer::first_index(
+		sge::renderer::index::first(
 			0u),
 		index_buffer_size_);
 }
@@ -705,7 +711,7 @@ flakelib::marching_cubes::cpu::object::update_buffers()
 	this->fill_index_buffer();
 }
 
-sge::renderer::vertex_declaration &
+sge::renderer::vertex::declaration &
 flakelib::marching_cubes::cpu::object::vertex_declaration()
 {
 	return
@@ -728,14 +734,14 @@ void
 flakelib::marching_cubes::cpu::object::fill_vertex_buffer()
 {
 	vertex_buffer_size_ =
-		sge::renderer::vertex_count(
+		sge::renderer::vertex::count(
 			static_cast<sge::renderer::size_type>(implementation_->nverts()));
 
 	if(
 		!vertex_buffer_ ||
 		vertex_buffer_->size() < vertex_buffer_size_)
 	{
-		sge::renderer::vertex_count const vertex_buffer_capacity(
+		sge::renderer::vertex::count const vertex_buffer_capacity(
 			fcppt::math::next_power_of_2(
 				vertex_buffer_size_.get()));
 
@@ -743,17 +749,18 @@ flakelib::marching_cubes::cpu::object::fill_vertex_buffer()
 
 		vertex_buffer_.take(
 			renderer_.create_vertex_buffer(
-				*vertex_declaration_,
-				sge::renderer::vf::dynamic::make_part_index
-				<
-					flakelib::marching_cubes::vf::interleaved,
-					flakelib::marching_cubes::vf::interleaved_part
-				>(),
-				vertex_buffer_capacity,
-				sge::renderer::resource_flags_field::null()));
+				sge::renderer::vertex::buffer_parameters(
+					*vertex_declaration_,
+					sge::renderer::vf::dynamic::make_part_index
+					<
+						flakelib::marching_cubes::vf::interleaved,
+						flakelib::marching_cubes::vf::interleaved_part
+					>(),
+					vertex_buffer_capacity,
+					sge::renderer::resource_flags_field::null())));
 	}
 
-	sge::renderer::scoped_vertex_lock vblock(
+	sge::renderer::vertex::scoped_lock vblock(
 		*vertex_buffer_,
 		sge::renderer::lock_mode::writeonly);
 
@@ -827,7 +834,7 @@ flakelib::marching_cubes::cpu::object::fill_index_buffer()
 	index_format;
 
 	index_buffer_size_ =
-		sge::renderer::index_count(
+		sge::renderer::index::count(
 			static_cast<sge::renderer::size_type>(
 				implementation_->ntrigs()) *
 			3u);
@@ -836,7 +843,7 @@ flakelib::marching_cubes::cpu::object::fill_index_buffer()
 		!index_buffer_ ||
 		index_buffer_->size() < index_buffer_size_)
 	{
-		sge::renderer::index_count const index_buffer_capacity(
+		sge::renderer::index::count const index_buffer_capacity(
 			fcppt::math::next_power_of_2(
 				index_buffer_size_.get()));
 
@@ -844,9 +851,10 @@ flakelib::marching_cubes::cpu::object::fill_index_buffer()
 
 		index_buffer_.take(
 			renderer_.create_index_buffer(
-				sge::renderer::index::dynamic::make_format<index_format>(),
-				index_buffer_capacity,
-				sge::renderer::resource_flags_field::null()));
+				sge::renderer::index::buffer_parameters(
+					sge::renderer::index::dynamic::make_format<index_format>(),
+					index_buffer_capacity,
+					sge::renderer::resource_flags_field::null())));
 	}
 
 	/*
@@ -857,7 +865,7 @@ flakelib::marching_cubes::cpu::object::fill_index_buffer()
 			(static_cast<sge::renderer::size_type>(implementation_->ntrigs()) * 3u * 4u)/1024u));
 	*/
 
-	sge::renderer::scoped_index_lock const iblock(
+	sge::renderer::index::scoped_lock const iblock(
 		*index_buffer_,
 		sge::renderer::lock_mode::writeonly);
 

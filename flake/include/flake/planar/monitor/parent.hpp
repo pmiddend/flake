@@ -22,11 +22,11 @@
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <sge/renderer/vector2.hpp>
-#include <sge/renderer/vertex_declaration_fwd.hpp>
-#include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/context/ffp_fwd.hpp>
 #include <sge/renderer/device/ffp_fwd.hpp>
 #include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
+#include <sge/renderer/vertex/declaration_fwd.hpp>
+#include <sge/renderer/vertex/declaration_scoped_ptr.hpp>
 #include <sge/shader/context_fwd.hpp>
 #include <sge/shader/pair.hpp>
 #include <sge/shader/parameter/matrix.hpp>
@@ -70,7 +70,7 @@ public:
 		sge::font::ttf_size,
 		monitor::font_color const &);
 
-	sge::renderer::vertex_declaration const &
+	sge::renderer::vertex::declaration const &
 	arrow_vertex_declaration() const;
 
 	sge::opencl::context::object &
@@ -119,7 +119,7 @@ private:
 	sge::font::system &font_system_;
 	monitor::font_color const font_color_;
 	sge::font::object_scoped_ptr const font_;
-	sge::renderer::vertex_declaration_scoped_ptr vd_;
+	sge::renderer::vertex::declaration_scoped_ptr vd_;
 	sge::renderer::state::core::sampler::object_scoped_ptr const point_sampler_;
 
 	sge::shader::pair arrow_shader_;

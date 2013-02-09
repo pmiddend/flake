@@ -13,6 +13,7 @@
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/image/color/predef.hpp>
+#include <sge/input/keyboard/optional_key_code.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
@@ -26,6 +27,7 @@
 #include <sge/renderer/state/core/rasterizer/scoped.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
+#include <sge/renderer/texture/emulate_srgb.hpp>
 #include <sge/renderer/texture/mipmap/all_levels.hpp>
 #include <sge/scenic/render_context/base.hpp>
 #include <sge/scenic/scene/from_blender_file.hpp>
@@ -35,18 +37,17 @@
 #include <sge/timer/reset_when_expired.hpp>
 #include <fcppt/insert_to_fcppt_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/ref.hpp>
-#include <fcppt/cref.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/deg_to_rad.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
-#include <fcppt/tr1/functional.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/chrono.hpp>
 #include <cstdlib>
+#include <functional>
+#include <memory>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -80,32 +81,32 @@ flake::tests::flakes::flakes(
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("arrows")),
-				test::optional_key_code(
+				sge::input::keyboard::optional_key_code(
 					sge::input::keyboard::key_code::f1)))
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("snowcover")),
-				test::optional_key_code(
+				sge::input::keyboard::optional_key_code(
 					sge::input::keyboard::key_code::f3)))
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("models")),
-				test::optional_key_code(
+				sge::input::keyboard::optional_key_code(
 					sge::input::keyboard::key_code::f4)))
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("wireframe")),
-				test::optional_key_code(
+				sge::input::keyboard::optional_key_code(
 					sge::input::keyboard::key_code::f5)))
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("marchingcubes")),
-				test::optional_key_code(
+				sge::input::keyboard::optional_key_code(
 					sge::input::keyboard::key_code::f6)))
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("flakes")),
-				test::optional_key_code(
+				sge::input::keyboard::optional_key_code(
 					sge::input::keyboard::key_code::f2))),
 		sge::systems::cursor_option_field(
 			sge::systems::cursor_option::exclusive)),
@@ -408,24 +409,21 @@ flake::tests::flakes::flakes(
 				FCPPT_TEXT("update-snow-cover")))
 		?
 			fcppt::make_unique_ptr<flake::volume::snow_cover::parallel_update>(
-				fcppt::ref(
-					marching_cubes_manager_),
-				fcppt::ref(
-					this->opencl_system().command_queue()),
-				fcppt::cref(
-					snow_density_view_))
+				marching_cubes_manager_,
+				this->opencl_system().command_queue(),
+				snow_density_view_)
 		:
-			fcppt::unique_ptr<flake::volume::snow_cover::parallel_update>()),
+			std::unique_ptr<flake::volume::snow_cover::parallel_update>()),
 /*
 		flake::volume::flakes::snow_density_view(
 			flakelib::volume::float_view(
 				activity_buffer_->value()))),
 */
 	wind_strength_modulator_(
-		std::tr1::bind(
+		std::bind(
 			&flakelib::volume::simulation::stam::wind_source::wind_strength,
 			&wind_source_,
-			std::tr1::placeholders::_1),
+			std::placeholders::_1),
 		flakelib::value_modulator::mean(
 			sge::parse::json::find_and_convert_member<cl_float>(
 				this->configuration(),
@@ -454,7 +452,7 @@ flake::tests::flakes::flakes(
 		test::information::identifier(
 			FCPPT_TEXT("snow vertices")),
 		flake::test::information::string_conversion_adapter<flakelib::marching_cubes::gpu::vertex_count>(
-			std::tr1::bind(
+			std::bind(
 				&flakes::snow_cover_vertices_,
 				this)))*/
 {
@@ -658,7 +656,7 @@ flake::tests::flakes::update()
 
 void
 flake::tests::flakes::key_down_callback(
-	sge::input::keyboard::key_code::type const _key)
+	sge::input::keyboard::key_code const _key)
 {
 	switch(_key)
 	{

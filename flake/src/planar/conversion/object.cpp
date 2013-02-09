@@ -5,6 +5,7 @@
 #include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program_context.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
+#include <sge/opencl/command_queue/map_flags.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
@@ -14,7 +15,6 @@
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
-#include <fcppt/assign/make_array.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/variant/holds_type.hpp>

@@ -10,16 +10,16 @@
 #include <flakelib/volume/float_view.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/command_queue/object_fwd.hpp>
-#include <sge/renderer/index_buffer_scoped_ptr.hpp>
-#include <sge/renderer/index_count.hpp>
 #include <sge/renderer/scalar.hpp>
-#include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
-#include <sge/renderer/vertex_count.hpp>
-#include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/context/core_fwd.hpp>
 #include <sge/renderer/device/core_fwd.hpp>
+#include <sge/renderer/index/buffer_scoped_ptr.hpp>
+#include <sge/renderer/index/count.hpp>
 #include <sge/renderer/index/i32.hpp>
 #include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
+#include <sge/renderer/vertex/buffer_scoped_ptr.hpp>
+#include <sge/renderer/vertex/count.hpp>
+#include <sge/renderer/vertex/declaration_scoped_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/container/raw_vector.hpp>
@@ -69,7 +69,7 @@ public:
 	update_buffers();
 
 	FLAKELIB_SYMBOL
-	sge::renderer::vertex_declaration &
+	sge::renderer::vertex::declaration &
 	vertex_declaration();
 
 	FLAKELIB_SYMBOL
@@ -98,11 +98,11 @@ private:
 	sge::renderer::device::core &renderer_;
 	flakelib::marching_cubes::cpu::grid_size const grid_size_;
 	flakelib::marching_cubes::iso_level const iso_level_;
-	sge::renderer::vertex_declaration_scoped_ptr vertex_declaration_;
-	sge::renderer::vertex_buffer_scoped_ptr vertex_buffer_;
-	sge::renderer::vertex_count vertex_buffer_size_;
-	sge::renderer::index_buffer_scoped_ptr index_buffer_;
-	sge::renderer::index_count index_buffer_size_;
+	sge::renderer::vertex::declaration_scoped_ptr vertex_declaration_;
+	sge::renderer::vertex::buffer_scoped_ptr vertex_buffer_;
+	sge::renderer::vertex::count vertex_buffer_size_;
+	sge::renderer::index::buffer_scoped_ptr index_buffer_;
+	sge::renderer::index::count index_buffer_size_;
 	sge::renderer::state::core::depth_stencil::object_scoped_ptr const depth_stencil_state_;
 	fcppt::scoped_ptr<MarchingCubes> const implementation_;
 	real_sequence data_;

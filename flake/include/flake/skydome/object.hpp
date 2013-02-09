@@ -7,14 +7,14 @@
 #include <flake/skydome/y_translation.hpp>
 #include <sge/camera/base_fwd.hpp>
 #include <sge/image2d/system_fwd.hpp>
-#include <sge/renderer/index_buffer_scoped_ptr.hpp>
 #include <sge/renderer/scalar.hpp>
-#include <sge/renderer/vertex_buffer_scoped_ptr.hpp>
-#include <sge/renderer/vertex_declaration_scoped_ptr.hpp>
 #include <sge/renderer/context/core_fwd.hpp>
 #include <sge/renderer/device/core_fwd.hpp>
+#include <sge/renderer/index/buffer_scoped_ptr.hpp>
 #include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
 #include <sge/renderer/texture/planar_scoped_ptr.hpp>
+#include <sge/renderer/vertex/buffer_scoped_ptr.hpp>
+#include <sge/renderer/vertex/declaration_scoped_ptr.hpp>
 #include <sge/shader/context_fwd.hpp>
 #include <sge/shader/pair.hpp>
 #include <sge/shader/parameter/matrix.hpp>
@@ -50,9 +50,9 @@ private:
 	flake::skydome::y_translation const y_translation_;
 	sge::renderer::device::core &renderer_;
 	sge::camera::base &camera_;
-	sge::renderer::vertex_declaration_scoped_ptr const vertex_declaration_;
-	sge::renderer::vertex_buffer_scoped_ptr const vertex_buffer_;
-	sge::renderer::index_buffer_scoped_ptr const index_buffer_;
+	sge::renderer::vertex::declaration_scoped_ptr const vertex_declaration_;
+	sge::renderer::vertex::buffer_scoped_ptr const vertex_buffer_;
+	sge::renderer::index::buffer_scoped_ptr const index_buffer_;
 	sge::renderer::texture::planar_scoped_ptr const texture_;
 	sge::shader::pair shader_;
 	sge::shader::parameter::matrix<sge::renderer::scalar,4,4> mvp_parameter_;

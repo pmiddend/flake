@@ -1,5 +1,6 @@
 #include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
+#include <sge/image/color/format.hpp>
 #include <sge/image/color/l8_format.hpp>
 #include <sge/image/mizuiro_color.hpp>
 #include <sge/image/color/r32f_format.hpp>
@@ -9,6 +10,7 @@
 #include <sge/image2d/view/make.hpp>
 #include <sge/image2d/view/object.hpp>
 #include <sge/image2d/view/size.hpp>
+#include <sge/opencl/command_queue/map_flags.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>

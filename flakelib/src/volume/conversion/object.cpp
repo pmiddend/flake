@@ -6,15 +6,14 @@
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/volume/float_buffer_lock.hpp>
 #include <flakelib/volume/conversion/object.hpp>
+#include <sge/opencl/command_queue/map_flags.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/scoped_objects.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <fcppt/from_std_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/move.hpp>
 #include <fcppt/optional.hpp>
-#include <fcppt/ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/container/raw_vector.hpp>
@@ -26,6 +25,7 @@
 #include <cstddef>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -168,8 +168,7 @@ flakelib::volume::conversion::object::raw_voxel_file_to_buffer(
 {
 	flakelib::volume::unique_float_buffer_lock result(
 		fcppt::make_unique_ptr<flakelib::volume::float_buffer_lock>(
-			fcppt::ref(
-				_buffer_pool),
+			_buffer_pool,
 			sge::opencl::dim3(
 				_raw_voxel_file_dimension.get(),
 				_raw_voxel_file_dimension.get(),
@@ -231,7 +230,7 @@ flakelib::volume::conversion::object::raw_voxel_file_to_buffer(
 	std::cout.flush();
 
 	return
-		fcppt::move(
+		std::move(
 			result);
 }
 
@@ -419,8 +418,7 @@ flakelib::volume::conversion::object::binvox_file_to_buffer(
 
 	flakelib::volume::unique_float_buffer_lock result(
 		fcppt::make_unique_ptr<flakelib::volume::float_buffer_lock>(
-			fcppt::ref(
-				_buffer_pool),
+			_buffer_pool,
 			real_grid_size));
 
 	sge::opencl::command_queue::scoped_buffer_mapping scoped_mapping(
@@ -494,6 +492,6 @@ flakelib::volume::conversion::object::binvox_file_to_buffer(
 	std::cout << "current_index: " << current_index << "\n";
 
 	return
-		fcppt::move(
+		std::move(
 			result);
 }
