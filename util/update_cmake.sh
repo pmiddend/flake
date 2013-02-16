@@ -1,29 +1,14 @@
-#!/bin/bash
+#!/bin/sh
 
-function die()
-{
-	exit -1
-}
+set -e -u
 
-function update_cmake_file()
-{
-	local cmakefile="$1"
-
-	update_cmake \
-		"${cmakefile}" \
-		"${@:2}" \
-		|| die
-
-	mv "${cmakefile}".new "${cmakefile}" || die
-}
-
-update_cmake_file \
+update_cmake \
 	flakelib/CMakeLists.txt \
 	FLAKELIB_FILES \
 	flakelib/src \
 	flakelib/include/flakelib
 
-update_cmake_file \
+update_cmake \
 	flake/CMakeLists.txt \
 	FLAKE_FILES \
 	flake/src \
