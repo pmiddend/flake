@@ -10,7 +10,7 @@
 #include <flakelib/volume/retrieve_zero_float4_buffer.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
-#include <sge/charconv/utf8_file_to_fcppt_string.hpp>
+#include <sge/charconv/utf8_file_to_fcppt_string_exn.hpp>
 #include <sge/image/color/predef.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/opencl/single_device_system/parameters.hpp>
@@ -62,7 +62,7 @@ flake::tests::solipsistic::solipsistic(
 				true)),
 	json_configuration_(
 		sge::parse::json::parse_string_exn(
-			sge::charconv::utf8_file_to_fcppt_string(
+			sge::charconv::utf8_file_to_fcppt_string_exn(
 				flake::media_path_from_string(
 					FCPPT_TEXT("config.json")))).object()),
 	simulation_size_(

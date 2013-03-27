@@ -10,7 +10,7 @@
 #include <flakelib/cl/cflags.hpp>
 #include <flakelib/cl/compiler_flags.hpp>
 #include <flakelib/cl/program_context.hpp>
-#include <sge/charconv/utf8_file_to_fcppt_string.hpp>
+#include <sge/charconv/utf8_file_to_fcppt_string_exn.hpp>
 #include <sge/font/system.hpp>
 #include <sge/image/color/predef.hpp>
 #include <sge/image/color/any/object.hpp>
@@ -148,7 +148,7 @@ flake::test::base::base(
 	configuration_(
 		fcppt::make_unique_ptr<sge::parse::json::object>(
 			sge::parse::json::parse_string_exn(
-				sge::charconv::utf8_file_to_fcppt_string(
+				sge::charconv::utf8_file_to_fcppt_string_exn(
 					flake::media_path_from_string(
 						FCPPT_TEXT("config.json")))).object())),
 	local_configuration_(
