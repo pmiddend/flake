@@ -312,7 +312,6 @@ flake::tests::flakes::flakes(
 	scene_(
 		scene_manager_,
 		this->viewport_manager(),
-		this->charconv_system(),
 		camera_manager_.camera(),
 		sge::scenic::scene::from_blender_file(
 			flake::media_path_from_string(
@@ -321,8 +320,7 @@ flake::tests::flakes::flakes(
 					this->configuration(),
 					sge::parse::json::string_to_path(
 						FCPPT_TEXT("scene-name")))+
-				FCPPT_TEXT("/description.json")),
-			this->charconv_system())),
+				FCPPT_TEXT("/description.json")))),
 	marching_cubes_manager_(
 		this->renderer(),
 		this->opencl_system().command_queue(),

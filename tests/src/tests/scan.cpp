@@ -3,7 +3,6 @@
 #include <flake/test/information/string_conversion_adapter.hpp>
 #include <flake/tests/scan.hpp>
 #include <flakelib/media_path_from_string.hpp>
-#include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/buffer/linear_view_impl.hpp>
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <flakelib/cl/cflags.hpp>
@@ -11,8 +10,7 @@
 #include <flakelib/volume/retrieve_zero_float4_buffer.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
-#include <sge/charconv/create_system.hpp>
-#include <sge/charconv/system.hpp>
+#include <sge/charconv/utf8_file_to_fcppt_string.hpp>
 #include <sge/image/color/predef.hpp>
 #include <sge/opencl/command_queue/map_flags.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
@@ -64,12 +62,9 @@ flake::tests::scan::scan(
 		sge::opencl::single_device_system::parameters()
 			.prefer_gpu(
 				true)),
-	charconv_system_(
-		sge::charconv::create_system()),
 	json_configuration_(
 		sge::parse::json::parse_string_exn(
-			flakelib::utf8_file_to_fcppt_string(
-				*charconv_system_,
+			sge::charconv::utf8_file_to_fcppt_string(
 				flake::media_path_from_string(
 					FCPPT_TEXT("config.json")))).object()),
 	program_context_(

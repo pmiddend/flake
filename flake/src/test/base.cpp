@@ -6,13 +6,11 @@
 #include <flake/time_modifier/object.hpp>
 #include <flakelib/log.hpp>
 #include <flakelib/scoped_frame_limiter.hpp>
-#include <flakelib/utf8_file_to_fcppt_string.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/cl/cflags.hpp>
 #include <flakelib/cl/compiler_flags.hpp>
 #include <flakelib/cl/program_context.hpp>
-#include <sge/charconv/create_system.hpp>
-#include <sge/charconv/system.hpp>
+#include <sge/charconv/utf8_file_to_fcppt_string.hpp>
 #include <sge/font/system.hpp>
 #include <sge/image/color/predef.hpp>
 #include <sge/image/color/any/object.hpp>
@@ -147,13 +145,10 @@ flake::test::base::base(
 		std::wcout,
 		"woutput.txt"),
 #endif
-	charconv_system_(
-		sge::charconv::create_system()),
 	configuration_(
 		fcppt::make_unique_ptr<sge::parse::json::object>(
 			sge::parse::json::parse_string_exn(
-				flakelib::utf8_file_to_fcppt_string(
-					*charconv_system_,
+				sge::charconv::utf8_file_to_fcppt_string(
 					flake::media_path_from_string(
 						FCPPT_TEXT("config.json")))).object())),
 	local_configuration_(
@@ -381,13 +376,6 @@ flake::test::base::image_system()
 {
 	return
 		systems_->image_system();
-}
-
-sge::charconv::system &
-flake::test::base::charconv_system()
-{
-	return
-		*charconv_system_;
 }
 
 flakelib::buffer_pool::object &

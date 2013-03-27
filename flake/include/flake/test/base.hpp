@@ -15,7 +15,6 @@
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
-#include <sge/charconv/system_fwd.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/input/cursor/object_fwd.hpp>
@@ -34,7 +33,6 @@
 #include <sge/systems/keyboard_collector.hpp>
 #include <sge/systems/mouse_collector.hpp>
 #include <sge/systems/renderer_caps.hpp>
-#include <sge/systems/with_charconv.hpp>
 #include <sge/systems/with_font.hpp>
 #include <sge/systems/with_image2d.hpp>
 #include <sge/systems/with_input.hpp>
@@ -115,9 +113,6 @@ protected:
 	sge::image2d::system &
 	image_system();
 
-	sge::charconv::system &
-	charconv_system();
-
 	flakelib::buffer_pool::object &
 	buffer_pool();
 
@@ -151,11 +146,10 @@ private:
 	typedef
 	sge::systems::instance
 	<
-		boost::mpl::vector6
+		boost::mpl::vector5
 		<
 			sge::systems::with_renderer<sge::systems::renderer_caps::ffp>,
 			sge::systems::with_window,
-			sge::systems::with_charconv,
 			sge::systems::with_font,
 			sge::systems::with_image2d,
 			sge::systems::with_input
@@ -179,7 +173,6 @@ private:
 	flake::scoped_wostream_file_redirection wlog_redirection_;
 	flake::scoped_wostream_file_redirection woutput_redirection_;
 #endif
-	fcppt::scoped_ptr<sge::charconv::system> const charconv_system_;
 	fcppt::scoped_ptr<sge::parse::json::object> const configuration_;
 	sge::parse::json::object const local_configuration_;
 	test::feature_sequence features_;

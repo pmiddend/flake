@@ -13,7 +13,6 @@
 #include <flakelib/volume/simulation/stam/semilagrangian_advection.hpp>
 #include <flakelib/volume/simulation/stam/subtract_pressure_gradient.hpp>
 #include <flakelib/volume/simulation/stam/wind_source.hpp>
-#include <sge/charconv/system_scoped_ptr.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/object.hpp>
 #include <awl/main/exit_code.hpp>
@@ -39,7 +38,6 @@ public:
 	~solipsistic();
 private:
 	sge::opencl::single_device_system::object opencl_system_;
-	sge::charconv::system_scoped_ptr charconv_system_;
 	sge::parse::json::object json_configuration_;
 	flakelib::volume::grid_size const simulation_size_;
 	flakelib::cl::program_context program_context_;

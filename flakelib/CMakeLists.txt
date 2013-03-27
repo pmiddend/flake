@@ -160,7 +160,6 @@ set(
 	flakelib/include/flakelib/timer/description.hpp
 	flakelib/include/flakelib/timer/object.hpp
 	flakelib/include/flakelib/timer/wobject.hpp
-	flakelib/include/flakelib/utf8_file_to_fcppt_string.hpp
 	flakelib/include/flakelib/utility/fill_buffer.hpp
 	flakelib/include/flakelib/utility/fill_buffer_fwd.hpp
 	flakelib/include/flakelib/utility/mix_buffers.hpp
@@ -255,7 +254,6 @@ set(
 	flakelib/src/splatter/box/object_fwd.cpp
 	flakelib/src/splatter/object.cpp
 	flakelib/src/splatter/rectangle/object.cpp
-	flakelib/src/utf8_file_to_fcppt_string.cpp
 	flakelib/src/utility/fill_buffer.cpp
 	flakelib/src/utility/mix_buffers.cpp
 	flakelib/src/value_modulator/object.cpp
