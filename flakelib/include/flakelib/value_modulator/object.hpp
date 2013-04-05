@@ -12,7 +12,8 @@
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/scoped_ptr.hpp>
 #include <fcppt/random/variate.hpp>
-#include <fcppt/random/distribution/uniform_real.hpp>
+#include <fcppt/random/distribution/basic.hpp>
+#include <fcppt/random/distribution/parameters/uniform_real.hpp>
 #include <fcppt/random/generator/minstd_rand.hpp>
 
 
@@ -54,7 +55,13 @@ private:
 	random_generator;
 
 	typedef
-	fcppt::random::distribution::uniform_real<cl_float>
+	fcppt::random::distribution::basic
+	<
+		fcppt::random::distribution::parameters::uniform_real
+		<
+			cl_float
+		>
+	>
 	distribution;
 
 	typedef

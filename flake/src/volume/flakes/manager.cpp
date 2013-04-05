@@ -51,8 +51,9 @@
 #include <fcppt/math/vector/arithmetic.hpp>
 #include <fcppt/math/vector/output.hpp>
 #include <fcppt/random/variate.hpp>
-#include <fcppt/random/distribution/uniform_int.hpp>
-#include <fcppt/random/distribution/uniform_real.hpp>
+#include <fcppt/random/distribution/basic.hpp>
+#include <fcppt/random/distribution/parameters/uniform_int.hpp>
+#include <fcppt/random/distribution/parameters/uniform_real.hpp>
 #include <fcppt/random/generator/minstd_rand.hpp>
 #include <fcppt/random/generator/seed_from_chrono.hpp>
 
@@ -360,11 +361,23 @@ flake::volume::flakes::manager::generate_particles(
 		fcppt::random::generator::seed_from_chrono<generator_type::seed>());
 
 	typedef
-	fcppt::random::distribution::uniform_int<unsigned>
+	fcppt::random::distribution::basic
+	<
+		fcppt::random::distribution::parameters::uniform_int
+		<
+			unsigned
+		>
+	>
 	uniform_unsigned_distribution;
 
 	typedef
-	fcppt::random::distribution::uniform_real<sge::renderer::scalar>
+	fcppt::random::distribution::basic
+	<
+		fcppt::random::distribution::parameters::uniform_real
+		<
+			sge::renderer::scalar
+		>
+	>
 	renderer_scalar_distribution;
 
 	typedef
@@ -386,34 +399,34 @@ flake::volume::flakes::manager::generate_particles(
 	unsigned_variate part_rng(
 		number_generator,
 		uniform_unsigned_distribution(
-			uniform_unsigned_distribution::min(
+			uniform_unsigned_distribution::param_type::min(
 				0u),
-			uniform_unsigned_distribution::max(
+			uniform_unsigned_distribution::param_type::max(
 				_number_of_textures.get()-1u)));
 
 	renderer_scalar_variate
 		size_rng(
 			number_generator,
 			renderer_scalar_distribution(
-				renderer_scalar_distribution::min(
+				renderer_scalar_distribution::param_type::min(
 					minimum_size_.get()),
-				renderer_scalar_distribution::sup(
+				renderer_scalar_distribution::param_type::sup(
 					maximum_size_.get()))),
 		x_rng(
 			number_generator,
 			renderer_scalar_distribution(
-				renderer_scalar_distribution::min(
+				renderer_scalar_distribution::param_type::min(
 					1.0f),
-				renderer_scalar_distribution::sup(
+				renderer_scalar_distribution::param_type::sup(
 					static_cast<sge::renderer::scalar>(
 						_grid_size.get().w()/2u-1u)))),
 		y_rng(
 			number_generator,
 			renderer_scalar_distribution(
-				renderer_scalar_distribution::min(
+				renderer_scalar_distribution::param_type::min(
 					static_cast<sge::renderer::scalar>(
 						1.0f)),
-				renderer_scalar_distribution::sup(
+				renderer_scalar_distribution::param_type::sup(
 					static_cast<sge::renderer::scalar>(
 						_grid_size.get().h())-
 					static_cast<sge::renderer::scalar>(
@@ -421,9 +434,9 @@ flake::volume::flakes::manager::generate_particles(
 		z_rng(
 			number_generator,
 			renderer_scalar_distribution(
-				renderer_scalar_distribution::min(
+				renderer_scalar_distribution::param_type::min(
 					1.0f),
-				renderer_scalar_distribution::sup(
+				renderer_scalar_distribution::param_type::sup(
 					static_cast<sge::renderer::scalar>(
 						_grid_size.get().d()-1u))));
 

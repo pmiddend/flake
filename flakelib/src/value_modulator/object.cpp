@@ -24,9 +24,9 @@ flakelib::value_modulator::object::object(
 		fcppt::make_unique_ptr<variate>(
 			number_generator_,
 			distribution(
-				distribution::min(
+				distribution::param_type::min(
 					_mean.get() - _variance.get()),
-				distribution::sup(
+				distribution::param_type::sup(
 					_mean.get() + _variance.get())))),
 	current_time_(
 		static_cast<cl_float>(
@@ -83,9 +83,9 @@ flakelib::value_modulator::object::mean(
 		fcppt::make_unique_ptr<variate>(
 			number_generator_,
 			distribution(
-				distribution::min(
+				distribution::param_type::min(
 					_mean.get() - variance_.get()),
-				distribution::sup(
+				distribution::param_type::sup(
 					_mean.get() + variance_.get()))));
 }
 
