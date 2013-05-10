@@ -60,13 +60,13 @@ flake::volume::arrows::manager::manager(
 		_renderer,
 		sge::shader::parameter::is_projection_matrix(
 			true),
-		sge::renderer::matrix4()),
+		sge::renderer::matrix4::identity()),
 	camera_position_parameter_(
 		shader_.vertex_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"camera_position")),
-		sge::renderer::vector3()),
+		sge::renderer::vector3::null()),
 	children_()
 {
 }

@@ -145,7 +145,7 @@ flake::skydome::object::object(
 		renderer_,
 		sge::shader::parameter::is_projection_matrix(
 			true),
-		sge::renderer::matrix4()),
+		sge::renderer::matrix4::identity()),
 	texture_parameter_(
 		shader_.pixel_program(),
 		sge::shader::parameter::name(

@@ -71,7 +71,6 @@ flake::planar::monitor::arrows::arrows(
 		_arrow_scale),
 	grid_scale_(
 		_grid_scale),
-	position_(),
 	vb_(
 		child::parent().renderer().create_vertex_buffer(
 			sge::renderer::vertex::buffer_parameters(

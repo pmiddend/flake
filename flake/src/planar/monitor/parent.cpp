@@ -92,7 +92,7 @@ flake::planar::monitor::parent::parent(
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"initial_position")),
-		sge::renderer::vector2()),
+		sge::renderer::vector2::null()),
 	arrow_projection_parameter_(
 		arrow_shader_.vertex_program(),
 		sge::shader::parameter::name(
@@ -101,7 +101,7 @@ flake::planar::monitor::parent::parent(
 		renderer_,
 		sge::shader::parameter::is_projection_matrix(
 			true),
-		sge::renderer::matrix4()),
+		sge::renderer::matrix4::identity()),
 	sprite_buffers_(
 		renderer_,
 		sge::sprite::buffers::option::dynamic),

@@ -163,7 +163,7 @@ flake::volume::flakes::manager::manager(
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"camera_position")),
-		sge::renderer::vector3()),
+		sge::renderer::vector3::null()),
 	tile_size_parameter_(
 		shader_.pixel_program(),
 		sge::shader::parameter::name(
@@ -186,7 +186,7 @@ flake::volume::flakes::manager::manager(
 		renderer_,
 		sge::shader::parameter::is_projection_matrix(
 			true),
-		sge::renderer::matrix4()),
+		sge::renderer::matrix4::identity()),
 	texture_(
 		sge::renderer::texture::create_planar_from_path(
 			flake::media_path_from_string(

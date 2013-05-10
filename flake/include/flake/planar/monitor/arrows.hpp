@@ -73,7 +73,6 @@ private:
 	monitor::grid_dimensions::value_type const dimensions_;
 	monitor::arrow_scale const arrow_scale_;
 	monitor::grid_scale const grid_scale_;
-	monitor::rect::vector position_;
 	sge::renderer::vertex::buffer_scoped_ptr const vb_;
 	sge::opencl::memory_object::buffer cl_vb_;
 	fcppt::scoped_ptr<dummy_sprite::object> sprite_;

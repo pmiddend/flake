@@ -155,7 +155,7 @@ flake::volume::density_visualization::raycaster::object::object(
 		renderer_,
 		sge::shader::parameter::is_projection_matrix(
 			true),
-		sge::renderer::matrix4()),
+		sge::renderer::matrix4::identity()),
 	step_size_parameter_(
 		shader_.pixel_program(),
 		sge::shader::parameter::name(
@@ -204,7 +204,7 @@ flake::volume::density_visualization::raycaster::object::object(
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"camera_position")),
-		sge::renderer::vector3()),
+		sge::renderer::vector3::null()),
 	loaded_texture_(
 		shader_.pixel_program(),
 		sge::shader::parameter::name(

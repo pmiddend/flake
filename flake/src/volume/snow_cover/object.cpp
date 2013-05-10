@@ -62,7 +62,7 @@ flake::volume::snow_cover::object::object(
 		_renderer,
 		sge::shader::parameter::is_projection_matrix(
 			true),
-		sge::renderer::matrix4()),
+		sge::renderer::matrix4::identity()),
 	texture_repeats_parameter_(
 		shader_.pixel_program(),
 		sge::shader::parameter::name(

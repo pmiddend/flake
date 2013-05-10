@@ -178,16 +178,19 @@ void
 flake::planar::cursor_splatter::update(
 	flakelib::duration const &_delta)
 {
+	if(!last_cursor_position_)
+		return;
+
 	if(left_button_pushed_down_ && optional_left_mouse_target_)
 		this->splat_at_cursor_position(
 			*optional_left_mouse_target_,
-			last_cursor_position_,
+			*last_cursor_position_,
 			_delta);
 
 	if(right_button_pushed_down_ && optional_right_mouse_target_)
 		this->splat_at_cursor_position(
 			*optional_right_mouse_target_,
-			last_cursor_position_,
+			*last_cursor_position_,
 			_delta);
 }
 
@@ -216,11 +219,8 @@ void
 flake::planar::cursor_splatter::move_callback(
 	sge::input::cursor::move_event const &e)
 {
-	if(!e.position())
-		return;
-
 	last_cursor_position_ =
-		*e.position();
+		e.position();
 }
 
 void

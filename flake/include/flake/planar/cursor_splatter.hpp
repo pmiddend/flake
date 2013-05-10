@@ -14,7 +14,7 @@
 #include <sge/input/cursor/button_event_fwd.hpp>
 #include <sge/input/cursor/move_event_fwd.hpp>
 #include <sge/input/cursor/object_fwd.hpp>
-#include <sge/input/cursor/position.hpp>
+#include <sge/input/cursor/optional_position.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/renderer/vector2.hpp>
 #include <sge/renderer/device/core_fwd.hpp>
@@ -67,7 +67,7 @@ private:
 	fcppt::signal::scoped_connection button_connection_;
 	fcppt::signal::scoped_connection move_connection_;
 	bool left_button_pushed_down_,right_button_pushed_down_;
-	sge::input::cursor::position last_cursor_position_;
+	sge::input::cursor::optional_position last_cursor_position_;
 
 	void
 	button_callback(
