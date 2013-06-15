@@ -11,7 +11,7 @@ namespace planar
 namespace monitor
 {
 typedef
-fcppt::math::box::rect<monitor::scalar>::type
+fcppt::math::box::rect<monitor::scalar>
 rect;
 }
 }

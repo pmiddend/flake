@@ -10,7 +10,7 @@ namespace flakelib
 namespace cl
 {
 typedef
-fcppt::math::dim::static_<cl_uint,4>::type
+fcppt::math::dim::static_<cl_uint,4>
 uint4;
 }
 }

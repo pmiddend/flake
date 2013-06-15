@@ -11,7 +11,7 @@ namespace planar
 namespace monitor
 {
 typedef
-fcppt::math::dim::static_<monitor::scalar,2>::type
+fcppt::math::dim::static_<monitor::scalar,2>
 dim;
 }
 }

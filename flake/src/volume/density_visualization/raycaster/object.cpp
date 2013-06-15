@@ -402,7 +402,7 @@ flake::volume::density_visualization::raycaster::object::camera_is_inside_cube()
 				sge::renderer::vector3::null(),
 				fcppt::math::dim::structure_cast
 				<
-					fcppt::math::dim::static_<sge::renderer::scalar,3>::type
+					fcppt::math::dim::static_<sge::renderer::scalar,3>
 				>(
 					grid_size_.get())),
 			-camera_.coordinate_system().position().get());

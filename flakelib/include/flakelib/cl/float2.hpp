@@ -9,7 +9,7 @@ namespace flakelib
 namespace cl
 {
 typedef
-fcppt::math::vector::static_<cl_float,2>::type
+fcppt::math::vector::static_<cl_float,2>
 float2;
 }
 }

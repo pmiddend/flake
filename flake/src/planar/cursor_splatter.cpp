@@ -73,13 +73,13 @@ unproject(
 	fcppt::math::matrix::object<T,M1,M2,S2> const &inverse_mvp,
 	fcppt::math::box::object<T,2> const &viewport)
 {
-	typedef typename
+	typedef
 	fcppt::math::vector::static_
 	<
 		T,
 		static_cast<fcppt::math::size_type>(
 			N::value+1)
-	>::type
+	>
 	vector4;
 
 	// Copied from
@@ -234,7 +234,7 @@ flake::planar::cursor_splatter::splat_at_cursor_position(
 			cursor_position_window_coords));
 
 	typedef
-	fcppt::math::box::rect<sge::renderer::scalar>::type
+	fcppt::math::box::rect<sge::renderer::scalar>
 	renderer_scalar_rect;
 
 	renderer_scalar_rect const
@@ -302,7 +302,7 @@ flake::planar::cursor_splatter::unproject_cursor_position(
 				current_viewport.pos()));
 
 	typedef
-	fcppt::math::box::rect<sge::renderer::scalar>::type
+	fcppt::math::box::rect<sge::renderer::scalar>
 	renderer_scalar_rect;
 
 	renderer_scalar_rect const
