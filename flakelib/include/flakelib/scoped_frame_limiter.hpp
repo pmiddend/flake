@@ -4,7 +4,7 @@
 #include <flakelib/symbol.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <boost/chrono.hpp>
+#include <chrono>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -16,7 +16,7 @@ FCPPT_NONCOPYABLE(
 	scoped_frame_limiter);
 public:
 	typedef
-	boost::chrono::high_resolution_clock
+	std::chrono::high_resolution_clock
 	clock_type;
 
 	typedef

@@ -18,6 +18,9 @@
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
 #include <fcppt/variant/object.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <chrono>
+#include <fcppt/config/external_end.hpp>
 
 
 flake::notifications::object::object(
@@ -40,7 +43,7 @@ flake::notifications::object::object(
 	messages_(),
 	second_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
-			boost::chrono::seconds(
+			std::chrono::seconds(
 				1)))
 {
 }

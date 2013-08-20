@@ -1,6 +1,9 @@
 #include <flakelib/scoped_frame_limiter.hpp>
 #include <fcppt/time/sleep.hpp>
 #include <fcppt/time/sleep_duration.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <chrono>
+#include <fcppt/config/external_end.hpp>
 
 
 flakelib::scoped_frame_limiter::scoped_frame_limiter(
@@ -9,8 +12,8 @@ flakelib::scoped_frame_limiter::scoped_frame_limiter(
 	before_frame_(
 		clock_type::now()),
 	minimum_frame_length_(
-		boost::chrono::duration_cast<clock_type::duration>(
-			boost::chrono::seconds(1)) / _desired_fps)
+		std::chrono::duration_cast<clock_type::duration>(
+			std::chrono::seconds(1)) / _desired_fps)
 {
 }
 
@@ -23,6 +26,6 @@ flakelib::scoped_frame_limiter::~scoped_frame_limiter()
 		return;
 
 	fcppt::time::sleep(
-		boost::chrono::duration_cast<fcppt::time::sleep_duration>(
+		std::chrono::duration_cast<fcppt::time::sleep_duration>(
 			minimum_frame_length_ - diff));
 }

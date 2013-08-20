@@ -2,6 +2,10 @@
 #define FLAKELIB_TIMER_BASIC_IMPL_HPP_INCLUDED
 
 #include <flakelib/timer/basic_decl.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <chrono>
+#include <fcppt/config/external_end.hpp>
+
 
 template
 <
@@ -38,7 +42,7 @@ flakelib::timer::basic<Char,CharTraits,Clock>::~basic()
 		<< stream_.widen(':')
 		<< stream_.widen(' ')
 		<<
-			boost::chrono::duration_cast<boost::chrono::milliseconds>(now - start_).count()
+			std::chrono::duration_cast<std::chrono::milliseconds>(now - start_).count()
 		<< stream_.widen('m')
 		<< stream_.widen('s')
 		<< stream_.widen('\n');

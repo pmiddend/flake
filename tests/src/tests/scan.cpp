@@ -33,9 +33,6 @@
 #include <fcppt/math/deg_to_rad.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
-#include <fcppt/config/external_begin.hpp>
-#include <boost/chrono.hpp>
-#include <fcppt/config/external_end.hpp>
 
 
 awl::main::exit_code const

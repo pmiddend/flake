@@ -41,7 +41,7 @@
 #include <fcppt/math/dim/output.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <boost/chrono.hpp>
+#include <chrono>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -230,7 +230,7 @@ flake::tests::marching_cubes::marching_cubes(
 */
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
-			boost::chrono::seconds(
+			std::chrono::seconds(
 				1)))
 {
 	/*

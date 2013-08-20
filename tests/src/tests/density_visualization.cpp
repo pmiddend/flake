@@ -22,7 +22,7 @@
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <boost/chrono.hpp>
+#include <chrono>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -170,7 +170,7 @@ flake::tests::density_visualization::density_visualization(
 */
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
-			boost::chrono::seconds(1)))
+			std::chrono::seconds(1)))
 {
 	/*
 	splatter_.splat_volume_float(

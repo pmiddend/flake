@@ -44,7 +44,7 @@
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <boost/chrono.hpp>
+#include <chrono>
 #include <cstdlib>
 #include <functional>
 #include <memory>
@@ -439,10 +439,10 @@ flake::tests::flakes::flakes(
 					FCPPT_TEXT("wind-strength-frequency-seconds"))))),
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
-			boost::chrono::seconds(1))),
+			std::chrono::seconds(1))),
 	snow_cover_update_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
-			boost::chrono::milliseconds(1000)))/*,
+			std::chrono::milliseconds(1000)))/*,
 	snow_cover_vertices_(
 		0u),
 	snow_cover_vertices_information_(

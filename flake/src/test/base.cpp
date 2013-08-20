@@ -65,6 +65,7 @@
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/signal/connection.hpp>
 #include <fcppt/config/external_begin.hpp>
+#include <chrono>
 #include <exception>
 #include <functional>
 #include <iostream>
@@ -241,8 +242,8 @@ flake::test::base::base(
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("tests/notification-font-size"))),
 			flake::notifications::time_to_live(
-				boost::chrono::milliseconds(
-					sge::parse::json::find_and_convert_member<boost::chrono::milliseconds::rep>(
+				std::chrono::milliseconds(
+					sge::parse::json::find_and_convert_member<std::chrono::milliseconds::rep>(
 						*configuration_,
 						sge::parse::json::string_to_path(
 							FCPPT_TEXT("tests/notification-ttl-ms"))))))),

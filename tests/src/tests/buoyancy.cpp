@@ -36,6 +36,9 @@
 #include <fcppt/math/box/structure_cast.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <chrono>
+#include <fcppt/config/external_end.hpp>
 
 
 awl::main::exit_code const
@@ -303,7 +306,7 @@ flake::tests::buoyancy::buoyancy(
 				0.5f))),
 	delta_timer_(
 		sge::timer::parameters<sge::timer::clocks::standard>(
-			boost::chrono::seconds(1)))
+			std::chrono::seconds(1)))
 {
 	rucksack_viewport_adaptor_.child(
 		rucksack_enumeration_);
