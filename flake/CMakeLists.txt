@@ -67,7 +67,6 @@ set(
 	flake/include/flake/planar/monitor/texture.hpp
 	flake/include/flake/planar/monitor/texture_fwd.hpp
 	flake/include/flake/planar/monitor/texture_size.hpp
-	flake/include/flake/planar/monitor/vector.hpp
 	flake/include/flake/postprocessing/context.hpp
 	flake/include/flake/postprocessing/context_fwd.hpp
 	flake/include/flake/postprocessing/fullscreen_quad.hpp
