@@ -13,7 +13,7 @@
 #include <sge/image/color/predef.hpp>
 #include <sge/image/view/const_object.hpp>
 #include <sge/image2d/file.hpp>
-#include <sge/image2d/system.hpp>
+#include <sge/image2d/load_exn.hpp>
 #include <sge/image2d/view/const_elements_wrapper.hpp>
 #include <sge/image2d/view/size.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
@@ -104,7 +104,8 @@ flake::tests::vorticity::vorticity(
 		this->program_context(),
 		this->buffer_pool()),
 	boundary_image_file_(
-		this->image_system().load(
+		sge::image2d::load_exn(
+			this->image_system(),
 			flake::media_path()
 				/ FCPPT_TEXT("boundaries")
 				/
