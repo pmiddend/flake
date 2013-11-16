@@ -7,7 +7,9 @@
 #include <sge/opencl/command_queue/object_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <boost/thread.hpp>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -35,11 +37,11 @@ private:
 	flakelib::marching_cubes::cpu::object &marching_cubes_;
 	sge::opencl::command_queue::object &command_queue_;
 	flake::volume::flakes::snow_density_view const buffer_;
-	boost::mutex dirty_mutex_;
-	boost::mutex finished_mutex_;
+	std::mutex dirty_mutex_;
+	std::mutex finished_mutex_;
 	bool finished_;
-	boost::condition_variable not_dirty_;
-	boost::thread thread_;
+	std::condition_variable not_dirty_;
+	std::thread thread_;
 
 	void
 	thread();

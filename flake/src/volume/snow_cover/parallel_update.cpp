@@ -2,6 +2,7 @@
 #include <flakelib/marching_cubes/cpu/object.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <functional>
+#include <mutex>
 #include <fcppt/config/external_end.hpp>
 
 flake::volume::snow_cover::parallel_update::parallel_update(
@@ -31,7 +32,7 @@ void
 flake::volume::snow_cover::parallel_update::restart_if_finished()
 {
 	{
-		boost::unique_lock<boost::mutex> l(
+		std::unique_lock<std::mutex> l(
 			finished_mutex_);
 
 		if(!finished_)
@@ -55,18 +56,17 @@ flake::volume::snow_cover::parallel_update::restart_if_finished()
 
 flake::volume::snow_cover::parallel_update::~parallel_update()
 {
-	thread_.interrupt();
 	thread_.join();
 }
 
 void
 flake::volume::snow_cover::parallel_update::thread()
-try
 {
+	// FIXME: finished is always true and std::thread doesn't support thread interruption
 	for(;;)
 	{
 		{
-			boost::unique_lock<boost::mutex> l(
+			std::unique_lock<std::mutex> l(
 				dirty_mutex_);
 
 			//		std::cout << "Snow cover update thread: Waiting\n";
@@ -79,13 +79,10 @@ try
 			marching_cubes_.run();
 		}
 
-		boost::unique_lock<boost::mutex> l(
+		std::unique_lock<std::mutex> l(
 			finished_mutex_);
 
 		finished_ =
 			true;
 	}
-}
-catch(boost::thread_interrupted const &)
-{
 }
