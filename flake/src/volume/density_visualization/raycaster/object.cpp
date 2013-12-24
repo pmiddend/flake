@@ -127,15 +127,15 @@ flake::volume::density_visualization::raycaster::object::object(
 					sge::image::color::format::r32f,
 					sge::renderer::texture::emulate_srgb::no),
 				sge::renderer::texture::mipmap::off(),
-				sge::renderer::resource_flags_field(
+				sge::renderer::resource_flags_field{
 			//		sge::renderer::resource_flags_field::null()),
-					sge::renderer::resource_flags::readable),
+					sge::renderer::resource_flags::readable},
 				sge::renderer::texture::capabilities_field::null()))),
 	cl_texture_(
 		_context,
-		sge::opencl::memory_object::flags_field(
-			sge::opencl::memory_object::flags::read) |
-			sge::opencl::memory_object::flags::write,
+		sge::opencl::memory_object::flags_field{
+			sge::opencl::memory_object::flags::read,
+			sge::opencl::memory_object::flags::write},
 		*texture_),
 	shader_(
 		_shader_context,

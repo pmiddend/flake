@@ -49,8 +49,9 @@ flakelib::buffer_pool::object::get_and_lock(
 		pool_,
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
 			context_,
-			sge::opencl::memory_object::flags_field(
-				sge::opencl::memory_object::flags::read) | sge::opencl::memory_object::flags::write,
+			sge::opencl::memory_object::flags_field{
+				sge::opencl::memory_object::flags::read,
+				sge::opencl::memory_object::flags::write},
 			_byte_size));
 
 	locked_buffers_.insert(

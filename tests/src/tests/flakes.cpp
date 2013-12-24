@@ -108,8 +108,8 @@ flake::tests::flakes::flakes(
 					FCPPT_TEXT("flakes")),
 				sge::input::keyboard::optional_key_code(
 					sge::input::keyboard::key_code::f2))),
-		sge::systems::cursor_option_field(
-			sge::systems::cursor_option::exclusive)),
+		sge::systems::cursor_option_field{
+			sge::systems::cursor_option::exclusive}),
 	simulation_size_(
 		sge::parse::json::find_and_convert_member<sge::opencl::dim3>(
 			this->configuration(),
@@ -195,10 +195,10 @@ flake::tests::flakes::flakes(
 			0.0f)*/),
 	snow_density_buffer_(
 		this->opencl_system().context(),
-		sge::opencl::memory_object::flags_field(
-			sge::opencl::memory_object::flags::read)
-			| sge::opencl::memory_object::flags::write
-			| sge::opencl::memory_object::flags::alloc_host_ptr,
+		sge::opencl::memory_object::flags_field{
+			sge::opencl::memory_object::flags::read,
+			sge::opencl::memory_object::flags::write,
+			sge::opencl::memory_object::flags::alloc_host_ptr},
 		sge::opencl::memory_object::byte_size(
 			simulation_size_.get().content() * sizeof(cl_float))),
 	snow_density_view_(

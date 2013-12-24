@@ -188,8 +188,8 @@ flake::test::base::base(
 						sge::renderer::display_mode::optional_object()),
 					sge::viewport::fill_on_resize())
 					.caps(
-						sge::renderer::caps::system_field(
-							sge::renderer::caps::system::opengl)))
+						sge::renderer::caps::system_field{
+							sge::renderer::caps::system::opengl}))
 				(sge::systems::input(
 					_cursor_options)))),
 	quit_connection_(

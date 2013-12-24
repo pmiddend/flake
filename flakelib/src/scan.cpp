@@ -72,9 +72,9 @@ flakelib::scan::scan(
 			"uniformUpdate")),
 	buffer_(
 		command_queue_.context(),
-		sge::opencl::memory_object::flags_field(
-			sge::opencl::memory_object::flags::read) |
-		sge::opencl::memory_object::flags::write,
+		sge::opencl::memory_object::flags_field{
+			sge::opencl::memory_object::flags::read,
+			sge::opencl::memory_object::flags::write},
 		sge::opencl::memory_object::byte_size(
 			(MAX_BATCH_ELEMENTS / (4u * WORKGROUP_SIZE)) * sizeof(cl_uint)))
 {

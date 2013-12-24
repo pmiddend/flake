@@ -82,8 +82,8 @@ flake::tests::marching_cubes::marching_cubes(
 					FCPPT_TEXT("frameupdate")),
 				sge::input::keyboard::optional_key_code(
 					sge::input::keyboard::key_code::f3))),
-		sge::systems::cursor_option_field(
-			sge::systems::cursor_option::exclusive)),
+		sge::systems::cursor_option_field{
+			sge::systems::cursor_option::exclusive}),
 	simulation_size_(
 		sge::parse::json::find_and_convert_member<sge::opencl::dim3>(
 			this->configuration(),

@@ -80,8 +80,8 @@ flake::planar::monitor::arrows::arrows(
 				sge::renderer::vertex::count(
 					static_cast<sge::renderer::size_type>(
 						dimensions_.content() * 6)),
-				sge::renderer::resource_flags_field(
-					sge::renderer::resource_flags::readable)))),
+				sge::renderer::resource_flags_field{
+					sge::renderer::resource_flags::readable}))),
 	cl_vb_(
 		child::parent().cl_context(),
 		*vb_,

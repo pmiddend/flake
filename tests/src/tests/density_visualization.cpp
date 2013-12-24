@@ -60,8 +60,8 @@ flake::tests::density_visualization::density_visualization(
 					FCPPT_TEXT("wireframe")),
 				flake::test::optional_key_code(
 					sge::input::keyboard::key_code::f2)))*/
-		sge::systems::cursor_option_field(
-			sge::systems::cursor_option::exclusive)),
+		sge::systems::cursor_option_field{
+			sge::systems::cursor_option::exclusive}),
 	simulation_size_(
 		sge::parse::json::find_and_convert_member<sge::opencl::dim3>(
 			this->configuration(),

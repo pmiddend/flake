@@ -66,8 +66,8 @@ flake::planar::monitor::texture::texture(
 				sge::renderer::texture::capabilities_field::null()))),
 	cl_texture_(
 		child::parent().cl_context(),
-		sge::opencl::memory_object::flags_field(
-			sge::opencl::memory_object::flags::write),
+		sge::opencl::memory_object::flags_field{
+			sge::opencl::memory_object::flags::write},
 		*renderer_texture_),
 	sprite_(
 		flake::planar::monitor::dummy_sprite::parameters()
