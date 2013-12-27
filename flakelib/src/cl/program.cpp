@@ -14,7 +14,8 @@
 #include <fcppt/algorithm/shortest_levenshtein.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/io/stream_to_string.hpp>
-#include <fcppt/log/headers.hpp>
+#include <fcppt/log/_.hpp>
+#include <fcppt/log/debug.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/filesystem/fstream.hpp>

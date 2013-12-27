@@ -60,7 +60,8 @@
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/io/cerr.hpp>
-#include <fcppt/log/headers.hpp>
+#include <fcppt/log/_.hpp>
+#include <fcppt/log/debug.hpp>
 #include <fcppt/log/location.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/signal/connection.hpp>
