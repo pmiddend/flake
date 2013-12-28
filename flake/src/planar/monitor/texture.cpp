@@ -7,6 +7,7 @@
 #include <sge/font/object.hpp>
 #include <sge/font/text.hpp>
 #include <sge/font/text_parameters.hpp>
+#include <sge/font/align_h/left.hpp>
 #include <sge/image/color/predef.hpp>
 #include <sge/opencl/memory_object/flags_field.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
@@ -88,7 +89,7 @@ flake::planar::monitor::texture::texture(
 		flake::planar::monitor::font_axis_policy(
 			child::parent().font(),
 			sge::font::text_parameters(
-				sge::font::align_h::left),
+				sge::font::align_h::left()),
 			sge::font::from_fcppt_string(
 				this->name()))),
 	sprite_box_(
@@ -118,7 +119,7 @@ flake::planar::monitor::texture::texture(
 		sge::font::from_fcppt_string(
 			this->name()),
 		sge::font::text_parameters(
-			sge::font::align_h::left),
+			sge::font::align_h::left()),
 		sge::font::vector::null(),
 		child::parent().font_color().get(),
 		sge::renderer::texture::emulate_srgb::no)

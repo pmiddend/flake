@@ -5,6 +5,8 @@
 #include <sge/font/system.hpp>
 #include <sge/font/text.hpp>
 #include <sge/font/text_parameters.hpp>
+#include <sge/font/align_h/max_width.hpp>
+#include <sge/font/align_h/right.hpp>
 #include <sge/font/draw/static_text.hpp>
 #include <sge/image/color/predef.hpp>
 #include <sge/image/color/init.hpp>
@@ -108,9 +110,9 @@ flake::notifications::object::render(
 
 	sge::font::text_parameters const text_parameters(
 		sge::font::text_parameters(
-			sge::font::align_h::right)
-			.max_width(
-				viewport_rect.w() - border_padding));
+			sge::font::align_h::right(
+				sge::font::align_h::max_width(
+					viewport_rect.w() - border_padding))));
 
 	sge::font::unit current_y =
 		border_padding;
