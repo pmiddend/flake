@@ -125,7 +125,7 @@ find_package(
 	modelobj
 	font
 	fontdraw
-	parse
+	parsejson
 	systems
 	window
 	viewport
