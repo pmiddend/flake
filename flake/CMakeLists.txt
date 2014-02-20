@@ -208,6 +208,9 @@ add_library(
 	STATIC
 	${FLAKE_FILES_ABS})
 
+fcppt_utils_set_target_compiler_flags(
+	flake_helper_library)
+
 target_link_libraries(
 	flake_helper_library
 	${FLAKELIB_DEFAULT_LINK_TARGET})

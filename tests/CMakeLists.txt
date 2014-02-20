@@ -16,6 +16,9 @@ awl_utils_add_portable_executable(
 	"custom_main"
 	src/tests/vorticity.cpp)
 
+fcppt_utils_set_target_compiler_flags(
+	tests_vorticity)
+
 target_link_libraries(
 	tests_vorticity
 	${FLAKELIB_DEFAULT_LINK_TARGET}
@@ -41,6 +44,9 @@ awl_utils_add_portable_executable(
 	tests_buoyancy
 	"custom_main"
 	src/tests/buoyancy.cpp)
+
+fcppt_utils_set_target_compiler_flags(
+	tests_buoyancy)
 
 target_link_libraries(
 	tests_buoyancy
@@ -68,6 +74,9 @@ awl_utils_add_portable_executable(
 	"custom_main"
 	src/tests/flakes.cpp)
 
+fcppt_utils_set_target_compiler_flags(
+	tests_flakes)
+
 target_link_libraries(
 	tests_flakes
 	${FLAKELIB_DEFAULT_LINK_TARGET}
@@ -94,6 +103,9 @@ awl_utils_add_portable_executable(
 	"custom_main"
 	src/tests/marching_cubes.cpp)
 
+fcppt_utils_set_target_compiler_flags(
+	tests_marching_cubes)
+
 target_link_libraries(
 	tests_marching_cubes
 	${FLAKELIB_DEFAULT_LINK_TARGET}
@@ -119,6 +131,9 @@ awl_utils_add_portable_executable(
 	tests_density_visualization
 	"custom_main"
 	src/tests/density_visualization.cpp)
+
+fcppt_utils_set_target_compiler_flags(
+	tests_density_visualization)
 
 target_link_libraries(
 	tests_density_visualization
@@ -147,6 +162,9 @@ awl_utils_add_portable_executable(
 	"custom_main"
 	src/tests/solipsistic.cpp)
 
+fcppt_utils_set_target_compiler_flags(
+	tests_solipsistic)
+
 target_link_libraries(
 	tests_solipsistic
 	${FLAKELIB_DEFAULT_LINK_TARGET}
@@ -172,6 +190,9 @@ awl_utils_add_portable_executable(
 	tests_scan
 	"custom_main"
 	src/tests/scan.cpp)
+
+fcppt_utils_set_target_compiler_flags(
+	tests_scan)
 
 target_link_libraries(
 	tests_scan

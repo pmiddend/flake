@@ -305,6 +305,9 @@ function(
 		${VARIANT}
 		${FLAKELIB_FILES_ABS})
 
+	fcppt_utils_set_target_compiler_flags(
+		${TARGETNAME})
+
 	if(
 		NOT MSVC)
 		target_link_libraries(

@@ -1,6 +1,6 @@
 cmake_minimum_required(
   VERSION
-  2.6)
+  2.8.12)
 
 project(
   flake)
@@ -46,14 +46,8 @@ if(MSVC)
 		/wd4626)
 endif()
 
-# fcppt begin
 find_package(
 	fcppt REQUIRED)
-include_directories(
-	${fcppt_INCLUDE_DIRS})
-add_definitions(
-	${fcppt_DEFINITIONS})
-# fcppt end
 
 # cg begin
 find_package(
@@ -73,33 +67,16 @@ add_definitions(
 	${OpenCL_DEFINITIONS})
 # OpenCL end
 
-# cg begin
+# OpenGL begin
 find_package(
 	OpenGL REQUIRED)
 include_directories(
 	${OPENGL_INCLUDE_DIR})
-# cg end
+# OpenGL end
 
-# OpenCL begin
-find_package(
-	OpenCL REQUIRED)
-include_directories(
-	${FCPPT_UTILS_INCLUDE_SYSTEM}
-	${OPENCL_INCLUDE_DIR})
-add_definitions(
-	${OpenCL_DEFINITIONS})
-# OpenCL end
-
-# awl begin
 find_package(
 	awl REQUIRED)
-include_directories(
-	${awl_INCLUDE_DIR})
-add_definitions(
-	${awl_DEFINITIONS})
-# awl end
 
-# sge begin
 find_package(
 	sge REQUIRED COMPONENTS
 	opencl
@@ -133,18 +110,6 @@ find_package(
 	plugin
 	audio
 )
-
-include_directories(
-  ${sge_INCLUDE_DIRS})
-add_definitions(
-  ${sge_DEFINITIONS})
-# sge end
-
-# get rid of a pretty useless warning
-if(CMAKE_COMPILER_IS_GNUCXX OR FCPPT_UTILS_COMPILER_IS_CLANGPP)
-	add_definitions(
-		-Wno-old-style-cast)
-endif()
 
 option(
 	ENABLE_SHARED
