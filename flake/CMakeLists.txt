@@ -199,6 +199,9 @@ fcppt_utils_append_source_dir_and_make_groups(
 	"${FLAKE_FILES}"
 	FLAKE_FILES_ABS)
 
+fcppt_utils_install_data_dir(
+	INSTALL_DATA_DIR)
+
 set(
 	INSTALL_MEDIA_DIR
 	${INSTALL_DATA_DIR}/flake_media)
