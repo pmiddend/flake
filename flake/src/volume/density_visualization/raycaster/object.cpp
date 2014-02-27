@@ -7,11 +7,10 @@
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
-#include <sge/image/store.hpp>
 #include <sge/image/algorithm/may_overlap.hpp>
-#include <sge/image2d/l8.hpp>
 #include <sge/image2d/save_from_view.hpp>
 #include <sge/image2d/algorithm/copy_and_convert.hpp>
+#include <sge/image2d/store/l8.hpp>
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/image2d/view/object.hpp>
 #include <sge/image2d/view/to_const.hpp>
@@ -297,7 +296,7 @@ flake::volume::density_visualization::raycaster::object::update(
 		*texture_);
 
 	typedef
-	sge::image2d::l8
+	sge::image2d::store::l8
 	store_type;
 
 	store_type temp_store(

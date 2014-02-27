@@ -1,8 +1,7 @@
 #include <flake/save_l8_texture_to_file.hpp>
-#include <sge/image/store.hpp>
 #include <sge/image/algorithm/may_overlap.hpp>
 #include <sge/image2d/dim.hpp>
-#include <sge/image2d/l8.hpp>
+#include <sge/image2d/store/l8.hpp>
 #include <sge/image2d/save_from_view.hpp>
 #include <sge/image2d/algorithm/copy_and_convert.hpp>
 #include <sge/image2d/view/object.hpp>
@@ -21,7 +20,7 @@ flake::save_l8_texture_to_file(
 	sge::renderer::texture::const_scoped_planar_lock slock(
 		_texture);
 
-	typedef sge::image2d::l8 store_type;
+	typedef sge::image2d::store::l8 store_type;
 
 	store_type whole_store(
 		fcppt::math::dim::structure_cast<sge::image2d::dim>(
