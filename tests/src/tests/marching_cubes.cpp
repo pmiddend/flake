@@ -24,7 +24,7 @@
 #include <sge/renderer/context/ffp.hpp>
 #include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/state/core/rasterizer/object.hpp>
-#include <sge/renderer/state/core/rasterizer/object_scoped_ptr.hpp>
+#include <sge/renderer/state/core/rasterizer/object_unique_ptr.hpp>
 #include <sge/renderer/state/core/rasterizer/parameters.hpp>
 #include <sge/renderer/state/core/rasterizer/scoped.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
@@ -294,7 +294,7 @@ void
 flake::tests::marching_cubes::render(
 	sge::renderer::context::ffp &_context)
 {
-	sge::renderer::state::core::rasterizer::object_scoped_ptr const rasterizer_state(
+	sge::renderer::state::core::rasterizer::object_unique_ptr const rasterizer_state(
 		this->renderer().create_rasterizer_state(
 			sge::renderer::state::core::rasterizer::parameters(
 				sge::renderer::state::core::rasterizer::cull_mode::off,

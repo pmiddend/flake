@@ -2,7 +2,7 @@
 #define FLAKE_TEST_INFORMATION_MANAGER_HPP_INCLUDED
 
 #include <flake/test/information/object.hpp>
-#include <sge/font/object_scoped_ptr.hpp>
+#include <sge/font/object_unique_ptr.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <sge/font/ttf_size.hpp>
 #include <sge/image/color/any/object.hpp>
@@ -50,7 +50,7 @@ private:
 
 	sge::renderer::device::ffp &renderer_;
 	sge::image::color::any::object const color_;
-	sge::font::object_scoped_ptr font_;
+	sge::font::object_unique_ptr const font_;
 	child_sequence children_;
 
 	void

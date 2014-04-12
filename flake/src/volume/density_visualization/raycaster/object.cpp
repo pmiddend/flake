@@ -26,7 +26,7 @@
 #include <sge/renderer/state/core/blend/scoped.hpp>
 #include <sge/renderer/state/core/blend/write_mask_all.hpp>
 #include <sge/renderer/state/core/rasterizer/object.hpp>
-#include <sge/renderer/state/core/rasterizer/object_scoped_ptr.hpp>
+#include <sge/renderer/state/core/rasterizer/object_unique_ptr.hpp>
 #include <sge/renderer/state/core/rasterizer/parameters.hpp>
 #include <sge/renderer/state/core/rasterizer/scoped.hpp>
 #include <sge/renderer/state/core/sampler/object.hpp>
@@ -351,7 +351,7 @@ flake::volume::density_visualization::raycaster::object::render(
 		_context,
 		*blend_state_);
 
-	sge::renderer::state::core::rasterizer::object_scoped_ptr const rasterizer_state(
+	sge::renderer::state::core::rasterizer::object_unique_ptr const rasterizer_state(
 		renderer_.create_rasterizer_state(
 			sge::renderer::state::core::rasterizer::parameters(
 				this->camera_is_inside_cube()

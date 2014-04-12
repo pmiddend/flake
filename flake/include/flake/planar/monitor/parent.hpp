@@ -12,7 +12,7 @@
 #include <flake/planar/monitor/dummy_sprite/buffers.hpp>
 #include <flake/planar/monitor/dummy_sprite/collection.hpp>
 #include <flake/planar/monitor/dummy_sprite/state_object.hpp>
-#include <sge/font/object_scoped_ptr.hpp>
+#include <sge/font/object_unique_ptr.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <sge/font/ttf_size.hpp>
 #include <sge/image/color/any/object_fwd.hpp>
@@ -24,9 +24,9 @@
 #include <sge/renderer/vector2.hpp>
 #include <sge/renderer/context/ffp_fwd.hpp>
 #include <sge/renderer/device/ffp_fwd.hpp>
-#include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
+#include <sge/renderer/state/core/sampler/object_unique_ptr.hpp>
 #include <sge/renderer/vertex/declaration_fwd.hpp>
-#include <sge/renderer/vertex/declaration_scoped_ptr.hpp>
+#include <sge/renderer/vertex/declaration_unique_ptr.hpp>
 #include <sge/shader/context_fwd.hpp>
 #include <sge/shader/pair.hpp>
 #include <sge/shader/parameter/matrix.hpp>
@@ -118,9 +118,9 @@ private:
 	sge::opencl::command_queue::object &command_queue_;
 	sge::font::system &font_system_;
 	monitor::font_color const font_color_;
-	sge::font::object_scoped_ptr const font_;
-	sge::renderer::vertex::declaration_scoped_ptr vd_;
-	sge::renderer::state::core::sampler::object_scoped_ptr const point_sampler_;
+	sge::font::object_unique_ptr const font_;
+	sge::renderer::vertex::declaration_unique_ptr const vd_;
+	sge::renderer::state::core::sampler::object_unique_ptr const point_sampler_;
 
 	sge::shader::pair arrow_shader_;
 	sge::shader::parameter::vector<sge::renderer::scalar,2> arrow_initial_position_parameter_;

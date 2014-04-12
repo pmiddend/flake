@@ -16,12 +16,12 @@
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/renderer/context/ffp_fwd.hpp>
 #include <sge/renderer/device/ffp_fwd.hpp>
-#include <sge/renderer/state/core/blend/object_scoped_ptr.hpp>
-#include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
-#include <sge/renderer/state/ffp/misc/object_scoped_ptr.hpp>
-#include <sge/renderer/texture/planar_scoped_ptr.hpp>
-#include <sge/renderer/vertex/buffer_scoped_ptr.hpp>
-#include <sge/renderer/vertex/declaration_scoped_ptr.hpp>
+#include <sge/renderer/state/core/blend/object_unique_ptr.hpp>
+#include <sge/renderer/state/core/depth_stencil/object_unique_ptr.hpp>
+#include <sge/renderer/state/ffp/misc/object_unique_ptr.hpp>
+#include <sge/renderer/texture/planar_unique_ptr.hpp>
+#include <sge/renderer/vertex/buffer_unique_ptr.hpp>
+#include <sge/renderer/vertex/declaration_unique_ptr.hpp>
 #include <sge/shader/context_fwd.hpp>
 #include <sge/shader/pair.hpp>
 #include <sge/shader/parameter/matrix.hpp>
@@ -29,7 +29,9 @@
 #include <sge/shader/parameter/scalar.hpp>
 #include <sge/shader/parameter/vector.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/scoped_ptr.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <memory>
+#include <fcppt/config/external_end.hpp>
 
 
 namespace flake
@@ -83,23 +85,23 @@ private:
 	sge::camera::base &camera_;
 	flake::volume::flakes::minimum_size const minimum_size_;
 	flake::volume::flakes::maximum_size const maximum_size_;
-	sge::renderer::state::core::blend::object_scoped_ptr const blend_state_;
-	sge::renderer::state::core::depth_stencil::object_scoped_ptr const depth_stencil_state_;
-	sge::renderer::state::ffp::misc::object_scoped_ptr const misc_state_;
-	sge::renderer::vertex::declaration_scoped_ptr const vertex_declaration_;
-	sge::renderer::vertex::buffer_scoped_ptr const positions_buffer_;
-	sge::renderer::vertex::buffer_scoped_ptr const texcoords_buffer_;
-	sge::renderer::vertex::buffer_scoped_ptr const point_sizes_buffer_;
+	sge::renderer::state::core::blend::object_unique_ptr const blend_state_;
+	sge::renderer::state::core::depth_stencil::object_unique_ptr const depth_stencil_state_;
+	sge::renderer::state::ffp::misc::object_unique_ptr const misc_state_;
+	sge::renderer::vertex::declaration_unique_ptr const vertex_declaration_;
+	sge::renderer::vertex::buffer_unique_ptr const positions_buffer_;
+	sge::renderer::vertex::buffer_unique_ptr const texcoords_buffer_;
+	sge::renderer::vertex::buffer_unique_ptr const point_sizes_buffer_;
 	flake::volume::flakes::texture_tile_size tile_size_;
 	sge::shader::pair shader_;
 	sge::shader::parameter::vector<sge::renderer::scalar,3u> camera_position_parameter_;
 	sge::shader::parameter::scalar<sge::renderer::scalar> tile_size_parameter_;
 	sge::shader::parameter::scalar<sge::renderer::scalar> maximum_distance_parameter_;
 	sge::shader::parameter::matrix<sge::renderer::scalar,4u,4u> mvp_parameter_;
-	sge::renderer::texture::planar_scoped_ptr const texture_;
+	sge::renderer::texture::planar_unique_ptr const texture_;
 	sge::shader::parameter::planar_texture loaded_texture_;
-	fcppt::scoped_ptr<sge::opencl::memory_object::buffer> cl_positions_buffer_;
-	fcppt::scoped_ptr<sge::opencl::memory_object::buffer> cl_point_sizes_buffer_;
+	std::unique_ptr<sge::opencl::memory_object::buffer> cl_positions_buffer_;
+	std::unique_ptr<sge::opencl::memory_object::buffer> cl_point_sizes_buffer_;
 
 	void
 	generate_particles(

@@ -21,7 +21,7 @@
 #include <sge/renderer/state/core/sampler/address/parameters.hpp>
 #include <sge/renderer/state/core/sampler/filter/point.hpp>
 #include <sge/renderer/state/ffp/transform/object.hpp>
-#include <sge/renderer/state/ffp/transform/object_scoped_ptr.hpp>
+#include <sge/renderer/state/ffp/transform/object_unique_ptr.hpp>
 #include <sge/renderer/state/ffp/transform/parameters.hpp>
 #include <sge/renderer/state/ffp/transform/scoped.hpp>
 #include <sge/renderer/vertex/declaration.hpp>
@@ -36,7 +36,6 @@
 #include <sge/sprite/process/with_options.hpp>
 #include <fcppt/make_cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/scoped_ptr.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_map.hpp>
@@ -195,7 +194,7 @@ flake::planar::monitor::parent::render(
 
 	if(_projection)
 	{
-		sge::renderer::state::ffp::transform::object_scoped_ptr
+		sge::renderer::state::ffp::transform::object_unique_ptr const
 			projection_state(
 				renderer_.create_transform_state(
 					sge::renderer::state::ffp::transform::parameters(

@@ -265,7 +265,7 @@ flakelib::marching_cubes::gpu::object::resize_gl_buffers()
 		static_cast<sge::renderer::size_type>(
 			2u * vertex_count_.get()));
 
-	positions_buffer_.take(
+	positions_buffer_ =
 		manager_.renderer().create_vertex_buffer(
 			sge::renderer::vertex::buffer_parameters(
 				manager_.vertex_declaration(),
@@ -275,9 +275,9 @@ flakelib::marching_cubes::gpu::object::resize_gl_buffers()
 					flakelib::marching_cubes::vf::position_part
 				>(),
 				real_vertex_count,
-				sge::renderer::resource_flags_field::null())));
+				sge::renderer::resource_flags_field::null()));
 
-	normals_buffer_.take(
+	normals_buffer_ =
 		manager_.renderer().create_vertex_buffer(
 			sge::renderer::vertex::buffer_parameters(
 				manager_.vertex_declaration(),
@@ -287,19 +287,19 @@ flakelib::marching_cubes::gpu::object::resize_gl_buffers()
 					flakelib::marching_cubes::vf::normal_part
 				>(),
 				real_vertex_count,
-				sge::renderer::resource_flags_field::null())));
+				sge::renderer::resource_flags_field::null()));
 
-	positions_buffer_cl_.take(
+	positions_buffer_cl_ =
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
 			command_queue_.context(),
 			*positions_buffer_,
-			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
+			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write);
 
-	normals_buffer_cl_.take(
+	normals_buffer_cl_ =
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
 			command_queue_.context(),
 			*normals_buffer_,
-			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
+			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write);
 }
 
 cl_uint

@@ -209,7 +209,7 @@ flake::postprocessing::context::viewport_callback()
 	sge::renderer::size_type const downsample_factor =
 		4u;
 
-	downsampled_texture_0_.take(
+	downsampled_texture_0_ =
 		renderer_.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
 				target_size / downsample_factor,
@@ -219,9 +219,9 @@ flake::postprocessing::context::viewport_callback()
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags_field::null(),
 				sge::renderer::texture::capabilities_field{
-					sge::renderer::texture::capabilities::render_target})));
+					sge::renderer::texture::capabilities::render_target}));
 
-	downsampled_texture_1_.take(
+	downsampled_texture_1_ =
 		renderer_.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
 				target_size / downsample_factor,
@@ -231,9 +231,9 @@ flake::postprocessing::context::viewport_callback()
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags_field::null(),
 				sge::renderer::texture::capabilities_field{
-					sge::renderer::texture::capabilities::render_target})));
+					sge::renderer::texture::capabilities::render_target}));
 
-	rendering_result_texture_.take(
+	rendering_result_texture_ =
 		renderer_.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
 				target_size,
@@ -243,7 +243,7 @@ flake::postprocessing::context::viewport_callback()
 				sge::renderer::texture::mipmap::off(),
 				sge::renderer::resource_flags_field::null(),
 				sge::renderer::texture::capabilities_field{
-					sge::renderer::texture::capabilities::render_target})));
+					sge::renderer::texture::capabilities::render_target}));
 
 	finalize_input_texture_parameter_.set(
 		sge::shader::parameter::planar_texture::optional_value(
@@ -253,21 +253,21 @@ flake::postprocessing::context::viewport_callback()
 		sge::shader::parameter::planar_texture::optional_value(
 			*downsampled_texture_0_));
 
-	offscreen_target_.take(
+	offscreen_target_ =
 		sge::renderer::target::from_texture(
 			renderer_,
-			*rendering_result_texture_));
+			*rendering_result_texture_);
 
-	offscreen_downsampled_target_.take(
+	offscreen_downsampled_target_ =
 		sge::renderer::target::from_texture(
 			renderer_,
-			*downsampled_texture_0_));
+			*downsampled_texture_0_);
 
-	depth_stencil_surface_.take(
+	depth_stencil_surface_ =
 		renderer_.create_depth_stencil_surface(
 			sge::renderer::depth_stencil_buffer::surface_parameters(
 				target_size,
-				sge::image::ds::format::d32)));
+				sge::image::ds::format::d32));
 
 	offscreen_target_->depth_stencil_surface(
 		sge::renderer::depth_stencil_buffer::optional_surface_ref(

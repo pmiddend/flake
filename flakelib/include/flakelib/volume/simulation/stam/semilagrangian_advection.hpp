@@ -4,7 +4,7 @@
 #include <flakelib/duration.hpp>
 #include <flakelib/symbol.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
-#include <flakelib/cl/kernel_scoped_ptr.hpp>
+#include <flakelib/cl/kernel_unique_ptr.hpp>
 #include <flakelib/cl/program.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/volume/boundary_buffer_view.hpp>
@@ -55,8 +55,8 @@ public:
 private:
 	flakelib::buffer_pool::object &buffer_pool_;
 	cl::program program_;
-	cl::kernel_scoped_ptr volume_kernel_;
-	cl::kernel_scoped_ptr scalar_kernel_;
+	cl::kernel_unique_ptr const volume_kernel_;
+	cl::kernel_unique_ptr const scalar_kernel_;
 };
 }
 }

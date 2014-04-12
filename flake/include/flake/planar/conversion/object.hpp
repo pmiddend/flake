@@ -8,7 +8,7 @@
 #include <flake/planar/conversion/x_coordinate_file.hpp>
 #include <flake/planar/conversion/y_coordinate_file.hpp>
 #include <flakelib/buffer/planar_view_fwd.hpp>
-#include <flakelib/cl/kernel_scoped_ptr.hpp>
+#include <flakelib/cl/kernel_unique_ptr.hpp>
 #include <flakelib/cl/program.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/planar/float2_view.hpp>
@@ -63,8 +63,8 @@ public:
 private:
 	sge::opencl::command_queue::object &command_queue_;
 	flakelib::cl::program program_;
-	flakelib::cl::kernel_scoped_ptr to_arrow_vb_kernel_;
-	flakelib::cl::kernel_scoped_ptr scalar_to_texture_kernel_;
+	flakelib::cl::kernel_unique_ptr const to_arrow_vb_kernel_;
+	flakelib::cl::kernel_unique_ptr const scalar_to_texture_kernel_;
 };
 }
 }

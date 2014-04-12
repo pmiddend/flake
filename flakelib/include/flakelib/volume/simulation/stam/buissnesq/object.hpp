@@ -3,7 +3,7 @@
 
 #include <flakelib/duration.hpp>
 #include <flakelib/symbol.hpp>
-#include <flakelib/cl/kernel_scoped_ptr.hpp>
+#include <flakelib/cl/kernel_unique_ptr.hpp>
 #include <flakelib/cl/program.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/volume/boundary_buffer_view.hpp>
@@ -51,7 +51,7 @@ public:
 	~object();
 private:
 	cl::program program_;
-	cl::kernel_scoped_ptr kernel_;
+	cl::kernel_unique_ptr const kernel_;
 };
 }
 }

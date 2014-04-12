@@ -12,15 +12,15 @@
 #include <sge/image2d/system_fwd.hpp>
 #include <sge/opencl/context/object_fwd.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
-#include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
-#include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
+#include <sge/renderer/cg/loaded_program_unique_ptr.hpp>
+#include <sge/renderer/cg/loaded_texture_unique_ptr.hpp>
 #include <sge/renderer/context/core_fwd.hpp>
 #include <sge/renderer/device/core_fwd.hpp>
-#include <sge/renderer/state/core/blend/object_scoped_ptr.hpp>
-#include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
+#include <sge/renderer/state/core/blend/object_unique_ptr.hpp>
+#include <sge/renderer/state/core/sampler/object_unique_ptr.hpp>
 #include <sge/renderer/texture/planar_shared_ptr.hpp>
-#include <sge/renderer/vertex/buffer_scoped_ptr.hpp>
-#include <sge/renderer/vertex/declaration_scoped_ptr.hpp>
+#include <sge/renderer/vertex/buffer_unique_ptr.hpp>
+#include <sge/renderer/vertex/declaration_unique_ptr.hpp>
 #include <sge/shader/pair.hpp>
 #include <sge/shader/parameter/matrix.hpp>
 #include <sge/shader/parameter/planar_texture.hpp>
@@ -69,12 +69,12 @@ private:
 	sge::camera::base const &camera_;
 	sge::image2d::system &image_system_;
 	flakelib::volume::conversion::object &conversion_;
-	sge::renderer::state::core::blend::object_scoped_ptr const blend_state_;
-	sge::renderer::state::core::sampler::object_scoped_ptr const sampler_state_;
+	sge::renderer::state::core::blend::object_unique_ptr const blend_state_;
+	sge::renderer::state::core::sampler::object_unique_ptr const sampler_state_;
 	flakelib::volume::grid_size grid_size_;
 	flake::volume::density_visualization::raycaster::debug_output const debug_output_;
-	sge::renderer::vertex::declaration_scoped_ptr vertex_declaration_;
-	sge::renderer::vertex::buffer_scoped_ptr vertex_buffer_;
+	sge::renderer::vertex::declaration_unique_ptr vertex_declaration_;
+	sge::renderer::vertex::buffer_unique_ptr vertex_buffer_;
 	sge::renderer::texture::planar_shared_ptr texture_;
 	sge::opencl::memory_object::image::planar cl_texture_;
 

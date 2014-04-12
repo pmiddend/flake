@@ -7,10 +7,8 @@
 #include <flake/volume/snow_cover/sun_direction.hpp>
 #include <flake/volume/snow_cover/texture_repeats.hpp>
 #include <sge/camera/base_fwd.hpp>
-#include <sge/renderer/cg/loaded_program_scoped_ptr.hpp>
-#include <sge/renderer/cg/loaded_texture_scoped_ptr.hpp>
 #include <sge/renderer/device/core_fwd.hpp>
-#include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
+#include <sge/renderer/state/core/sampler/object_unique_ptr.hpp>
 #include <sge/renderer/vertex/declaration_fwd.hpp>
 #include <sge/shader/context.hpp>
 #include <sge/shader/pair.hpp>
@@ -55,7 +53,7 @@ private:
 	sge::shader::parameter::matrix<sge::renderer::scalar,4u,4u> mvp_parameter_;
 	sge::shader::parameter::scalar<sge::renderer::scalar> texture_repeats_parameter_;
 	sge::shader::parameter::vector<sge::renderer::scalar,3> sun_direction_parameter_;
-	sge::renderer::state::core::sampler::object_scoped_ptr const sampler_state_;
+	sge::renderer::state::core::sampler::object_unique_ptr const sampler_state_;
 };
 }
 }

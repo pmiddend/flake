@@ -3,7 +3,7 @@
 
 #include <flakelib/symbol.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
-#include <flakelib/cl/kernel_scoped_ptr.hpp>
+#include <flakelib/cl/kernel_unique_ptr.hpp>
 #include <flakelib/cl/program.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/volume/float4_view.hpp>
@@ -75,8 +75,8 @@ public:
 	~object();
 private:
 	cl::program program_;
-	cl::kernel_scoped_ptr to_arrow_vb_kernel_;
-	cl::kernel_scoped_ptr float_view_to_flat_volume_texture_kernel_;
+	cl::kernel_unique_ptr const to_arrow_vb_kernel_;
+	cl::kernel_unique_ptr const float_view_to_flat_volume_texture_kernel_;
 };
 }
 }

@@ -21,7 +21,6 @@
 #include <sge/renderer/state/core/blend/scoped.hpp>
 #include <sge/renderer/state/core/blend/write_mask_all.hpp>
 #include <sge/renderer/state/core/depth_stencil/object.hpp>
-#include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
 #include <sge/renderer/state/core/depth_stencil/parameters.hpp>
 #include <sge/renderer/state/core/depth_stencil/scoped.hpp>
 #include <sge/renderer/state/ffp/misc/object.hpp>
@@ -213,17 +212,17 @@ flake::volume::flakes::manager::manager(
 		_grid_size,
 		_tile_count);
 
-	cl_positions_buffer_.take(
+	cl_positions_buffer_ =
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
 			_context,
 			*positions_buffer_,
-			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
+			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write);
 
-	cl_point_sizes_buffer_.take(
+	cl_point_sizes_buffer_ =
 		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
 			_context,
 			*point_sizes_buffer_,
-			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
+			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write);
 }
 
 void

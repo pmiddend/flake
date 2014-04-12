@@ -24,7 +24,7 @@
 #include <sge/camera/ortho_freelook/object.hpp>
 #include <sge/camera/ortho_freelook/projection_rectangle_from_viewport.hpp>
 #include <sge/image2d/file_unique_ptr.hpp>
-#include <sge/renderer/texture/planar_scoped_ptr.hpp>
+#include <sge/renderer/texture/planar_unique_ptr.hpp>
 #include <sge/rucksack/widget/enumeration.hpp>
 #include <sge/rucksack/widget/viewport_adaptor.hpp>
 #include <sge/timer/basic.hpp>
@@ -73,7 +73,7 @@ private:
 	flakelib::planar::unique_float_buffer_lock smoke_density_source_buffer_;
 
 	// Monitors
-	sge::renderer::texture::planar_scoped_ptr boundary_texture_;
+	sge::renderer::texture::planar_unique_ptr const boundary_texture_;
 	flake::planar::monitor::parent monitor_parent_;
 	flake::planar::conversion::object planar_converter_;
 	flake::planar::monitor::arrows velocity_arrows_;

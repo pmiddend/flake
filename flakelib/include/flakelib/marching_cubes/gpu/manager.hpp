@@ -6,7 +6,7 @@
 #include <flakelib/buffer_pool/linear_lock.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/cl/kernel.hpp>
-#include <flakelib/cl/kernel_scoped_ptr.hpp>
+#include <flakelib/cl/kernel_unique_ptr.hpp>
 #include <flakelib/cl/program.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/marching_cubes/iso_level.hpp>
@@ -31,8 +31,8 @@
 #include <sge/renderer/size_type.hpp>
 #include <sge/renderer/context/core_fwd.hpp>
 #include <sge/renderer/device/core_fwd.hpp>
-#include <sge/renderer/state/core/depth_stencil/object_scoped_ptr.hpp>
-#include <sge/renderer/vertex/declaration_scoped_ptr.hpp>
+#include <sge/renderer/state/core/depth_stencil/object_unique_ptr.hpp>
+#include <sge/renderer/vertex/declaration_unique_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/intrusive/list.hpp>
@@ -141,8 +141,8 @@ private:
 	sge::opencl::command_queue::object &command_queue_;
 	sge::renderer::device::core &renderer_;
 	flakelib::scan::object &scan_;
-	sge::renderer::vertex::declaration_scoped_ptr const vertex_declaration_;
-	sge::renderer::state::core::depth_stencil::object_scoped_ptr const depth_stencil_state_;
+	sge::renderer::vertex::declaration_unique_ptr const vertex_declaration_;
+	sge::renderer::state::core::depth_stencil::object_unique_ptr const depth_stencil_state_;
 	child_sequence children_;
 	cl_image_format table_format_;
 	cl_int triangle_table_error_code_;
@@ -151,9 +151,9 @@ private:
 	cl_mem num_vert_table_;
 
 	flakelib::cl::program program_;
-	cl::kernel_scoped_ptr classify_kernel_;
-	cl::kernel_scoped_ptr compact_kernel_;
-	cl::kernel_scoped_ptr generate_triangles_kernel_;
+	cl::kernel_unique_ptr const classify_kernel_;
+	cl::kernel_unique_ptr const compact_kernel_;
+	cl::kernel_unique_ptr const generate_triangles_kernel_;
 	flakelib::volume::gradient &gradient_;
 	unique_linear_uint_lock debug_buffer_;
 

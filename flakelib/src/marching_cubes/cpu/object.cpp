@@ -747,7 +747,7 @@ flakelib::marching_cubes::cpu::object::fill_vertex_buffer()
 
 		std::cout << "Reallocating vertex buffer (size " << vertex_buffer_size_.get() << ", capacity " << vertex_buffer_capacity.get() << ")\n";
 
-		vertex_buffer_.take(
+		vertex_buffer_ =
 			renderer_.create_vertex_buffer(
 				sge::renderer::vertex::buffer_parameters(
 					*vertex_declaration_,
@@ -757,7 +757,7 @@ flakelib::marching_cubes::cpu::object::fill_vertex_buffer()
 						flakelib::marching_cubes::vf::interleaved_part
 					>(),
 					vertex_buffer_capacity,
-					sge::renderer::resource_flags_field::null())));
+					sge::renderer::resource_flags_field::null()));
 	}
 
 	sge::renderer::vertex::scoped_lock vblock(
@@ -849,12 +849,12 @@ flakelib::marching_cubes::cpu::object::fill_index_buffer()
 
 		std::cerr << "Reallocating index buffer (size " << index_buffer_size_.get() << ", capacity " << index_buffer_capacity.get() << ")\n";
 
-		index_buffer_.take(
+		index_buffer_ =
 			renderer_.create_index_buffer(
 				sge::renderer::index::buffer_parameters(
 					sge::renderer::index::dynamic::make_format<index_format>(),
 					index_buffer_capacity,
-					sge::renderer::resource_flags_field::null())));
+					sge::renderer::resource_flags_field::null()));
 	}
 
 	/*

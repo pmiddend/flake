@@ -11,6 +11,9 @@
 #include <sge/camera/base_fwd.hpp>
 #include <sge/viewport/manager_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <memory>
+#include <fcppt/config/external_end.hpp>
 
 
 namespace flake
@@ -37,9 +40,9 @@ public:
 
 	~camera_manager();
 private:
-	fcppt::scoped_ptr<sge::camera::base> const camera_;
+	std::unique_ptr<sge::camera::base> const camera_;
 	sge::camera::perspective_projection_from_viewport perspective_projection_from_viewport_;
-	fcppt::scoped_ptr<sge::camera::tracking::json::interval_exporter> const exporter_;
+	std::unique_ptr<sge::camera::tracking::json::interval_exporter> const exporter_;
 	fcppt::signal::scoped_connection const key_press_connection_;
 	bool recording_;
 

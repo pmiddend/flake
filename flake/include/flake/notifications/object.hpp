@@ -4,7 +4,7 @@
 #include <flake/notifications/message.hpp>
 #include <flake/notifications/text.hpp>
 #include <flake/notifications/time_to_live.hpp>
-#include <sge/font/object_scoped_ptr.hpp>
+#include <sge/font/object_unique_ptr.hpp>
 #include <sge/font/system_fwd.hpp>
 #include <sge/font/ttf_size.hpp>
 #include <sge/renderer/context/ffp_fwd.hpp>
@@ -12,7 +12,6 @@
 #include <sge/timer/basic_impl.hpp>
 #include <sge/timer/clocks/standard.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/scoped_ptr.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <list>
@@ -59,7 +58,7 @@ private:
 
 	notifications::time_to_live const time_to_live_;
 	sge::renderer::device::ffp &renderer_;
-	sge::font::object_scoped_ptr font_;
+	sge::font::object_unique_ptr const font_;
 	message_sequence messages_;
 	sge::timer::basic<sge::timer::clocks::standard> second_timer_;
 };

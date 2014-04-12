@@ -22,7 +22,7 @@
 #include <sge/renderer/projection/near.hpp>
 #include <sge/renderer/projection/orthogonal_wh.hpp>
 #include <sge/renderer/state/ffp/transform/object.hpp>
-#include <sge/renderer/state/ffp/transform/object_scoped_ptr.hpp>
+#include <sge/renderer/state/ffp/transform/object_unique_ptr.hpp>
 #include <sge/renderer/state/ffp/transform/parameters.hpp>
 #include <sge/renderer/state/ffp/transform/scoped.hpp>
 #include <sge/renderer/target/onscreen.hpp>
@@ -146,7 +146,7 @@ flake::planar::monitor::arrows::arrows(
 
 	if(_optional_texture)
 	{
-		sprite_.take(
+		sprite_ =
 			fcppt::make_unique_ptr<dummy_sprite::object>(
 				dummy_sprite::parameters()
 					.texture(
@@ -154,7 +154,7 @@ flake::planar::monitor::arrows::arrows(
 							*_optional_texture))
 					.connection(
 						child::parent().sprite_collection().connection(
-							0))));
+							0)));
 	}
 }
 FCPPT_PP_POP_WARNING
@@ -227,7 +227,7 @@ flake::planar::monitor::arrows::render_font(
 	sge::renderer::context::ffp &_context,
 	monitor::optional_projection const &_projection)
 {
-	sge::renderer::state::ffp::transform::object_scoped_ptr const world_state(
+	sge::renderer::state::ffp::transform::object_unique_ptr const world_state(
 		child::parent().renderer().create_transform_state(
 			sge::renderer::state::ffp::transform::parameters(
 				sge::renderer::matrix4::identity())));
@@ -237,7 +237,7 @@ flake::planar::monitor::arrows::render_font(
 		sge::renderer::state::ffp::transform::mode::world,
 		*world_state);
 
-	sge::renderer::state::ffp::transform::object_scoped_ptr const projection_state(
+	sge::renderer::state::ffp::transform::object_unique_ptr const projection_state(
 		child::parent().renderer().create_transform_state(
 			sge::renderer::state::ffp::transform::parameters(
 				_projection

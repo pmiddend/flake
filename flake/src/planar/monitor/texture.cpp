@@ -13,7 +13,7 @@
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/state/ffp/transform/object.hpp>
-#include <sge/renderer/state/ffp/transform/object_scoped_ptr.hpp>
+#include <sge/renderer/state/ffp/transform/object_unique_ptr.hpp>
 #include <sge/renderer/state/ffp/transform/parameters.hpp>
 #include <sge/renderer/state/ffp/transform/scoped.hpp>
 #include <sge/renderer/target/onscreen.hpp>
@@ -151,7 +151,7 @@ flake::planar::monitor::texture::render(
 	sge::renderer::context::ffp &_context,
 	monitor::optional_projection const &_projection)
 {
-	sge::renderer::state::ffp::transform::object_scoped_ptr
+	sge::renderer::state::ffp::transform::object_unique_ptr const
 		projection_state(
 			child::parent().renderer().create_transform_state(
 				sge::renderer::state::ffp::transform::parameters(

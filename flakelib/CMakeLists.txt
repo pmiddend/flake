@@ -36,7 +36,6 @@ set(
 	flakelib/include/flakelib/cl/kernel.hpp
 	flakelib/include/flakelib/cl/kernel_fwd.hpp
 	flakelib/include/flakelib/cl/kernel_parameters.hpp
-	flakelib/include/flakelib/cl/kernel_scoped_ptr.hpp
 	flakelib/include/flakelib/cl/kernel_shared_ptr.hpp
 	flakelib/include/flakelib/cl/kernel_unique_ptr.hpp
 	flakelib/include/flakelib/cl/planar_image_view_to_cl_image.hpp

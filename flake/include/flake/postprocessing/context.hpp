@@ -3,12 +3,12 @@
 
 #include <flake/postprocessing/fullscreen_quad.hpp>
 #include <sge/renderer/context/scoped_ffp_unique_ptr.hpp>
-#include <sge/renderer/depth_stencil_buffer/surface_scoped_ptr.hpp>
+#include <sge/renderer/depth_stencil_buffer/surface_unique_ptr.hpp>
 #include <sge/renderer/device/ffp_fwd.hpp>
-#include <sge/renderer/state/core/sampler/object_scoped_ptr.hpp>
-#include <sge/renderer/target/offscreen_scoped_ptr.hpp>
-#include <sge/renderer/texture/planar_scoped_ptr.hpp>
-#include <sge/renderer/vertex/declaration_scoped_ptr.hpp>
+#include <sge/renderer/state/core/sampler/object_unique_ptr.hpp>
+#include <sge/renderer/target/offscreen_unique_ptr.hpp>
+#include <sge/renderer/texture/planar_unique_ptr.hpp>
+#include <sge/renderer/vertex/declaration_unique_ptr.hpp>
 #include <sge/shader/context_fwd.hpp>
 #include <sge/shader/pair.hpp>
 #include <sge/shader/parameter/planar_texture.hpp>
@@ -44,9 +44,9 @@ public:
 	~context();
 private:
 	sge::renderer::device::ffp &renderer_;
-	sge::renderer::vertex::declaration_scoped_ptr const quad_vertex_declaration_;
-	sge::renderer::state::core::sampler::object_scoped_ptr const linear_clamping_texture_state_;
-	sge::renderer::state::core::sampler::object_scoped_ptr const point_clamping_texture_state_;
+	sge::renderer::vertex::declaration_unique_ptr const quad_vertex_declaration_;
+	sge::renderer::state::core::sampler::object_unique_ptr const linear_clamping_texture_state_;
+	sge::renderer::state::core::sampler::object_unique_ptr const point_clamping_texture_state_;
 	flake::postprocessing::fullscreen_quad fullscreen_quad_;
 	sge::shader::pair downsample_shader_;
 	sge::shader::parameter::planar_texture downsample_input_texture_parameter_;
@@ -58,12 +58,12 @@ private:
 	sge::shader::parameter::planar_texture finalize_input_texture_parameter_;
 	sge::shader::parameter::planar_texture finalize_blurred_texture_parameter_;
 	fcppt::signal::scoped_connection viewport_connection_;
-	sge::renderer::texture::planar_scoped_ptr rendering_result_texture_;
-	sge::renderer::target::offscreen_scoped_ptr offscreen_target_;
-	sge::renderer::depth_stencil_buffer::surface_scoped_ptr depth_stencil_surface_;
-	sge::renderer::target::offscreen_scoped_ptr offscreen_downsampled_target_;
-	sge::renderer::texture::planar_scoped_ptr downsampled_texture_0_;
-	sge::renderer::texture::planar_scoped_ptr downsampled_texture_1_;
+	sge::renderer::texture::planar_unique_ptr rendering_result_texture_;
+	sge::renderer::target::offscreen_unique_ptr offscreen_target_;
+	sge::renderer::depth_stencil_buffer::surface_unique_ptr depth_stencil_surface_;
+	sge::renderer::target::offscreen_unique_ptr offscreen_downsampled_target_;
+	sge::renderer::texture::planar_unique_ptr downsampled_texture_0_;
+	sge::renderer::texture::planar_unique_ptr downsampled_texture_1_;
 
 	void
 	viewport_callback();

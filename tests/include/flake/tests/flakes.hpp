@@ -43,6 +43,9 @@
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/signal/scoped_connection.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <memory>
+#include <fcppt/config/external_end.hpp>
 
 
 namespace flake
@@ -100,7 +103,7 @@ private:
 		//flakelib::marching_cubes::gpu::manager marching_cubes_manager_;
 	flakelib::marching_cubes::cpu::object marching_cubes_manager_;
 	flake::volume::snow_cover::object snow_cover_;
-	fcppt::scoped_ptr<flake::volume::snow_cover::parallel_update> snow_cover_parallel_update_;
+	std::unique_ptr<flake::volume::snow_cover::parallel_update> const snow_cover_parallel_update_;
 		//flakelib::marching_cubes::gpu::object marching_cubes_;
 	flakelib::value_modulator::object wind_strength_modulator_;
 

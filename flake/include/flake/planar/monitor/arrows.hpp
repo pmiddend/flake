@@ -13,14 +13,16 @@
 #include <sge/font/draw/static_text.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
-#include <sge/renderer/vertex/buffer_scoped_ptr.hpp>
+#include <sge/renderer/vertex/buffer_unique_ptr.hpp>
 #include <sge/rucksack/widget/dummy.hpp>
 #include <sge/rucksack/widget/box/base.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/scoped_ptr.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <memory>
+#include <fcppt/config/external_end.hpp>
 
 
 namespace flake
@@ -73,9 +75,9 @@ private:
 	monitor::grid_dimensions::value_type const dimensions_;
 	monitor::arrow_scale const arrow_scale_;
 	monitor::grid_scale const grid_scale_;
-	sge::renderer::vertex::buffer_scoped_ptr const vb_;
+	sge::renderer::vertex::buffer_unique_ptr const vb_;
 	sge::opencl::memory_object::buffer cl_vb_;
-	fcppt::scoped_ptr<dummy_sprite::object> sprite_;
+	std::unique_ptr<dummy_sprite::object> sprite_;
 	sge::rucksack::widget::box::base box_parent_;
 	sge::rucksack::widget::dummy font_box_;
 	sge::rucksack::widget::dummy sprite_box_;

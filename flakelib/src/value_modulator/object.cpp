@@ -79,14 +79,14 @@ flakelib::value_modulator::object::mean(
 	mean_ =
 		_mean;
 
-	next_control_point_rng_.take(
+	next_control_point_rng_ =
 		fcppt::make_unique_ptr<variate>(
 			number_generator_,
 			distribution(
 				distribution::param_type::min(
 					_mean.get() - variance_.get()),
 				distribution::param_type::sup(
-					_mean.get() + variance_.get()))));
+					_mean.get() + variance_.get())));
 }
 
 flakelib::value_modulator::mean const

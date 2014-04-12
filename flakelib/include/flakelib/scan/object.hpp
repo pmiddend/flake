@@ -4,7 +4,7 @@
 #include <flakelib/symbol.hpp>
 #include <flakelib/buffer_pool/linear_lock_impl.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
-#include <flakelib/cl/kernel_scoped_ptr.hpp>
+#include <flakelib/cl/kernel_unique_ptr.hpp>
 #include <flakelib/cl/program.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/scan/batch_size.hpp>
@@ -53,9 +53,9 @@ public:
 private:
 	flakelib::buffer_pool::object &buffer_pool_;
 	flakelib::cl::program program_;
-	flakelib::cl::kernel_scoped_ptr exclusive_local1_kernel_;
-	flakelib::cl::kernel_scoped_ptr exclusive_local2_kernel_;
-	flakelib::cl::kernel_scoped_ptr uniform_update_kernel_;
+	flakelib::cl::kernel_unique_ptr const exclusive_local1_kernel_;
+	flakelib::cl::kernel_unique_ptr const exclusive_local2_kernel_;
+	flakelib::cl::kernel_unique_ptr const uniform_update_kernel_;
 	unique_linear_uint_lock buffer_;
 	unique_linear_uint_lock debug_buffer_;
 

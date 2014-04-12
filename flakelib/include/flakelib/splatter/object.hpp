@@ -3,7 +3,7 @@
 
 #include <flakelib/symbol.hpp>
 #include <flakelib/cl/float2.hpp>
-#include <flakelib/cl/kernel_scoped_ptr.hpp>
+#include <flakelib/cl/kernel_unique_ptr.hpp>
 #include <flakelib/cl/program.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
 #include <flakelib/planar/float2_view.hpp>
@@ -74,9 +74,9 @@ public:
 	~object();
 private:
 	flakelib::cl::program program_;
-	flakelib::cl::kernel_scoped_ptr splat_planar_float_;
-	flakelib::cl::kernel_scoped_ptr splat_planar_float2_;
-	flakelib::cl::kernel_scoped_ptr splat_volume_float_;
+	flakelib::cl::kernel_unique_ptr const splat_planar_float_;
+	flakelib::cl::kernel_unique_ptr const splat_planar_float2_;
+	flakelib::cl::kernel_unique_ptr const splat_volume_float_;
 };
 }
 }

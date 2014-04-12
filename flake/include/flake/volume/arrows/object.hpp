@@ -12,7 +12,7 @@
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/renderer/context/core_fwd.hpp>
 #include <sge/renderer/device/core_fwd.hpp>
-#include <sge/renderer/vertex/buffer_scoped_ptr.hpp>
+#include <sge/renderer/vertex/buffer_unique_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/preprocessor/disable_gcc_warning.hpp>
@@ -68,7 +68,7 @@ private:
 	flakelib::volume::conversion::arrow_scale const arrow_scale_;
 	flakelib::volume::conversion::grid_scale const grid_scale_;
 	flakelib::volume::conversion::origin const origin_;
-	sge::renderer::vertex::buffer_scoped_ptr const vb_;
+	sge::renderer::vertex::buffer_unique_ptr const vb_;
 	sge::opencl::memory_object::buffer gl_buffer_;
 };
 
