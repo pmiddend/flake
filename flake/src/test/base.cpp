@@ -169,7 +169,6 @@ flake::test::base::base(
 		fcppt::make_unique_ptr<systems_instance>(
 			sge::systems::make_list
 				(sge::systems::image2d(
-					sge::image::capabilities_field::null(),
 					sge::media::all_extensions))
 				(sge::systems::window(
 					sge::window::parameters(
