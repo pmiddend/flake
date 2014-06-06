@@ -9,9 +9,12 @@
 #include <sge/font/align_h/right.hpp>
 #include <sge/font/draw/static_text.hpp>
 #include <sge/image/color/predef.hpp>
-#include <sge/image/color/init.hpp>
 #include <sge/image/color/rgba8.hpp>
 #include <sge/image/color/any/object.hpp>
+#include <sge/image/color/init/alpha.hpp>
+#include <sge/image/color/init/blue.hpp>
+#include <sge/image/color/init/green.hpp>
+#include <sge/image/color/init/red.hpp>
 #include <sge/renderer/device/ffp.hpp>
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/texture/emulate_srgb.hpp>
