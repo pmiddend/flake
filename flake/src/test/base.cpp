@@ -37,13 +37,13 @@
 #include <sge/systems/instance.hpp>
 #include <sge/systems/list.hpp>
 #include <sge/systems/make_list.hpp>
+#include <sge/systems/original_window.hpp>
 #include <sge/systems/quit_on_escape.hpp>
 #include <sge/systems/renderer.hpp>
 #include <sge/systems/window.hpp>
 #include <sge/viewport/fill_on_resize.hpp>
 #include <sge/viewport/manager.hpp>
 #include <sge/window/object.hpp>
-#include <sge/window/parameters.hpp>
 #include <sge/window/system.hpp>
 #include <sge/window/title.hpp>
 #include <awl/main/exit_code.hpp>
@@ -171,7 +171,7 @@ flake::test::base::base(
 				(sge::systems::image2d(
 					sge::media::all_extensions))
 				(sge::systems::window(
-					sge::window::parameters(
+					sge::systems::original_window(
 						_window_title,
 						sge::parse::json::find_and_convert_member<sge::window::dim>(
 							*configuration_,
