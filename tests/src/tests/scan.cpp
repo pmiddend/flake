@@ -14,6 +14,7 @@
 #include <sge/image/color/predef.hpp>
 #include <sge/opencl/command_queue/map_flags.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
+#include <sge/opencl/event/object.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/opencl/single_device_system/parameters.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>

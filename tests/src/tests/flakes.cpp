@@ -28,6 +28,7 @@
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/texture/create_planar_from_path.hpp>
 #include <sge/renderer/texture/emulate_srgb.hpp>
+#include <sge/renderer/texture/planar.hpp>
 #include <sge/renderer/texture/mipmap/all_levels.hpp>
 #include <sge/scenic/render_context/base.hpp>
 #include <sge/scenic/scene/from_blender_file.hpp>

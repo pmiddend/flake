@@ -6,6 +6,7 @@
 #include <sge/opencl/command_queue/map_flags.hpp>
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/command_queue/scoped_planar_mapping.hpp>
+#include <sge/opencl/event/object.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/memory_object/image/sge_color_format_to_opencl.hpp>
 #include <fcppt/make_unique_ptr.hpp>

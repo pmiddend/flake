@@ -7,9 +7,11 @@
 #include <sge/opencl/memory_object/byte_size.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
+#include <memory>
 #include <set>
+#include <vector>
 #include <fcppt/config/external_end.hpp>
+
 
 namespace flakelib
 {
@@ -43,7 +45,13 @@ public:
 	~object();
 private:
 	typedef
-	boost::ptr_vector<sge::opencl::memory_object::buffer>
+	std::vector
+	<
+		std::unique_ptr
+		<
+			sge::opencl::memory_object::buffer
+		>
+	>
 	pool_container;
 
 	typedef

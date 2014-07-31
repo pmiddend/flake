@@ -1,6 +1,7 @@
 #include <flakelib/exception.hpp>
 #include <flakelib/cl/kernel.hpp>
 #include <sge/opencl/command_queue/enqueue_kernel.hpp>
+#include <sge/opencl/event/object.hpp>
 #include <sge/opencl/kernel/local_buffer.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <fcppt/from_std_string.hpp>
