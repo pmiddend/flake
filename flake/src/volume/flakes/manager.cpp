@@ -46,7 +46,6 @@
 #include <fcppt/make_cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/text.hpp>
-#include <fcppt/assign/make_container.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
 #include <fcppt/math/vector/output.hpp>
 #include <fcppt/random/variate.hpp>
@@ -245,13 +244,13 @@ flake::volume::flakes::manager::render(
 	sge::renderer::vertex::scoped_declaration_and_buffers scoped_vf(
 		_context,
 		*vertex_declaration_,
-		fcppt::assign::make_container<sge::renderer::vertex::const_buffer_ref_container>
-			(fcppt::make_cref(
-				*positions_buffer_))
-			(fcppt::make_cref(
-				*point_sizes_buffer_))
-			(fcppt::make_cref(
-				*texcoords_buffer_)));
+		sge::renderer::vertex::const_buffer_ref_container{
+			fcppt::make_cref(
+				*positions_buffer_),
+			fcppt::make_cref(
+				*point_sizes_buffer_),
+			fcppt::make_cref(
+				*texcoords_buffer_)});
 
 	sge::renderer::state::ffp::misc::scoped const scoped_misc(
 		_context,
