@@ -81,10 +81,7 @@ flake::planar::monitor::texture::texture(
 				child::parent().sprite_collection().connection(
 					0))),
 	box_parent_(
-		sge::rucksack::axis::y,
-		sge::rucksack::aspect(
-			1,
-			1)),
+		sge::rucksack::axis::y),
 	font_box_(
 		flake::planar::monitor::font_axis_policy(
 			child::parent().font(),
@@ -95,24 +92,13 @@ flake::planar::monitor::texture::texture(
 	sprite_box_(
 		sge::rucksack::axis_policy2(
 			sge::rucksack::axis_policy(
-				sge::rucksack::minimum_size(
-					static_cast<sge::rucksack::scalar>(
-						_texture_size.get().w())),
 				sge::rucksack::preferred_size(
-					sge::rucksack::optional_scalar()),
-				sge::rucksack::is_expanding(
-					false)),
+					static_cast<sge::rucksack::scalar>(
+						_texture_size.get().w()))),
 			sge::rucksack::axis_policy(
-				sge::rucksack::minimum_size(
-					static_cast<sge::rucksack::scalar>(
-						_texture_size.get().h())),
 				sge::rucksack::preferred_size(
-					sge::rucksack::optional_scalar()),
-				sge::rucksack::is_expanding(
-					false)),
-			sge::rucksack::aspect(
-				1,
-				1))),
+					static_cast<sge::rucksack::scalar>(
+						_texture_size.get().h()))))),
 	font_renderable_(
 		child::parent().renderer(),
 		child::parent().font(),

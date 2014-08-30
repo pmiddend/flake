@@ -20,22 +20,11 @@ flake::planar::monitor::font_axis_policy(
 	return
 		sge::rucksack::axis_policy2(
 			sge::rucksack::axis_policy(
-				sge::rucksack::minimum_size(
+				sge::rucksack::preferred_size{
 					static_cast<sge::rucksack::scalar>(
-						size.w())),
-				sge::rucksack::preferred_size(
-					sge::rucksack::optional_scalar()),
-				sge::rucksack::is_expanding(
-					false)),
+						size.w())}),
 			sge::rucksack::axis_policy(
-				sge::rucksack::minimum_size(
+				sge::rucksack::preferred_size{
 					static_cast<sge::rucksack::scalar>(
-						size.h())),
-				sge::rucksack::preferred_size(
-					sge::rucksack::optional_scalar()),
-				sge::rucksack::is_expanding(
-					false)),
-			sge::rucksack::aspect(
-				1,
-				1));
+						size.h())}));
 }

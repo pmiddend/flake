@@ -271,10 +271,7 @@ flake::tests::vorticity::vorticity(
 			sge::parse::json::find_and_convert_member<sge::rucksack::scalar>(
 				this->configuration(),
 				sge::parse::json::string_to_path(
-					FCPPT_TEXT("master-and-slave-padding")))),
-		sge::rucksack::aspect(
-			1,
-			1)),
+					FCPPT_TEXT("master-and-slave-padding"))))),
 	freelook_camera_(
 		sge::camera::ortho_freelook::parameters(
 			this->mouse(),

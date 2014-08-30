@@ -14,8 +14,8 @@
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <sge/renderer/vertex/buffer_unique_ptr.hpp>
+#include <sge/rucksack/widget/box.hpp>
 #include <sge/rucksack/widget/dummy.hpp>
-#include <sge/rucksack/widget/box/base.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
@@ -78,7 +78,7 @@ private:
 	sge::renderer::vertex::buffer_unique_ptr const vb_;
 	sge::opencl::memory_object::buffer cl_vb_;
 	std::unique_ptr<dummy_sprite::object> sprite_;
-	sge::rucksack::widget::box::base box_parent_;
+	sge::rucksack::widget::box box_parent_;
 	sge::rucksack::widget::dummy font_box_;
 	sge::rucksack::widget::dummy sprite_box_;
 	sge::font::draw::static_text font_renderable_;

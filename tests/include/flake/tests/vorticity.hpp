@@ -25,8 +25,8 @@
 #include <sge/camera/ortho_freelook/projection_rectangle_from_viewport.hpp>
 #include <sge/image2d/file_unique_ptr.hpp>
 #include <sge/renderer/texture/planar_unique_ptr.hpp>
+#include <sge/rucksack/viewport/adaptor.hpp>
 #include <sge/rucksack/widget/enumeration.hpp>
-#include <sge/rucksack/widget/viewport_adaptor.hpp>
 #include <sge/timer/basic.hpp>
 #include <sge/timer/clocks/standard.hpp>
 #include <awl/main/exit_code.hpp>
@@ -82,7 +82,7 @@ private:
 	flake::planar::monitor::texture divergence_texture_;
 	flake::planar::monitor::texture pressure_texture_;
 	flake::planar::monitor::arrows vorticity_gradient_arrows_;
-	sge::rucksack::widget::viewport_adaptor rucksack_viewport_adaptor_;
+	sge::rucksack::viewport::adaptor rucksack_viewport_adaptor_;
 	sge::rucksack::widget::enumeration rucksack_enumeration_;
 
 	// Other stuff

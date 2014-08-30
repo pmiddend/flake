@@ -98,6 +98,7 @@ find_package(
 	cg
 	renderercg
 	rucksack
+	rucksackviewport
 	image3d
 	modelobj
 	font
