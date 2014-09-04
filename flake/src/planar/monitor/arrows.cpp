@@ -35,6 +35,7 @@
 #include <sge/renderer/vf/dynamic/part_index.hpp>
 #include <sge/rucksack/axis.hpp>
 #include <sge/rucksack/axis_policy2.hpp>
+#include <sge/rucksack/padding.hpp>
 #include <sge/shader/scoped_pair.hpp>
 #include <sge/sprite/parameters.hpp>
 #include <sge/sprite/projection_matrix.hpp>
@@ -89,7 +90,8 @@ flake::planar::monitor::arrows::arrows(
 		sge::opencl::memory_object::renderer_buffer_lock_mode::write_only),
 	sprite_(),
 	box_parent_(
-		sge::rucksack::axis::y),
+		sge::rucksack::axis::y,
+		sge::rucksack::padding{0}),
 	font_box_(
 		flake::planar::monitor::font_axis_policy(
 			child::parent().font(),

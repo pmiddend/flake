@@ -22,6 +22,7 @@
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/rucksack/axis.hpp>
 #include <sge/rucksack/axis_policy2.hpp>
+#include <sge/rucksack/padding.hpp>
 #include <sge/sprite/parameters.hpp>
 #include <sge/sprite/projection_matrix.hpp>
 #include <sge/texture/part_raw_ref.hpp>
@@ -81,7 +82,8 @@ flake::planar::monitor::texture::texture(
 				child::parent().sprite_collection().connection(
 					0))),
 	box_parent_(
-		sge::rucksack::axis::y),
+		sge::rucksack::axis::y,
+		sge::rucksack::padding{0}),
 	font_box_(
 		flake::planar::monitor::font_axis_policy(
 			child::parent().font(),
