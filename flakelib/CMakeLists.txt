@@ -286,10 +286,13 @@ include(
 	FcpptSymbol)
 
 fcppt_generate_symbol_header(
-	FLAKELIB_STATIC_LINK
-	flakelib
-	FLAKELIB
-	flakelib)
+	STATIC_LINK_FLAG
+		FLAKELIB_STATIC_LINK
+	EXPORTS_NAME
+		flakelib
+	SYMBOL_NAME
+		FLAKELIB
+)
 
 include_directories(
 	${CMAKE_BINARY_DIR}/include)
