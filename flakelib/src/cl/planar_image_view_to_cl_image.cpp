@@ -10,6 +10,7 @@
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/memory_object/image/sge_color_format_to_opencl.hpp>
 #include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/cast/size_fun.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -32,7 +33,9 @@ flakelib::cl::planar_image_view_to_cl_image(
 			sge::opencl::memory_object::image::sge_color_format_to_opencl(
 				sge::image2d::view::format(
 					_planar_image)),
-			fcppt::math::dim::structure_cast<sge::opencl::dim2>(
+			fcppt::math::dim::structure_cast<
+				sge::opencl::dim2,
+				fcppt::cast::size_fun>(
 				sge::image2d::view::size(
 					_planar_image)),
 			sge::opencl::memory_object::image::planar_pitch(
@@ -44,7 +47,9 @@ flakelib::cl::planar_image_view_to_cl_image(
 		sge::opencl::command_queue::map_flags::write,
 		sge::opencl::memory_object::rect(
 			sge::opencl::memory_object::rect::vector::null(),
-			fcppt::math::dim::structure_cast<sge::opencl::memory_object::rect::dim>(
+			fcppt::math::dim::structure_cast<
+				sge::opencl::memory_object::rect::dim,
+				fcppt::cast::size_fun>(
 				sge::image2d::view::size(
 					_planar_image))),
 		sge::opencl::event::sequence());

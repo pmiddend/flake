@@ -32,6 +32,7 @@
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/cast/size_fun.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
@@ -115,7 +116,9 @@ flake::tests::vorticity::vorticity(
 						FCPPT_TEXT("boundary"))))),
 	boundary_buffer_(
 		this->buffer_pool(),
-		fcppt::math::dim::structure_cast<sge::opencl::dim2>(
+		fcppt::math::dim::structure_cast<
+			sge::opencl::dim2,
+			fcppt::cast::size_fun>(
 			sge::image2d::view::size(
 				boundary_image_file_->view()))),
 	velocity_buffer_(
@@ -156,7 +159,9 @@ flake::tests::vorticity::vorticity(
 		flake::planar::monitor::name(
 			FCPPT_TEXT("velocity")),
 		flake::planar::monitor::grid_dimensions(
-			fcppt::math::dim::structure_cast<flake::planar::monitor::grid_dimensions::value_type>(
+			fcppt::math::dim::structure_cast<
+				flake::planar::monitor::grid_dimensions::value_type,
+				fcppt::cast::size_fun>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
 		flake::planar::monitor::arrow_scale(
@@ -180,11 +185,15 @@ flake::tests::vorticity::vorticity(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("texture-grid-scale"))) *
-			fcppt::math::dim::structure_cast<flake::planar::monitor::grid_dimensions::value_type>(
+			fcppt::math::dim::structure_cast<
+				flake::planar::monitor::grid_dimensions::value_type,
+				fcppt::cast::size_fun>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
 		flake::planar::monitor::texture_size(
-			fcppt::math::dim::structure_cast<flake::planar::monitor::dim>(
+			fcppt::math::dim::structure_cast<
+				flake::planar::monitor::dim,
+				fcppt::cast::size_fun>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
 		flake::planar::monitor::scaling_factor(
@@ -198,11 +207,15 @@ flake::tests::vorticity::vorticity(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("texture-grid-scale"))) *
-			fcppt::math::dim::structure_cast<flake::planar::monitor::grid_dimensions::value_type>(
+			fcppt::math::dim::structure_cast<
+				flake::planar::monitor::grid_dimensions::value_type,
+				fcppt::cast::size_fun>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
 		flake::planar::monitor::texture_size(
-			fcppt::math::dim::structure_cast<flake::planar::monitor::dim>(
+			fcppt::math::dim::structure_cast<
+				flake::planar::monitor::dim,
+				fcppt::cast::size_fun>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
 		flake::planar::monitor::scaling_factor(
@@ -216,11 +229,15 @@ flake::tests::vorticity::vorticity(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("texture-grid-scale"))) *
-			fcppt::math::dim::structure_cast<flake::planar::monitor::grid_dimensions::value_type>(
+			fcppt::math::dim::structure_cast<
+				flake::planar::monitor::grid_dimensions::value_type,
+				fcppt::cast::size_fun>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
 		flake::planar::monitor::texture_size(
-			fcppt::math::dim::structure_cast<flake::planar::monitor::dim>(
+			fcppt::math::dim::structure_cast<
+				flake::planar::monitor::dim,
+				fcppt::cast::size_fun>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
 		flake::planar::monitor::scaling_factor(
@@ -234,11 +251,15 @@ flake::tests::vorticity::vorticity(
 				this->configuration(),
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("texture-grid-scale"))) *
-			fcppt::math::dim::structure_cast<flake::planar::monitor::grid_dimensions::value_type>(
+			fcppt::math::dim::structure_cast<
+				flake::planar::monitor::grid_dimensions::value_type,
+				fcppt::cast::size_fun>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
 		flake::planar::monitor::texture_size(
-			fcppt::math::dim::structure_cast<flake::planar::monitor::dim>(
+			fcppt::math::dim::structure_cast<
+				flake::planar::monitor::dim,
+				fcppt::cast::size_fun>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
 		flake::planar::monitor::scaling_factor(
@@ -248,7 +269,9 @@ flake::tests::vorticity::vorticity(
 		flake::planar::monitor::name(
 			FCPPT_TEXT("vorticity gradient")),
 		flake::planar::monitor::grid_dimensions(
-			fcppt::math::dim::structure_cast<flake::planar::monitor::grid_dimensions::value_type>(
+			fcppt::math::dim::structure_cast<
+				flake::planar::monitor::grid_dimensions::value_type,
+				fcppt::cast::size_fun>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
 		flake::planar::monitor::arrow_scale(

@@ -14,7 +14,6 @@ include(
 find_package(
 	Boost 1.45.0 REQUIRED COMPONENTS
 	filesystem
-	thread
 	system)
 
 include_directories(

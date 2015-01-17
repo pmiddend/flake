@@ -8,12 +8,12 @@
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/image/algorithm/may_overlap.hpp>
+#include <sge/image/view/wrap.hpp>
 #include <sge/image2d/save_from_view.hpp>
 #include <sge/image2d/algorithm/copy_and_convert.hpp>
 #include <sge/image2d/store/l8.hpp>
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/image2d/view/object.hpp>
-#include <sge/image2d/view/to_const.hpp>
 #include <sge/renderer/lock_mode.hpp>
 #include <sge/renderer/primitive_type.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
@@ -53,6 +53,7 @@
 #include <sge/shader/scoped_pair.hpp>
 #include <fcppt/make_cref.hpp>
 #include <fcppt/assign/make_map.hpp>
+#include <fcppt/cast/int_to_float_fun.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/contains_point.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
@@ -119,9 +120,8 @@ flake::volume::density_visualization::raycaster::object::object(
 	texture_(
 		renderer_.create_planar_texture(
 			sge::renderer::texture::planar_parameters(
-				fcppt::math::dim::structure_cast<sge::renderer::dim2>(
-					flakelib::volume::conversion::planar_size_from_volume_size(
-						_grid_size.get())),
+				flakelib::volume::conversion::planar_size_from_volume_size(
+					_grid_size.get()),
 				sge::renderer::texture::color_format(
 					sge::image::color::format::r32f,
 					sge::renderer::texture::emulate_srgb::no),
@@ -292,29 +292,32 @@ flake::volume::density_visualization::raycaster::object::update(
 	if(!debug_output_.get())
 		return;
 
-	sge::renderer::texture::const_scoped_planar_lock const slock(
-		*texture_);
-
 	typedef
 	sge::image2d::store::l8
 	store_type;
 
-	store_type temp_store(
+	store_type const temp_store(
 		store_type::dim(
 			texture_->size().w(),
-			texture_->size().h()));
+			texture_->size().h()),
+		[this](
+			store_type::view_type const &_init_view)
+		{
+			sge::renderer::texture::const_scoped_planar_lock const slock(
+				*texture_);
 
-	sge::image2d::algorithm::copy_and_convert(
-		slock.value(),
-		sge::image2d::view::object(
-			temp_store.wrapped_view()),
-		sge::image::algorithm::may_overlap::no);
+			sge::image2d::algorithm::copy_and_convert(
+				slock.value(),
+				sge::image2d::view::object(
+					sge::image::view::wrap(
+						_init_view)),
+				sge::image::algorithm::may_overlap::no);
+		});
 
 	sge::image2d::save_from_view(
 		image_system_,
-		sge::image2d::view::to_const(
-			sge::image2d::view::object(
-				temp_store.wrapped_view())),
+		sge::image2d::view::const_object(
+			temp_store.const_wrapped_view()),
 		"/tmp/volume_texture.png");
 }
 
@@ -401,7 +404,8 @@ flake::volume::density_visualization::raycaster::object::camera_is_inside_cube()
 				sge::renderer::vector3::null(),
 				fcppt::math::dim::structure_cast
 				<
-					fcppt::math::dim::static_<sge::renderer::scalar,3>
+					fcppt::math::dim::static_<sge::renderer::scalar,3>,
+					fcppt::cast::int_to_float_fun
 				>(
 					grid_size_.get())),
 			-camera_.coordinate_system().position().get());

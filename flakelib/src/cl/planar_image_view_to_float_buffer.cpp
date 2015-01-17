@@ -19,6 +19,7 @@
 #include <mizuiro/color/channel/luminance.hpp>
 #include <mizuiro/color/channel/red.hpp>
 #include <mizuiro/image/algorithm/binary_iteration.hpp>
+#include <mizuiro/image/algorithm/make_iterator_identity.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/variant/object.hpp>
 
@@ -88,7 +89,8 @@ flakelib::cl::planar_image_view_to_float_buffer(
 	mizuiro::image::algorithm::binary_iteration(
 		convert(),
 		l8_view,
-		r32f_view);
+		r32f_view,
+		mizuiro::image::algorithm::make_iterator_identity());
 	/*
 	sge::image2d::algorithm::copy_and_convert(
 		_view,

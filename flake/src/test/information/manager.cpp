@@ -16,6 +16,7 @@
 #include <sge/renderer/target/onscreen.hpp>
 #include <sge/renderer/texture/emulate_srgb.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/cast/size_fun.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/next_prior.hpp>
@@ -72,7 +73,9 @@ flake::test::information::manager::render(
 		2;
 
 	sge::font::rect const viewport_rect(
-		fcppt::math::box::structure_cast<sge::font::rect>(
+		fcppt::math::box::structure_cast<
+			sge::font::rect,
+			fcppt::cast::size_fun>(
 			renderer_.onscreen_target().viewport().get()));
 
 	sge::font::draw::static_text text(

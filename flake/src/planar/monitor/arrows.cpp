@@ -43,6 +43,8 @@
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/cast/int_to_float_fun.hpp>
+#include <fcppt/cast/size_fun.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
@@ -191,11 +193,15 @@ flake::planar::monitor::arrows::update()
 	if(sprite_)
 	{
 		sprite_->pos(
-			fcppt::math::vector::structure_cast<monitor::dummy_sprite::object::vector>(
+			fcppt::math::vector::structure_cast<
+				monitor::dummy_sprite::object::vector,
+				fcppt::cast::size_fun>(
 				sprite_box_.position()));
 
 		sprite_->size(
-			fcppt::math::dim::structure_cast<monitor::dummy_sprite::object::dim>(
+			fcppt::math::dim::structure_cast<
+				monitor::dummy_sprite::object::dim,
+				fcppt::cast::size_fun>(
 				sprite_box_.size()));
 	}
 }
@@ -274,14 +280,18 @@ flake::planar::monitor::arrows::render_arrows(
 			*_projection
 		:
 			sge::renderer::projection::orthogonal_wh(
-				fcppt::math::dim::structure_cast<sge::renderer::projection::dim>(
+				fcppt::math::dim::structure_cast<
+					sge::renderer::projection::dim,
+					fcppt::cast::int_to_float_fun>(
 					child::parent().renderer().onscreen_target().viewport().get().size()),
 				sge::renderer::projection::near(0.0f),
 				sge::renderer::projection::far(10.0f)));
 
 
 	child::parent().arrow_position(
-		fcppt::math::vector::structure_cast<sge::renderer::vector2>(
+		fcppt::math::vector::structure_cast<
+			sge::renderer::vector2,
+			fcppt::cast::int_to_float_fun>(
 			sprite_box_.position()));
 
 	_context.render_nonindexed(

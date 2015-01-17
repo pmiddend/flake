@@ -20,6 +20,7 @@
 #include <sge/renderer/texture/emulate_srgb.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters_impl.hpp>
+#include <fcppt/cast/size_fun.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
 #include <fcppt/variant/object.hpp>
@@ -105,7 +106,9 @@ flake::notifications::object::render(
 			3;
 
 	sge::font::rect const viewport_rect(
-		fcppt::math::box::structure_cast<sge::font::rect>(
+		fcppt::math::box::structure_cast<
+			sge::font::rect,
+			fcppt::cast::size_fun>(
 			renderer_.onscreen_target().viewport().get()));
 
 	if(!viewport_rect.content())

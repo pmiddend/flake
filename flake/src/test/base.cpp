@@ -172,7 +172,7 @@ flake::test::base::base(
 					sge::media::all_extensions))
 				(sge::systems::window(
 					sge::systems::original_window(
-						_window_title,
+						_window_title).dim(
 						sge::parse::json::find_and_convert_member<sge::window::dim>(
 							*configuration_,
 							sge::parse::json::string_to_path(

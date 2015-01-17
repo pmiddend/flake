@@ -39,6 +39,7 @@
 #include <fcppt/insert_to_fcppt_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/assign/make_container.hpp>
+#include <fcppt/cast/size_fun.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/deg_to_rad.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
@@ -205,7 +206,9 @@ flake::tests::flakes::flakes(
 	snow_density_view_(
 		flakelib::volume::float_view(
 			snow_density_buffer_,
-			fcppt::math::dim::structure_cast<sge::opencl::dim3>(
+			fcppt::math::dim::structure_cast<
+				sge::opencl::dim3,
+				fcppt::cast::size_fun>(
 				simulation_size_.get()))),
 	activity_buffer_(
 		flakelib::volume::retrieve_filled_float_buffer(
@@ -326,7 +329,9 @@ flake::tests::flakes::flakes(
 		this->renderer(),
 		this->opencl_system().command_queue(),
 		flakelib::marching_cubes::cpu::grid_size(
-			fcppt::math::dim::structure_cast<sge::renderer::dim3>(
+			fcppt::math::dim::structure_cast<
+				sge::renderer::dim3,
+				fcppt::cast::size_fun>(
 				simulation_size_.get())),
 		flakelib::marching_cubes::iso_level(
 			sge::parse::json::find_and_convert_member<cl_float>(
