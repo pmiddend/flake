@@ -1,5 +1,6 @@
 #include <flake/save_l8_texture_to_file.hpp>
 #include <sge/image/algorithm/may_overlap.hpp>
+#include <sge/image/algorithm/uninitialized.hpp>
 #include <sge/image/view/wrap.hpp>
 #include <sge/image2d/dim.hpp>
 #include <sge/image2d/store/l8.hpp>
@@ -39,7 +40,8 @@ flake::save_l8_texture_to_file(
 				sge::image2d::view::object(
 					sge::image::view::wrap(
 						_view)),
-				sge::image::algorithm::may_overlap::no);
+				sge::image::algorithm::may_overlap::no,
+				sge::image::algorithm::uninitialized::yes);
 		});
 
 	sge::image2d::save_from_view(

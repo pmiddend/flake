@@ -1,5 +1,6 @@
 #include <flakelib/cl/planar_image_view_to_cl_image.hpp>
 #include <sge/image/algorithm/may_overlap.hpp>
+#include <sge/image/algorithm/uninitialized.hpp>
 #include <sge/image2d/algorithm/copy_and_convert.hpp>
 #include <sge/image2d/view/format.hpp>
 #include <sge/image2d/view/size.hpp>
@@ -57,7 +58,8 @@ flakelib::cl::planar_image_view_to_cl_image(
 	sge::image2d::algorithm::copy_and_convert(
 		_planar_image,
 		scoped_image.view(),
-		sge::image::algorithm::may_overlap::no);
+		sge::image::algorithm::may_overlap::no,
+		sge::image::algorithm::uninitialized::yes);
 
 	return
 		std::move(

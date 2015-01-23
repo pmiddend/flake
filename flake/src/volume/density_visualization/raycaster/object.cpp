@@ -8,6 +8,7 @@
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/image/algorithm/may_overlap.hpp>
+#include <sge/image/algorithm/uninitialized.hpp>
 #include <sge/image/view/wrap.hpp>
 #include <sge/image2d/save_from_view.hpp>
 #include <sge/image2d/algorithm/copy_and_convert.hpp>
@@ -311,7 +312,8 @@ flake::volume::density_visualization::raycaster::object::update(
 				sge::image2d::view::object(
 					sge::image::view::wrap(
 						_init_view)),
-				sge::image::algorithm::may_overlap::no);
+				sge::image::algorithm::may_overlap::no,
+				sge::image::algorithm::uninitialized::yes);
 		});
 
 	sge::image2d::save_from_view(
