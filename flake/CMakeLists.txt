@@ -157,7 +157,6 @@ set(
 	flake/include/flake/volume/snow_cover/steep_texture.hpp
 	flake/include/flake/volume/snow_cover/sun_direction.hpp
 	flake/include/flake/volume/snow_cover/texture_repeats.hpp
-	flake/include/flake/volume/sun/object.hpp
 	flake/include/flake/volume/sun/object_fwd.hpp
 	flake/src/basic_scoped_ostream_file_redirection.cpp
 	flake/src/exception.cpp

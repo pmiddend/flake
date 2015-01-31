@@ -44,7 +44,6 @@ set(
 	flakelib/include/flakelib/cl/program_context.hpp
 	flakelib/include/flakelib/cl/program_context_fwd.hpp
 	flakelib/include/flakelib/cl/uint4.hpp
-	flakelib/include/flakelib/class_symbol.hpp
 	flakelib/include/flakelib/console_percent_bar.hpp
 	flakelib/include/flakelib/duration.hpp
 	flakelib/include/flakelib/exception.hpp
@@ -156,7 +155,6 @@ set(
 	flakelib/include/flakelib/timer/basic_decl.hpp
 	flakelib/include/flakelib/timer/basic_fwd.hpp
 	flakelib/include/flakelib/timer/basic_impl.hpp
-	flakelib/include/flakelib/timer/description.hpp
 	flakelib/include/flakelib/timer/object.hpp
 	flakelib/include/flakelib/timer/wobject.hpp
 	flakelib/include/flakelib/utility/fill_buffer.hpp
