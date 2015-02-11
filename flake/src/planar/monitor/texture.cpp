@@ -28,7 +28,6 @@
 #include <sge/texture/part_raw_ref.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/cast/int_to_float_fun.hpp>
 #include <fcppt/cast/size_fun.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/object_impl.hpp>
@@ -60,10 +59,7 @@ flake::planar::monitor::texture::texture(
 	renderer_texture_(
 		child::parent().renderer().create_planar_texture(
 			sge::renderer::texture::planar_parameters(
-				fcppt::math::dim::structure_cast<
-					sge::renderer::dim2,
-					fcppt::cast::int_to_float_fun>(
-					_grid_dimensions.get()),
+				_grid_dimensions.get(),
 				sge::renderer::texture::color_format(
 					sge::image::color::format::rgba32f,
 					sge::renderer::texture::emulate_srgb::no),

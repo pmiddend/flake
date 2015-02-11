@@ -32,6 +32,7 @@
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/cast/int_to_float_fun.hpp>
 #include <fcppt/cast/size_fun.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
@@ -193,7 +194,7 @@ flake::tests::vorticity::vorticity(
 		flake::planar::monitor::texture_size(
 			fcppt::math::dim::structure_cast<
 				flake::planar::monitor::dim,
-				fcppt::cast::size_fun>(
+				fcppt::cast::int_to_float_fun>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
 		flake::planar::monitor::scaling_factor(
@@ -215,7 +216,7 @@ flake::tests::vorticity::vorticity(
 		flake::planar::monitor::texture_size(
 			fcppt::math::dim::structure_cast<
 				flake::planar::monitor::dim,
-				fcppt::cast::size_fun>(
+				fcppt::cast::int_to_float_fun>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
 		flake::planar::monitor::scaling_factor(
@@ -237,7 +238,7 @@ flake::tests::vorticity::vorticity(
 		flake::planar::monitor::texture_size(
 			fcppt::math::dim::structure_cast<
 				flake::planar::monitor::dim,
-				fcppt::cast::size_fun>(
+				fcppt::cast::int_to_float_fun>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
 		flake::planar::monitor::scaling_factor(
@@ -259,7 +260,7 @@ flake::tests::vorticity::vorticity(
 		flake::planar::monitor::texture_size(
 			fcppt::math::dim::structure_cast<
 				flake::planar::monitor::dim,
-				fcppt::cast::size_fun>(
+				fcppt::cast::int_to_float_fun>(
 				sge::image2d::view::size(
 					boundary_image_file_->view()))),
 		flake::planar::monitor::scaling_factor(

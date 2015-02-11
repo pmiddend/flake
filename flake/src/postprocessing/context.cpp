@@ -32,7 +32,6 @@
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_map.hpp>
-#include <fcppt/cast/int_to_float_fun.hpp>
 #include <fcppt/cast/size_fun.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
@@ -208,7 +207,7 @@ flake::postprocessing::context::viewport_callback()
 	sge::renderer::dim2 const target_size(
 		fcppt::math::dim::structure_cast<
 			sge::renderer::dim2,
-			fcppt::cast::int_to_float_fun>(
+			fcppt::cast::size_fun>(
 			sge::renderer::target::viewport_size(
 				renderer_.onscreen_target())));
 

@@ -27,10 +27,13 @@
 #include <fcppt/math/vector/narrow_cast.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/math/vector/structure_cast.hpp>
+#include <fcppt/math/vector/to_signed.hpp>
+#include <fcppt/math/vector/to_unsigned.hpp>
 #include <fcppt/signal/connection.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
 #include <functional>
+#include <type_traits>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -266,6 +269,16 @@ flake::planar::cursor_splatter::splat_at_cursor_position(
 	flakelib::splatter::rectangle::position::value_type
 	discrete_vector2;
 
+	typedef
+	decltype(
+		fcppt::math::vector::to_signed(
+			std::declval<
+				flakelib::splatter::rectangle::position::value_type
+			>()
+		)
+	)
+	signed_discrete_vector2;
+
 	sge::renderer::vector2 const
 		unprojected_relative_lefttop(
 			unprojected_lefttop - monitor_rectangle_origin_lefttop.pos());
@@ -274,13 +287,14 @@ flake::planar::cursor_splatter::splat_at_cursor_position(
 	flakelib::splatter::rectangle::object new_pen_rectangle(
 		flakelib::splatter::rectangle::position(
 			pen_.bounding().position().get() +
+			fcppt::math::vector::to_unsigned(
+				fcppt::math::vector::structure_cast<
+					signed_discrete_vector2,
+					fcppt::cast::float_to_int_fun>(
+						unprojected_relative_lefttop)) -
 			fcppt::math::vector::structure_cast<
 				discrete_vector2,
-				fcppt::cast::float_to_int_fun>(
-				unprojected_relative_lefttop) -
-			fcppt::math::vector::structure_cast<
-				discrete_vector2,
-				fcppt::cast::float_to_int_fun>(
+				fcppt::cast::size_fun>(
 				fcppt::math::dim::to_vector(
 					pen_.bounding().size().get() /
 					static_cast<discrete_unit>(
