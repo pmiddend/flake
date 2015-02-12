@@ -12,7 +12,6 @@
 #include <flake/test/information/object.hpp>
 #include <flake/time_modifier/multiplier.hpp>
 #include <flake/time_modifier/object_fwd.hpp>
-#include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/buffer_pool/object_fwd.hpp>
 #include <flakelib/cl/program_context_fwd.hpp>
 #include <sge/font/system_fwd.hpp>
@@ -38,6 +37,7 @@
 #include <sge/systems/with_input.hpp>
 #include <sge/systems/with_renderer.hpp>
 #include <sge/systems/with_window.hpp>
+#include <sge/timer/scoped_frame_limiter.hpp>
 #include <sge/viewport/manager_fwd.hpp>
 #include <sge/window/title.hpp>
 #include <awl/main/exit_code.hpp>
@@ -182,7 +182,7 @@ private:
 	std::unique_ptr<sge::opencl::single_device_system::object> const opencl_system_;
 	std::unique_ptr<flakelib::cl::program_context> const program_context_;
 	std::unique_ptr<flakelib::buffer_pool::object> const buffer_pool_;
-	flakelib::scoped_frame_limiter::fps_type desired_fps_;
+	sge::timer::scoped_frame_limiter::ticks_per_second desired_fps_;
 	fcppt::signal::scoped_connection viewport_connection_;
 	std::unique_ptr<flake::notifications::object> const notifications_;
 	std::unique_ptr<flake::test::information::manager> const information_manager_;

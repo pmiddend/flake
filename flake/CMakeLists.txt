@@ -215,6 +215,7 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	flake_helper_library
+	${sgetimer_TARGET}
 	${FLAKELIB_DEFAULT_LINK_TARGET})
 
 include(

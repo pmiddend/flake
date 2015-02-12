@@ -5,7 +5,6 @@
 #include <flake/test/information/manager.hpp>
 #include <flake/time_modifier/object.hpp>
 #include <flakelib/log.hpp>
-#include <flakelib/scoped_frame_limiter.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/cl/cflags.hpp>
 #include <flakelib/cl/compiler_flags.hpp>
@@ -41,6 +40,7 @@
 #include <sge/systems/quit_on_escape.hpp>
 #include <sge/systems/renderer.hpp>
 #include <sge/systems/window.hpp>
+#include <sge/timer/scoped_frame_limiter.hpp>
 #include <sge/viewport/fill_on_resize.hpp>
 #include <sge/viewport/manager.hpp>
 #include <sge/window/object.hpp>
@@ -94,7 +94,7 @@ flake::test::base::run()
 
 	while(systems_->window_system().poll())
 	{
-		flakelib::scoped_frame_limiter frame_limiter(
+		sge::timer::scoped_frame_limiter frame_limiter(
 			desired_fps_);
 
 		this->update();
@@ -224,7 +224,7 @@ flake::test::base::base(
 		fcppt::make_unique_ptr<flakelib::buffer_pool::object>(
 			this->opencl_system().context())),
 	desired_fps_(
-		sge::parse::json::find_and_convert_member<flakelib::scoped_frame_limiter::fps_type>(
+		sge::parse::json::find_and_convert_member<sge::timer::scoped_frame_limiter::ticks_per_second>(
 			*configuration_,
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("tests/desired-fps")))),

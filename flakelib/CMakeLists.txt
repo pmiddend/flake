@@ -130,7 +130,6 @@ set(
 	flakelib/include/flakelib/scan/object.hpp
 	flakelib/include/flakelib/scan/object_fwd.hpp
 	flakelib/include/flakelib/scan/value_type.hpp
-	flakelib/include/flakelib/scoped_frame_limiter.hpp
 	flakelib/include/flakelib/splatter/box/object.hpp
 	flakelib/include/flakelib/splatter/box/object_fwd.hpp
 	flakelib/include/flakelib/splatter/box/position.hpp
@@ -247,7 +246,6 @@ set(
 	flakelib/src/planar/simulation/stam/wind_source.cpp
 	flakelib/src/scan.cpp
 	flakelib/src/scan/object.cpp
-	flakelib/src/scoped_frame_limiter.cpp
 	flakelib/src/splatter/box/object_fwd.cpp
 	flakelib/src/splatter/object.cpp
 	flakelib/src/splatter/rectangle/object.cpp
