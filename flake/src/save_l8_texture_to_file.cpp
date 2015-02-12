@@ -3,9 +3,9 @@
 #include <sge/image/algorithm/uninitialized.hpp>
 #include <sge/image/view/wrap.hpp>
 #include <sge/image2d/dim.hpp>
-#include <sge/image2d/store/l8.hpp>
 #include <sge/image2d/save_from_view.hpp>
 #include <sge/image2d/algorithm/copy_and_convert.hpp>
+#include <sge/image2d/store/l8.hpp>
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/image2d/view/object.hpp>
 #include <sge/renderer/texture/const_scoped_planar_lock.hpp>

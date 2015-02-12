@@ -1,15 +1,14 @@
 #include <flake/test/camera_manager.hpp>
-#include <fcppt/signal/connection.hpp>
-#include <sge/input/keyboard/key_event.hpp>
-#include <sge/input/keyboard/device.hpp>
-#include <sge/parse/json/is_null.hpp>
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/object.hpp>
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/camera/tracking/object.hpp>
 #include <sge/camera/tracking/json/interval_exporter.hpp>
 #include <sge/camera/tracking/json/keyframes_from_json.hpp>
+#include <sge/input/keyboard/device.hpp>
+#include <sge/input/keyboard/key_event.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
+#include <sge/parse/json/is_null.hpp>
 #include <sge/parse/json/parse_file_exn.hpp>
 #include <sge/parse/json/path.hpp>
 #include <sge/parse/json/value.hpp>
@@ -17,6 +16,7 @@
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/math/deg_to_rad.hpp>
+#include <fcppt/signal/connection.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <functional>
 #include <memory>

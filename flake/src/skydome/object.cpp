@@ -17,8 +17,8 @@
 #include <sge/renderer/index/buffer.hpp>
 #include <sge/renderer/index/buffer_parameters.hpp>
 #include <sge/renderer/index/iterator.hpp>
-#include <sge/renderer/index/view.hpp>
 #include <sge/renderer/index/scoped_lock.hpp>
+#include <sge/renderer/index/view.hpp>
 #include <sge/renderer/index/dynamic/make_format.hpp>
 #include <sge/renderer/state/core/sampler/object.hpp>
 #include <sge/renderer/state/core/sampler/parameters.hpp>

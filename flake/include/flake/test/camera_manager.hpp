@@ -1,14 +1,14 @@
 #ifndef FLAKE_TEST_CAMERA_MANAGER_HPP_INCLUDED
 #define FLAKE_TEST_CAMERA_MANAGER_HPP_INCLUDED
 
+#include <sge/camera/base_fwd.hpp>
 #include <sge/camera/perspective_projection_from_viewport.hpp>
+#include <sge/camera/update_duration.hpp>
 #include <sge/camera/tracking/json/interval_exporter_fwd.hpp>
 #include <sge/input/keyboard/device_fwd.hpp>
-#include <sge/camera/update_duration.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>
 #include <sge/input/mouse/device_fwd.hpp>
 #include <sge/parse/json/object_fwd.hpp>
-#include <sge/camera/base_fwd.hpp>
 #include <sge/viewport/manager_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/config/external_begin.hpp>
