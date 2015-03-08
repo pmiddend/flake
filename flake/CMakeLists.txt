@@ -205,17 +205,23 @@ set(
 	INSTALL_MEDIA_DIR
 	${INSTALL_DATA_DIR}/flake_media)
 
+find_package(
+	FcpptThreads
+	REQUIRED)
+
 add_library(
 	flake_helper_library
 	STATIC
 	${FLAKE_FILES_ABS})
 
 fcppt_utils_set_target_compiler_flags(
-	flake_helper_library)
+	flake_helper_library
+	${FcpptThreads_DEFINITIONS})
 
 target_link_libraries(
 	flake_helper_library
 	${sgetimer_TARGET}
+	${FcpptThreads_LIBRARIES}
 	${FLAKELIB_DEFAULT_LINK_TARGET})
 
 include(
