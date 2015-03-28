@@ -203,9 +203,14 @@ find_package(
 include(
 	FcpptSymbol)
 
+set(
+	FLAKELIB_HELPER_STATIC_LINK_FLAG
+	FLAKELIB_HELPER_STATIC_LINK
+)
+
 fcppt_generate_symbol_header(
 	STATIC_LINK_FLAG
-		FLAKELIB_HELPER_STATIC_LINK
+		${FLAKELIB_HELPER_STATIC_LINK_FLAG}
 	EXPORTS_NAME
 		flakelib_helper_library
 	SYMBOL_NAME
@@ -223,13 +228,10 @@ function(
 		${VARIANT}
 		${FLAKE_FILES_ABS})
 
-	if(
-		${VARIANT} STREQUAL "STATIC")
-		target_compile_definitions(
-			${TARGETNAME}
-			PUBLIC
-			"FLAKELIB_HELPER_STATIC_LINK")
-	endif()
+	fcppt_utils_interface_static_link(
+		${TARGETNAME}
+		${VARIANT}
+		${FLAKELIB_HELPER_STATIC_LINK_FLAG})
 
 	fcppt_utils_set_target_compiler_flags(
 		${TARGETNAME}
@@ -263,7 +265,7 @@ function(
 		${sgeviewport_TARGET}
 		${sgewindow_TARGET}
 		${FcpptThreads_LIBRARIES}
-		${FLAKELIB_DEFAULT_LINK_TARGET})
+		${flakelib_TARGET})
 
 	target_include_directories(
 		${TARGETNAME}
@@ -280,17 +282,26 @@ function(
 endfunction()
 
 if(
-	ENABLE_STATIC)
+	ENABLE_STATIC
+)
+	fcppt_utils_static_link_name(
+		flakelib_helper_library
+		STATIC_NAME
+	)
+
 	make_flakelib_helper_library(
-		flakelib_helper_library_static
-		STATIC)
+		${STATIC_NAME}
+		STATIC
+	)
 endif()
 
 if(
-	ENABLE_SHARED)
+	ENABLE_SHARED
+)
 	make_flakelib_helper_library(
 		flakelib_helper_library
-		SHARED)
+		SHARED
+	)
 endif()
 
 include(

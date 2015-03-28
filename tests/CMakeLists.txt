@@ -21,8 +21,8 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	tests_vorticity
-	${FLAKELIB_DEFAULT_LINK_TARGET}
-	${FLAKELIB_HELPER_DEFAULT_LINK_TARGET}
+	${flakelib_TARGET}
+	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
 	${fcppt_filesystem_TARGET}
 	${Cg_LIBRARIES}
@@ -50,8 +50,8 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	tests_buoyancy
-	${FLAKELIB_DEFAULT_LINK_TARGET}
-	${FLAKELIB_HELPER_DEFAULT_LINK_TARGET}
+	${flakelib_TARGET}
+	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
 	${fcppt_filesystem_TARGET}
 	${awl_TARGET}
@@ -79,8 +79,8 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	tests_flakes
-	${FLAKELIB_DEFAULT_LINK_TARGET}
-	${FLAKELIB_HELPER_DEFAULT_LINK_TARGET}
+	${flakelib_TARGET}
+	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
 	${fcppt_filesystem_TARGET}
 	${Cg_LIBRARIES}
@@ -108,8 +108,8 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	tests_marching_cubes
-	${FLAKELIB_DEFAULT_LINK_TARGET}
-	${FLAKELIB_HELPER_DEFAULT_LINK_TARGET}
+	${flakelib_TARGET}
+	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
 	${fcppt_filesystem_TARGET}
 	${Cg_LIBRARIES}
@@ -137,8 +137,8 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	tests_density_visualization
-	${FLAKELIB_DEFAULT_LINK_TARGET}
-	${FLAKELIB_HELPER_DEFAULT_LINK_TARGET}
+	${flakelib_TARGET}
+	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
 	${fcppt_filesystem_TARGET}
 	${Cg_LIBRARIES}
@@ -167,8 +167,8 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	tests_solipsistic
-	${FLAKELIB_DEFAULT_LINK_TARGET}
-	${FLAKELIB_HELPER_DEFAULT_LINK_TARGET}
+	${flakelib_TARGET}
+	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
 	${fcppt_filesystem_TARGET}
 	${Cg_LIBRARIES}
@@ -196,8 +196,8 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	tests_scan
-	${FLAKELIB_DEFAULT_LINK_TARGET}
-	${FLAKELIB_HELPER_DEFAULT_LINK_TARGET}
+	${flakelib_TARGET}
+	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
 	${fcppt_filesystem_TARGET}
 	${awl_TARGET}

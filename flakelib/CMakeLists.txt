@@ -278,9 +278,14 @@ endif()
 include(
 	FcpptSymbol)
 
+set(
+	FLAKELIB_STATIC_LINK_FLAG
+	"FLAKELIB_STATIC_LINK"
+)
+
 fcppt_generate_symbol_header(
 	STATIC_LINK_FLAG
-		FLAKELIB_STATIC_LINK
+		${FLAKELIB_STATIC_LINK_FLAG}
 	EXPORTS_NAME
 		flakelib
 	SYMBOL_NAME
@@ -312,13 +317,11 @@ function(
 			${Boost_SYSTEM_LIBRARY})
 	endif()
 
-	if(
-		${VARIANT} STREQUAL "STATIC")
-		target_compile_definitions(
-			${TARGETNAME}
-			PUBLIC
-			"FLAKELIB_STATIC_LINK")
-	endif()
+	fcppt_utils_interface_static_link(
+		${TARGETNAME}
+		${VARIANT}
+		${FLAKELIB_STATIC_LINK_FLAG}
+	)
 
 	if(
 		UNIX)
@@ -359,17 +362,26 @@ function(
 endfunction()
 
 if(
-	ENABLE_STATIC)
+	ENABLE_STATIC
+)
+	fcppt_utils_static_link_name(
+		flakelib
+		STATIC_NAME
+	)
+
 	make_flakelib_library(
-		flakelib_static
-		STATIC)
+		${STATIC_NAME}
+		STATIC
+	)
 endif()
 
 if(
-	ENABLE_SHARED)
+	ENABLE_SHARED
+)
 	make_flakelib_library(
 		flakelib
-		SHARED)
+		SHARED
+	)
 endif()
 
 fcppt_utils_install_data_dir(

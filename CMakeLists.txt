@@ -113,22 +113,13 @@ find_package(
 
 fcppt_utils_static_shared()
 
-if(
-	FCPPT_UTILS_DEFAULT_LINK_STATIC)
-	set(
-		FLAKELIB_DEFAULT_LINK_TARGET
-		flakelib_static)
-	set(
-		FLAKELIB_HELPER_DEFAULT_LINK_TARGET
-		flakelib_helper_library_static)
-else()
-	set(
-		FLAKELIB_DEFAULT_LINK_TARGET
-		flakelib)
-	set(
-		FLAKELIB_HELPER_DEFAULT_LINK_TARGET
-		flakelib_helper_library)
-endif()
+fcppt_utils_link_target(
+	flakelib
+)
+
+fcppt_utils_link_target(
+	flakelib_helper_library
+)
 
 add_subdirectory(
 	flakelib)
