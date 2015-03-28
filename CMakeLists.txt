@@ -111,36 +111,23 @@ find_package(
 	audio
 )
 
-option(
-	ENABLE_SHARED
-	"Build flakelib as a shared library"
-	TRUE)
+fcppt_utils_static_shared()
 
-option(
-	ENABLE_STATIC
-	"Build flakelib as a static library"
-	FALSE)
-
-# choose a library to link the tests to
 if(
-	ENABLE_SHARED)
-	set(
-		FLAKELIB_DEFAULT_LINK_TARGET
-		flakelib)
-	set(
-		FLAKELIB_HELPER_DEFAULT_LINK_TARGET
-		flakelib_helper_library)
-endif()
-
-# static overrides shared
-if(
-	ENABLE_STATIC)
+	FCPPT_UTILS_DEFAULT_LINK_STATIC)
 	set(
 		FLAKELIB_DEFAULT_LINK_TARGET
 		flakelib_static)
 	set(
 		FLAKELIB_HELPER_DEFAULT_LINK_TARGET
 		flakelib_helper_library_static)
+else()
+	set(
+		FLAKELIB_DEFAULT_LINK_TARGET
+		flakelib)
+	set(
+		FLAKELIB_HELPER_DEFAULT_LINK_TARGET
+		flakelib_helper_library)
 endif()
 
 add_subdirectory(
