@@ -3,6 +3,7 @@
 
 #include <flake/scoped_ostream_file_redirection.hpp>
 #include <flake/scoped_wostream_file_redirection.hpp>
+#include <flake/detail/symbol.hpp>
 #include <flake/notifications/object_fwd.hpp>
 #include <flake/notifications/text.hpp>
 #include <flake/postprocessing/context.hpp>
@@ -43,6 +44,7 @@
 #include <awl/main/exit_code.hpp>
 #include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/symbol/class.hpp>
 #include <fcppt/config/platform.hpp>
 #include <fcppt/signal/scoped_connection.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -55,14 +57,16 @@ namespace flake
 {
 namespace test
 {
-class base
+class FCPPT_SYMBOL_CLASS base
 {
 FCPPT_NONCOPYABLE(
 	base);
 public:
+	FLAKE_DETAIL_SYMBOL
 	awl::main::exit_code const
 	run();
 
+	FLAKE_DETAIL_SYMBOL
 	virtual ~base() = 0;
 protected:
 	base(
@@ -133,6 +137,7 @@ protected:
 	flake::test::information::manager &
 	information_manager();
 
+	FLAKE_DETAIL_SYMBOL
 	bool
 	dump_this_frame() const;
 protected:

@@ -1,6 +1,7 @@
 #ifndef FLAKE_SKYDOME_OBJECT_HPP_INCLUDED
 #define FLAKE_SKYDOME_OBJECT_HPP_INCLUDED
 
+#include <flake/detail/symbol.hpp>
 #include <flake/skydome/latitude.hpp>
 #include <flake/skydome/longitude.hpp>
 #include <flake/skydome/texture_path.hpp>
@@ -31,6 +32,7 @@ class object
 FCPPT_NONCOPYABLE(
 	object);
 public:
+	FLAKE_DETAIL_SYMBOL
 	object(
 		sge::renderer::device::core &,
 		sge::shader::context &,
@@ -41,10 +43,12 @@ public:
 		flake::skydome::latitude const &,
 		flake::skydome::y_translation const &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	render(
 		sge::renderer::context::core &);
 
+	FLAKE_DETAIL_SYMBOL
 	~object();
 private:
 	flake::skydome::y_translation const y_translation_;

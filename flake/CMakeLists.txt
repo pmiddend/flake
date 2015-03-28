@@ -1,12 +1,3 @@
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-include_directories(
-	${CMAKE_SOURCE_DIR}/flakelib/include)
-
-include_directories(
-	${CMAKE_BINARY_DIR}/include)
-
 set(
 	FLAKE_FILES
 	flake/include/flake/basic_scoped_ostream_file_redirection_decl.hpp
@@ -209,20 +200,98 @@ find_package(
 	FcpptThreads
 	REQUIRED)
 
-add_library(
-	flake_helper_library
-	STATIC
-	${FLAKE_FILES_ABS})
+include(
+	FcpptSymbol)
 
-fcppt_utils_set_target_compiler_flags(
-	flake_helper_library
-	${FcpptThreads_DEFINITIONS})
+fcppt_generate_symbol_header(
+	STATIC_LINK_FLAG
+		FLAKELIB_HELPER_STATIC_LINK
+	EXPORTS_NAME
+		flakelib_helper_library
+	SYMBOL_NAME
+		FLAKE_DETAIL
+)
 
-target_link_libraries(
-	flake_helper_library
-	${sgetimer_TARGET}
-	${FcpptThreads_LIBRARIES}
-	${FLAKELIB_DEFAULT_LINK_TARGET})
+
+function(
+	make_flakelib_helper_library
+	TARGETNAME
+	VARIANT
+)
+	add_library(
+		${TARGETNAME}
+		${VARIANT}
+		${FLAKE_FILES_ABS})
+
+	if(
+		${VARIANT} STREQUAL "STATIC")
+		target_compile_definitions(
+			${TARGETNAME}
+			PUBLIC
+			"FLAKELIB_HELPER_STATIC_LINK")
+	endif()
+
+	fcppt_utils_set_target_compiler_flags(
+		${TARGETNAME}
+		ADDITIONAL_FLAGS
+		${FcpptThreads_DEFINITIONS})
+
+	target_link_libraries(
+		${TARGETNAME}
+		PRIVATE
+		${fcppt_core_TARGET}
+		${fcppt_log_TARGET}
+		${sgecamera_TARGET}
+		${sgecg_TARGET}
+		${sgecharconv_TARGET}
+		${sgefont_TARGET}
+		${sgefontdraw_TARGET}
+		${sgeimagecolor_TARGET}
+		${sgeimage2d_TARGET}
+		${sgeinput_TARGET}
+		${sgemedia_TARGET}
+		${sgeopencl_TARGET}
+		${sgeparse_TARGET}
+		${sgeparsejson_TARGET}
+		${sgerenderer_TARGET}
+		${sgerucksack_TARGET}
+		${sgeshader_TARGET}
+		${sgesprite_TARGET}
+		${sgesystems_TARGET}
+		${sgetexture_TARGET}
+		${sgetimer_TARGET}
+		${sgeviewport_TARGET}
+		${sgewindow_TARGET}
+		${FcpptThreads_LIBRARIES}
+		${FLAKELIB_DEFAULT_LINK_TARGET})
+
+	target_include_directories(
+		${TARGETNAME}
+		PUBLIC
+		${CMAKE_CURRENT_SOURCE_DIR}/include
+		PRIVATE
+		${CMAKE_BINARY_DIR}/include)
+
+	install(
+		TARGETS
+		${TARGETNAME}
+		DESTINATION
+		${INSTALL_LIBRARY_DIR})
+endfunction()
+
+if(
+	ENABLE_STATIC)
+	make_flakelib_helper_library(
+		flakelib_helper_library_static
+		STATIC)
+endif()
+
+if(
+	ENABLE_SHARED)
+	make_flakelib_helper_library(
+		flakelib_helper_library
+		SHARED)
+endif()
 
 include(
 	SGECustomPath)

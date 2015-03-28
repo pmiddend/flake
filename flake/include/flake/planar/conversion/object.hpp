@@ -1,6 +1,7 @@
 #ifndef FLAKE_PLANAR_CONVERSION_OBJECT_HPP_INCLUDED
 #define FLAKE_PLANAR_CONVERSION_OBJECT_HPP_INCLUDED
 
+#include <flake/detail/symbol.hpp>
 #include <flake/planar/conversion/arrow_scale.hpp>
 #include <flake/planar/conversion/constant_addition.hpp>
 #include <flake/planar/conversion/grid_scale.hpp>
@@ -28,10 +29,12 @@ class object
 FCPPT_NONCOPYABLE(
 	object);
 public:
+	FLAKE_DETAIL_SYMBOL
 	explicit
 	object(
 		flakelib::cl::program_context const &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	to_arrow_vb(
 		flakelib::planar::float2_view const &,
@@ -41,17 +44,20 @@ public:
 		conversion::grid_scale const &,
 		conversion::arrow_scale const &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	arrows_to_matlab_files(
 		flakelib::planar::float2_view const &,
 		flake::planar::conversion::x_coordinate_file const &,
 		flake::planar::conversion::y_coordinate_file const &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	scalar_to_matlab_file(
 		flakelib::planar::float_view const &,
 		boost::filesystem::path const &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	scalar_to_texture(
 		flakelib::planar::float_view const &,
@@ -59,6 +65,7 @@ public:
 		conversion::scaling_factor const &,
 		conversion::constant_addition const &);
 
+	FLAKE_DETAIL_SYMBOL
 	~object();
 private:
 	sge::opencl::command_queue::object &command_queue_;

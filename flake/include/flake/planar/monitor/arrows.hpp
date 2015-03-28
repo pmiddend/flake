@@ -1,6 +1,7 @@
 #ifndef FLAKE_PLANAR_MONITOR_ARROWS_HPP_INCLUDED
 #define FLAKE_PLANAR_MONITOR_ARROWS_HPP_INCLUDED
 
+#include <flake/detail/symbol.hpp>
 #include <flake/planar/monitor/arrow_scale.hpp>
 #include <flake/planar/monitor/child.hpp>
 #include <flake/planar/monitor/grid_dimensions.hpp>
@@ -38,6 +39,7 @@ class arrows
 FCPPT_NONCOPYABLE(
 	arrows);
 public:
+	FLAKE_DETAIL_SYMBOL
 	arrows(
 		monitor::parent &,
 		monitor::name const &,
@@ -46,12 +48,15 @@ public:
 		monitor::grid_scale const &,
 		monitor::optional_background_texture const &);
 
+	FLAKE_DETAIL_SYMBOL
 	sge::opencl::memory_object::buffer &
 	cl_buffer();
 
+	FLAKE_DETAIL_SYMBOL
 	monitor::arrow_scale const
 	arrow_scale() const;
 
+	FLAKE_DETAIL_SYMBOL
 	monitor::grid_scale const
 	grid_scale() const;
 
@@ -66,9 +71,11 @@ public:
 	void
 	update();
 
+	FLAKE_DETAIL_SYMBOL
 	sge::rucksack::widget::base &
 	widget();
 
+	FLAKE_DETAIL_SYMBOL
 	~arrows();
 private:
 	fcppt::string const name_;

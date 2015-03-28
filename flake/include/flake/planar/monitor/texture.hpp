@@ -1,6 +1,7 @@
 #ifndef FLAKE_PLANAR_MONITOR_TEXTURE_HPP_INCLUDED
 #define FLAKE_PLANAR_MONITOR_TEXTURE_HPP_INCLUDED
 
+#include <flake/detail/symbol.hpp>
 #include <flake/planar/monitor/child.hpp>
 #include <flake/planar/monitor/grid_dimensions.hpp>
 #include <flake/planar/monitor/name.hpp>
@@ -31,6 +32,7 @@ class texture
 FCPPT_NONCOPYABLE(
 	texture);
 public:
+	FLAKE_DETAIL_SYMBOL
 	texture(
 		monitor::parent &,
 		monitor::name const &,
@@ -38,6 +40,7 @@ public:
 		monitor::texture_size const &,
 		monitor::scaling_factor const &);
 
+	FLAKE_DETAIL_SYMBOL
 	sge::opencl::memory_object::image::planar &
 	cl_texture();
 
@@ -55,9 +58,11 @@ public:
 	void
 	update();
 
+	FLAKE_DETAIL_SYMBOL
 	sge::rucksack::widget::base &
 	widget();
 
+	FLAKE_DETAIL_SYMBOL
 	sge::rucksack::widget::base const &
 	widget() const;
 
@@ -67,6 +72,7 @@ public:
 	sge::rucksack::widget::base const &
 	content_widget() const;
 
+	FLAKE_DETAIL_SYMBOL
 	~texture();
 private:
 	fcppt::string const name_;

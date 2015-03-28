@@ -1,6 +1,7 @@
 #ifndef FLAKE_TEST_FEATURE_HPP_INCLUDED
 #define FLAKE_TEST_FEATURE_HPP_INCLUDED
 
+#include <flake/detail/symbol.hpp>
 #include <flake/test/json_identifier.hpp>
 #include <sge/input/keyboard/optional_key_code.hpp>
 
@@ -11,6 +12,7 @@ namespace test
 class feature
 {
 public:
+	FLAKE_DETAIL_SYMBOL
 	feature(
 		test::json_identifier const &,
 		sge::input::keyboard::optional_key_code const &);

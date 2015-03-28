@@ -1,6 +1,7 @@
 #ifndef FLAKE_VOLUME_FLAKES_MOVER_HPP_INCLUDED
 #define FLAKE_VOLUME_FLAKES_MOVER_HPP_INCLUDED
 
+#include <flake/detail/symbol.hpp>
 #include <flake/volume/flakes/activity_view.hpp>
 #include <flake/volume/flakes/collision_increment.hpp>
 #include <flake/volume/flakes/count.hpp>
@@ -42,6 +43,7 @@ class mover
 FCPPT_NONCOPYABLE(
 	mover);
 public:
+	FLAKE_DETAIL_SYMBOL
 	mover(
 		flakelib::cl::program_context const &,
 		flakelib::buffer_pool::object &,
@@ -55,6 +57,7 @@ public:
 		flake::volume::flakes::gravity_magnitude const &,
 		flakelib::marching_cubes::iso_level const &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	update(
 		flakelib::duration const &,
@@ -62,6 +65,7 @@ public:
 		flakelib::volume::boundary_buffer_view const &,
 		flake::volume::flakes::count const &);
 
+	FLAKE_DETAIL_SYMBOL
 	~mover();
 private:
 	typedef

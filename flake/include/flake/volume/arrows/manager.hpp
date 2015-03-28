@@ -1,6 +1,7 @@
 #ifndef FLAKE_VOLUME_ARROWS_MANAGER_HPP_INCLUDED
 #define FLAKE_VOLUME_ARROWS_MANAGER_HPP_INCLUDED
 
+#include <flake/detail/symbol.hpp>
 #include <flake/volume/arrows/object.hpp>
 #include <sge/camera/base_fwd.hpp>
 #include <sge/renderer/scalar.hpp>
@@ -30,16 +31,19 @@ class manager
 FCPPT_NONCOPYABLE(
 	manager);
 public:
+	FLAKE_DETAIL_SYMBOL
 	explicit
 	manager(
 		sge::renderer::device::core &,
 		sge::shader::context &,
 		sge::camera::base &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	render(
 		sge::renderer::context::core &);
 
+	FLAKE_DETAIL_SYMBOL
 	~manager();
 private:
 	friend class arrows::object;

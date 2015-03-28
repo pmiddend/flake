@@ -1,6 +1,7 @@
 #ifndef FLAKE_VOLUME_ARROWS_OBJECT_HPP_INCLUDED
 #define FLAKE_VOLUME_ARROWS_OBJECT_HPP_INCLUDED
 
+#include <flake/detail/symbol.hpp>
 #include <flake/volume/arrows/manager_fwd.hpp>
 #include <flakelib/volume/float4_view.hpp>
 #include <flakelib/volume/grid_size.hpp>
@@ -43,6 +44,7 @@ class object
 FCPPT_NONCOPYABLE(
 	object);
 public:
+	FLAKE_DETAIL_SYMBOL
 	explicit
 	object(
 		sge::opencl::context::object &,
@@ -53,6 +55,7 @@ public:
 		flakelib::volume::conversion::origin const &,
 		flakelib::volume::grid_size const &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	update(
 		flakelib::volume::float4_view const &);
@@ -61,6 +64,7 @@ public:
 	render(
 		sge::renderer::context::core &);
 
+	FLAKE_DETAIL_SYMBOL
 	~object();
 private:
 	sge::renderer::device::core &renderer_;

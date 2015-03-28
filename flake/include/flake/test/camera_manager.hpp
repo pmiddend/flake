@@ -1,6 +1,7 @@
 #ifndef FLAKE_TEST_CAMERA_MANAGER_HPP_INCLUDED
 #define FLAKE_TEST_CAMERA_MANAGER_HPP_INCLUDED
 
+#include <flake/detail/symbol.hpp>
 #include <sge/camera/base_fwd.hpp>
 #include <sge/camera/perspective_projection_from_viewport.hpp>
 #include <sge/camera/update_duration.hpp>
@@ -25,19 +26,23 @@ class camera_manager
 FCPPT_NONCOPYABLE(
 	camera_manager);
 public:
+	FLAKE_DETAIL_SYMBOL
 	camera_manager(
 		sge::parse::json::object const &,
 		sge::input::keyboard::device &,
 			sge::input::mouse::device &,
 			sge::viewport::manager &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	update(
 		sge::camera::update_duration const &);
 
+	FLAKE_DETAIL_SYMBOL
 	sge::camera::base &
 	camera();
 
+	FLAKE_DETAIL_SYMBOL
 	~camera_manager();
 private:
 	std::unique_ptr<sge::camera::base> const camera_;

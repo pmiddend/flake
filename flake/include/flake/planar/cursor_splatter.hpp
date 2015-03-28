@@ -1,6 +1,7 @@
 #ifndef FLAKE_PLANAR_CURSOR_SPLATTER_HPP_INCLUDED
 #define FLAKE_PLANAR_CURSOR_SPLATTER_HPP_INCLUDED
 
+#include <flake/detail/symbol.hpp>
 #include <flake/planar/monitor/texture_fwd.hpp>
 #include <flakelib/duration.hpp>
 #include <flakelib/buffer/planar_view_impl.hpp>
@@ -33,6 +34,7 @@ class cursor_splatter
 FCPPT_NONCOPYABLE(
 	cursor_splatter);
 public:
+	FLAKE_DETAIL_SYMBOL
 	cursor_splatter(
 		monitor::texture &,
 		flakelib::splatter::object &,
@@ -42,18 +44,22 @@ public:
 		cl_float,
 		flakelib::splatter::pen::planar const &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	left_mouse_target(
 		flakelib::planar::float_view const &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	right_mouse_target(
 		flakelib::planar::float_view const &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	update(
 		flakelib::duration const &);
 
+	FLAKE_DETAIL_SYMBOL
 	~cursor_splatter();
 private:
 	monitor::texture &monitor_texture_;

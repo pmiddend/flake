@@ -1,6 +1,7 @@
 #ifndef FLAKE_VOLUME_DENSITY_VISUALIZATION_RAYCASTER_OBJECT_HPP_INCLUDED
 #define FLAKE_VOLUME_DENSITY_VISUALIZATION_RAYCASTER_OBJECT_HPP_INCLUDED
 
+#include <flake/detail/symbol.hpp>
 #include <flake/volume/density_visualization/raycaster/debug_output.hpp>
 #include <flake/volume/density_visualization/raycaster/step_size.hpp>
 #include <flakelib/volume/float_view.hpp>
@@ -42,6 +43,7 @@ class object
 FCPPT_NONCOPYABLE(
 	object);
 public:
+	FLAKE_DETAIL_SYMBOL
 	object(
 		sge::renderer::device::core &,
 		sge::shader::context &,
@@ -53,16 +55,19 @@ public:
 		flake::volume::density_visualization::raycaster::step_size const &,
 		flake::volume::density_visualization::raycaster::debug_output const &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	update(
 		flakelib::volume::float_view const &,
 		flakelib::volume::conversion::scaling_factor const &,
 		flakelib::volume::conversion::constant_addition const &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	render(
 		sge::renderer::context::core &);
 
+	FLAKE_DETAIL_SYMBOL
 	~object();
 private:
 	sge::renderer::device::core &renderer_;

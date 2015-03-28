@@ -1,6 +1,3 @@
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}/include)
-
 set(
 	FLAKELIB_FILES
 	flakelib/include/flakelib/buffer/linear_view.hpp
@@ -290,11 +287,12 @@ fcppt_generate_symbol_header(
 		FLAKELIB
 )
 
-include_directories(
-	${CMAKE_BINARY_DIR}/include)
+find_package(
+	mizuiro
+	REQUIRED)
 
 function(
-	MAKE_FLAKELIB_LIBRARY
+	make_flakelib_library
 	TARGETNAME
 	VARIANT)
 
@@ -310,15 +308,15 @@ function(
 		NOT MSVC)
 		target_link_libraries(
 			${TARGETNAME}
+			PRIVATE
 			${Boost_SYSTEM_LIBRARY})
 	endif()
 
 	if(
 		${VARIANT} STREQUAL "STATIC")
-		set_target_properties(
+		target_compile_definitions(
 			${TARGETNAME}
-			PROPERTIES
-			COMPILE_DEFINITIONS
+			PUBLIC
 			"FLAKELIB_STATIC_LINK")
 	endif()
 
@@ -327,6 +325,7 @@ function(
 
 		target_link_libraries(
 			${TARGETNAME}
+			PRIVATE
 			ncurses)
 
 	endif()
@@ -334,6 +333,7 @@ function(
 	# This is, of course, extremely overlinked
 	target_link_libraries(
 		${TARGETNAME}
+		PRIVATE
 		${fcppt_core_TARGET}
 		${fcppt_filesystem_TARGET}
 		${awl_TARGET}
@@ -341,6 +341,15 @@ function(
 		${OPENCL_LIBRARIES}
 		${OPENGL_gl_LIBRARY}
 		${Boost_LIBRARIES})
+
+	target_include_directories(
+		${TARGETNAME}
+		PRIVATE
+		${CMAKE_BINARY_DIR}/include
+		${mizuiro_INCLUDE_DIRS}
+		PUBLIC
+		${fcppt_INCLUDE_DIRS}
+		${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 	install(
 		TARGETS
@@ -378,6 +387,3 @@ sge_config_add_custom_path(
 	flakelib_media
 	${CMAKE_SOURCE_DIR}/flakelib/flakelib_media
 	${INSTALL_MEDIA_DIR})
-
-add_definitions(
-	${FLAKELIB_CONFIG_LINK_MACROS})

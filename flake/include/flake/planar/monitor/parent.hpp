@@ -1,6 +1,7 @@
 #ifndef FLAKE_PLANAR_MONITOR_PARENT_HPP_INCLUDED
 #define FLAKE_PLANAR_MONITOR_PARENT_HPP_INCLUDED
 
+#include <flake/detail/symbol.hpp>
 #include <flake/planar/monitor/arrow_scale.hpp>
 #include <flake/planar/monitor/child.hpp>
 #include <flake/planar/monitor/child_list.hpp>
@@ -62,6 +63,7 @@ class parent
 FCPPT_NONCOPYABLE(
 	parent);
 public:
+	FLAKE_DETAIL_SYMBOL
 	parent(
 		sge::renderer::device::ffp &,
 		sge::shader::context &,
@@ -102,14 +104,17 @@ public:
 	sge::font::object &
 	font();
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	render(
 		sge::renderer::context::ffp &,
 		monitor::optional_projection const &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	update();
 
+	FLAKE_DETAIL_SYMBOL
 	~parent();
 private:
 	friend class monitor::child;

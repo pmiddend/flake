@@ -1,6 +1,7 @@
 #ifndef FLAKE_VOLUME_SNOW_COVER_OBJECT_HPP_INCLUDED
 #define FLAKE_VOLUME_SNOW_COVER_OBJECT_HPP_INCLUDED
 
+#include <flake/detail/symbol.hpp>
 #include <flake/volume/snow_cover/flat_texture.hpp>
 #include <flake/volume/snow_cover/scoped_fwd.hpp>
 #include <flake/volume/snow_cover/steep_texture.hpp>
@@ -30,6 +31,7 @@ class object
 FCPPT_NONCOPYABLE(
 	object);
 public:
+	FLAKE_DETAIL_SYMBOL
 	object(
 		sge::camera::base &_camera,
 		sge::renderer::device::core &,
@@ -40,6 +42,7 @@ public:
 		flake::volume::snow_cover::flat_texture const &,
 		flake::volume::snow_cover::sun_direction const &);
 
+	FLAKE_DETAIL_SYMBOL
 	~object();
 private:
 	friend class flake::volume::snow_cover::scoped;

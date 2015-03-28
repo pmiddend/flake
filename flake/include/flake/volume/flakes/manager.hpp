@@ -1,6 +1,7 @@
 #ifndef FLAKE_VOLUME_FLAKES_MANAGER_HPP_INCLUDED
 #define FLAKE_VOLUME_FLAKES_MANAGER_HPP_INCLUDED
 
+#include <flake/detail/symbol.hpp>
 #include <flake/volume/flakes/count.hpp>
 #include <flake/volume/flakes/maximum_size.hpp>
 #include <flake/volume/flakes/minimum_size.hpp>
@@ -45,6 +46,7 @@ class manager
 FCPPT_NONCOPYABLE(
 	manager);
 public:
+	FLAKE_DETAIL_SYMBOL
 	manager(
 		sge::renderer::device::ffp &,
 		sge::shader::context &,
@@ -59,26 +61,33 @@ public:
 		flake::volume::flakes::texture_tile_count const &,
 		flakelib::volume::grid_size const &);
 
+	FLAKE_DETAIL_SYMBOL
 	void
 	render(
 		sge::renderer::context::ffp &,
 		flake::volume::flakes::count const &);
 
+	FLAKE_DETAIL_SYMBOL
 	flake::volume::flakes::position_view const
 	cl_positions();
 
+	FLAKE_DETAIL_SYMBOL
 	flake::volume::flakes::point_size_view const
 	cl_point_sizes();
 
+	FLAKE_DETAIL_SYMBOL
 	flake::volume::flakes::minimum_size
 	minimum_size() const;
 
+	FLAKE_DETAIL_SYMBOL
 	flake::volume::flakes::maximum_size
 	maximum_size() const;
 
+	FLAKE_DETAIL_SYMBOL
 	flake::volume::flakes::count
 	maximum_count() const;
 
+	FLAKE_DETAIL_SYMBOL
 	~manager();
 private:
 	sge::renderer::device::ffp &renderer_;

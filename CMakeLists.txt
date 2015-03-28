@@ -127,6 +127,9 @@ if(
 	set(
 		FLAKELIB_DEFAULT_LINK_TARGET
 		flakelib)
+	set(
+		FLAKELIB_HELPER_DEFAULT_LINK_TARGET
+		flakelib_helper_library)
 endif()
 
 # static overrides shared
@@ -135,10 +138,9 @@ if(
 	set(
 		FLAKELIB_DEFAULT_LINK_TARGET
 		flakelib_static)
-
 	set(
-		FLAKELIB_CONFIG_LINK_MACROS
-		"-D FLAKELIB_STATIC_LINK")
+		FLAKELIB_HELPER_DEFAULT_LINK_TARGET
+		flakelib_helper_library_static)
 endif()
 
 add_subdirectory(
