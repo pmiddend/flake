@@ -157,7 +157,7 @@ flake::planar::monitor::arrows::arrows(
 							}
 						)
 						.connection(
-							child::parent().sprite_collection().connection(
+							this->parent().sprite_collection().connection(
 								0)));
 		}
 	);
@@ -257,7 +257,7 @@ flake::planar::monitor::arrows::render_font(
 						return
 							// FIXME: This is broken
 							sge::sprite::projection_matrix(
-								child::parent().renderer().onscreen_target().viewport()
+								this->parent().renderer().onscreen_target().viewport()
 							).get_unsafe();
 					}
 				)
@@ -309,7 +309,7 @@ flake::planar::monitor::arrows::render_arrows(
 						fcppt::math::dim::structure_cast<
 							sge::renderer::projection::dim,
 							fcppt::cast::int_to_float_fun>(
-							child::parent().renderer().onscreen_target().viewport().get().size()),
+							this->parent().renderer().onscreen_target().viewport().get().size()),
 						sge::renderer::projection::near(0.0f),
 						sge::renderer::projection::far(10.0f));
 			}

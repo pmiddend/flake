@@ -156,7 +156,7 @@ flake::planar::monitor::texture::render(
 							// FIXME
 							return
 								sge::sprite::projection_matrix(
-									child::parent().renderer().onscreen_target().viewport()
+									this->parent().renderer().onscreen_target().viewport()
 								).get_unsafe();
 						}
 					)
