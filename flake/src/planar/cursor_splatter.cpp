@@ -11,6 +11,7 @@
 #include <sge/renderer/vector3.hpp>
 #include <sge/renderer/device/core.hpp>
 #include <sge/renderer/target/onscreen.hpp>
+#include <fcppt/maybe_void.hpp>
 #include <fcppt/cast/float_to_int_fun.hpp>
 #include <fcppt/cast/int_to_float_fun.hpp>
 #include <fcppt/cast/size_fun.hpp>
@@ -31,7 +32,6 @@
 #include <fcppt/math/vector/to_unsigned.hpp>
 #include <fcppt/signal/connection.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <boost/type_traits/is_floating_point.hpp>
 #include <functional>
 #include <type_traits>
 #include <fcppt/config/external_end.hpp>
@@ -72,7 +72,7 @@ template<typename T,typename N,typename S1,typename M1,typename M2,typename S2>
 typename
 boost::enable_if
 <
-	boost::is_floating_point<T>,
+	std::is_floating_point<T>,
 	fcppt::math::vector::object<T,N,S1>
 >::type
 unproject(
@@ -185,20 +185,53 @@ void
 flake::planar::cursor_splatter::update(
 	flakelib::duration const &_delta)
 {
-	if(!last_cursor_position_)
-		return;
+	fcppt::maybe_void(
+		last_cursor_position_,
+		[
+			this,
+			_delta
+		](
+			sge::input::cursor::position const _last_cursor_position
+		)
+		{
+			fcppt::maybe_void(
+				optional_left_mouse_target_,
+				[
+					this,
+					_delta,
+					_last_cursor_position
+				](
+					flakelib::planar::float_view const &_left_mouse_target
+				)
+				{
+					if(left_button_pushed_down_)
+						this->splat_at_cursor_position(
+							_left_mouse_target,
+							_last_cursor_position,
+							_delta);
+				}
+			);
 
-	if(left_button_pushed_down_ && optional_left_mouse_target_)
-		this->splat_at_cursor_position(
-			*optional_left_mouse_target_,
-			*last_cursor_position_,
-			_delta);
+			fcppt::maybe_void(
+				optional_right_mouse_target_,
+				[
+					this,
+					_delta,
+					_last_cursor_position
+				](
+					flakelib::planar::float_view const &_right_mouse_target
+				)
+				{
 
-	if(right_button_pushed_down_ && optional_right_mouse_target_)
-		this->splat_at_cursor_position(
-			*optional_right_mouse_target_,
-			*last_cursor_position_,
-			_delta);
+					if(right_button_pushed_down_)
+						this->splat_at_cursor_position(
+							_right_mouse_target,
+							_last_cursor_position,
+							_delta);
+				}
+			);
+		}
+	);
 }
 
 flake::planar::cursor_splatter::~cursor_splatter()

@@ -40,8 +40,10 @@
 #include <sge/sprite/parameters.hpp>
 #include <sge/sprite/projection_matrix.hpp>
 #include <sge/texture/part_raw_ref.hpp>
+#include <fcppt/from_optional.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/maybe_void.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/cast/int_to_float_fun.hpp>
 #include <fcppt/cast/size_fun.hpp>
@@ -134,18 +136,31 @@ flake::planar::monitor::arrows::arrows(
 		sprite_box_,
 		sge::rucksack::alignment::left_or_top);
 
-	if(_optional_texture)
-	{
-		sprite_ =
-			fcppt::make_unique_ptr<dummy_sprite::object>(
-				dummy_sprite::parameters()
-					.texture(
-						fcppt::make_shared_ptr<sge::texture::part_raw_ref>(
-							*_optional_texture))
-					.connection(
-						child::parent().sprite_collection().connection(
-							0)));
-	}
+	fcppt::maybe_void(
+		_optional_texture,
+		[
+			this
+		](
+			sge::renderer::texture::planar &_texture
+		)
+		{
+			sprite_ =
+				fcppt::make_unique_ptr<dummy_sprite::object>(
+					dummy_sprite::parameters()
+						.texture(
+							dummy_sprite::object::texture_type{
+								fcppt::make_shared_ptr<
+									sge::texture::part_raw_ref
+								>(
+									_texture
+								)
+							}
+						)
+						.connection(
+							child::parent().sprite_collection().connection(
+								0)));
+		}
+	);
 }
 FCPPT_PP_POP_WARNING
 
@@ -234,12 +249,21 @@ flake::planar::monitor::arrows::render_font(
 	sge::renderer::state::ffp::transform::object_unique_ptr const projection_state(
 		child::parent().renderer().create_transform_state(
 			sge::renderer::state::ffp::transform::parameters(
-				_projection
-				?
-					*_projection
-				:
-					*sge::sprite::projection_matrix(
-						child::parent().renderer().onscreen_target().viewport()))));
+				fcppt::from_optional(
+					_projection,
+					[
+						this
+					]{
+						return
+							// FIXME: This is broken
+							sge::sprite::projection_matrix(
+								child::parent().renderer().onscreen_target().viewport()
+							).get_unsafe();
+					}
+				)
+			)
+		)
+	);
 
 	sge::renderer::state::ffp::transform::scoped const projection_transform(
 		_context,
@@ -275,17 +299,22 @@ flake::planar::monitor::arrows::render_arrows(
 		*vb_);
 
 	child::parent().arrow_projection(
-		_projection.has_value()
-		?
-			*_projection
-		:
-			sge::renderer::projection::orthogonal_wh(
-				fcppt::math::dim::structure_cast<
-					sge::renderer::projection::dim,
-					fcppt::cast::int_to_float_fun>(
-					child::parent().renderer().onscreen_target().viewport().get().size()),
-				sge::renderer::projection::near(0.0f),
-				sge::renderer::projection::far(10.0f)));
+		fcppt::from_optional(
+			_projection,
+			[
+				this
+			]{
+				return
+					sge::renderer::projection::orthogonal_wh(
+						fcppt::math::dim::structure_cast<
+							sge::renderer::projection::dim,
+							fcppt::cast::int_to_float_fun>(
+							child::parent().renderer().onscreen_target().viewport().get().size()),
+						sge::renderer::projection::near(0.0f),
+						sge::renderer::projection::far(10.0f));
+			}
+		)
+	);
 
 
 	child::parent().arrow_position(

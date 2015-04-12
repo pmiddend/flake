@@ -50,9 +50,11 @@
 #include <awl/main/exit_failure.hpp>
 #include <awl/main/exit_success.hpp>
 #include <awl/main/function_context.hpp>
+#include <fcppt/const.hpp>
 #include <fcppt/exception.hpp>
 #include <fcppt/format.hpp>
 #include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/maybe.hpp>
 #include <fcppt/optional_impl.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/to_std_string.hpp>
@@ -481,25 +483,45 @@ flake::test::base::key_callback(
 	}
 
 	for(
-		test::feature_sequence::iterator it = features_.begin();
-		it != features_.end();
-		++it)
+		auto &feature
+		:
+		features_
+	)
 	{
-		if(!it->optional_key_code())
-			continue;
+		if(
+			fcppt::maybe(
+				feature.optional_key_code(),
+				fcppt::const_(
+					false
+				),
+				[
+					this,
+					&feature,
+					&e
+				](
+					sge::input::keyboard::key_code const _key_code
+				)
+				{
+					if(_key_code == e.key_code())
+					{
+						feature.is_active(
+							!feature.is_active());
+						this->post_notification(
+							notifications::text(
+								feature.json_identifier().get()+
+								FCPPT_TEXT(" ")+
+								bool_to_string(
+									feature.is_active())));
+						return
+							true;
+					}
 
-		if(*(it->optional_key_code()) == e.key_code())
-		{
-			it->is_active(
-				!it->is_active());
-			this->post_notification(
-				notifications::text(
-					it->json_identifier().get()+
-					FCPPT_TEXT(" ")+
-					bool_to_string(
-						it->is_active())));
+					return
+						false;
+				}
+			)
+		)
 			break;
-		}
 	}
 
 	this->key_down_callback(

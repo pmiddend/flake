@@ -36,6 +36,7 @@
 #include <sge/sprite/process/with_options.hpp>
 #include <fcppt/make_cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/maybe.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_map.hpp>
@@ -181,7 +182,7 @@ flake::planar::monitor::parent::font()
 void
 flake::planar::monitor::parent::render(
 	sge::renderer::context::ffp &_context,
-	monitor::optional_projection const &_projection)
+	monitor::optional_projection const &_opt_projection)
 {
 	sge::renderer::state::core::sampler::scoped const scoped_filter(
 		_context,
@@ -192,62 +193,72 @@ flake::planar::monitor::parent::render(
 			fcppt::make_cref(
 				*point_sampler_)));
 
-	if(_projection)
-	{
-		sge::renderer::state::ffp::transform::object_unique_ptr const
-			projection_state(
-				renderer_.create_transform_state(
-					sge::renderer::state::ffp::transform::parameters(
-						*_projection))),
-			world_state(
-				renderer_.create_transform_state(
-					sge::renderer::state::ffp::transform::parameters(
-						sge::renderer::matrix4::identity())));
-
-		sge::renderer::state::ffp::transform::scoped const
-			projection_transform(
+	fcppt::maybe(
+		_opt_projection,
+		[
+			this,
+			&_context
+		]{
+			sge::sprite::process::all(
 				_context,
-				sge::renderer::state::ffp::transform::mode::projection,
-				*projection_state),
-			world_transform(
-				_context,
-				sge::renderer::state::ffp::transform::mode::world,
-				*world_state);
+				sprite_collection_.range(),
+				sprite_buffers_,
+				sge::sprite::compare::default_(),
+				sprite_states_);
+		},
+		[
+			this,
+			&_context
+		](
+			sge::renderer::matrix4 const &_projection
+		)
+		{
+			sge::renderer::state::ffp::transform::object_unique_ptr const
+				projection_state(
+					renderer_.create_transform_state(
+						sge::renderer::state::ffp::transform::parameters(
+							_projection))),
+				world_state(
+					renderer_.create_transform_state(
+						sge::renderer::state::ffp::transform::parameters(
+							sge::renderer::matrix4::identity())));
 
-		sge::sprite::process::with_options
-		<
-			sge::sprite::process::options
+			sge::renderer::state::ffp::transform::scoped const
+				projection_transform(
+					_context,
+					sge::renderer::state::ffp::transform::mode::projection,
+					*projection_state),
+				world_transform(
+					_context,
+					sge::renderer::state::ffp::transform::mode::world,
+					*world_state);
+
+			sge::sprite::process::with_options
 			<
-				sge::sprite::process::default_geometry_options
+				sge::sprite::process::options
 				<
-					flake::planar::monitor::dummy_sprite::choices,
-					sge::sprite::compare::default_
-				>::value
-			>
-		>(
-			_context,
-			sprite_collection_.range(),
-			sprite_buffers_,
-			sge::sprite::compare::default_(),
-			sprite_states_,
-			flake::planar::monitor::dummy_sprite::state_options(
-				sge::sprite::state::vertex_options::declaration_and_buffer)
-				.no_transform_state());
-	}
-	else
-	{
-		sge::sprite::process::all(
-			_context,
-			sprite_collection_.range(),
-			sprite_buffers_,
-			sge::sprite::compare::default_(),
-			sprite_states_);
-	}
+					sge::sprite::process::default_geometry_options
+					<
+						flake::planar::monitor::dummy_sprite::choices,
+						sge::sprite::compare::default_
+					>::value
+				>
+			>(
+				_context,
+				sprite_collection_.range(),
+				sprite_buffers_,
+				sge::sprite::compare::default_(),
+				sprite_states_,
+				flake::planar::monitor::dummy_sprite::state_options(
+					sge::sprite::state::vertex_options::declaration_and_buffer)
+					.no_transform_state());
+		}
+	);
 
 	for(child_list::iterator it = children_.begin(); it != children_.end(); ++it)
 		it->render(
 			_context,
-			_projection);
+			_opt_projection);
 }
 
 void

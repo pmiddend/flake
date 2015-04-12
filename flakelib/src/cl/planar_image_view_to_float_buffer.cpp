@@ -21,6 +21,7 @@
 #include <mizuiro/image/algorithm/binary_iteration.hpp>
 #include <mizuiro/image/algorithm/make_iterator_identity.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/variant/get_exn.hpp>
 #include <fcppt/variant/object.hpp>
 
 
@@ -75,16 +76,25 @@ flakelib::cl::planar_image_view_to_float_buffer(
 	r32f_view_type;
 
 	l8_view_type const l8_view =
-		_view.get().get<l8_view_type>();
+		fcppt::variant::get_exn<
+			l8_view_type
+		>(
+			_view.get()
+		);
 
 	r32f_view_type const r32f_view =
-		sge::image2d::view::make(
-			static_cast<sge::image::raw_pointer>(
-				scoped_bmap.ptr()),
-			sge::image2d::view::size(
-				_view),
-			sge::image::color::format::r32f,
-			sge::image2d::pitch::null()).get().get<r32f_view_type>();
+		fcppt::variant::get_exn<
+			r32f_view_type
+		>(
+			sge::image2d::view::make(
+				static_cast<sge::image::raw_pointer>(
+					scoped_bmap.ptr()),
+				sge::image2d::view::size(
+					_view),
+				sge::image::color::format::r32f,
+				sge::image2d::pitch::null()
+			).get()
+		);
 
 	mizuiro::image::algorithm::binary_iteration(
 		convert(),

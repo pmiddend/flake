@@ -26,6 +26,7 @@
 #include <sge/sprite/parameters.hpp>
 #include <sge/sprite/projection_matrix.hpp>
 #include <sge/texture/part_raw_ref.hpp>
+#include <fcppt/from_optional.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/cast/size_fun.hpp>
@@ -76,8 +77,12 @@ flake::planar::monitor::texture::texture(
 			.size(
 				_texture_size.get())
 			.texture(
-				fcppt::make_shared_ptr<sge::texture::part_raw_ref>(
-					*renderer_texture_))
+				flake::planar::monitor::dummy_sprite::object::texture_type{
+					fcppt::make_shared_ptr<sge::texture::part_raw_ref>(
+						*renderer_texture_
+					)
+				}
+			)
 			.connection(
 				child::parent().sprite_collection().connection(
 					0))),
@@ -143,12 +148,21 @@ flake::planar::monitor::texture::render(
 		projection_state(
 			child::parent().renderer().create_transform_state(
 				sge::renderer::state::ffp::transform::parameters(
-					_projection
-					?
-						*_projection
-					:
-						*sge::sprite::projection_matrix(
-							child::parent().renderer().onscreen_target().viewport())))),
+					fcppt::from_optional(
+						_projection,
+						[
+							this
+						]{
+							// FIXME
+							return
+								sge::sprite::projection_matrix(
+									child::parent().renderer().onscreen_target().viewport()
+								).get_unsafe();
+						}
+					)
+				)
+			)
+		),
 		world_state(
 			child::parent().renderer().create_transform_state(
 				sge::renderer::state::ffp::transform::parameters(

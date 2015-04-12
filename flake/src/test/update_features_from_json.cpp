@@ -1,6 +1,6 @@
 #include <flake/test/update_features_from_json.hpp>
 #include <sge/parse/json/array.hpp>
-#include <sge/parse/json/get.hpp>
+#include <sge/parse/json/get_exn.hpp>
 #include <sge/parse/json/member_map.hpp>
 #include <sge/parse/json/object.hpp>
 #include <fcppt/assert/error_message.hpp>
@@ -34,7 +34,7 @@ flake::test::update_features_from_json(
 			found_feature = true;
 
 			current_feature->is_active(
-				sge::parse::json::get<bool>(
+				sge::parse::json::get_exn<bool>(
 					current_json->second));
 		}
 
