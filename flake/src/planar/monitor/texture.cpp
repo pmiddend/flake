@@ -1,7 +1,6 @@
 #include <flake/planar/monitor/font_axis_policy.hpp>
 #include <flake/planar/monitor/parent.hpp>
 #include <flake/planar/monitor/texture.hpp>
-#include <flake/planar/monitor/dummy_sprite/parameters.hpp>
 #include <sge/font/dim.hpp>
 #include <sge/font/from_fcppt_string.hpp>
 #include <sge/font/object.hpp>
@@ -23,8 +22,11 @@
 #include <sge/rucksack/axis.hpp>
 #include <sge/rucksack/axis_policy2.hpp>
 #include <sge/rucksack/padding.hpp>
-#include <sge/sprite/parameters.hpp>
 #include <sge/sprite/projection_matrix.hpp>
+#include <sge/sprite/roles/connection.hpp>
+#include <sge/sprite/roles/pos.hpp>
+#include <sge/sprite/roles/size.hpp>
+#include <sge/sprite/roles/texture0.hpp>
 #include <sge/texture/part_raw_ref.hpp>
 #include <fcppt/from_optional.hpp>
 #include <fcppt/make_shared_ptr.hpp>
@@ -73,19 +75,21 @@ flake::planar::monitor::texture::texture(
 			sge::opencl::memory_object::flags::write},
 		*renderer_texture_),
 	sprite_(
-		flake::planar::monitor::dummy_sprite::parameters()
-			.size(
-				_texture_size.get())
-			.texture(
-				flake::planar::monitor::dummy_sprite::object::texture_type{
-					fcppt::make_shared_ptr<sge::texture::part_raw_ref>(
-						*renderer_texture_
-					)
-				}
-			)
-			.connection(
-				child::parent().sprite_collection().connection(
-					0))),
+		sge::sprite::roles::size{} =
+			_texture_size.get(),
+		sge::sprite::roles::texture0{} =
+			flake::planar::monitor::dummy_sprite::object::texture_type{
+				fcppt::make_shared_ptr<sge::texture::part_raw_ref>(
+					*renderer_texture_
+				)
+			},
+		sge::sprite::roles::connection{} =
+			child::parent().sprite_collection().connection(
+				0
+			),
+		sge::sprite::roles::pos{} =
+			flake::planar::monitor::dummy_sprite::object::vector::null()
+	),
 	box_parent_(
 		sge::rucksack::axis::y,
 		sge::rucksack::padding{0}),

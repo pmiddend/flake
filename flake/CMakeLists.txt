@@ -38,7 +38,6 @@ set(
 	flake/include/flake/planar/monitor/dummy_sprite/collection.hpp
 	flake/include/flake/planar/monitor/dummy_sprite/object.hpp
 	flake/include/flake/planar/monitor/dummy_sprite/order.hpp
-	flake/include/flake/planar/monitor/dummy_sprite/parameters.hpp
 	flake/include/flake/planar/monitor/dummy_sprite/state_choices.hpp
 	flake/include/flake/planar/monitor/dummy_sprite/state_object.hpp
 	flake/include/flake/planar/monitor/dummy_sprite/state_options.hpp

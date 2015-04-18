@@ -1,7 +1,6 @@
 #include <flake/planar/monitor/arrows.hpp>
 #include <flake/planar/monitor/font_axis_policy.hpp>
 #include <flake/planar/monitor/parent.hpp>
-#include <flake/planar/monitor/dummy_sprite/parameters.hpp>
 #include <sge/font/dim.hpp>
 #include <sge/font/from_fcppt_string.hpp>
 #include <sge/font/object.hpp>
@@ -37,8 +36,11 @@
 #include <sge/rucksack/axis_policy2.hpp>
 #include <sge/rucksack/padding.hpp>
 #include <sge/shader/scoped_pair.hpp>
-#include <sge/sprite/parameters.hpp>
 #include <sge/sprite/projection_matrix.hpp>
+#include <sge/sprite/roles/connection.hpp>
+#include <sge/sprite/roles/pos.hpp>
+#include <sge/sprite/roles/size.hpp>
+#include <sge/sprite/roles/texture0.hpp>
 #include <sge/texture/part_raw_ref.hpp>
 #include <fcppt/from_optional.hpp>
 #include <fcppt/make_shared_ptr.hpp>
@@ -146,19 +148,23 @@ flake::planar::monitor::arrows::arrows(
 		{
 			sprite_ =
 				fcppt::make_unique_ptr<dummy_sprite::object>(
-					dummy_sprite::parameters()
-						.texture(
-							dummy_sprite::object::texture_type{
-								fcppt::make_shared_ptr<
-									sge::texture::part_raw_ref
-								>(
-									_texture
-								)
-							}
-						)
-						.connection(
-							this->parent().sprite_collection().connection(
-								0)));
+					sge::sprite::roles::texture0{} =
+						dummy_sprite::object::texture_type{
+							fcppt::make_shared_ptr<
+								sge::texture::part_raw_ref
+							>(
+								_texture
+							)
+						},
+					sge::sprite::roles::connection{} =
+						this->parent().sprite_collection().connection(
+							0
+						),
+					sge::sprite::roles::pos{} =
+						dummy_sprite::object::vector::null(),
+					sge::sprite::roles::size{} =
+						dummy_sprite::object::dim::null()
+				);
 		}
 	);
 }

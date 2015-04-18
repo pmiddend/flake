@@ -6,8 +6,11 @@
 #include <sge/sprite/config/float_type.hpp>
 #include <sge/sprite/config/intrusive.hpp>
 #include <sge/sprite/config/normal_size.hpp>
+#include <sge/sprite/config/pos.hpp>
+#include <sge/sprite/config/pos_option.hpp>
 #include <sge/sprite/config/texture_coordinates.hpp>
 #include <sge/sprite/config/texture_level_count.hpp>
+#include <sge/sprite/config/texture_size_option.hpp>
 #include <sge/sprite/config/type_choices.hpp>
 #include <sge/sprite/config/unit_type.hpp>
 #include <sge/sprite/config/with_texture.hpp>
@@ -32,7 +35,14 @@ sge::sprite::config::choices
 		sge::sprite::config::unit_type<monitor::scalar>,
 		sge::sprite::config::float_type<monitor::scalar>
 	>,
-	sge::sprite::config::normal_size,
+	sge::sprite::config::pos
+	<
+		sge::sprite::config::pos_option::pos
+	>,
+	sge::sprite::config::normal_size
+	<
+		sge::sprite::config::texture_size_option::never
+	>,
 	boost::mpl::vector2
 	<
 		sge::sprite::config::with_texture
