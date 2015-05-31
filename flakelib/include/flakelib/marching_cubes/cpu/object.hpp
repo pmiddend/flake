@@ -21,6 +21,7 @@
 #include <sge/renderer/vertex/count.hpp>
 #include <sge/renderer/vertex/declaration_unique_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/optional_impl.hpp>
 #include <fcppt/container/raw_vector.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <memory>
@@ -100,10 +101,14 @@ private:
 	sge::renderer::device::core &renderer_;
 	flakelib::marching_cubes::cpu::grid_size const grid_size_;
 	flakelib::marching_cubes::iso_level const iso_level_;
-	sge::renderer::vertex::declaration_unique_ptr vertex_declaration_;
-	sge::renderer::vertex::buffer_unique_ptr vertex_buffer_;
+	sge::renderer::vertex::declaration_unique_ptr const vertex_declaration_;
+	fcppt::optional<
+		sge::renderer::vertex::buffer_unique_ptr
+	> vertex_buffer_;
 	sge::renderer::vertex::count vertex_buffer_size_;
-	sge::renderer::index::buffer_unique_ptr index_buffer_;
+	fcppt::optional<
+		sge::renderer::index::buffer_unique_ptr
+	> index_buffer_;
 	sge::renderer::index::count index_buffer_size_;
 	sge::renderer::state::core::depth_stencil::object_unique_ptr const depth_stencil_state_;
 	std::unique_ptr<MarchingCubes> const implementation_;
