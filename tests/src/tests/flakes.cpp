@@ -38,6 +38,7 @@
 #include <sge/timer/reset_when_expired.hpp>
 #include <fcppt/insert_to_fcppt_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/strong_typedef_output.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/cast/size_fun.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
