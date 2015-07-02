@@ -472,7 +472,7 @@ flake::test::base::key_callback(
 	if(!e.pressed())
 		return;
 
-	if(e.key_code() == sge::input::keyboard::key_code::sysrq)
+	if(e.key().code() == sge::input::keyboard::key_code::sysrq)
 	{
 		dump_this_frame_ =
 			true;
@@ -502,7 +502,7 @@ flake::test::base::key_callback(
 					sge::input::keyboard::key_code const _key_code
 				)
 				{
-					if(_key_code == e.key_code())
+					if(_key_code == e.key().code())
 					{
 						feature.is_active(
 							!feature.is_active());
@@ -525,5 +525,5 @@ flake::test::base::key_callback(
 	}
 
 	this->key_down_callback(
-		e.key_code());
+		e.key().code());
 }

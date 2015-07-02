@@ -55,7 +55,7 @@ flake::time_modifier::object::key_callback(
 			fcppt::insert_to_fcppt_string(
 				kernel_.current_multiplier().get());
 
-	switch(e.key_code())
+	switch(e.key().code())
 	{
 		case sge::input::keyboard::key_code::p:
 			notifications_.add_message(

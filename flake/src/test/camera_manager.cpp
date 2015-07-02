@@ -149,7 +149,7 @@ flake::test::camera_manager::key_press_callback(
 	if(!_key_event.pressed())
 		return;
 
-	if(_key_event.key_code() == sge::input::keyboard::key_code::f8)
+	if(_key_event.key().code() == sge::input::keyboard::key_code::f8)
 		recording_ =
 			!recording_;
 }
