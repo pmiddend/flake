@@ -33,7 +33,8 @@ flakelib::utility::fill_buffer::apply(
 
 	kernel_->numerical_argument(
 		"value",
-		_value);
+		sge::opencl::kernel::numeric_type(
+			_value));
 
 	kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim1(

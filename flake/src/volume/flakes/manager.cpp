@@ -81,10 +81,11 @@ flake::volume::flakes::manager::manager(
 	blend_state_(
 		renderer_.create_blend_state(
 			sge::renderer::state::core::blend::parameters(
-				sge::renderer::state::core::blend::alpha_enabled(
-					sge::renderer::state::core::blend::combined(
-						sge::renderer::state::core::blend::source::src_alpha,
-						sge::renderer::state::core::blend::dest::inv_src_alpha)),
+				sge::renderer::state::core::blend::alpha_variant(
+					sge::renderer::state::core::blend::alpha_enabled(
+						sge::renderer::state::core::blend::combined(
+							sge::renderer::state::core::blend::source::src_alpha,
+							sge::renderer::state::core::blend::dest::inv_src_alpha))),
 				sge::renderer::state::core::blend::write_mask_all()))),
 	depth_stencil_state_(
 		renderer_.create_depth_stencil_state(
@@ -94,7 +95,8 @@ flake::volume::flakes::manager::manager(
 						sge::renderer::state::core::depth_stencil::depth::func::less,
 						sge::renderer::state::core::depth_stencil::depth::write_enable(
 							false))),
-				sge::renderer::state::core::depth_stencil::stencil::off()))),
+				sge::renderer::state::core::depth_stencil::stencil::variant(
+					sge::renderer::state::core::depth_stencil::stencil::off())))),
 	misc_state_(
 		renderer_.create_misc_state(
 			sge::renderer::state::ffp::misc::parameters(

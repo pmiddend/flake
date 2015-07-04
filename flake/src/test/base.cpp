@@ -40,6 +40,7 @@
 #include <sge/systems/quit_on_escape.hpp>
 #include <sge/systems/renderer.hpp>
 #include <sge/systems/window.hpp>
+#include <sge/systems/window_source.hpp>
 #include <sge/timer/scoped_frame_limiter.hpp>
 #include <sge/viewport/fill_on_resize.hpp>
 #include <sge/viewport/manager.hpp>
@@ -173,12 +174,13 @@ flake::test::base::base(
 				(sge::systems::image2d(
 					sge::media::all_extensions))
 				(sge::systems::window(
-					sge::systems::original_window(
-						_window_title).dim(
-						sge::parse::json::find_and_convert_member<sge::window::dim>(
-							*configuration_,
-							sge::parse::json::string_to_path(
-								FCPPT_TEXT("tests/window-size"))))).dont_show())
+					sge::systems::window_source(
+						sge::systems::original_window(
+							_window_title).dim(
+							sge::parse::json::find_and_convert_member<sge::window::dim>(
+								*configuration_,
+								sge::parse::json::string_to_path(
+									FCPPT_TEXT("tests/window-size")))))).dont_show())
 				(sge::systems::renderer(
 					sge::renderer::pixel_format::object(
 						sge::renderer::pixel_format::color::depth32,

@@ -32,23 +32,27 @@ flakelib::volume::simulation::stam::outflow_boundaries::update(
 
 	kernel_->numerical_argument(
 		"buffer_width",
-		static_cast<cl_int>(
-			_view.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_view.size().w())));
 
 	kernel_->numerical_argument(
 		"buffer_height",
-		static_cast<cl_int>(
-			_view.size().h()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_view.size().h())));
 
 	kernel_->numerical_argument(
 		"buffer_depth",
-		static_cast<cl_int>(
-			_view.size().d()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_view.size().d())));
 
 	kernel_->numerical_argument(
 		"line_pitch",
-		static_cast<cl_uint>(
-			_view.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_view.size().w())));
 
 	kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim2(

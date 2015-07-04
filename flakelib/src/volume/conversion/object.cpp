@@ -78,28 +78,34 @@ flakelib::volume::conversion::object::to_arrow_vb(
 
 	to_arrow_vb_kernel_->numerical_argument(
 		"input_line_pitch",
-		static_cast<cl_uint>(
-			_input.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_input.size().w())));
 
 	to_arrow_vb_kernel_->numerical_argument(
 		"arrow_scale",
-		_arrow_scale.get());
+		sge::opencl::kernel::numeric_type(
+			_arrow_scale.get()));
 
 	to_arrow_vb_kernel_->numerical_argument(
 		"grid_scale",
-		_grid_scale.get());
+		sge::opencl::kernel::numeric_type(
+			_grid_scale.get()));
 
 	to_arrow_vb_kernel_->numerical_argument(
 		"origin_x",
-		_origin.get().x());
+		sge::opencl::kernel::numeric_type(
+			_origin.get().x()));
 
 	to_arrow_vb_kernel_->numerical_argument(
 		"origin_y",
-		_origin.get().y());
+		sge::opencl::kernel::numeric_type(
+			_origin.get().y()));
 
 	to_arrow_vb_kernel_->numerical_argument(
 		"origin_z",
-		_origin.get().z());
+		sge::opencl::kernel::numeric_type(
+			_origin.get().z()));
 
 	to_arrow_vb_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim3(
@@ -132,8 +138,9 @@ flakelib::volume::conversion::object::float_view_to_flat_volume_texture(
 
 	float_view_to_flat_volume_texture_kernel_->numerical_argument(
 		"input_line_pitch",
-		static_cast<cl_uint>(
-			_input.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_input.size().w())));
 
 	float_view_to_flat_volume_texture_kernel_->planar_image_argument(
 		"output",
@@ -141,22 +148,26 @@ flakelib::volume::conversion::object::float_view_to_flat_volume_texture(
 
 	float_view_to_flat_volume_texture_kernel_->numerical_argument(
 		"scaling_factor",
-		_scaling_factor.get());
+		sge::opencl::kernel::numeric_type(
+			_scaling_factor.get()));
 
 	float_view_to_flat_volume_texture_kernel_->numerical_argument(
 		"constant_addition",
-		_constant_addition.get());
+		sge::opencl::kernel::numeric_type(
+			_constant_addition.get()));
 
 	// This is the place where the assertion above comes in.
 	float_view_to_flat_volume_texture_kernel_->numerical_argument(
 		"slice_edge_size",
-		static_cast<cl_uint>(
-			_input.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_input.size().w())));
 
 	float_view_to_flat_volume_texture_kernel_->numerical_argument(
 		"slices_per_row",
-		static_cast<cl_uint>(
-			_output.size().w() / _input.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_output.size().w() / _input.size().w())));
 
 	float_view_to_flat_volume_texture_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim3(

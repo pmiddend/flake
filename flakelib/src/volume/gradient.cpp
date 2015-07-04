@@ -53,8 +53,9 @@ flakelib::volume::gradient::update(
 
 	kernel_->numerical_argument(
 		"buffer_pitch",
-		static_cast<cl_uint>(
-			_buffer.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_buffer.size().w())));
 
 	kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim3(

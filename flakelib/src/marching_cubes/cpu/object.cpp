@@ -26,7 +26,9 @@
 #include <sge/renderer/state/core/depth_stencil/parameters.hpp>
 #include <sge/renderer/state/core/depth_stencil/scoped.hpp>
 #include <sge/renderer/state/core/depth_stencil/depth/enabled.hpp>
+#include <sge/renderer/state/core/depth_stencil/depth/variant.hpp>
 #include <sge/renderer/state/core/depth_stencil/stencil/off.hpp>
+#include <sge/renderer/state/core/depth_stencil/stencil/variant.hpp>
 #include <sge/renderer/vertex/buffer.hpp>
 #include <sge/renderer/vertex/buffer_parameters.hpp>
 #include <sge/renderer/vertex/declaration.hpp>
@@ -454,8 +456,16 @@ flakelib::marching_cubes::cpu::object::object(
 					sge::renderer::state::core::depth_stencil::depth::enabled(
 						sge::renderer::state::core::depth_stencil::depth::func::less,
 						sge::renderer::state::core::depth_stencil::depth::write_enable(
-							true))),
-				sge::renderer::state::core::depth_stencil::stencil::off()))),
+							true
+						)
+					)
+				),
+				sge::renderer::state::core::depth_stencil::stencil::variant(
+					sge::renderer::state::core::depth_stencil::stencil::off()
+				)
+			)
+		)
+	),
 	implementation_(
 		fcppt::make_unique_ptr<MarchingCubes>(
 			static_cast<int>(

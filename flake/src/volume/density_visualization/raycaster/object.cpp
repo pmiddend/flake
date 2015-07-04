@@ -87,10 +87,11 @@ flake::volume::density_visualization::raycaster::object::object(
 	blend_state_(
 		renderer_.create_blend_state(
 			sge::renderer::state::core::blend::parameters(
-				sge::renderer::state::core::blend::alpha_enabled(
-					sge::renderer::state::core::blend::combined(
-						sge::renderer::state::core::blend::source::src_alpha,
-						sge::renderer::state::core::blend::dest::inv_src_alpha)),
+				sge::renderer::state::core::blend::alpha_variant(
+					sge::renderer::state::core::blend::alpha_enabled(
+						sge::renderer::state::core::blend::combined(
+							sge::renderer::state::core::blend::source::src_alpha,
+							sge::renderer::state::core::blend::dest::inv_src_alpha))),
 				sge::renderer::state::core::blend::write_mask_all()))),
 	sampler_state_(
 		renderer_.create_sampler_state(

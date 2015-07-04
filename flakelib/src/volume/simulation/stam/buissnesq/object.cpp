@@ -27,15 +27,18 @@ flakelib::volume::simulation::stam::buissnesq::object::object(
 {
 	kernel_->numerical_argument(
 		"density_strength",
-		_density_strength.get());
+		sge::opencl::kernel::numeric_type(
+			_density_strength.get()));
 
 	kernel_->numerical_argument(
 		"temperature_strength",
-		_temperature_strength.get());
+		sge::opencl::kernel::numeric_type(
+			_temperature_strength.get()));
 
 	kernel_->numerical_argument(
 		"ambient_temperature",
-		_ambient_temperature.get());
+		sge::opencl::kernel::numeric_type(
+			_ambient_temperature.get()));
 }
 
 void
@@ -65,7 +68,8 @@ flakelib::volume::simulation::stam::buissnesq::object::update(
 
 	kernel_->numerical_argument(
 		"time_delta",
-		_delta.count());
+		sge::opencl::kernel::numeric_type(
+			_delta.count()));
 
 	kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim1(

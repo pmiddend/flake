@@ -6,13 +6,11 @@
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/planar/simulation/stam/semilagrangian_advection.hpp>
 #include <sge/opencl/clinclude.hpp>
+#include <sge/opencl/kernel/numeric_type.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/dim/comparison.hpp>
-#include <fcppt/config/external_begin.hpp>
-#include <utility>
-#include <fcppt/config/external_end.hpp>
 
 
 flakelib::planar::simulation::stam::semilagrangian_advection::semilagrangian_advection(
@@ -73,21 +71,22 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update_float2(
 
 	planar_kernel_->numerical_argument(
 		"buffer_pitch",
-		static_cast<cl_uint>(
-			_buffer.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_buffer.size().w())));
 
 	planar_kernel_->numerical_argument(
 		"dt",
-		static_cast<cl_float>(
-			_dt.count()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_float>(
+				_dt.count())));
 
 	planar_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim2(
 			_buffer.size()));
 
 	return
-		std::move(
-			result);
+		result;
 }
 
 flakelib::planar::unique_float_buffer_lock
@@ -126,21 +125,22 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update_float(
 
 	scalar_kernel_->numerical_argument(
 		"buffer_pitch",
-		static_cast<cl_uint>(
-			_buffer.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_buffer.size().w())));
 
 	scalar_kernel_->numerical_argument(
 		"dt",
-		static_cast<cl_float>(
-			_dt.count()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_float>(
+				_dt.count())));
 
 	scalar_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim2(
 			_buffer.size()));
 
 	return
-		std::move(
-			result);
+		result;
 }
 
 flakelib::planar::simulation::stam::semilagrangian_advection::~semilagrangian_advection()

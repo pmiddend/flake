@@ -30,7 +30,8 @@ flakelib::planar::simulation::stam::wind_source::wind_strength(
 {
 	kernel_->numerical_argument(
 		"wind_strength",
-		_wind_strength);
+		sge::opencl::kernel::numeric_type(
+			_wind_strength));
 }
 
 void
@@ -43,8 +44,9 @@ flakelib::planar::simulation::stam::wind_source::update(
 
 	kernel_->numerical_argument(
 		"buffer_pitch",
-		static_cast<cl_uint>(
-			_view.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_view.size().w())));
 
 	kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim1(

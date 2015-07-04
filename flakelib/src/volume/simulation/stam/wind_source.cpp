@@ -35,10 +35,11 @@ flakelib::volume::simulation::stam::wind_source::wind_strength(
 {
 	kernel_->numerical_argument(
 		"wind_strength",
-		std::max(
-			static_cast<cl_float>(
-				0.0f),
-			_wind_strength));
+		sge::opencl::kernel::numeric_type(
+			std::max(
+				static_cast<cl_float>(
+					0.0f),
+				_wind_strength)));
 }
 
 void
@@ -51,23 +52,27 @@ flakelib::volume::simulation::stam::wind_source::update(
 
 	kernel_->numerical_argument(
 		"line_pitch",
-		static_cast<cl_uint>(
-			_view.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_view.size().w())));
 
 	kernel_->numerical_argument(
 		"buffer_width",
-		static_cast<cl_int>(
-			_view.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_view.size().w())));
 
 	kernel_->numerical_argument(
 		"buffer_height",
-		static_cast<cl_int>(
-			_view.size().h()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_view.size().h())));
 
 	kernel_->numerical_argument(
 		"buffer_depth",
-		static_cast<cl_int>(
-			_view.size().d()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_view.size().d())));
 
 	kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim2(

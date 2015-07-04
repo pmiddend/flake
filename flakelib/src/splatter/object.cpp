@@ -46,51 +46,61 @@ flakelib::splatter::object::splat_planar_float(
 
 	splat_planar_float_->numerical_argument(
 		"pen_position_x",
-		static_cast<cl_int>(
-			_pen.bounding().position().get().x()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_pen.bounding().position().get().x())));
 
 	splat_planar_float_->numerical_argument(
 		"pen_position_y",
-		static_cast<cl_int>(
-			_pen.bounding().position().get().y()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_pen.bounding().position().get().y())));
 
 	splat_planar_float_->numerical_argument(
 		"buffer_width",
-		static_cast<cl_int>(
-			_buffer.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_buffer.size().w())));
 
 	splat_planar_float_->numerical_argument(
 		"buffer_height",
-		static_cast<cl_int>(
-			_buffer.size().h()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_buffer.size().h())));
 
 	splat_planar_float_->numerical_argument(
 		"buffer_pitch",
-		static_cast<cl_uint>(
-			_buffer.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_buffer.size().w())));
 
 	splat_planar_float_->numerical_argument(
 		"value",
-		_value);
+		sge::opencl::kernel::numeric_type(
+			_value));
 
 	splat_planar_float_->numerical_argument(
 		"is_rectangle",
-		static_cast<cl_int>(
-			!_pen.is_round().get()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				!_pen.is_round().get())));
 
 	splat_planar_float_->numerical_argument(
 		"is_hard",
-		static_cast<cl_int>(
-			!_pen.is_smooth().get()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				!_pen.is_smooth().get())));
 
 	splat_planar_float_->numerical_argument(
 		"blend_factor",
-		_pen.blend_factor().get());
+		sge::opencl::kernel::numeric_type(
+			_pen.blend_factor().get()));
 
 	splat_planar_float_->numerical_argument(
 		"do_mixing",
-		static_cast<cl_int>(
-			_pen.draw_mode() == pen::draw_mode::mix));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_pen.draw_mode() == pen::draw_mode::mix)));
 
 	splat_planar_float_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim2(
@@ -119,61 +129,73 @@ flakelib::splatter::object::splat_volume_float(
 
 	splat_volume_float_->numerical_argument(
 		"pen_position_x",
-		static_cast<cl_int>(
-			_pen.bounding().position().get().x()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_pen.bounding().position().get().x())));
 
 	splat_volume_float_->numerical_argument(
 		"pen_position_y",
-		static_cast<cl_int>(
-			_pen.bounding().position().get().y()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_pen.bounding().position().get().y())));
 
 	splat_volume_float_->numerical_argument(
 		"pen_position_z",
-		static_cast<cl_int>(
-			_pen.bounding().position().get().z()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_pen.bounding().position().get().z())));
 
 	splat_volume_float_->numerical_argument(
 		"buffer_width",
-		static_cast<cl_int>(
-			_buffer.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_buffer.size().w())));
 
 	splat_volume_float_->numerical_argument(
 		"buffer_height",
-		static_cast<cl_int>(
-			_buffer.size().h()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_buffer.size().h())));
 
 	splat_volume_float_->numerical_argument(
 		"buffer_depth",
-		static_cast<cl_int>(
-			_buffer.size().d()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_buffer.size().d())));
 
 	splat_volume_float_->numerical_argument(
 		"buffer_pitch",
-		static_cast<cl_uint>(
-			_buffer.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_buffer.size().w())));
 
 	splat_volume_float_->numerical_argument(
 		"value",
-		_value);
+		sge::opencl::kernel::numeric_type(
+			_value));
 
 	splat_volume_float_->numerical_argument(
 		"is_box",
-		static_cast<cl_int>(
-			!_pen.is_round().get()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				!_pen.is_round().get())));
 
 	splat_volume_float_->numerical_argument(
 		"is_hard",
-		static_cast<cl_int>(
-			!_pen.is_smooth().get()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				!_pen.is_smooth().get())));
 
 	splat_volume_float_->numerical_argument(
 		"blend_factor",
-		_pen.blend_factor().get());
+		sge::opencl::kernel::numeric_type(
+			_pen.blend_factor().get()));
 
 	splat_volume_float_->numerical_argument(
 		"do_mixing",
-		static_cast<cl_int>(
-			_pen.draw_mode() == pen::draw_mode::mix));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_pen.draw_mode() == pen::draw_mode::mix)));
 
 	splat_volume_float_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim3(

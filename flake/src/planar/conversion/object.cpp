@@ -62,16 +62,19 @@ flake::planar::conversion::object::to_arrow_vb(
 
 	to_arrow_vb_kernel_->numerical_argument(
 		"buffer_pitch",
-		static_cast<cl_uint>(
-			_planar_buffer.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_planar_buffer.size().w())));
 
 	to_arrow_vb_kernel_->numerical_argument(
 		"grid_scale",
-		_grid_scale.get());
+		sge::opencl::kernel::numeric_type(
+			_grid_scale.get()));
 
 	to_arrow_vb_kernel_->numerical_argument(
 		"arrow_scale",
-		_arrow_scale.get());
+		sge::opencl::kernel::numeric_type(
+			_arrow_scale.get()));
 
 	sge::opencl::memory_object::base_ref_sequence mem_objects;
 	mem_objects.push_back(
@@ -210,11 +213,13 @@ flake::planar::conversion::object::scalar_to_texture(
 
 	scalar_to_texture_kernel_->numerical_argument(
 		"scaling",
-		_scaling.get());
+		sge::opencl::kernel::numeric_type(
+			_scaling.get()));
 
 	scalar_to_texture_kernel_->numerical_argument(
 		"addition",
-		_constant_addition.get());
+		sge::opencl::kernel::numeric_type(
+			_constant_addition.get()));
 
 	sge::opencl::memory_object::base_ref_sequence mem_objects;
 	mem_objects.push_back(

@@ -61,8 +61,9 @@ flakelib::planar::simulation::stam::jacobi::update(
 
 	kernel_->numerical_argument(
 		"buffer_pitch",
-		static_cast<cl_uint>(
-			_boundary.get().size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_boundary.get().size().w())));
 
 	kernel_->buffer_argument(
 		"rhs",

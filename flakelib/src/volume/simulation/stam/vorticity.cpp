@@ -11,9 +11,6 @@
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/dim/comparison.hpp>
-#include <fcppt/config/external_begin.hpp>
-#include <utility>
-#include <fcppt/config/external_end.hpp>
 
 
 flakelib::volume::simulation::stam::vorticity::vorticity(
@@ -65,16 +62,16 @@ flakelib::volume::simulation::stam::vorticity::apply_vorticity(
 
 	vorticity_kernel_->numerical_argument(
 		"buffer_pitch",
-		static_cast<cl_uint>(
-			_velocity.get().size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_velocity.get().size().w())));
 
 	vorticity_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim3(
 			_velocity.get().size()));
 
 	return
-		std::move(
-			result);
+		result;
 }
 
 flakelib::volume::unique_float4_buffer_lock
@@ -91,12 +88,14 @@ flakelib::volume::simulation::stam::vorticity::apply_confinement(
 
 	confinement_kernel_->numerical_argument(
 		"vorticity_strength",
-		_strength.get());
+		sge::opencl::kernel::numeric_type(
+			_strength.get()));
 
 	confinement_kernel_->numerical_argument(
 		"dt",
-		static_cast<cl_float>(
-			_dt.count()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_float>(
+				_dt.count())));
 
 	confinement_kernel_->buffer_argument(
 		"vorticity",
@@ -112,16 +111,16 @@ flakelib::volume::simulation::stam::vorticity::apply_confinement(
 
 	confinement_kernel_->numerical_argument(
 		"buffer_pitch",
-		static_cast<cl_uint>(
-			_vorticity.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_vorticity.size().w())));
 
 	confinement_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim3(
 			_vorticity.size()));
 
 	return
-		std::move(
-			result);
+		result;
 }
 
 flakelib::volume::simulation::stam::vorticity::~vorticity()

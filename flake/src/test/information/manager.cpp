@@ -9,6 +9,7 @@
 #include <sge/font/text_parameters.hpp>
 #include <sge/font/vector.hpp>
 #include <sge/font/align_h/left.hpp>
+#include <sge/font/align_h/variant.hpp>
 #include <sge/font/draw/simple.hpp>
 #include <sge/font/draw/static_text.hpp>
 #include <sge/font/weight/bold.hpp>
@@ -83,7 +84,8 @@ flake::test::information::manager::render(
 		*font_,
 		result,
 		sge::font::text_parameters(
-			sge::font::align_h::left()),
+			sge::font::align_h::variant(
+				sge::font::align_h::left())),
 		sge::font::vector::null(),
 		color_,
 		sge::renderer::texture::emulate_srgb::no);

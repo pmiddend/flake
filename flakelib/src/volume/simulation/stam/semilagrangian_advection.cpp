@@ -10,9 +10,6 @@
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/dim/comparison.hpp>
-#include <fcppt/config/external_begin.hpp>
-#include <utility>
-#include <fcppt/config/external_end.hpp>
 
 
 flakelib::volume::simulation::stam::semilagrangian_advection::semilagrangian_advection(
@@ -73,21 +70,22 @@ flakelib::volume::simulation::stam::semilagrangian_advection::update_float4(
 
 	volume_kernel_->numerical_argument(
 		"buffer_pitch",
-		static_cast<cl_uint>(
-			_buffer.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_buffer.size().w())));
 
 	volume_kernel_->numerical_argument(
 		"dt",
-		static_cast<cl_float>(
-			_dt.count()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_float>(
+				_dt.count())));
 
 	volume_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim3(
 			_buffer.size()));
 
 	return
-		std::move(
-			result);
+		result;
 }
 
 flakelib::volume::unique_float_buffer_lock
@@ -126,21 +124,22 @@ flakelib::volume::simulation::stam::semilagrangian_advection::update_float(
 
 	scalar_kernel_->numerical_argument(
 		"buffer_pitch",
-		static_cast<cl_uint>(
-			_buffer.size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_buffer.size().w())));
 
 	scalar_kernel_->numerical_argument(
 		"dt",
-		static_cast<cl_float>(
-			_dt.count()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_float>(
+				_dt.count())));
 
 	scalar_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim3(
 			_buffer.size()));
 
 	return
-		std::move(
-			result);
+		result;
 }
 
 flakelib::volume::simulation::stam::semilagrangian_advection::~semilagrangian_advection()

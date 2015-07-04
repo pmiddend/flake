@@ -11,6 +11,7 @@
 #include <sge/opencl/command_queue/object.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/context/object.hpp>
+#include <sge/opencl/kernel/numeric_type.hpp>
 #include <sge/opencl/memory_object/create_image_format.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
@@ -69,7 +70,8 @@ flakelib::marching_cubes::gpu::manager::manager(
 						sge::renderer::state::core::depth_stencil::depth::func::less,
 						sge::renderer::state::core::depth_stencil::depth::write_enable(
 							true))),
-				sge::renderer::state::core::depth_stencil::stencil::off()))),
+				sge::renderer::state::core::depth_stencil::stencil::variant(
+					sge::renderer::state::core::depth_stencil::stencil::off())))),
 	children_(),
 	table_format_(
 		sge::opencl::memory_object::create_image_format(
@@ -231,8 +233,9 @@ flakelib::marching_cubes::gpu::manager::classify_voxels(
 
 	classify_kernel_->numerical_argument(
 		"vertices_for_voxel_size",
-		static_cast<cl_uint>(
-			_vertices_for_voxel.get().size().content()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_vertices_for_voxel.get().size().content())));
 
 	classify_kernel_->buffer_argument(
 		"voxel_occupation",
@@ -240,8 +243,9 @@ flakelib::marching_cubes::gpu::manager::classify_voxels(
 
 	classify_kernel_->numerical_argument(
 		"voxel_occupation_size",
-		static_cast<cl_uint>(
-			_voxel_occupation.get().size().content()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_voxel_occupation.get().size().content())));
 
 	classify_kernel_->vector_argument(
 		"grid_size",
@@ -257,7 +261,8 @@ flakelib::marching_cubes::gpu::manager::classify_voxels(
 
 	classify_kernel_->numerical_argument(
 		"iso_value",
-		_iso_level.get());
+		sge::opencl::kernel::numeric_type(
+			_iso_level.get()));
 
 	classify_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim1(
@@ -315,8 +320,9 @@ flakelib::marching_cubes::gpu::manager::compact_voxels(
 
 	compact_kernel_->numerical_argument(
 		"voxel_occupation_size",
-		static_cast<cl_uint>(
-			_voxel_occupation.get().size().content()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_voxel_occupation.get().size().content())));
 
 	compact_kernel_->buffer_argument(
 		"summed_voxel_occupation",
@@ -324,8 +330,9 @@ flakelib::marching_cubes::gpu::manager::compact_voxels(
 
 	compact_kernel_->numerical_argument(
 		"summed_voxel_occupation_size",
-		static_cast<cl_uint>(
-			_summed_voxel_occupation.get().size().content()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_summed_voxel_occupation.get().size().content())));
 
 	compact_kernel_->buffer_argument(
 		"compacted_voxel_occupation",
@@ -333,8 +340,9 @@ flakelib::marching_cubes::gpu::manager::compact_voxels(
 
 	compact_kernel_->numerical_argument(
 		"compacted_voxel_occupation_size",
-		static_cast<cl_uint>(
-			_compacted_voxel_occupation.get().size().content()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_compacted_voxel_occupation.get().size().content())));
 
 	compact_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim1(
@@ -367,8 +375,9 @@ flakelib::marching_cubes::gpu::manager::generate_triangles(
 
 	generate_triangles_kernel_->numerical_argument(
 		"positions_size",
-		static_cast<cl_uint>(
-			_positions_buffer.get().byte_size().get() / (4u*sizeof(cl_float))));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_positions_buffer.get().byte_size().get() / (4u*sizeof(cl_float)))));
 
 	generate_triangles_kernel_->buffer_argument(
 		"normals",
@@ -376,8 +385,9 @@ flakelib::marching_cubes::gpu::manager::generate_triangles(
 
 	generate_triangles_kernel_->numerical_argument(
 		"normals_size",
-		static_cast<cl_uint>(
-			_positions_buffer.get().byte_size().get() / (4u*sizeof(cl_float))));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_positions_buffer.get().byte_size().get() / (4u*sizeof(cl_float)))));
 
 	flakelib::volume::unique_float4_buffer_lock gradient(
 		gradient_.update(
@@ -393,8 +403,9 @@ flakelib::marching_cubes::gpu::manager::generate_triangles(
 
 	generate_triangles_kernel_->numerical_argument(
 		"compacted_voxel_occupation_size",
-		static_cast<cl_uint>(
-			_compacted_voxel_occupation_view.get().size().content()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_compacted_voxel_occupation_view.get().size().content())));
 
 	generate_triangles_kernel_->buffer_argument(
 		"summed_vertices_for_voxel",
@@ -402,8 +413,9 @@ flakelib::marching_cubes::gpu::manager::generate_triangles(
 
 	generate_triangles_kernel_->numerical_argument(
 		"summed_vertices_for_voxel_size",
-		static_cast<cl_uint>(
-			_summed_vertices_for_voxel_view.get().size().content()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_summed_vertices_for_voxel_view.get().size().content())));
 
 	generate_triangles_kernel_->buffer_argument(
 		"volume",
@@ -423,16 +435,19 @@ flakelib::marching_cubes::gpu::manager::generate_triangles(
 
 	generate_triangles_kernel_->numerical_argument(
 		"iso_value",
-		_iso_level.get());
+		sge::opencl::kernel::numeric_type(
+			_iso_level.get()));
 
 	generate_triangles_kernel_->numerical_argument(
 		"active_voxels",
-		_active_voxels.get());
+		sge::opencl::kernel::numeric_type(
+			_active_voxels.get()));
 
 	generate_triangles_kernel_->numerical_argument(
 		"max_verts",
-		static_cast<cl_uint>(
-			_vertex_count.get()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_vertex_count.get())));
 
 	generate_triangles_kernel_->enqueue(
 		sge::opencl::command_queue::global_dim1(

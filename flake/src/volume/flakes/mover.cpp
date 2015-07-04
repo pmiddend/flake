@@ -61,7 +61,8 @@ flake::volume::flakes::mover::mover(
 
 	update_activity_kernel_->numerical_argument(
 		"iso_level",
-		_iso_level.get());
+		sge::opencl::kernel::numeric_type(
+			_iso_level.get()));
 
 	update_activity_kernel_->buffer_argument(
 		"snow_density",
@@ -69,8 +70,9 @@ flake::volume::flakes::mover::mover(
 
 	update_activity_kernel_->numerical_argument(
 		"buffer_pitch",
-		static_cast<cl_uint>(
-			_snow_density.get().size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_snow_density.get().size().w())));
 
 	update_activity_kernel_->buffer_argument(
 		"activity",
@@ -78,7 +80,8 @@ flake::volume::flakes::mover::mover(
 
 	move_kernel_->numerical_argument(
 		"minimum_size",
-		_minimum_size.get());
+		sge::opencl::kernel::numeric_type(
+			_minimum_size.get()));
 
 	move_kernel_->buffer_argument(
 		"velocities",
@@ -86,11 +89,13 @@ flake::volume::flakes::mover::mover(
 
 	move_kernel_->numerical_argument(
 		"maximum_size",
-		_maximum_size.get());
+		sge::opencl::kernel::numeric_type(
+			_maximum_size.get()));
 
 	move_kernel_->numerical_argument(
 		"gravity_magnitude",
-		_gravity_magnitude.get());
+		sge::opencl::kernel::numeric_type(
+			_gravity_magnitude.get()));
 
 	move_kernel_->buffer_argument(
 		"activity",
@@ -110,7 +115,8 @@ flake::volume::flakes::mover::mover(
 
 	move_kernel_->numerical_argument(
 		"collision_increment",
-		_collision_increment.get());
+		sge::opencl::kernel::numeric_type(
+			_collision_increment.get()));
 }
 
 void
@@ -128,11 +134,13 @@ flake::volume::flakes::mover::update(
 
 	move_kernel_->numerical_argument(
 		"time",
-		time_);
+		sge::opencl::kernel::numeric_type(
+			time_));
 
 	move_kernel_->numerical_argument(
 		"time_delta",
-		_delta.count());
+		sge::opencl::kernel::numeric_type(
+			_delta.count()));
 
 	move_kernel_->buffer_argument(
 		"fluid_velocity",
@@ -140,23 +148,27 @@ flake::volume::flakes::mover::update(
 
 	move_kernel_->numerical_argument(
 		"bounding_volume_width",
-		static_cast<cl_int>(
-			_boundary.get().size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_boundary.get().size().w())));
 
 	move_kernel_->numerical_argument(
 		"bounding_volume_height",
-		static_cast<cl_int>(
-			_boundary.get().size().h()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_boundary.get().size().h())));
 
 	move_kernel_->numerical_argument(
 		"bounding_volume_depth",
-		static_cast<cl_int>(
-			_boundary.get().size().d()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_int>(
+				_boundary.get().size().d())));
 
 	move_kernel_->numerical_argument(
 		"buffer_pitch",
-		static_cast<cl_uint>(
-			_velocity.get().size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_velocity.get().size().w())));
 
 	sge::opencl::memory_object::scoped_objects scoped_vb(
 		move_kernel_->command_queue(),
@@ -189,11 +201,13 @@ flake::volume::flakes::mover::initialize_velocities(
 
 	initialize_velocities_kernel_->numerical_argument(
 		"minimum_size",
-		_minimum_size.get());
+		sge::opencl::kernel::numeric_type(
+			_minimum_size.get()));
 
 	initialize_velocities_kernel_->numerical_argument(
 		"maximum_size",
-		_maximum_size.get());
+		sge::opencl::kernel::numeric_type(
+			_maximum_size.get()));
 
 	initialize_velocities_kernel_->buffer_argument(
 		"velocities",

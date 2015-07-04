@@ -8,6 +8,7 @@
 #include <sge/font/text.hpp>
 #include <sge/font/text_parameters.hpp>
 #include <sge/font/align_h/left.hpp>
+#include <sge/font/align_h/variant.hpp>
 #include <sge/opencl/memory_object/renderer_buffer_lock_mode.hpp>
 #include <sge/renderer/primitive_type.hpp>
 #include <sge/renderer/resource_flags.hpp>
@@ -102,7 +103,8 @@ flake::planar::monitor::arrows::arrows(
 		flake::planar::monitor::font_axis_policy(
 			child::parent().font(),
 			sge::font::text_parameters(
-				sge::font::align_h::left()),
+				sge::font::align_h::variant(
+					sge::font::align_h::left())),
 			sge::font::from_fcppt_string(
 				this->name()))),
 	sprite_box_(
@@ -125,7 +127,8 @@ flake::planar::monitor::arrows::arrows(
 		sge::font::from_fcppt_string(
 			this->name()),
 		sge::font::text_parameters(
-			sge::font::align_h::left()),
+			sge::font::align_h::variant(
+				sge::font::align_h::left())),
 		sge::font::vector::null(),
 		child::parent().font_color().get(),
 		sge::renderer::texture::emulate_srgb::no)

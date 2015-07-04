@@ -104,8 +104,9 @@ flakelib::scan::object::object(
 
 	exclusive_local2_kernel_->numerical_argument(
 		"d_Buf_size",
-		static_cast<cl_uint>(
-			buffer_->value().size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				buffer_->value().size().w())));
 
 	uniform_update_kernel_->buffer_argument(
 		"d_Buf",
@@ -113,8 +114,9 @@ flakelib::scan::object::object(
 
 	uniform_update_kernel_->numerical_argument(
 		"d_Buf_size",
-		static_cast<cl_uint>(
-			buffer_->value().size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				buffer_->value().size().w())));
 
 #ifdef FLAKELIB_SCAN_DEBUG
 	sge::opencl::command_queue::scoped_buffer_mapping buffer_mapping(
@@ -202,8 +204,9 @@ flakelib::scan::object::exclusive_local1(
 
 	exclusive_local1_kernel_->numerical_argument(
 		"source_size",
-		static_cast<cl_uint>(
-			_source.get().size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_source.get().size().w())));
 
 	exclusive_local1_kernel_->buffer_argument(
 		"destination",
@@ -211,8 +214,9 @@ flakelib::scan::object::exclusive_local1(
 
 	exclusive_local1_kernel_->numerical_argument(
 		"destination_size",
-		static_cast<cl_uint>(
-			_destination.get().size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_destination.get().size().w())));
 
 	exclusive_local1_kernel_->local_buffer_argument(
 		"local_data",
@@ -221,12 +225,14 @@ flakelib::scan::object::exclusive_local1(
 
 	exclusive_local1_kernel_->numerical_argument(
 		"local_data_size",
-		static_cast<cl_uint>(
-			2u * WORKGROUP_SIZE));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				2u * WORKGROUP_SIZE)));
 
 	exclusive_local1_kernel_->numerical_argument(
 		"size",
-		_elements_per_workgroup.get());
+		sge::opencl::kernel::numeric_type(
+			_elements_per_workgroup.get()));
 
 	exclusive_local1_kernel_->enqueue(
 		sge::opencl::command_queue::global_dim1(
@@ -254,8 +260,9 @@ flakelib::scan::object::exclusive_local2(
 
 	exclusive_local2_kernel_->numerical_argument(
 		"d_Dst_size",
-		static_cast<cl_uint>(
-			_destination.get().size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_destination.get().size().w())));
 
 	exclusive_local2_kernel_->buffer_argument(
 		"d_Src",
@@ -263,8 +270,9 @@ flakelib::scan::object::exclusive_local2(
 
 	exclusive_local2_kernel_->numerical_argument(
 		"d_Src_size",
-		static_cast<cl_uint>(
-			_source.get().size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_source.get().size().w())));
 
 	exclusive_local2_kernel_->local_buffer_argument(
 		"l_Data",
@@ -273,19 +281,22 @@ flakelib::scan::object::exclusive_local2(
 
 	exclusive_local2_kernel_->numerical_argument(
 		"l_Data_size",
-		static_cast<cl_uint>(
-			2u * WORKGROUP_SIZE));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				2u * WORKGROUP_SIZE)));
 
 
 	exclusive_local2_kernel_->numerical_argument(
 		"N",
-		static_cast<cl_uint>(
-			_batch_size.get() * _block_count.get()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_batch_size.get() * _block_count.get())));
 
 	exclusive_local2_kernel_->numerical_argument(
 		"arrayLength",
-		static_cast<cl_uint>(
-			_block_count.get()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_block_count.get())));
 
 	sge::opencl::size_type const
 		global_size =
@@ -319,8 +330,9 @@ flakelib::scan::object::uniform_update(
 
 	uniform_update_kernel_->numerical_argument(
 		"d_Data_size",
-		static_cast<cl_uint>(
-			_destination.get().size().w()));
+		sge::opencl::kernel::numeric_type(
+			static_cast<cl_uint>(
+				_destination.get().size().w())));
 
 	FCPPT_ASSERT_PRE(
 		_block_count.get() * WORKGROUP_SIZE
