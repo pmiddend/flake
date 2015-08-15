@@ -14,6 +14,7 @@
 #include <sge/image/color/predef.hpp>
 #include <sge/image/color/any/object.hpp>
 #include <sge/input/keyboard/device.hpp>
+#include <sge/input/keyboard/key_callback.hpp>
 #include <sge/input/keyboard/key_code.hpp>
 #include <sge/input/keyboard/key_event.hpp>
 #include <sge/log/global_context.hpp>
@@ -43,7 +44,9 @@
 #include <sge/systems/window_source.hpp>
 #include <sge/timer/scoped_frame_limiter.hpp>
 #include <sge/viewport/fill_on_resize.hpp>
+#include <sge/viewport/manage_callback.hpp>
 #include <sge/viewport/manager.hpp>
+#include <sge/viewport/optional_resize_callback.hpp>
 #include <sge/window/object.hpp>
 #include <sge/window/system.hpp>
 #include <sge/window/title.hpp>
@@ -190,7 +193,10 @@ flake::test::base::base(
 					sge::renderer::display_mode::parameters(
 						sge::renderer::display_mode::vsync::on,
 						sge::renderer::display_mode::optional_object()),
-					sge::viewport::fill_on_resize())
+					sge::viewport::optional_resize_callback{
+						sge::viewport::fill_on_resize()
+					}
+				)
 					.caps(
 						sge::renderer::caps::system_field{
 							sge::renderer::caps::system::opengl}))
@@ -234,9 +240,14 @@ flake::test::base::base(
 				FCPPT_TEXT("tests/desired-fps")))),
 	viewport_connection_(
 		systems_->viewport_manager().manage_callback(
-			std::bind(
-				&test::base::viewport_callback,
-				this))),
+			sge::viewport::manage_callback{
+				std::bind(
+					&test::base::viewport_callback,
+					this
+				)
+			}
+		)
+	),
 	notifications_(
 		fcppt::make_unique_ptr<flake::notifications::object>(
 			this->renderer(),
@@ -279,10 +290,15 @@ flake::test::base::base(
 					FCPPT_TEXT("features/paused"))))),
 	key_callback_connection_(
 		this->keyboard().key_callback(
-			std::bind(
-				&base::key_callback,
-				this,
-				std::placeholders::_1))),
+			sge::input::keyboard::key_callback{
+				std::bind(
+					&base::key_callback,
+					this,
+					std::placeholders::_1
+				)
+			}
+		)
+	),
 	postprocessing_(
 		this->renderer(),
 		this->viewport_manager(),

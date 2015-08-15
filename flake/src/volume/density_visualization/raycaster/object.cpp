@@ -302,19 +302,21 @@ flake::volume::density_visualization::raycaster::object::update(
 		store_type::dim(
 			texture_->size().w(),
 			texture_->size().h()),
-		[this](
-			store_type::view_type const &_init_view)
-		{
-			sge::renderer::texture::const_scoped_planar_lock const slock(
-				*texture_);
+		store_type::init_function{
+			[this](
+				store_type::view_type const &_init_view)
+			{
+				sge::renderer::texture::const_scoped_planar_lock const slock(
+					*texture_);
 
-			sge::image2d::algorithm::copy_and_convert(
-				slock.value(),
-				sge::image2d::view::object(
-					sge::image::view::wrap(
-						_init_view)),
-				sge::image::algorithm::may_overlap::no,
-				sge::image::algorithm::uninitialized::yes);
+				sge::image2d::algorithm::copy_and_convert(
+					slock.value(),
+					sge::image2d::view::object(
+						sge::image::view::wrap(
+							_init_view)),
+					sge::image::algorithm::may_overlap::no,
+					sge::image::algorithm::uninitialized::yes);
+			}
 		});
 
 	sge::image2d::save_from_view(

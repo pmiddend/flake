@@ -6,6 +6,7 @@
 #include <sge/camera/tracking/json/interval_exporter.hpp>
 #include <sge/camera/tracking/json/keyframes_from_json.hpp>
 #include <sge/input/keyboard/device.hpp>
+#include <sge/input/keyboard/key_callback.hpp>
 #include <sge/input/keyboard/key_event.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/is_null.hpp>
@@ -110,10 +111,15 @@ flake::test::camera_manager::camera_manager(
 							FCPPT_TEXT("keyframe-export-path")))))),
 	key_press_connection_(
 		_keyboard.key_callback(
-			std::bind(
-				&camera_manager::key_press_callback,
-				this,
-				std::placeholders::_1))),
+			sge::input::keyboard::key_callback{
+				std::bind(
+					&camera_manager::key_press_callback,
+					this,
+					std::placeholders::_1
+				)
+			}
+		)
+	),
 	recording_(
 		false)
 {

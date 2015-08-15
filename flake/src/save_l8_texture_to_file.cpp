@@ -27,21 +27,23 @@ flake::save_l8_texture_to_file(
 			sge::image2d::dim,
 			fcppt::cast::size_fun>(
 			_texture.size()),
-		[
-			&_texture
-		](
-			store_type::view_type const &_view)
-		{
-			sge::renderer::texture::const_scoped_planar_lock slock(
-				_texture);
+		store_type::init_function{
+			[
+				&_texture
+			](
+				store_type::view_type const &_view)
+			{
+				sge::renderer::texture::const_scoped_planar_lock slock(
+					_texture);
 
-			sge::image2d::algorithm::copy_and_convert(
-				slock.value(),
-				sge::image2d::view::object(
-					sge::image::view::wrap(
-						_view)),
-				sge::image::algorithm::may_overlap::no,
-				sge::image::algorithm::uninitialized::yes);
+				sge::image2d::algorithm::copy_and_convert(
+					slock.value(),
+					sge::image2d::view::object(
+						sge::image::view::wrap(
+							_view)),
+					sge::image::algorithm::may_overlap::no,
+					sge::image::algorithm::uninitialized::yes);
+			}
 		});
 
 	sge::image2d::save_from_view(

@@ -4,7 +4,9 @@
 #include <sge/camera/base.hpp>
 #include <sge/camera/coordinate_system/object.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
+#include <sge/input/cursor/button_callback.hpp>
 #include <sge/input/cursor/button_event.hpp>
+#include <sge/input/cursor/move_callback.hpp>
 #include <sge/input/cursor/move_event.hpp>
 #include <sge/input/cursor/object.hpp>
 #include <sge/renderer/vector2.hpp>
@@ -145,16 +147,26 @@ flake::planar::cursor_splatter::cursor_splatter(
 		_pen),
 	button_connection_(
 		_cursor.button_callback(
-			std::bind(
-				&cursor_splatter::button_callback,
-				this,
-				std::placeholders::_1))),
+			sge::input::cursor::button_callback{
+				std::bind(
+					&cursor_splatter::button_callback,
+					this,
+					std::placeholders::_1
+				)
+			}
+		)
+	),
 	move_connection_(
 		_cursor.move_callback(
-			std::bind(
-				&cursor_splatter::move_callback,
-				this,
-				std::placeholders::_1))),
+			sge::input::cursor::move_callback{
+				std::bind(
+					&cursor_splatter::move_callback,
+					this,
+					std::placeholders::_1
+				)
+			}
+		)
+	),
 	left_button_pushed_down_(
 		false),
 	right_button_pushed_down_(

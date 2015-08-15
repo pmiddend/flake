@@ -27,6 +27,7 @@
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/renderer/vertex/declaration.hpp>
 #include <sge/shader/scoped_pair.hpp>
+#include <sge/viewport/manage_callback.hpp>
 #include <sge/viewport/manager.hpp>
 #include <fcppt/make_cref.hpp>
 #include <fcppt/make_unique_ptr_fcppt.hpp>
@@ -153,9 +154,14 @@ flake::postprocessing::context::context(
 		sge::shader::parameter::planar_texture::optional_value()),
 	viewport_connection_(
 		_viewport_manager.manage_callback(
-			std::bind(
-				&flake::postprocessing::context::viewport_callback,
-				this))),
+			sge::viewport::manage_callback{
+				std::bind(
+					&flake::postprocessing::context::viewport_callback,
+					this
+				)
+			}
+		)
+	),
 	rendering_result_texture_(),
 	offscreen_target_(),
 	depth_stencil_surface_(),

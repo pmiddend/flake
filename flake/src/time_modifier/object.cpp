@@ -1,6 +1,7 @@
 #include <flake/notifications/object.hpp>
 #include <flake/time_modifier/object.hpp>
 #include <sge/input/keyboard/device.hpp>
+#include <sge/input/keyboard/key_callback.hpp>
 #include <sge/input/keyboard/key_event.hpp>
 #include <fcppt/insert_to_fcppt_string.hpp>
 #include <fcppt/text.hpp>
@@ -20,10 +21,15 @@ flake::time_modifier::object::object(
 		_is_paused),
 	key_connection_(
 		_keyboard.key_callback(
-			std::bind(
-				&object::key_callback,
-				this,
-				std::placeholders::_1))),
+			sge::input::keyboard::key_callback{
+				std::bind(
+					&object::key_callback,
+					this,
+					std::placeholders::_1
+				)
+			}
+		)
+	),
 	notifications_(
 		_notifications)
 {
