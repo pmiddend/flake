@@ -323,12 +323,12 @@ flake::tests::vorticity::vorticity(
 			flakelib::splatter::rectangle::object(
 				flakelib::splatter::rectangle::position(
 					flakelib::splatter::rectangle::position::value_type(
-						0,
-						0)),
+						0u,
+						0u)),
 				flakelib::splatter::rectangle::size(
 					flakelib::splatter::rectangle::size::value_type(
-						20,
-						20))),
+						20u,
+						20u))),
 			flakelib::splatter::pen::is_round(
 				true),
 			flakelib::splatter::pen::is_smooth(

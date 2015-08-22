@@ -4,8 +4,8 @@
 #include <fcppt/math/is_power_of_2.hpp>
 #include <fcppt/math/next_power_of_2.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
+#include <fcppt/math/dim/static.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <boost/mpl/prior.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
 #include <boost/type_traits/is_unsigned.hpp>
 #include <boost/type_traits/promote.hpp>
@@ -60,22 +60,20 @@ typename
 boost::disable_if
 <
 	boost::is_floating_point<T>,
-	fcppt::math::dim::object
+	fcppt::math::dim::static_
 	<
 		T,
-		typename boost::mpl::prior<N>::type,
-		S
+		N::value - 1u
 	>
 >::type const
 planar_size_from_volume_size(
 	fcppt::math::dim::object<T,N,S> const &input)
 {
 	typedef
-	fcppt::math::dim::object
+	fcppt::math::dim::static_
 	<
 		T,
-		typename boost::mpl::prior<N>::type,
-		S
+		N::value - 1u
 	>
 	result_type;
 
