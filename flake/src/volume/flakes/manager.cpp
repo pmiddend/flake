@@ -46,7 +46,9 @@
 #include <fcppt/make_cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/math/matrix/identity.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
+#include <fcppt/math/vector/null.hpp>
 #include <fcppt/math/vector/output.hpp>
 #include <fcppt/random/variate.hpp>
 #include <fcppt/random/distribution/basic.hpp>
@@ -163,7 +165,10 @@ flake::volume::flakes::manager::manager(
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"camera_position")),
-		sge::renderer::vector3::null()),
+		fcppt::math::vector::null<
+			sge::renderer::vector3
+		>()
+	),
 	tile_size_parameter_(
 		shader_.pixel_program(),
 		sge::shader::parameter::name(
@@ -186,7 +191,10 @@ flake::volume::flakes::manager::manager(
 		renderer_,
 		sge::shader::parameter::is_projection_matrix(
 			true),
-		sge::renderer::matrix4::identity()),
+		fcppt::math::matrix::identity<
+			sge::renderer::matrix4
+		>()
+	),
 	texture_(
 		sge::renderer::texture::create_planar_from_path(
 			flake::media_path_from_string(

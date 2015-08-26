@@ -29,6 +29,7 @@
 #include <fcppt/text.hpp>
 #include <fcppt/assert/error.hpp>
 #include <fcppt/assert/pre.hpp>
+#include <fcppt/math/dim/contents.hpp>
 #include <fcppt/math/dim/output.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <cstdlib>
@@ -235,7 +236,12 @@ flakelib::marching_cubes::gpu::manager::classify_voxels(
 		"vertices_for_voxel_size",
 		sge::opencl::kernel::numeric_type(
 			static_cast<cl_uint>(
-				_vertices_for_voxel.get().size().content())));
+				fcppt::math::dim::contents(
+					_vertices_for_voxel.get().size()
+				)
+			)
+		)
+	);
 
 	classify_kernel_->buffer_argument(
 		"voxel_occupation",
@@ -245,7 +251,12 @@ flakelib::marching_cubes::gpu::manager::classify_voxels(
 		"voxel_occupation_size",
 		sge::opencl::kernel::numeric_type(
 			static_cast<cl_uint>(
-				_voxel_occupation.get().size().content())));
+				fcppt::math::dim::contents(
+					_voxel_occupation.get().size()
+				)
+			)
+		)
+	);
 
 	classify_kernel_->vector_argument(
 		"grid_size",
@@ -267,7 +278,12 @@ flakelib::marching_cubes::gpu::manager::classify_voxels(
 	classify_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim1(
 			sge::opencl::dim1(
-				_density.get().size().content())));
+				fcppt::math::dim::contents(
+					_density.get().size()
+				)
+			)
+		)
+	);
 
 #ifdef FLAKELIB_SCAN_DEBUG
 	this->check_debug_buffer(
@@ -322,7 +338,12 @@ flakelib::marching_cubes::gpu::manager::compact_voxels(
 		"voxel_occupation_size",
 		sge::opencl::kernel::numeric_type(
 			static_cast<cl_uint>(
-				_voxel_occupation.get().size().content())));
+				fcppt::math::dim::contents(
+					_voxel_occupation.get().size()
+				)
+			)
+		)
+	);
 
 	compact_kernel_->buffer_argument(
 		"summed_voxel_occupation",
@@ -332,7 +353,12 @@ flakelib::marching_cubes::gpu::manager::compact_voxels(
 		"summed_voxel_occupation_size",
 		sge::opencl::kernel::numeric_type(
 			static_cast<cl_uint>(
-				_summed_voxel_occupation.get().size().content())));
+				fcppt::math::dim::contents(
+					_summed_voxel_occupation.get().size()
+				)
+			)
+		)
+	);
 
 	compact_kernel_->buffer_argument(
 		"compacted_voxel_occupation",
@@ -342,12 +368,22 @@ flakelib::marching_cubes::gpu::manager::compact_voxels(
 		"compacted_voxel_occupation_size",
 		sge::opencl::kernel::numeric_type(
 			static_cast<cl_uint>(
-				_compacted_voxel_occupation.get().size().content())));
+				fcppt::math::dim::contents(
+					_compacted_voxel_occupation.get().size()
+				)
+			)
+		)
+	);
 
 	compact_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim1(
 			sge::opencl::dim1(
-				_voxel_occupation.get().size().content())));
+				fcppt::math::dim::contents(
+					_voxel_occupation.get().size()
+				)
+			)
+		)
+	);
 
 #ifdef FLAKELIB_SCAN_DEBUG
 	this->check_debug_buffer(
@@ -405,7 +441,12 @@ flakelib::marching_cubes::gpu::manager::generate_triangles(
 		"compacted_voxel_occupation_size",
 		sge::opencl::kernel::numeric_type(
 			static_cast<cl_uint>(
-				_compacted_voxel_occupation_view.get().size().content())));
+				fcppt::math::dim::contents(
+					_compacted_voxel_occupation_view.get().size()
+				)
+			)
+		)
+	);
 
 	generate_triangles_kernel_->buffer_argument(
 		"summed_vertices_for_voxel",
@@ -415,7 +456,12 @@ flakelib::marching_cubes::gpu::manager::generate_triangles(
 		"summed_vertices_for_voxel_size",
 		sge::opencl::kernel::numeric_type(
 			static_cast<cl_uint>(
-				_summed_vertices_for_voxel_view.get().size().content())));
+				fcppt::math::dim::contents(
+					_summed_vertices_for_voxel_view.get().size()
+				)
+			)
+		)
+	);
 
 	generate_triangles_kernel_->buffer_argument(
 		"volume",

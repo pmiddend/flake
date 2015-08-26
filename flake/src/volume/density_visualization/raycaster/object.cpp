@@ -59,7 +59,9 @@
 #include <fcppt/math/box/contains_point.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/matrix/identity.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
+#include <fcppt/math/vector/null.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <algorithm>
 #include <fcppt/config/external_end.hpp>
@@ -156,7 +158,10 @@ flake::volume::density_visualization::raycaster::object::object(
 		renderer_,
 		sge::shader::parameter::is_projection_matrix(
 			true),
-		sge::renderer::matrix4::identity()),
+		fcppt::math::matrix::identity<
+			sge::renderer::matrix4
+		>()
+	),
 	step_size_parameter_(
 		shader_.pixel_program(),
 		sge::shader::parameter::name(
@@ -205,7 +210,10 @@ flake::volume::density_visualization::raycaster::object::object(
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"camera_position")),
-		sge::renderer::vector3::null()),
+		fcppt::math::vector::null<
+			sge::renderer::vector3
+		>()
+	),
 	loaded_texture_(
 		shader_.pixel_program(),
 		sge::shader::parameter::name(
@@ -406,7 +414,9 @@ flake::volume::density_visualization::raycaster::object::camera_is_inside_cube()
 	return
 		fcppt::math::box::contains_point(
 			fcppt::math::box::object<sge::renderer::scalar,3>(
-				sge::renderer::vector3::null(),
+				fcppt::math::vector::null<
+					sge::renderer::vector3
+				>(),
 				fcppt::math::dim::structure_cast
 				<
 					fcppt::math::dim::static_<sge::renderer::scalar,3>,

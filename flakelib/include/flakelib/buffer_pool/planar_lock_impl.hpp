@@ -3,6 +3,7 @@
 
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/buffer_pool/planar_lock_decl.hpp>
+#include <fcppt/math/dim/contents.hpp>
 
 
 template<typename T>
@@ -17,7 +18,11 @@ flakelib::buffer_pool::planar_lock<T>::planar_lock(
 			sge::opencl::memory_object::byte_size(
 				static_cast<sge::opencl::memory_object::byte_size::value_type>(
 					static_cast<sge::opencl::memory_object::byte_size::value_type>(
-						_size.content()) *
+						fcppt::math::dim::contents(
+							_size
+						)
+					)
+					*
 					static_cast<sge::opencl::memory_object::byte_size::value_type>(
 						sizeof(T))))),
 		_size)

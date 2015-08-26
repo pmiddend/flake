@@ -8,6 +8,7 @@
 #include <sge/renderer/state/core/sampler/filter/trilinear.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/shader/load_edited_string.hpp>
+#include <fcppt/math/matrix/identity.hpp>
 
 
 flake::volume::snow_cover::object::object(
@@ -62,7 +63,10 @@ flake::volume::snow_cover::object::object(
 		_renderer,
 		sge::shader::parameter::is_projection_matrix(
 			true),
-		sge::renderer::matrix4::identity()),
+		fcppt::math::matrix::identity<
+			sge::renderer::matrix4
+		>()
+	),
 	texture_repeats_parameter_(
 		shader_.pixel_program(),
 		sge::shader::parameter::name(

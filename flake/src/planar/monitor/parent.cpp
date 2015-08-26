@@ -43,6 +43,8 @@
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
+#include <fcppt/math/matrix/identity.hpp>
+#include <fcppt/math/vector/null.hpp>
 
 
 flake::planar::monitor::parent::parent(
@@ -92,7 +94,10 @@ flake::planar::monitor::parent::parent(
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"initial_position")),
-		sge::renderer::vector2::null()),
+		fcppt::math::vector::null<
+			sge::renderer::vector2
+		>()
+	),
 	arrow_projection_parameter_(
 		arrow_shader_.vertex_program(),
 		sge::shader::parameter::name(
@@ -101,7 +106,10 @@ flake::planar::monitor::parent::parent(
 		renderer_,
 		sge::shader::parameter::is_projection_matrix(
 			true),
-		sge::renderer::matrix4::identity()),
+		fcppt::math::matrix::identity<
+			sge::renderer::matrix4
+		>()
+	),
 	sprite_buffers_(
 		renderer_,
 		sge::sprite::buffers::option::dynamic),
@@ -221,7 +229,12 @@ flake::planar::monitor::parent::render(
 				world_state(
 					renderer_.create_transform_state(
 						sge::renderer::state::ffp::transform::parameters(
-							sge::renderer::matrix4::identity())));
+							fcppt::math::matrix::identity<
+								sge::renderer::matrix4
+							>()
+						)
+					)
+				);
 
 			sge::renderer::state::ffp::transform::scoped const
 				projection_transform(

@@ -3,6 +3,7 @@
 
 #include <fcppt/math/is_power_of_2.hpp>
 #include <fcppt/math/next_power_of_2.hpp>
+#include <fcppt/math/dim/contents.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/static.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -80,7 +81,10 @@ planar_size_from_volume_size(
 	T const
 		raw_edge_size =
 			fcppt::math::discrete_sqrt(
-				input.content()),
+				fcppt::math::dim::contents(
+					input
+				)
+			),
 		pot_edge_size =
 			fcppt::math::is_power_of_2(raw_edge_size)
 			?

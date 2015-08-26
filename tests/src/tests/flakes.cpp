@@ -43,8 +43,10 @@
 #include <fcppt/cast/size_fun.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/deg_to_rad.hpp>
+#include <fcppt/math/dim/contents.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/vector/null.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <chrono>
@@ -151,7 +153,10 @@ flake::tests::flakes::flakes(
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("grid-scale")))),
 		flakelib::volume::conversion::origin(
-			sge::renderer::vector3::null()),
+			fcppt::math::vector::null<
+				sge::renderer::vector3
+			>()
+		),
 		simulation_size_),
 	wind_source_(
 		this->program_context(),
@@ -203,7 +208,10 @@ flake::tests::flakes::flakes(
 			sge::opencl::memory_object::flags::write,
 			sge::opencl::memory_object::flags::alloc_host_ptr},
 		sge::opencl::memory_object::byte_size(
-			simulation_size_.get().content() * sizeof(cl_float))),
+			fcppt::math::dim::contents(
+				simulation_size_.get()
+			)
+			* sizeof(cl_float))),
 	snow_density_view_(
 		flakelib::volume::float_view(
 			snow_density_buffer_,

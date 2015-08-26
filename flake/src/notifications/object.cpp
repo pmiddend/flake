@@ -24,6 +24,8 @@
 #include <fcppt/cast/size_fun.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
+#include <fcppt/math/dim/contents.hpp>
+#include <fcppt/math/vector/null.hpp>
 #include <fcppt/variant/object.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <chrono>
@@ -112,7 +114,13 @@ flake::notifications::object::render(
 			fcppt::cast::size_fun>(
 			renderer_.onscreen_target().viewport().get()));
 
-	if(!viewport_rect.content())
+	if(
+		fcppt::math::dim::contents(
+			viewport_rect.size()
+		)
+		==
+		0u
+	)
 		return;
 
 	sge::font::text_parameters const text_parameters(
@@ -154,7 +162,9 @@ flake::notifications::object::render(
 			*font_,
 			text_content,
 			text_parameters,
-			sge::font::vector::null(),
+			fcppt::math::vector::null<
+				sge::font::vector
+			>(),
 			text_color,
 			sge::renderer::texture::emulate_srgb::no);
 

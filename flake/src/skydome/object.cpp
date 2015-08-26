@@ -47,6 +47,7 @@
 #include <fcppt/math/pi.hpp>
 #include <fcppt/math/twopi.hpp>
 #include <fcppt/math/matrix/arithmetic.hpp>
+#include <fcppt/math/matrix/identity.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/math/vector/static.hpp>
@@ -144,7 +145,10 @@ flake::skydome::object::object(
 		renderer_,
 		sge::shader::parameter::is_projection_matrix(
 			true),
-		sge::renderer::matrix4::identity()),
+		fcppt::math::matrix::identity<
+			sge::renderer::matrix4
+		>()
+	),
 	texture_parameter_(
 		shader_.pixel_program(),
 		sge::shader::parameter::name(

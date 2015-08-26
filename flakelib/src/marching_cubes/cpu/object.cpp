@@ -46,6 +46,7 @@
 #include <fcppt/assert/optional_error.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/next_power_of_2.hpp>
+#include <fcppt/math/dim/contents.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
@@ -476,14 +477,22 @@ flakelib::marching_cubes::cpu::object::object(
 				grid_size_.get().d()))),
 	data_(
 		static_cast<real_sequence::size_type>(
-			_grid_size.get().content())),
+			fcppt::math::dim::contents(
+				_grid_size.get()
+			)
+		)
+	),
 	vertex_buffer_data_(),
 	index_data_(),
 	is_dirty_(
 		false),
 	boundary_(
 		static_cast<cl_float_sequence::size_type>(
-			_boundary.get().size().content()))
+			fcppt::math::dim::contents(
+				_boundary.get().size()
+			)
+		)
+	)
 {
 	implementation_->set_ext_data(
 		data_.data());
@@ -501,7 +510,12 @@ flakelib::marching_cubes::cpu::object::object(
 		static_cast<cl_float const *>(
 			buffer_mapping.ptr()),
 		static_cast<cl_float const *>(
-			buffer_mapping.ptr()) + _boundary.get().size().content(),
+			buffer_mapping.ptr()
+		)
+		+
+		fcppt::math::dim::contents(
+			_boundary.get().size()
+		),
 		boundary_.begin());
 }
 

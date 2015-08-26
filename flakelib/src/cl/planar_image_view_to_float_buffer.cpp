@@ -20,6 +20,7 @@
 #include <mizuiro/color/channel/red.hpp>
 #include <mizuiro/image/algorithm/binary_iteration.hpp>
 #include <mizuiro/image/algorithm/make_iterator_identity.hpp>
+#include <fcppt/math/dim/null.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/variant/get_exn.hpp>
 #include <fcppt/variant/object.hpp>
@@ -92,7 +93,9 @@ flakelib::cl::planar_image_view_to_float_buffer(
 				sge::image2d::view::size(
 					_view),
 				sge::image::color::format::r32f,
-				sge::image2d::pitch::null()
+				fcppt::math::dim::null<
+					sge::image2d::pitch
+				>()
 			).get()
 		);
 

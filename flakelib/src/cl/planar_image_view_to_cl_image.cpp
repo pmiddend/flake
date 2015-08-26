@@ -14,6 +14,7 @@
 #include <fcppt/cast/size_fun.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/vector/null.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <memory>
 #include <utility>
@@ -47,7 +48,9 @@ flakelib::cl::planar_image_view_to_cl_image(
 		*result,
 		sge::opencl::command_queue::map_flags::write,
 		sge::opencl::memory_object::rect(
-			sge::opencl::memory_object::rect::vector::null(),
+			fcppt::math::vector::null<
+				sge::opencl::memory_object::rect::vector
+			>(),
 			fcppt::math::dim::structure_cast<
 				sge::opencl::memory_object::rect::dim,
 				fcppt::cast::size_fun>(

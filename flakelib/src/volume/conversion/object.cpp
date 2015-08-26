@@ -15,17 +15,20 @@
 #include <fcppt/const.hpp>
 #include <fcppt/from_optional.hpp>
 #include <fcppt/from_std_string.hpp>
+#include <fcppt/make_int_range_count.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/optional.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/container/raw_vector.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
+#include <fcppt/math/dim/contents.hpp>
 #include <fcppt/math/dim/is_quadratic.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <cstddef>
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -214,9 +217,14 @@ flakelib::volume::conversion::object::raw_voxel_file_to_buffer(
 			scoped_mapping.ptr());
 
 	for(
-		std::size_t i = 0;
-		i < result->value().size().content();
-		++i)
+		std::size_t const i
+		:
+		fcppt::make_int_range_count(
+			fcppt::math::dim::contents(
+				result->value().size()
+			)
+		)
+	)
 	{
 		unsigned char new_char;
 

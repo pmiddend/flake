@@ -8,6 +8,8 @@
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/dim/comparison.hpp>
+#include <fcppt/math/dim/contents.hpp>
+
 
 flakelib::planar::simulation::stam::buissnesq::object::object(
 	cl::program_context const &_program_context,
@@ -74,7 +76,12 @@ flakelib::planar::simulation::stam::buissnesq::object::update(
 	kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim1(
 			sge::opencl::dim1(
-				_velocity.get().size().content())));
+				fcppt::math::dim::contents(
+					_velocity.get().size()
+				)
+			)
+		)
+	);
 }
 
 flakelib::planar::simulation::stam::buissnesq::object::~object()

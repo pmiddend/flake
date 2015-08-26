@@ -87,13 +87,19 @@ flakelib::cl::kernel::vector_argument(
 	unassigned_parameters_.erase(
 		_name);
 
+	auto const &storage(
+		_v.storage()
+	);
+
 	kernel_.argument(
 		this->index_for_name(
 			_name),
 		reinterpret_cast<unsigned char const *>(
-			_v.data()),
+			storage.data()
+		),
 		sge::opencl::memory_object::byte_size(
-			_v.size() * sizeof(cl_uint)));
+			storage.size()
+			* sizeof(cl_uint)));
 }
 
 void

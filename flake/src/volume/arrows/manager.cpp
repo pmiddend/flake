@@ -18,7 +18,9 @@
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/shader/scoped_pair.hpp>
 #include <fcppt/assign/make_container.hpp>
+#include <fcppt/math/matrix/identity.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
+#include <fcppt/math/vector/null.hpp>
 
 
 flake::volume::arrows::manager::manager(
@@ -61,13 +63,19 @@ flake::volume::arrows::manager::manager(
 		_renderer,
 		sge::shader::parameter::is_projection_matrix(
 			true),
-		sge::renderer::matrix4::identity()),
+		fcppt::math::matrix::identity<
+			sge::renderer::matrix4
+		>()
+	),
 	camera_position_parameter_(
 		shader_.vertex_program(),
 		sge::shader::parameter::name(
 			sge::cg::string(
 				"camera_position")),
-		sge::renderer::vector3::null()),
+		fcppt::math::vector::null<
+			sge::renderer::vector3
+		>()
+	),
 	children_()
 {
 }

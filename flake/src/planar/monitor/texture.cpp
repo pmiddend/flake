@@ -37,6 +37,8 @@
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/matrix/identity.hpp>
+#include <fcppt/math/vector/null.hpp>
 #include <fcppt/math/vector/output.hpp>
 #include <fcppt/math/vector/structure_cast.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -89,7 +91,9 @@ flake::planar::monitor::texture::texture(
 				0
 			),
 		sge::sprite::roles::pos{} =
-			flake::planar::monitor::dummy_sprite::object::vector::null()
+			fcppt::math::vector::null<
+				flake::planar::monitor::dummy_sprite::object::vector
+			>()
 	),
 	box_parent_(
 		sge::rucksack::axis::y,
@@ -120,7 +124,9 @@ flake::planar::monitor::texture::texture(
 		sge::font::text_parameters(
 			sge::font::align_h::variant(
 				sge::font::align_h::left())),
-		sge::font::vector::null(),
+		fcppt::math::vector::null<
+			sge::font::vector
+		>(),
 		child::parent().font_color().get(),
 		sge::renderer::texture::emulate_srgb::no)
 {
@@ -173,7 +179,12 @@ flake::planar::monitor::texture::render(
 		world_state(
 			child::parent().renderer().create_transform_state(
 				sge::renderer::state::ffp::transform::parameters(
-					sge::renderer::matrix4::identity())));
+					fcppt::math::matrix::identity<
+						sge::renderer::matrix4
+					>()
+				)
+			)
+		);
 
 	sge::renderer::state::ffp::transform::scoped const
 		projection_transform(

@@ -70,6 +70,7 @@
 #include <fcppt/log/debug.hpp>
 #include <fcppt/log/location.hpp>
 #include <fcppt/math/box/object_impl.hpp>
+#include <fcppt/math/dim/contents.hpp>
 #include <fcppt/signal/connection.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <chrono>
@@ -105,7 +106,13 @@ flake::test::base::run()
 
 		this->update();
 
-		if(this->renderer().onscreen_target().viewport().get().content())
+		if(
+			fcppt::math::dim::contents(
+				this->renderer().onscreen_target().viewport().get().size()
+			)
+			!=
+			0u
+		)
 		{
 			this->render(
 				postprocessing_.create_render_context()->get());
@@ -160,14 +167,14 @@ flake::test::base::base(
 					flake::media_path_from_string(
 						FCPPT_TEXT("config.json")))).object())),
 	local_configuration_(
-		sge::parse::json::find_and_convert_member<sge::parse::json::object const>(
+		sge::parse::json::find_and_convert_member<sge::parse::json::object>(
 			*configuration_,
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("tests/")+_json_identifier.get()))),
 	features_(
 		test::update_features_from_json(
 			_features,
-			sge::parse::json::find_and_convert_member<sge::parse::json::object const>(
+			sge::parse::json::find_and_convert_member<sge::parse::json::object>(
 				local_configuration_,
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("features"))))),

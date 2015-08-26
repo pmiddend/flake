@@ -6,6 +6,7 @@
 #include <sge/renderer/context/ffp_fwd.hpp>
 #include <sge/rucksack/widget/base_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/string.hpp>
 #include <fcppt/preprocessor/disable_gcc_warning.hpp>
 #include <fcppt/preprocessor/pop_warning.hpp>
 #include <fcppt/preprocessor/push_warning.hpp>

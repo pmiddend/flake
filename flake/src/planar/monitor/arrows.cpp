@@ -53,7 +53,11 @@
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/arithmetic.hpp>
+#include <fcppt/math/dim/contents.hpp>
+#include <fcppt/math/dim/null.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
+#include <fcppt/math/matrix/identity.hpp>
+#include <fcppt/math/vector/null.hpp>
 #include <fcppt/math/vector/structure_cast.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <limits>
@@ -88,7 +92,12 @@ flake::planar::monitor::arrows::arrows(
 					0u),
 				sge::renderer::vertex::count(
 					static_cast<sge::renderer::size_type>(
-						dimensions_.content() * 6)),
+						fcppt::math::dim::contents(
+							dimensions_
+						)
+						* 6
+					)
+				),
 				sge::renderer::resource_flags_field{
 					sge::renderer::resource_flags::readable}))),
 	cl_vb_(
@@ -129,7 +138,9 @@ flake::planar::monitor::arrows::arrows(
 		sge::font::text_parameters(
 			sge::font::align_h::variant(
 				sge::font::align_h::left())),
-		sge::font::vector::null(),
+		fcppt::math::vector::null<
+			sge::font::vector
+		>(),
 		child::parent().font_color().get(),
 		sge::renderer::texture::emulate_srgb::no)
 {
@@ -164,9 +175,13 @@ flake::planar::monitor::arrows::arrows(
 							0
 						),
 					sge::sprite::roles::pos{} =
-						dummy_sprite::object::vector::null(),
+						fcppt::math::vector::null<
+							dummy_sprite::object::vector
+						>(),
 					sge::sprite::roles::size{} =
-						dummy_sprite::object::dim::null()
+						fcppt::math::dim::null<
+							dummy_sprite::object::dim
+						>()
 				);
 		}
 	);
@@ -248,7 +263,12 @@ flake::planar::monitor::arrows::render_font(
 	sge::renderer::state::ffp::transform::object_unique_ptr const world_state(
 		child::parent().renderer().create_transform_state(
 			sge::renderer::state::ffp::transform::parameters(
-				sge::renderer::matrix4::identity())));
+				fcppt::math::matrix::identity<
+					sge::renderer::matrix4
+				>()
+			)
+		)
+	);
 
 	sge::renderer::state::ffp::transform::scoped const world_transform(
 		_context,

@@ -19,6 +19,7 @@
 #include <fcppt/text.hpp>
 #include <fcppt/cast/size_fun.hpp>
 #include <fcppt/math/box/structure_cast.hpp>
+#include <fcppt/math/vector/null.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/next_prior.hpp>
 #include <fcppt/config/external_end.hpp>
@@ -86,7 +87,9 @@ flake::test::information::manager::render(
 		sge::font::text_parameters(
 			sge::font::align_h::variant(
 				sge::font::align_h::left())),
-		sge::font::vector::null(),
+		fcppt::math::vector::null<
+			sge::font::vector
+		>(),
 		color_,
 		sge::renderer::texture::emulate_srgb::no);
 

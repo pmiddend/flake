@@ -40,6 +40,7 @@
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/structure_cast.hpp>
 #include <fcppt/math/dim/to_signed.hpp>
+#include <fcppt/math/vector/null.hpp>
 #include <fcppt/signal/connection.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <functional>
@@ -312,7 +313,9 @@ flake::postprocessing::context::switch_downsampled_target_texture(
 	)->viewport(
 		sge::renderer::target::viewport(
 			sge::renderer::pixel_rect(
-				sge::renderer::pixel_rect::vector::null(),
+				fcppt::math::vector::null<
+					sge::renderer::pixel_rect::vector
+				>(),
 				fcppt::math::dim::structure_cast<
 					sge::renderer::pixel_rect::dim,
 					fcppt::cast::size_fun>(
@@ -339,7 +342,9 @@ flake::postprocessing::context::switch_target_texture(
 	)->viewport(
 		sge::renderer::target::viewport(
 			sge::renderer::pixel_rect(
-				sge::renderer::pixel_rect::vector::null(),
+				fcppt::math::vector::null<
+					sge::renderer::pixel_rect::vector
+				>(),
 				fcppt::math::dim::structure_cast<
 					sge::renderer::pixel_rect::dim,
 					fcppt::cast::size_fun>(

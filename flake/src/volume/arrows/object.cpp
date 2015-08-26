@@ -13,6 +13,7 @@
 #include <sge/renderer/vertex/buffer_parameters.hpp>
 #include <sge/renderer/vertex/scoped_buffer.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
+#include <fcppt/math/dim/contents.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 
 
@@ -45,7 +46,11 @@ flake::volume::arrows::object::object(
 					vf::format_part
 				>(),
 				sge::renderer::vertex::count(
-					_grid_size.get().content() * 2u),
+					fcppt::math::dim::contents(
+						_grid_size.get()
+					)
+					* 2u
+				),
 				sge::renderer::resource_flags_field::null()))),
 	gl_buffer_(
 		_context,
