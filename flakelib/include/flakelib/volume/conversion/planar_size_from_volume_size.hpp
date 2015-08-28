@@ -3,6 +3,7 @@
 
 #include <fcppt/math/is_power_of_2.hpp>
 #include <fcppt/math/next_power_of_2.hpp>
+#include <fcppt/math/size_type.hpp>
 #include <fcppt/math/dim/contents.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/static.hpp>
@@ -56,7 +57,7 @@ namespace volume
 {
 namespace conversion
 {
-template<typename T,typename N,typename S>
+template<typename T,fcppt::math::size_type N,typename S>
 typename
 boost::disable_if
 <
@@ -64,7 +65,7 @@ boost::disable_if
 	fcppt::math::dim::static_
 	<
 		T,
-		N::value - 1u
+		N - 1u
 	>
 >::type const
 planar_size_from_volume_size(
@@ -74,7 +75,7 @@ planar_size_from_volume_size(
 	fcppt::math::dim::static_
 	<
 		T,
-		N::value - 1u
+		N - 1u
 	>
 	result_type;
 
