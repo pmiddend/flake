@@ -25,7 +25,7 @@
 #include <sge/timer/parameters.hpp>
 #include <sge/timer/reset_when_expired.hpp>
 #include <awl/main/exit_success.hpp>
-#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/make_unique_ptr_fcppt.hpp>
 #include <fcppt/to_std_string.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_container.hpp>
@@ -95,7 +95,7 @@ awl::main::exit_code const
 flake::tests::scan::run()
 {
 	flakelib::scan::object::unique_linear_uint_lock source_buffer(
-		fcppt::make_unique_ptr<flakelib::scan::object::linear_uint_lock>(
+		fcppt::make_unique_ptr_fcppt<flakelib::scan::object::linear_uint_lock>(
 			buffer_pool_,
 			sge::opencl::dim1(
 				64u * 128u * 128u)));

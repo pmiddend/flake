@@ -14,9 +14,6 @@
 #include <fcppt/random/distribution/basic.hpp>
 #include <fcppt/random/distribution/parameters/uniform_real.hpp>
 #include <fcppt/random/generator/minstd_rand.hpp>
-#include <fcppt/config/external_begin.hpp>
-#include <memory>
-#include <fcppt/config/external_end.hpp>
 
 
 namespace flakelib
@@ -75,7 +72,7 @@ private:
 	flakelib::value_modulator::variance variance_;
 	flakelib::value_modulator::frequency const frequency_;
 	random_generator number_generator_;
-	std::unique_ptr<variate> next_control_point_rng_;
+	variate next_control_point_rng_;
 	flakelib::duration current_time_;
 	cl_float last_control_point_;
 	cl_float next_control_point_;

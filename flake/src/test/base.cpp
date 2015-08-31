@@ -57,7 +57,7 @@
 #include <fcppt/const.hpp>
 #include <fcppt/exception.hpp>
 #include <fcppt/format.hpp>
-#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/make_unique_ptr_fcppt.hpp>
 #include <fcppt/maybe.hpp>
 #include <fcppt/optional_impl.hpp>
 #include <fcppt/text.hpp>
@@ -161,7 +161,7 @@ flake::test::base::base(
 		"woutput.txt"),
 #endif
 	configuration_(
-		fcppt::make_unique_ptr<sge::parse::json::object>(
+		fcppt::make_unique_ptr_fcppt<sge::parse::json::object>(
 			sge::parse::json::parse_string_exn(
 				sge::charconv::utf8_file_to_fcppt_string_exn(
 					flake::media_path_from_string(
@@ -179,7 +179,7 @@ flake::test::base::base(
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("features"))))),
 	systems_(
-		fcppt::make_unique_ptr<systems_instance>(
+		fcppt::make_unique_ptr_fcppt<systems_instance>(
 			sge::systems::make_list
 				(sge::systems::image2d(
 					sge::media::all_extensions))
@@ -213,17 +213,17 @@ flake::test::base::base(
 		sge::systems::quit_on_escape(
 			*systems_)),
 	shader_context_(
-		fcppt::make_unique_ptr<sge::shader::context>(
+		fcppt::make_unique_ptr_fcppt<sge::shader::context>(
 			this->renderer())),
 	opencl_system_(
-		fcppt::make_unique_ptr<sge::opencl::single_device_system::object>(
+		fcppt::make_unique_ptr_fcppt<sge::opencl::single_device_system::object>(
 			sge::opencl::single_device_system::parameters()
 				.renderer(
 					this->renderer())
 				.prefer_gpu(
 					true))),
 	program_context_(
-		fcppt::make_unique_ptr<flakelib::cl::program_context>(
+		fcppt::make_unique_ptr_fcppt<flakelib::cl::program_context>(
 			this->opencl_system().command_queue(),
 			flakelib::cl::compiler_flags(
 				flakelib::cl::cflags()+
@@ -238,7 +238,7 @@ flake::test::base::base(
 						flake::media_path_from_string(
 							FCPPT_TEXT("kernels"))))))),
 	buffer_pool_(
-		fcppt::make_unique_ptr<flakelib::buffer_pool::object>(
+		fcppt::make_unique_ptr_fcppt<flakelib::buffer_pool::object>(
 			this->opencl_system().context())),
 	desired_fps_(
 		sge::parse::json::find_and_convert_member<sge::timer::scoped_frame_limiter::ticks_per_second>(
@@ -256,7 +256,7 @@ flake::test::base::base(
 		)
 	),
 	notifications_(
-		fcppt::make_unique_ptr<flake::notifications::object>(
+		fcppt::make_unique_ptr_fcppt<flake::notifications::object>(
 			this->renderer(),
 			this->font_system(),
 			sge::parse::json::find_and_convert_member<sge::font::ttf_size>(
@@ -270,7 +270,7 @@ flake::test::base::base(
 						sge::parse::json::string_to_path(
 							FCPPT_TEXT("tests/notification-ttl-ms"))))))),
 	information_manager_(
-		fcppt::make_unique_ptr<flake::test::information::manager>(
+		fcppt::make_unique_ptr_fcppt<flake::test::information::manager>(
 			this->font_system(),
 			sge::parse::json::find_and_convert_member<sge::font::ttf_size>(
 				*configuration_,
@@ -286,9 +286,9 @@ flake::test::base::base(
 			&byte_size_to_megabytes,
 			std::bind(
 				&flakelib::buffer_pool::object::memory_consumption,
-				buffer_pool_.get()))),
+				buffer_pool_.get_pointer()))),
 	time_modifier_(
-		fcppt::make_unique_ptr<time_modifier::object>(
+		fcppt::make_unique_ptr_fcppt<time_modifier::object>(
 			this->keyboard(),
 			*notifications_,
 			sge::parse::json::find_and_convert_member<bool>(

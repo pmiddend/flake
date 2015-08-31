@@ -13,9 +13,11 @@
 #include <sge/parse/json/parse_file_exn.hpp>
 #include <sge/parse/json/path.hpp>
 #include <sge/parse/json/value.hpp>
-#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/make_unique_ptr_fcppt.hpp>
+#include <fcppt/maybe_void.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/unique_ptr_to_base.hpp>
 #include <fcppt/math/deg_to_rad.hpp>
 #include <fcppt/signal/connection.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -37,8 +39,10 @@ flake::test::camera_manager::camera_manager(
 				sge::parse::json::path(
 					FCPPT_TEXT("keyframe-import-path"))))
 		?
-			std::unique_ptr<sge::camera::base>(
-				fcppt::make_unique_ptr<sge::camera::first_person::object>(
+			fcppt::unique_ptr_to_base<
+				sge::camera::base
+			>(
+				fcppt::make_unique_ptr_fcppt<sge::camera::first_person::object>(
 					sge::camera::first_person::parameters(
 						_keyboard,
 						_mouse,
@@ -51,8 +55,10 @@ flake::test::camera_manager::camera_manager(
 									FCPPT_TEXT("camera-movement-speed")))),
 						sge::camera::coordinate_system::identity())))
 		:
-			std::unique_ptr<sge::camera::base>(
-				fcppt::make_unique_ptr<sge::camera::tracking::object>(
+			fcppt::unique_ptr_to_base<
+				sge::camera::base
+			>(
+				fcppt::make_unique_ptr_fcppt<sge::camera::tracking::object>(
 					sge::camera::optional_projection_matrix(),
 					sge::camera::tracking::json::keyframes_from_json(
 						sge::parse::json::parse_file_exn(
@@ -95,20 +101,36 @@ flake::test::camera_manager::camera_manager(
 				sge::parse::json::path(
 					FCPPT_TEXT("keyframe-export-path"))))
 		?
-			std::unique_ptr<sge::camera::tracking::json::interval_exporter>()
+			optional_interval_exporter()
 		:
-			fcppt::make_unique_ptr<sge::camera::tracking::json::interval_exporter>(
-				*camera_,
-				sge::camera::update_duration(
-					sge::parse::json::find_and_convert_member<sge::camera::update_duration::rep>(
-						_object,
-						sge::parse::json::path(
-							FCPPT_TEXT("keyframe-interval")))),
-				boost::filesystem::path(
-					sge::parse::json::find_and_convert_member<fcppt::string>(
-						_object,
-						sge::parse::json::path(
-							FCPPT_TEXT("keyframe-export-path")))))),
+			optional_interval_exporter(
+				fcppt::make_unique_ptr_fcppt<
+					sge::camera::tracking::json::interval_exporter
+				>(
+					*camera_,
+					sge::camera::update_duration(
+						sge::parse::json::find_and_convert_member<
+							sge::camera::update_duration::rep
+						>(
+							_object,
+							sge::parse::json::path(
+								FCPPT_TEXT("keyframe-interval")
+							)
+						)
+					),
+					boost::filesystem::path(
+						sge::parse::json::find_and_convert_member<
+							fcppt::string
+						>(
+							_object,
+							sge::parse::json::path(
+								FCPPT_TEXT("keyframe-export-path")
+							)
+						)
+					)
+				)
+			)
+	),
 	key_press_connection_(
 		_keyboard.key_callback(
 			sge::input::keyboard::key_callback{
@@ -129,8 +151,18 @@ void
 flake::test::camera_manager::update(
 	sge::camera::update_duration const &_duration)
 {
-	if(recording_ && exporter_)
-		exporter_->update();
+	if
+		(recording_
+	)
+		fcppt::maybe_void(
+			exporter_,
+			[](
+				auto const &_exporter
+			)
+			{
+				_exporter->update();
+			}
+		);
 
 	dynamic_cast<sge::camera::is_dynamic &>(
 		*camera_).update(

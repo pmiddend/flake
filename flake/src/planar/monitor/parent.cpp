@@ -35,7 +35,6 @@
 #include <sge/sprite/process/default_geometry_options.hpp>
 #include <sge/sprite/process/with_options.hpp>
 #include <fcppt/make_cref.hpp>
-#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/maybe.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>

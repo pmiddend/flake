@@ -31,7 +31,6 @@
 #include <sge/texture/part_raw_ref.hpp>
 #include <fcppt/from_optional.hpp>
 #include <fcppt/make_shared_ptr.hpp>
-#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/cast/size_fun.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/box/object_impl.hpp>

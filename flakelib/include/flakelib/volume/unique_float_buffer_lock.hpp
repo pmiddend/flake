@@ -2,16 +2,14 @@
 #define FLAKELIB_VOLUME_UNIQUE_FLOAT_BUFFER_LOCK_HPP_INCLUDED
 
 #include <flakelib/volume/float_buffer_lock.hpp>
-#include <fcppt/config/external_begin.hpp>
-#include <memory>
-#include <fcppt/config/external_end.hpp>
+#include <fcppt/unique_ptr_impl.hpp>
 
 namespace flakelib
 {
 namespace volume
 {
 typedef
-std::unique_ptr<volume::float_buffer_lock>
+fcppt::unique_ptr<volume::float_buffer_lock>
 unique_float_buffer_lock;
 }
 }

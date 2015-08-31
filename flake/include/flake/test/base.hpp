@@ -44,12 +44,12 @@
 #include <awl/main/exit_code.hpp>
 #include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/unique_ptr.hpp>
 #include <fcppt/symbol/class.hpp>
 #include <fcppt/config/platform.hpp>
 #include <fcppt/signal/scoped_connection.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/mpl/vector/vector10.hpp>
-#include <memory>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -178,21 +178,21 @@ private:
 	flake::scoped_wostream_file_redirection wlog_redirection_;
 	flake::scoped_wostream_file_redirection woutput_redirection_;
 #endif
-	std::unique_ptr<sge::parse::json::object> const configuration_;
+	fcppt::unique_ptr<sge::parse::json::object> const configuration_;
 	sge::parse::json::object const local_configuration_;
 	test::feature_sequence features_;
-	std::unique_ptr<systems_instance> const systems_;
+	fcppt::unique_ptr<systems_instance> const systems_;
 	fcppt::signal::scoped_connection quit_connection_;
-	std::unique_ptr<sge::shader::context> const shader_context_;
-	std::unique_ptr<sge::opencl::single_device_system::object> const opencl_system_;
-	std::unique_ptr<flakelib::cl::program_context> const program_context_;
-	std::unique_ptr<flakelib::buffer_pool::object> const buffer_pool_;
+	fcppt::unique_ptr<sge::shader::context> const shader_context_;
+	fcppt::unique_ptr<sge::opencl::single_device_system::object> const opencl_system_;
+	fcppt::unique_ptr<flakelib::cl::program_context> const program_context_;
+	fcppt::unique_ptr<flakelib::buffer_pool::object> const buffer_pool_;
 	sge::timer::scoped_frame_limiter::ticks_per_second desired_fps_;
 	fcppt::signal::scoped_connection viewport_connection_;
-	std::unique_ptr<flake::notifications::object> const notifications_;
-	std::unique_ptr<flake::test::information::manager> const information_manager_;
+	fcppt::unique_ptr<flake::notifications::object> const notifications_;
+	fcppt::unique_ptr<flake::test::information::manager> const information_manager_;
 	flake::test::information::object memory_consumption_information_;
-	std::unique_ptr<flake::time_modifier::object> const time_modifier_;
+	fcppt::unique_ptr<flake::time_modifier::object> const time_modifier_;
 	fcppt::signal::scoped_connection key_callback_connection_;
 	flake::postprocessing::context postprocessing_;
 	bool dump_this_frame_;

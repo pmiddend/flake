@@ -1,5 +1,4 @@
 #include <flakelib/value_modulator/object.hpp>
-#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/math/interpolation/trigonometric.hpp>
 #include <fcppt/random/generator/seed_from_chrono.hpp>
 
@@ -21,13 +20,12 @@ flakelib::value_modulator::object::object(
 	number_generator_(
 		fcppt::random::generator::seed_from_chrono<random_generator::seed>()),
 	next_control_point_rng_(
-		fcppt::make_unique_ptr<variate>(
-			number_generator_,
-			distribution(
-				distribution::param_type::min(
-					_mean.get() - _variance.get()),
-				distribution::param_type::sup(
-					_mean.get() + _variance.get())))),
+		number_generator_,
+		distribution(
+			distribution::param_type::min(
+				_mean.get() - _variance.get()),
+			distribution::param_type::sup(
+				_mean.get() + _variance.get()))),
 	current_time_(
 		static_cast<cl_float>(
 			0.0f)),
@@ -38,10 +36,10 @@ flakelib::value_modulator::object::object(
 		_mean);
 
 	last_control_point_ =
-		(*next_control_point_rng_)();
+		next_control_point_rng_();
 
 	next_control_point_ =
-		(*next_control_point_rng_)();
+		next_control_point_rng_();
 }
 
 void
@@ -62,7 +60,7 @@ flakelib::value_modulator::object::update(
 			next_control_point_;
 
 		next_control_point_ =
-			(*next_control_point_rng_)();
+			next_control_point_rng_();
 	}
 
 	value_modify_callback_(
@@ -80,7 +78,7 @@ flakelib::value_modulator::object::mean(
 		_mean;
 
 	next_control_point_rng_ =
-		fcppt::make_unique_ptr<variate>(
+		variate(
 			number_generator_,
 			distribution(
 				distribution::param_type::min(

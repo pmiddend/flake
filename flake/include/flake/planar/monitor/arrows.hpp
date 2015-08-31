@@ -15,15 +15,14 @@
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <sge/renderer/vertex/buffer_unique_ptr.hpp>
+#include <sge/sprite/object_decl.hpp>
 #include <sge/rucksack/widget/box.hpp>
 #include <sge/rucksack/widget/dummy.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/optional.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
-#include <fcppt/config/external_begin.hpp>
-#include <memory>
-#include <fcppt/config/external_end.hpp>
 
 
 namespace flake
@@ -84,7 +83,12 @@ private:
 	monitor::grid_scale const grid_scale_;
 	sge::renderer::vertex::buffer_unique_ptr const vb_;
 	sge::opencl::memory_object::buffer cl_vb_;
-	std::unique_ptr<dummy_sprite::object> sprite_;
+	typedef
+	fcppt::optional<
+		dummy_sprite::object
+	>
+	optional_dummy_sprite;
+	optional_dummy_sprite sprite_;
 	sge::rucksack::widget::box box_parent_;
 	sge::rucksack::widget::dummy font_box_;
 	sge::rucksack::widget::dummy sprite_box_;

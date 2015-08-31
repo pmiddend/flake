@@ -22,7 +22,7 @@
 #include <sge/timer/parameters.hpp>
 #include <sge/timer/reset_when_expired.hpp>
 #include <awl/main/exit_success.hpp>
-#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/make_unique_ptr_fcppt.hpp>
 #include <fcppt/to_std_string.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_container.hpp>
@@ -197,7 +197,7 @@ flake::tests::solipsistic::run_once()
 			velocity_buffer_->value());
 
 	flakelib::volume::unique_float_buffer_lock initial_guess_buffer_lock(
-		fcppt::make_unique_ptr<flakelib::volume::float_buffer_lock>(
+		fcppt::make_unique_ptr_fcppt<flakelib::volume::float_buffer_lock>(
 			buffer_pool_,
 			velocity_buffer_->value().size()));
 

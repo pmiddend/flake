@@ -44,7 +44,6 @@
 #include <sge/shader/load_edited_string.hpp>
 #include <sge/shader/scoped_pair.hpp>
 #include <fcppt/make_cref.hpp>
-#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/math/matrix/identity.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
@@ -56,6 +55,9 @@
 #include <fcppt/random/distribution/parameters/uniform_real.hpp>
 #include <fcppt/random/generator/minstd_rand.hpp>
 #include <fcppt/random/generator/seed_from_chrono.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <memory>
+#include <fcppt/config/external_end.hpp>
 
 
 flake::volume::flakes::manager::manager(
@@ -217,18 +219,19 @@ flake::volume::flakes::manager::manager(
 	cl_positions_buffer_(),
 	cl_point_sizes_buffer_()
 {
+	// This should be initialized directly
 	this->generate_particles(
 		_grid_size,
 		_tile_count);
 
 	cl_positions_buffer_ =
-		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
+		std::make_unique<sge::opencl::memory_object::buffer>(
 			_context,
 			*positions_buffer_,
 			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write);
 
 	cl_point_sizes_buffer_ =
-		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
+		std::make_unique<sge::opencl::memory_object::buffer>(
 			_context,
 			*point_sizes_buffer_,
 			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write);

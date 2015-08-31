@@ -37,7 +37,8 @@
 #include <sge/timer/parameters.hpp>
 #include <sge/timer/reset_when_expired.hpp>
 #include <fcppt/insert_to_fcppt_string.hpp>
-#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/make_unique_ptr_fcppt.hpp>
+#include <fcppt/maybe_void.hpp>
 #include <fcppt/strong_typedef_output.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/cast/size_fun.hpp>
@@ -421,12 +422,16 @@ flake::tests::flakes::flakes(
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("update-snow-cover")))
 		?
-			fcppt::make_unique_ptr<flake::volume::snow_cover::parallel_update>(
-				marching_cubes_manager_,
-				this->opencl_system().command_queue(),
-				snow_density_view_)
+			optional_snow_cover_parallel_update(
+				fcppt::make_unique_ptr_fcppt<flake::volume::snow_cover::parallel_update>(
+					marching_cubes_manager_,
+					this->opencl_system().command_queue(),
+					snow_density_view_
+				)
+			)
 		:
-			std::unique_ptr<flake::volume::snow_cover::parallel_update>()),
+			optional_snow_cover_parallel_update()
+	),
 /*
 		flake::volume::flakes::snow_density_view(
 			flakelib::volume::float_view(
@@ -641,19 +646,29 @@ flake::tests::flakes::update()
 				boundary_buffer_->value()),
 			current_flake_count_);
 
-		if(
-			snow_cover_parallel_update_ &&
-			sge::timer::reset_when_expired(snow_cover_update_) &&
-			this->feature_active(test::json_identifier(FCPPT_TEXT("marchingcubes"))))
-			snow_cover_parallel_update_->restart_if_finished();
-		/*
-		{
-			snow_cover_vertices_ =
-				marching_cubes_.update(
-					flakelib::marching_cubes::gpu::density_view(
-						snow_density_buffer_->value()));
-		}
-		*/
+		fcppt::maybe_void(
+			snow_cover_parallel_update_,
+			[
+				this
+			](
+				auto const &_snow_cover_parallel_update
+			)
+			{
+				if(
+					sge::timer::reset_when_expired(snow_cover_update_) &&
+					this->feature_active(test::json_identifier(FCPPT_TEXT("marchingcubes")))
+				)
+					_snow_cover_parallel_update->restart_if_finished();
+			/*
+			{
+				snow_cover_vertices_ =
+					marching_cubes_.update(
+						flakelib::marching_cubes::gpu::density_view(
+							snow_density_buffer_->value()));
+			}
+			*/
+			}
+		);
 
 		wind_strength_modulator_.update(
 			raw_delta);

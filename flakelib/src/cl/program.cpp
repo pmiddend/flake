@@ -8,7 +8,7 @@
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <fcppt/exception.hpp>
 #include <fcppt/from_std_string.hpp>
-#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/make_unique_ptr_fcppt.hpp>
 #include <fcppt/optional_impl.hpp>
 #include <fcppt/algorithm/contains.hpp>
 #include <fcppt/algorithm/shortest_levenshtein.hpp>
@@ -108,7 +108,7 @@ flakelib::cl::program::create_kernel(
 	}
 
 	return
-		fcppt::make_unique_ptr<cl::kernel>(
+		fcppt::make_unique_ptr_fcppt<cl::kernel>(
 			program_,
 			command_queue_,
 			_kernel_name,

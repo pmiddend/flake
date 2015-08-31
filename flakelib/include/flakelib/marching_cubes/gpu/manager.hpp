@@ -34,9 +34,10 @@
 #include <sge/renderer/state/core/depth_stencil/object_unique_ptr.hpp>
 #include <sge/renderer/vertex/declaration_unique_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/unique_ptr.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/intrusive/list.hpp>
-#include <memory>
+#include <string>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -135,7 +136,7 @@ private:
 	linear_uint_lock;
 
 	typedef
-	std::unique_ptr<linear_uint_lock>
+	fcppt::unique_ptr<linear_uint_lock>
 	unique_linear_uint_lock;
 
 	sge::opencl::command_queue::object &command_queue_;

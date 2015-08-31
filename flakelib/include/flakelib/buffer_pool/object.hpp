@@ -6,8 +6,8 @@
 #include <sge/opencl/memory_object/buffer_fwd.hpp>
 #include <sge/opencl/memory_object/byte_size.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/unique_ptr.hpp>
 #include <fcppt/config/external_begin.hpp>
-#include <memory>
 #include <set>
 #include <vector>
 #include <fcppt/config/external_end.hpp>
@@ -47,7 +47,7 @@ private:
 	typedef
 	std::vector
 	<
-		std::unique_ptr
+		fcppt::unique_ptr
 		<
 			sge::opencl::memory_object::buffer
 		>

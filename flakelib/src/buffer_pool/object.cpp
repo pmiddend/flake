@@ -1,6 +1,6 @@
 #include <flakelib/buffer_pool/object.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/make_unique_ptr_fcppt.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 
@@ -27,7 +27,7 @@ flakelib::buffer_pool::object::get_and_lock(
 	)
 	{
 		// Buffer is locked?
-		if(locked_buffers_.find(buffer.get()) != locked_buffers_.end())
+		if(locked_buffers_.find(buffer.get_pointer()) != locked_buffers_.end())
 			continue;
 
 		// Buffer isn't the right size?
@@ -37,7 +37,7 @@ flakelib::buffer_pool::object::get_and_lock(
 		// We found one (that was already created), so put it in
 		// locked_buffers and return it.
 		locked_buffers_.insert(
-			buffer.get());
+			buffer.get_pointer());
 
 		return
 			*buffer;
@@ -45,7 +45,7 @@ flakelib::buffer_pool::object::get_and_lock(
 
 	// We didn't find a suitable, unlocked texture. So create one
 	pool_.push_back(
-		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
+		fcppt::make_unique_ptr_fcppt<sge::opencl::memory_object::buffer>(
 			context_,
 			sge::opencl::memory_object::flags_field{
 				sge::opencl::memory_object::flags::read,
@@ -53,7 +53,7 @@ flakelib::buffer_pool::object::get_and_lock(
 			_byte_size));
 
 	locked_buffers_.insert(
-		pool_.back().get());
+		pool_.back().get_pointer());
 
 	return
 		*pool_.back();

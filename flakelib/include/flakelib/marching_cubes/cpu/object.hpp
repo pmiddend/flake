@@ -22,10 +22,8 @@
 #include <sge/renderer/vertex/declaration_unique_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/optional_impl.hpp>
+#include <fcppt/unique_ptr_impl.hpp>
 #include <fcppt/container/raw_vector.hpp>
-#include <fcppt/config/external_begin.hpp>
-#include <memory>
-#include <fcppt/config/external_end.hpp>
 
 
 namespace flakelib
@@ -111,7 +109,7 @@ private:
 	> index_buffer_;
 	sge::renderer::index::count index_buffer_size_;
 	sge::renderer::state::core::depth_stencil::object_unique_ptr const depth_stencil_state_;
-	std::unique_ptr<MarchingCubes> const implementation_;
+	fcppt::unique_ptr<MarchingCubes> const implementation_;
 	real_sequence data_;
 	renderer_scalar_sequence vertex_buffer_data_;
 	index_sequence index_data_;

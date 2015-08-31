@@ -44,7 +44,6 @@
 #include <fcppt/signal/connection.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <functional>
-#include <utility>
 #include <fcppt/config/external_end.hpp>
 
 
@@ -497,7 +496,6 @@ flake::postprocessing::context::finalize()
 		result->get());
 
 	return
-		std::move(
-			result);
+		result;
 }
 

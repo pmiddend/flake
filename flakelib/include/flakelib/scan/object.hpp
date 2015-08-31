@@ -11,9 +11,7 @@
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/config/external_begin.hpp>
-#include <memory>
-#include <fcppt/config/external_end.hpp>
+#include <fcppt/unique_ptr.hpp>
 
 
 namespace flakelib
@@ -34,7 +32,7 @@ public:
 	linear_uint_lock;
 
 	typedef
-	std::unique_ptr<linear_uint_lock>
+	fcppt::unique_ptr<linear_uint_lock>
 	unique_linear_uint_lock;
 
 	FLAKELIB_SYMBOL

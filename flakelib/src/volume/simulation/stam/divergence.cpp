@@ -7,13 +7,10 @@
 #include <flakelib/volume/simulation/stam/divergence.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/make_unique_ptr_fcppt.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/dim/comparison.hpp>
-#include <fcppt/config/external_begin.hpp>
-#include <utility>
-#include <fcppt/config/external_end.hpp>
 
 
 flakelib::volume::simulation::stam::divergence::divergence(
@@ -43,7 +40,7 @@ flakelib::volume::simulation::stam::divergence::update(
 		_buffer.size() == _boundary.get().size());
 
 	flakelib::volume::unique_float_buffer_lock result(
-		fcppt::make_unique_ptr<flakelib::volume::float_buffer_lock>(
+		fcppt::make_unique_ptr_fcppt<flakelib::volume::float_buffer_lock>(
 			buffer_pool_,
 			_buffer.size()));
 
@@ -70,8 +67,7 @@ flakelib::volume::simulation::stam::divergence::update(
 			_buffer.size()));
 
 	return
-		std::move(
-			result);
+		result;
 }
 
 flakelib::volume::simulation::stam::divergence::~divergence()

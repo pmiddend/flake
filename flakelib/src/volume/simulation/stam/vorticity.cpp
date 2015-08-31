@@ -7,7 +7,7 @@
 #include <flakelib/volume/simulation/stam/vorticity.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/make_unique_ptr_fcppt.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/dim/comparison.hpp>
@@ -44,7 +44,7 @@ flakelib::volume::simulation::stam::vorticity::apply_vorticity(
 		_velocity.get().size() == _boundary.get().size());
 
 	flakelib::volume::unique_float4_buffer_lock result(
-		fcppt::make_unique_ptr<flakelib::volume::float4_buffer_lock>(
+		fcppt::make_unique_ptr_fcppt<flakelib::volume::float4_buffer_lock>(
 			buffer_pool_,
 			_velocity.get().size()));
 
@@ -82,7 +82,7 @@ flakelib::volume::simulation::stam::vorticity::apply_confinement(
 	stam::vorticity_strength const &_strength)
 {
 	flakelib::volume::unique_float4_buffer_lock result(
-		fcppt::make_unique_ptr<flakelib::volume::float4_buffer_lock>(
+		fcppt::make_unique_ptr_fcppt<flakelib::volume::float4_buffer_lock>(
 			buffer_pool_,
 			_vorticity.size()));
 

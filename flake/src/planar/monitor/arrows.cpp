@@ -45,7 +45,6 @@
 #include <sge/texture/part_raw_ref.hpp>
 #include <fcppt/from_optional.hpp>
 #include <fcppt/make_shared_ptr.hpp>
-#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/maybe_void.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/cast/int_to_float_fun.hpp>
@@ -161,27 +160,29 @@ flake::planar::monitor::arrows::arrows(
 		)
 		{
 			sprite_ =
-				fcppt::make_unique_ptr<dummy_sprite::object>(
-					sge::sprite::roles::texture0{} =
-						dummy_sprite::object::texture_type{
-							fcppt::make_shared_ptr<
-								sge::texture::part_raw_ref
-							>(
-								_texture
-							)
-						},
-					sge::sprite::roles::connection{} =
-						this->parent().sprite_collection().connection(
-							0
-						),
-					sge::sprite::roles::pos{} =
-						fcppt::math::vector::null<
-							dummy_sprite::object::vector
-						>(),
-					sge::sprite::roles::size{} =
-						fcppt::math::dim::null<
-							dummy_sprite::object::dim
-						>()
+				optional_dummy_sprite(
+					dummy_sprite::object(
+						sge::sprite::roles::texture0{} =
+							dummy_sprite::object::texture_type{
+								fcppt::make_shared_ptr<
+									sge::texture::part_raw_ref
+								>(
+									_texture
+								)
+							},
+						sge::sprite::roles::connection{} =
+							this->parent().sprite_collection().connection(
+								0
+							),
+						sge::sprite::roles::pos{} =
+							fcppt::math::vector::null<
+								dummy_sprite::object::vector
+							>(),
+						sge::sprite::roles::size{} =
+							fcppt::math::dim::null<
+								dummy_sprite::object::dim
+							>()
+					)
 				);
 		}
 	);
@@ -229,20 +230,27 @@ flake::planar::monitor::arrows::render(
 void
 flake::planar::monitor::arrows::update()
 {
-	if(sprite_)
-	{
-		sprite_->pos(
-			fcppt::math::vector::structure_cast<
-				monitor::dummy_sprite::object::vector,
-				fcppt::cast::size_fun>(
-				sprite_box_.position()));
+	fcppt::maybe_void(
+		sprite_,
+		[
+			this
+		](
+			dummy_sprite::object &_sprite
+		)
+		{
+			_sprite.pos(
+				fcppt::math::vector::structure_cast<
+					monitor::dummy_sprite::object::vector,
+					fcppt::cast::size_fun>(
+					sprite_box_.position()));
 
-		sprite_->size(
-			fcppt::math::dim::structure_cast<
-				monitor::dummy_sprite::object::dim,
-				fcppt::cast::size_fun>(
-				sprite_box_.size()));
-	}
+			_sprite.size(
+				fcppt::math::dim::structure_cast<
+					monitor::dummy_sprite::object::dim,
+					fcppt::cast::size_fun>(
+					sprite_box_.size()));
+		}
+	);
 }
 
 sge::rucksack::widget::base &

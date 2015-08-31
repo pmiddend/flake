@@ -23,7 +23,7 @@
 #include <sge/renderer/vertex/scoped_buffer.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <fcppt/const.hpp>
-#include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/make_unique_ptr_fcppt.hpp>
 #include <fcppt/maybe.hpp>
 #include <fcppt/maybe_void.hpp>
 #include <fcppt/optional_assign.hpp>
@@ -107,15 +107,23 @@ flakelib::marching_cubes::gpu::object::update(
 		static_cast<sge::opencl::size_type>(
 			grid_size_.get().d()));
 
-	flakelib::volume::unique_uint_buffer_lock
-		vertices_for_voxel(
-			fcppt::make_unique_ptr<flakelib::volume::uint_buffer_lock>(
-				buffer_pool_,
-				grid_size_dim)),
-		voxel_occupation(
-			fcppt::make_unique_ptr<flakelib::volume::uint_buffer_lock>(
-				buffer_pool_,
-				grid_size_dim));
+	flakelib::volume::unique_uint_buffer_lock const vertices_for_voxel(
+		fcppt::make_unique_ptr_fcppt<
+			flakelib::volume::uint_buffer_lock
+		>(
+			buffer_pool_,
+			grid_size_dim
+		)
+	);
+
+	flakelib::volume::unique_uint_buffer_lock const voxel_occupation(
+		fcppt::make_unique_ptr_fcppt<
+			flakelib::volume::uint_buffer_lock
+		>(
+			buffer_pool_,
+			grid_size_dim
+		)
+	);
 
 	manager_.classify_voxels(
 		_density_view,
@@ -148,7 +156,7 @@ flakelib::marching_cubes::gpu::object::update(
 
 	flakelib::volume::unique_uint_buffer_lock
 		compacted_voxel_occupation(
-			fcppt::make_unique_ptr<flakelib::volume::uint_buffer_lock>(
+			fcppt::make_unique_ptr_fcppt<flakelib::volume::uint_buffer_lock>(
 				buffer_pool_,
 				grid_size_dim));
 
@@ -161,11 +169,6 @@ flakelib::marching_cubes::gpu::object::update(
 				grid_size_dim)),
 		flakelib::marching_cubes::gpu::compacted_voxel_occupation_view(
 			compacted_voxel_occupation->value()));
-
-
-	// Not needed anymore
-	summed_voxel_occupation.reset();
-	voxel_occupation.reset();
 
 	flakelib::scan::object::unique_linear_uint_lock summed_vertices_for_voxel(
 		manager_.scan().update(
@@ -182,22 +185,31 @@ flakelib::marching_cubes::gpu::object::update(
 			flakelib::linear::uint_view(
 				vertices_for_voxel->value().buffer()))+3u;
 
-	// Not needed anymore
-	vertices_for_voxel.reset();
-
 	this->resize_gl_buffers();
+
+	auto const &positions_buffer(
+		FCPPT_ASSERT_OPTIONAL_ERROR(
+			positions_buffer_cl_
+		)
+	);
+
+	auto const &normals_buffer(
+		FCPPT_ASSERT_OPTIONAL_ERROR(
+			normals_buffer_cl_
+		)
+	);
 
 	sge::opencl::memory_object::scoped_objects scoped_vb(
 		command_queue_,
 		fcppt::assign::make_container<sge::opencl::memory_object::base_ref_sequence>
-			(positions_buffer_cl_.get())
-			(normals_buffer_cl_.get()));
+			(positions_buffer.get_pointer())
+			(normals_buffer.get_pointer()));
 
 	manager_.generate_triangles(
 		flakelib::marching_cubes::gpu::normals_buffer(
-			*normals_buffer_cl_),
+			*normals_buffer),
 		flakelib::marching_cubes::gpu::positions_buffer(
-			*positions_buffer_cl_),
+			*positions_buffer),
 		flakelib::marching_cubes::gpu::compacted_voxel_occupation_view(
 				compacted_voxel_occupation->value()),
 		flakelib::marching_cubes::gpu::summed_vertices_for_voxel_view(
@@ -327,16 +339,18 @@ flakelib::marching_cubes::gpu::object::resize_gl_buffers()
 					sge::renderer::resource_flags_field::null()))));
 
 	positions_buffer_cl_ =
-		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
-			command_queue_.context(),
-			*positions_buffer,
-			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write);
+		optional_positions_buffer(
+			fcppt::make_unique_ptr_fcppt<sge::opencl::memory_object::buffer>(
+				command_queue_.context(),
+				*positions_buffer,
+				sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
 
 	normals_buffer_cl_ =
-		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
-			command_queue_.context(),
-			*normals_buffer,
-			sge::opencl::memory_object::renderer_buffer_lock_mode::read_write);
+		optional_normals_buffer(
+			fcppt::make_unique_ptr_fcppt<sge::opencl::memory_object::buffer>(
+				command_queue_.context(),
+				*normals_buffer,
+				sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
 }
 
 cl_uint
