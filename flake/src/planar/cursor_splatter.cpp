@@ -399,7 +399,7 @@ flake::planar::cursor_splatter::unproject_cursor_position(
 		floating_point_cursor_position_leftbottom(
 			static_cast<sge::renderer::scalar>(
 				cursor_position_viewport_coords.x()),
-			current_floating_point_viewport.h() -
+			current_floating_point_viewport.size().h() -
 			static_cast<sge::renderer::scalar>(
 				cursor_position_viewport_coords.y()),
 			static_cast<sge::renderer::scalar>(

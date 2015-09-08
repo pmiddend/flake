@@ -128,7 +128,7 @@ flake::notifications::object::render(
 			sge::font::align_h::variant(
 				sge::font::align_h::right(
 					sge::font::align_h::max_width(
-						viewport_rect.w() - border_padding)))));
+						viewport_rect.size().w() - border_padding)))));
 
 	sge::font::unit current_y =
 		border_padding;
@@ -177,7 +177,7 @@ flake::notifications::object::render(
 			_context);
 
 		current_y +=
-			static_text.rect().h() +
+			static_text.rect().size().h() +
 			line_spacing;
 	}
 }
