@@ -37,7 +37,7 @@
 #include <sge/timer/parameters.hpp>
 #include <sge/timer/reset_when_expired.hpp>
 #include <fcppt/insert_to_fcppt_string.hpp>
-#include <fcppt/make_unique_ptr_fcppt.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/maybe_void.hpp>
 #include <fcppt/strong_typedef_output.hpp>
 #include <fcppt/assign/make_container.hpp>
@@ -423,7 +423,7 @@ flake::tests::flakes::flakes(
 				FCPPT_TEXT("update-snow-cover")))
 		?
 			optional_snow_cover_parallel_update(
-				fcppt::make_unique_ptr_fcppt<flake::volume::snow_cover::parallel_update>(
+				fcppt::make_unique_ptr<flake::volume::snow_cover::parallel_update>(
 					marching_cubes_manager_,
 					this->opencl_system().command_queue(),
 					snow_density_view_

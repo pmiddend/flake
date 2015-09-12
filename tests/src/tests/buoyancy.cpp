@@ -29,7 +29,7 @@
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters.hpp>
-#include <fcppt/make_unique_ptr_fcppt.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/cast/int_to_float_fun.hpp>
@@ -134,23 +134,23 @@ flake::tests::buoyancy::buoyancy(
 			sge::image2d::view::size(
 				boundary_image_file_->view()))),
 	velocity_buffer_(
-		fcppt::make_unique_ptr_fcppt<flakelib::planar::float2_buffer_lock>(
+		fcppt::make_unique_ptr<flakelib::planar::float2_buffer_lock>(
 			this->buffer_pool(),
 			boundary_buffer_.value().size())),
 	smoke_density_buffer_(
-		fcppt::make_unique_ptr_fcppt<flakelib::planar::float_buffer_lock>(
+		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
 			this->buffer_pool(),
 			boundary_buffer_.value().size())),
 	smoke_density_source_buffer_(
-		fcppt::make_unique_ptr_fcppt<flakelib::planar::float_buffer_lock>(
+		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
 			this->buffer_pool(),
 			boundary_buffer_.value().size())),
 	temperature_density_buffer_(
-		fcppt::make_unique_ptr_fcppt<flakelib::planar::float_buffer_lock>(
+		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
 			this->buffer_pool(),
 			boundary_buffer_.value().size())),
 	temperature_density_source_buffer_(
-		fcppt::make_unique_ptr_fcppt<flakelib::planar::float_buffer_lock>(
+		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
 			this->buffer_pool(),
 			boundary_buffer_.value().size())),
 	boundary_texture_(
@@ -476,7 +476,7 @@ flake::tests::buoyancy::update()
 				velocity_buffer_->value());
 
 		flakelib::planar::unique_float_buffer_lock initial_guess_buffer_lock(
-			fcppt::make_unique_ptr_fcppt<flakelib::planar::float_buffer_lock>(
+			fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
 				this->buffer_pool(),
 				velocity_buffer_->value().size()));
 

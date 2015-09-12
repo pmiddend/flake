@@ -4,7 +4,7 @@
 #include <flakelib/cl/program_context.hpp>
 #include <flakelib/scan/object.hpp>
 #include <fcppt/insert_to_std_string.hpp>
-#include <fcppt/make_unique_ptr_fcppt.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/is_power_of_2.hpp>
@@ -73,13 +73,13 @@ flakelib::scan::object::object(
 			sge::opencl::kernel::name(
 				"uniform_update"))),
 	buffer_(
-		fcppt::make_unique_ptr_fcppt<linear_uint_lock>(
+		fcppt::make_unique_ptr<linear_uint_lock>(
 			buffer_pool_,
 			sge::opencl::dim1(
 				static_cast<sge::opencl::size_type>(
 					(MAX_BATCH_ELEMENTS / (4u * WORKGROUP_SIZE)) * sizeof(cl_uint))))),
 	debug_buffer_(
-		fcppt::make_unique_ptr_fcppt<linear_uint_lock>(
+		fcppt::make_unique_ptr<linear_uint_lock>(
 			buffer_pool_,
 			sge::opencl::dim1(
 				sizeof(
@@ -149,7 +149,7 @@ flakelib::scan::object::update(
 	    (_batch_size.get() * _source.size().w()) <= MAX_BATCH_ELEMENTS);
 
 	unique_linear_uint_lock destination_buffer(
-		fcppt::make_unique_ptr_fcppt<linear_uint_lock>(
+		fcppt::make_unique_ptr<linear_uint_lock>(
 			buffer_pool_,
 			_source.size()));
 

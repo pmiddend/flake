@@ -25,7 +25,7 @@
 #include <sge/renderer/vertex/scoped_declaration.hpp>
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <fcppt/insert_to_std_string.hpp>
-#include <fcppt/make_unique_ptr_fcppt.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/error.hpp>
 #include <fcppt/assert/pre.hpp>
@@ -132,7 +132,7 @@ flakelib::marching_cubes::gpu::manager::manager(
 	gradient_(
 		_gradient),
 	debug_buffer_(
-		fcppt::make_unique_ptr_fcppt<linear_uint_lock>(
+		fcppt::make_unique_ptr<linear_uint_lock>(
 			_buffer_pool,
 			sge::opencl::dim1(
 				sizeof(

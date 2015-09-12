@@ -15,9 +15,9 @@
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/image/planar_fwd.hpp>
 #include <sge/renderer/vertex/buffer_unique_ptr.hpp>
-#include <sge/sprite/object_decl.hpp>
 #include <sge/rucksack/widget/box.hpp>
 #include <sge/rucksack/widget/dummy.hpp>
+#include <sge/sprite/object_decl.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/optional.hpp>
 #include <fcppt/math/box/object_impl.hpp>

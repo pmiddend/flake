@@ -8,7 +8,7 @@
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/kernel/numeric_type.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <fcppt/make_unique_ptr_fcppt.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 
@@ -49,7 +49,7 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update_float2(
 		_buffer.size() == _boundary.get().size());
 
 	flakelib::planar::unique_float2_buffer_lock result(
-		fcppt::make_unique_ptr_fcppt<flakelib::planar::float2_buffer_lock>(
+		fcppt::make_unique_ptr<flakelib::planar::float2_buffer_lock>(
 			buffer_pool_,
 			_buffer.size()));
 
@@ -103,7 +103,7 @@ flakelib::planar::simulation::stam::semilagrangian_advection::update_float(
 		_buffer.size() == _boundary.get().size());
 
 	flakelib::planar::unique_float_buffer_lock result(
-		fcppt::make_unique_ptr_fcppt<flakelib::planar::float_buffer_lock>(
+		fcppt::make_unique_ptr<flakelib::planar::float_buffer_lock>(
 			buffer_pool_,
 			_buffer.size()));
 

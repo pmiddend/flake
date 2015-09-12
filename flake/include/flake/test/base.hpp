@@ -45,9 +45,9 @@
 #include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/unique_ptr.hpp>
-#include <fcppt/symbol/class.hpp>
 #include <fcppt/config/platform.hpp>
 #include <fcppt/signal/scoped_connection.hpp>
+#include <fcppt/symbol/class.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/mpl/vector/vector10.hpp>
 #include <fcppt/config/external_end.hpp>

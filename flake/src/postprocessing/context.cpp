@@ -30,7 +30,7 @@
 #include <sge/viewport/manage_callback.hpp>
 #include <sge/viewport/manager.hpp>
 #include <fcppt/make_cref.hpp>
-#include <fcppt/make_unique_ptr_fcppt.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/optional_assign.hpp>
 #include <fcppt/assert/optional_error.hpp>
 #include <fcppt/assert/pre.hpp>
@@ -179,7 +179,7 @@ flake::postprocessing::context::create_render_context()
 			rendering_result_texture_));
 
 	return
-		fcppt::make_unique_ptr_fcppt<sge::renderer::context::scoped_ffp>(
+		fcppt::make_unique_ptr<sge::renderer::context::scoped_ffp>(
 			renderer_,
 			*FCPPT_ASSERT_OPTIONAL_ERROR(
 				offscreen_target_));
@@ -466,7 +466,7 @@ sge::renderer::context::scoped_ffp_unique_ptr
 flake::postprocessing::context::finalize()
 {
 	sge::renderer::context::scoped_ffp_unique_ptr result(
-		fcppt::make_unique_ptr_fcppt<sge::renderer::context::scoped_ffp>(
+		fcppt::make_unique_ptr<sge::renderer::context::scoped_ffp>(
 			renderer_,
 			renderer_.onscreen_target()));
 

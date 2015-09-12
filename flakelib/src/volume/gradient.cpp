@@ -7,7 +7,7 @@
 #include <flakelib/volume/gradient.hpp>
 #include <sge/opencl/clinclude.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <fcppt/make_unique_ptr_fcppt.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/dim/comparison.hpp>
@@ -36,7 +36,7 @@ flakelib::volume::gradient::update(
 	volume::float_view const &_buffer)
 {
 	flakelib::volume::unique_float4_buffer_lock result(
-		fcppt::make_unique_ptr_fcppt<flakelib::volume::float4_buffer_lock>(
+		fcppt::make_unique_ptr<flakelib::volume::float4_buffer_lock>(
 			buffer_pool_,
 			_buffer.size()));
 

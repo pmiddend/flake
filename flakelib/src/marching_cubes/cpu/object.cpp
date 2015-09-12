@@ -42,7 +42,7 @@
 #include <sge/renderer/vf/dynamic/make_format.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <fcppt/insert_to_std_string.hpp>
-#include <fcppt/make_unique_ptr_fcppt.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/assert/optional_error.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/math/next_power_of_2.hpp>
@@ -468,7 +468,7 @@ flakelib::marching_cubes::cpu::object::object(
 		)
 	),
 	implementation_(
-		fcppt::make_unique_ptr_fcppt<MarchingCubes>(
+		fcppt::make_unique_ptr<MarchingCubes>(
 			static_cast<int>(
 				grid_size_.get().w()),
 			static_cast<int>(

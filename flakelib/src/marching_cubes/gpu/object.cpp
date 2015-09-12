@@ -23,7 +23,7 @@
 #include <sge/renderer/vertex/scoped_buffer.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <fcppt/const.hpp>
-#include <fcppt/make_unique_ptr_fcppt.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/maybe.hpp>
 #include <fcppt/maybe_void.hpp>
 #include <fcppt/optional_assign.hpp>
@@ -108,7 +108,7 @@ flakelib::marching_cubes::gpu::object::update(
 			grid_size_.get().d()));
 
 	flakelib::volume::unique_uint_buffer_lock const vertices_for_voxel(
-		fcppt::make_unique_ptr_fcppt<
+		fcppt::make_unique_ptr<
 			flakelib::volume::uint_buffer_lock
 		>(
 			buffer_pool_,
@@ -117,7 +117,7 @@ flakelib::marching_cubes::gpu::object::update(
 	);
 
 	flakelib::volume::unique_uint_buffer_lock const voxel_occupation(
-		fcppt::make_unique_ptr_fcppt<
+		fcppt::make_unique_ptr<
 			flakelib::volume::uint_buffer_lock
 		>(
 			buffer_pool_,
@@ -156,7 +156,7 @@ flakelib::marching_cubes::gpu::object::update(
 
 	flakelib::volume::unique_uint_buffer_lock
 		compacted_voxel_occupation(
-			fcppt::make_unique_ptr_fcppt<flakelib::volume::uint_buffer_lock>(
+			fcppt::make_unique_ptr<flakelib::volume::uint_buffer_lock>(
 				buffer_pool_,
 				grid_size_dim));
 
@@ -340,14 +340,14 @@ flakelib::marching_cubes::gpu::object::resize_gl_buffers()
 
 	positions_buffer_cl_ =
 		optional_positions_buffer(
-			fcppt::make_unique_ptr_fcppt<sge::opencl::memory_object::buffer>(
+			fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
 				command_queue_.context(),
 				*positions_buffer,
 				sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));
 
 	normals_buffer_cl_ =
 		optional_normals_buffer(
-			fcppt::make_unique_ptr_fcppt<sge::opencl::memory_object::buffer>(
+			fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
 				command_queue_.context(),
 				*normals_buffer,
 				sge::opencl::memory_object::renderer_buffer_lock_mode::read_write));

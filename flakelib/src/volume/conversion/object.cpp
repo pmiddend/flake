@@ -16,7 +16,7 @@
 #include <fcppt/from_optional.hpp>
 #include <fcppt/from_std_string.hpp>
 #include <fcppt/make_int_range_count.hpp>
-#include <fcppt/make_unique_ptr_fcppt.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/optional.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
@@ -183,7 +183,7 @@ flakelib::volume::conversion::object::raw_voxel_file_to_buffer(
 	flakelib::volume::conversion::raw_voxel_file_dimension const &_raw_voxel_file_dimension)
 {
 	flakelib::volume::unique_float_buffer_lock result(
-		fcppt::make_unique_ptr_fcppt<flakelib::volume::float_buffer_lock>(
+		fcppt::make_unique_ptr<flakelib::volume::float_buffer_lock>(
 			_buffer_pool,
 			sge::opencl::dim3(
 				_raw_voxel_file_dimension.get(),
@@ -438,7 +438,7 @@ flakelib::volume::conversion::object::binvox_file_to_buffer(
 		dimension);
 
 	flakelib::volume::unique_float_buffer_lock result(
-		fcppt::make_unique_ptr_fcppt<flakelib::volume::float_buffer_lock>(
+		fcppt::make_unique_ptr<flakelib::volume::float_buffer_lock>(
 			_buffer_pool,
 			real_grid_size));
 

@@ -1,6 +1,6 @@
 #include <flakelib/buffer_pool/object.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
-#include <fcppt/make_unique_ptr_fcppt.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 
@@ -45,7 +45,7 @@ flakelib::buffer_pool::object::get_and_lock(
 
 	// We didn't find a suitable, unlocked texture. So create one
 	pool_.push_back(
-		fcppt::make_unique_ptr_fcppt<sge::opencl::memory_object::buffer>(
+		fcppt::make_unique_ptr<sge::opencl::memory_object::buffer>(
 			context_,
 			sge::opencl::memory_object::flags_field{
 				sge::opencl::memory_object::flags::read,

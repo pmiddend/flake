@@ -13,7 +13,7 @@
 #include <sge/parse/json/parse_file_exn.hpp>
 #include <sge/parse/json/path.hpp>
 #include <sge/parse/json/value.hpp>
-#include <fcppt/make_unique_ptr_fcppt.hpp>
+#include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/maybe_void.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
@@ -42,7 +42,7 @@ flake::test::camera_manager::camera_manager(
 			fcppt::unique_ptr_to_base<
 				sge::camera::base
 			>(
-				fcppt::make_unique_ptr_fcppt<sge::camera::first_person::object>(
+				fcppt::make_unique_ptr<sge::camera::first_person::object>(
 					sge::camera::first_person::parameters(
 						_keyboard,
 						_mouse,
@@ -58,7 +58,7 @@ flake::test::camera_manager::camera_manager(
 			fcppt::unique_ptr_to_base<
 				sge::camera::base
 			>(
-				fcppt::make_unique_ptr_fcppt<sge::camera::tracking::object>(
+				fcppt::make_unique_ptr<sge::camera::tracking::object>(
 					sge::camera::optional_projection_matrix(),
 					sge::camera::tracking::json::keyframes_from_json(
 						sge::parse::json::parse_file_exn(
@@ -104,7 +104,7 @@ flake::test::camera_manager::camera_manager(
 			optional_interval_exporter()
 		:
 			optional_interval_exporter(
-				fcppt::make_unique_ptr_fcppt<
+				fcppt::make_unique_ptr<
 					sge::camera::tracking::json::interval_exporter
 				>(
 					*camera_,
