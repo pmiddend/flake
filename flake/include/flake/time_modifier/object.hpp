@@ -6,7 +6,7 @@
 #include <sge/input/keyboard/device_fwd.hpp>
 #include <sge/input/keyboard/key_event_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/signal/scoped_connection.hpp>
+#include <fcppt/signal/auto_connection.hpp>
 
 
 namespace flake
@@ -29,7 +29,7 @@ public:
 	~object();
 private:
 	flake::time_modifier::kernel kernel_;
-	fcppt::signal::scoped_connection key_connection_;
+	fcppt::signal::auto_connection key_connection_;
 	notifications::object &notifications_;
 
 	void

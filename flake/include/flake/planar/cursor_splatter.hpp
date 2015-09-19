@@ -22,7 +22,7 @@
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/optional_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
-#include <fcppt/signal/scoped_connection.hpp>
+#include <fcppt/signal/auto_connection.hpp>
 
 
 namespace flake
@@ -70,8 +70,8 @@ private:
 	fcppt::optional<flakelib::planar::float_view> optional_right_mouse_target_;
 	cl_float const splat_value_;
 	flakelib::splatter::pen::planar const pen_;
-	fcppt::signal::scoped_connection button_connection_;
-	fcppt::signal::scoped_connection move_connection_;
+	fcppt::signal::auto_connection button_connection_;
+	fcppt::signal::auto_connection move_connection_;
 	bool left_button_pushed_down_,right_button_pushed_down_;
 	sge::input::cursor::optional_position last_cursor_position_;
 

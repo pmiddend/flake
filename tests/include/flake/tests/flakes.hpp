@@ -44,7 +44,7 @@
 #include <fcppt/optional.hpp>
 #include <fcppt/unique_ptr.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
-#include <fcppt/signal/scoped_connection.hpp>
+#include <fcppt/signal/auto_connection.hpp>
 
 
 namespace flake

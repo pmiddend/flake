@@ -46,7 +46,7 @@
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/unique_ptr.hpp>
 #include <fcppt/config/platform.hpp>
-#include <fcppt/signal/scoped_connection.hpp>
+#include <fcppt/signal/auto_connection.hpp>
 #include <fcppt/symbol/class.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/mpl/vector/vector10.hpp>
@@ -182,18 +182,18 @@ private:
 	sge::parse::json::object const local_configuration_;
 	test::feature_sequence features_;
 	fcppt::unique_ptr<systems_instance> const systems_;
-	fcppt::signal::scoped_connection quit_connection_;
+	fcppt::signal::auto_connection quit_connection_;
 	fcppt::unique_ptr<sge::shader::context> const shader_context_;
 	fcppt::unique_ptr<sge::opencl::single_device_system::object> const opencl_system_;
 	fcppt::unique_ptr<flakelib::cl::program_context> const program_context_;
 	fcppt::unique_ptr<flakelib::buffer_pool::object> const buffer_pool_;
 	sge::timer::scoped_frame_limiter::ticks_per_second desired_fps_;
-	fcppt::signal::scoped_connection viewport_connection_;
+	fcppt::signal::auto_connection viewport_connection_;
 	fcppt::unique_ptr<flake::notifications::object> const notifications_;
 	fcppt::unique_ptr<flake::test::information::manager> const information_manager_;
 	flake::test::information::object memory_consumption_information_;
 	fcppt::unique_ptr<flake::time_modifier::object> const time_modifier_;
-	fcppt::signal::scoped_connection key_callback_connection_;
+	fcppt::signal::auto_connection key_callback_connection_;
 	flake::postprocessing::context postprocessing_;
 	bool dump_this_frame_;
 

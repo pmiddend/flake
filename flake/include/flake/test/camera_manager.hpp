@@ -57,7 +57,7 @@ private:
 
 	optional_interval_exporter const exporter_;
 
-	fcppt::signal::scoped_connection const key_press_connection_;
+	fcppt::signal::auto_connection const key_press_connection_;
 	bool recording_;
 
 	void

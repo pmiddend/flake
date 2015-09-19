@@ -16,7 +16,7 @@
 #include <sge/viewport/manager_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/optional.hpp>
-#include <fcppt/signal/scoped_connection.hpp>
+#include <fcppt/signal/auto_connection.hpp>
 
 
 namespace flake
@@ -58,7 +58,7 @@ private:
 	sge::shader::pair finalize_shader_;
 	sge::shader::parameter::planar_texture finalize_input_texture_parameter_;
 	sge::shader::parameter::planar_texture finalize_blurred_texture_parameter_;
-	fcppt::signal::scoped_connection viewport_connection_;
+	fcppt::signal::auto_connection viewport_connection_;
 	fcppt::optional<
 		sge::renderer::texture::planar_unique_ptr
 	> rendering_result_texture_;
