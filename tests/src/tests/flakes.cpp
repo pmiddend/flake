@@ -13,7 +13,8 @@
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/image/color/predef.hpp>
-#include <sge/input/keyboard/optional_key_code.hpp>
+#include <sge/input/key/code.hpp>
+#include <sge/input/key/optional_code.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
@@ -87,33 +88,33 @@ flake::tests::flakes::flakes(
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("arrows")),
-				sge::input::keyboard::optional_key_code(
-					sge::input::keyboard::key_code::f1)))
+				sge::input::key::optional_code(
+					sge::input::key::code::f1)))
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("snowcover")),
-				sge::input::keyboard::optional_key_code(
-					sge::input::keyboard::key_code::f3)))
+				sge::input::key::optional_code(
+					sge::input::key::code::f3)))
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("models")),
-				sge::input::keyboard::optional_key_code(
-					sge::input::keyboard::key_code::f4)))
+				sge::input::key::optional_code(
+					sge::input::key::code::f4)))
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("wireframe")),
-				sge::input::keyboard::optional_key_code(
-					sge::input::keyboard::key_code::f5)))
+				sge::input::key::optional_code(
+					sge::input::key::code::f5)))
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("marchingcubes")),
-				sge::input::keyboard::optional_key_code(
-					sge::input::keyboard::key_code::f6)))
+				sge::input::key::optional_code(
+					sge::input::key::code::f6)))
 			(test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("flakes")),
-				sge::input::keyboard::optional_key_code(
-					sge::input::keyboard::key_code::f2))),
+				sge::input::key::optional_code(
+					sge::input::key::code::f2))),
 		sge::systems::cursor_option_field{
 			sge::systems::cursor_option::exclusive}),
 	simulation_size_(
@@ -684,11 +685,11 @@ flake::tests::flakes::update()
 
 void
 flake::tests::flakes::key_down_callback(
-	sge::input::keyboard::key_code const _key)
+	sge::input::key::code const _key)
 {
 	switch(_key)
 	{
-	case sge::input::keyboard::key_code::period:
+	case sge::input::key::code::period:
 		wind_strength_modulator_.mean(
 			wind_strength_modulator_.mean() +
 			flakelib::value_modulator::mean(
@@ -699,7 +700,7 @@ flake::tests::flakes::key_down_callback(
 				fcppt::insert_to_fcppt_string(
 					wind_strength_modulator_.mean().get())));
 		break;
-	case sge::input::keyboard::key_code::comma:
+	case sge::input::key::code::comma:
 		wind_strength_modulator_.mean(
 			wind_strength_modulator_.mean() -
 			flakelib::value_modulator::mean(
@@ -710,7 +711,7 @@ flake::tests::flakes::key_down_callback(
 				fcppt::insert_to_fcppt_string(
 					wind_strength_modulator_.mean().get())));
 		break;
-	case sge::input::keyboard::key_code::_1:
+	case sge::input::key::code::_1:
 		current_flake_count_ =
 			std::max(
 				static_cast<flake::volume::flakes::count::value_type>(
@@ -724,7 +725,7 @@ flake::tests::flakes::key_down_callback(
 				fcppt::insert_to_fcppt_string(
 					current_flake_count_)));
 		break;
-	case sge::input::keyboard::key_code::_2:
+	case sge::input::key::code::_2:
 		current_flake_count_ =
 			std::min(
 				flakes_.maximum_count().get(),

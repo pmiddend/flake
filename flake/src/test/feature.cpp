@@ -2,7 +2,7 @@
 
 flake::test::feature::feature(
 	test::json_identifier const &_json_identifier,
-	sge::input::keyboard::optional_key_code const &_optional_key_code)
+	sge::input::key::optional_code const &_optional_key_code)
 :
 	json_identifier_(
 		_json_identifier),
@@ -20,7 +20,7 @@ flake::test::feature::json_identifier() const
 		json_identifier_;
 }
 
-sge::input::keyboard::optional_key_code const
+sge::input::key::optional_code const
 flake::test::feature::optional_key_code() const
 {
 	return

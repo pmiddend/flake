@@ -13,9 +13,9 @@
 #include <sge/font/system.hpp>
 #include <sge/image/color/predef.hpp>
 #include <sge/image/color/any/object.hpp>
+#include <sge/input/key/code.hpp>
 #include <sge/input/keyboard/device.hpp>
 #include <sge/input/keyboard/key_callback.hpp>
-#include <sge/input/keyboard/key_code.hpp>
 #include <sge/input/keyboard/key_event.hpp>
 #include <sge/log/global_context.hpp>
 #include <sge/media/all_extensions.hpp>
@@ -471,7 +471,7 @@ flake::test::base::viewport_callback()
 
 void
 flake::test::base::key_down_callback(
-	sge::input::keyboard::key_code)
+	sge::input::key::code)
 {
 }
 
@@ -497,7 +497,7 @@ flake::test::base::key_callback(
 	if(!e.pressed())
 		return;
 
-	if(e.key().code() == sge::input::keyboard::key_code::sysrq)
+	if(e.key().code() == sge::input::key::code::sysrq)
 	{
 		dump_this_frame_ =
 			true;
@@ -524,7 +524,7 @@ flake::test::base::key_callback(
 					&feature,
 					&e
 				](
-					sge::input::keyboard::key_code const _key_code
+					sge::input::key::code const _key_code
 				)
 				{
 					if(_key_code == e.key().code())

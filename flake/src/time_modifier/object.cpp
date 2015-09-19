@@ -63,20 +63,20 @@ flake::time_modifier::object::key_callback(
 
 	switch(e.key().code())
 	{
-		case sge::input::keyboard::key_code::p:
+		case sge::input::key::code::p:
 			notifications_.add_message(
 				notifications::text(
 					FCPPT_TEXT("toggle pause")));
 			kernel_.toggle_pause();
 			break;
-		case sge::input::keyboard::key_code::add:
+		case sge::input::key::code::add:
 			kernel_.faster();
 			notifications_.add_message(
 				notifications::text(
 					FCPPT_TEXT("time ")+
 					multiplier_string));
 			break;
-		case sge::input::keyboard::key_code::minus:
+		case sge::input::key::code::minus:
 			kernel_.slower();
 			notifications_.add_message(
 				notifications::text(

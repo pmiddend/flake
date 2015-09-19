@@ -15,7 +15,8 @@
 #include <sge/camera/matrix_conversion/world.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/image/color/predef.hpp>
-#include <sge/input/keyboard/optional_key_code.hpp>
+#include <sge/input/key/code.hpp>
+#include <sge/input/key/optional_code.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
 #include <sge/parse/json/string_to_path.hpp>
@@ -74,13 +75,13 @@ flake::tests::marching_cubes::marching_cubes(
 			(flake::test::feature(
 			 	flake::test::json_identifier(
 					FCPPT_TEXT("wireframe")),
-				sge::input::keyboard::optional_key_code(
-					sge::input::keyboard::key_code::f2)))
+				sge::input::key::optional_code(
+					sge::input::key::code::f2)))
 			(flake::test::feature(
 			 	flake::test::json_identifier(
 					FCPPT_TEXT("frameupdate")),
-				sge::input::keyboard::optional_key_code(
-					sge::input::keyboard::key_code::f3))),
+				sge::input::key::optional_code(
+					sge::input::key::code::f3))),
 		sge::systems::cursor_option_field{
 			sge::systems::cursor_option::exclusive}),
 	simulation_size_(

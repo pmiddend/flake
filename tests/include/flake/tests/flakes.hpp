@@ -128,7 +128,7 @@ private:
 
 	void
 	key_down_callback(
-		sge::input::keyboard::key_code);
+		sge::input::key::code);
 };
 }
 }
