@@ -216,6 +216,17 @@ fcppt_generate_symbol_header(
 		FLAKE_DETAIL
 )
 
+include(
+	SGECustomPath
+)
+
+sge_config_add_custom_path(
+	flake
+	flake_media
+	${CMAKE_SOURCE_DIR}/flake/flake_media
+	${INSTALL_MEDIA_DIR}
+	MEDIA_PATH_INCLUDES
+)
 
 function(
 	make_flakelib_helper_library
@@ -270,6 +281,7 @@ function(
 		${TARGETNAME}
 		PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}/include
+		${MEDIA_PATH_INCLUDES}
 		PRIVATE
 		${CMAKE_BINARY_DIR}/include)
 
@@ -302,12 +314,3 @@ if(
 		SHARED
 	)
 endif()
-
-include(
-	SGECustomPath)
-
-sge_config_add_custom_path(
-	flake
-	flake_media
-	${CMAKE_SOURCE_DIR}/flake/flake_media
-	${INSTALL_MEDIA_DIR})

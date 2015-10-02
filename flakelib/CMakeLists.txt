@@ -292,6 +292,25 @@ fcppt_generate_symbol_header(
 		FLAKELIB
 )
 
+fcppt_utils_install_data_dir(
+	INSTALL_DATA_DIR)
+
+set(
+	INSTALL_MEDIA_DIR
+	${INSTALL_DATA_DIR}/flakelib_media)
+
+include(
+	SGECustomPath
+)
+
+sge_config_add_custom_path(
+	flakelib
+	flakelib_media
+	${CMAKE_SOURCE_DIR}/flakelib/flakelib_media
+	${INSTALL_MEDIA_DIR}
+	MEDIA_PATH_INCLUDES
+)
+
 find_package(
 	mizuiro
 	REQUIRED)
@@ -350,9 +369,11 @@ function(
 		PRIVATE
 		${CMAKE_BINARY_DIR}/include
 		${mizuiro_INCLUDE_DIRS}
+		${MEDIA_PATH_INCLUDES}
 		PUBLIC
 		${fcppt_INCLUDE_DIRS}
-		${CMAKE_CURRENT_SOURCE_DIR}/include)
+		${CMAKE_CURRENT_SOURCE_DIR}/include
+	)
 
 	install(
 		TARGETS
@@ -383,19 +404,3 @@ if(
 		SHARED
 	)
 endif()
-
-fcppt_utils_install_data_dir(
-	INSTALL_DATA_DIR)
-
-set(
-	INSTALL_MEDIA_DIR
-	${INSTALL_DATA_DIR}/flakelib_media)
-
-include(
-	SGECustomPath)
-
-sge_config_add_custom_path(
-	flakelib
-	flakelib_media
-	${CMAKE_SOURCE_DIR}/flakelib/flakelib_media
-	${INSTALL_MEDIA_DIR})
