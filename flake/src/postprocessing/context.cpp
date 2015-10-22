@@ -3,7 +3,7 @@
 #include <sge/image/ds/format.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/color_buffer/optional_surface_ref.hpp>
-#include <sge/renderer/color_buffer/surface.hpp>
+#include <sge/renderer/color_buffer/writable_surface.hpp>
 #include <sge/renderer/context/ffp.hpp>
 #include <sge/renderer/context/scoped_ffp.hpp>
 #include <sge/renderer/depth_stencil_buffer/optional_surface_ref.hpp>
