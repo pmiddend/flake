@@ -85,7 +85,7 @@ flake::volume::arrows::object::render(
 		sge::renderer::vertex::first(
 			0u),
 		sge::renderer::vertex::count(
-			vb_->size()),
+			vb_->linear_size()),
 		sge::renderer::primitive_type::line_list);
 }
 

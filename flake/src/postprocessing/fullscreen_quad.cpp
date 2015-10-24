@@ -114,7 +114,7 @@ flake::postprocessing::fullscreen_quad::render(
 		sge::renderer::vertex::first(
 			0u),
 		sge::renderer::vertex::count(
-			vertex_buffer_->size()),
+			vertex_buffer_->linear_size()),
 		sge::renderer::primitive_type::triangle_strip);
 }
 

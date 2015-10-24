@@ -45,6 +45,7 @@
 #include <sge/shader/scoped_pair.hpp>
 #include <fcppt/make_cref.hpp>
 #include <fcppt/text.hpp>
+#include <fcppt/algorithm/repeat.hpp>
 #include <fcppt/math/matrix/identity.hpp>
 #include <fcppt/math/vector/arithmetic.hpp>
 #include <fcppt/math/vector/null.hpp>
@@ -322,7 +323,8 @@ flake::volume::flakes::manager::maximum_count() const
 {
 	return
 		flake::volume::flakes::count(
-			positions_buffer_->size().get());
+			positions_buffer_->linear_size()
+		);
 }
 
 flake::volume::flakes::manager::~manager()
@@ -451,36 +453,44 @@ flake::volume::flakes::manager::generate_particles(
 					static_cast<sge::renderer::scalar>(
 						_grid_size.get().d()-1u))));
 
-	for(
-		sge::renderer::vertex::count i(
-			0u);
-		i != positions_buffer_->size();
-		++i)
-	{
-		sge::renderer::vector4 starting_position =
-			sge::renderer::vector4(
-				x_rng(),
-				y_rng(),
-				z_rng(),
-				1.0f);
+	fcppt::algorithm::repeat(
+		positions_buffer_->linear_size(),
+		[
+			&x_rng,
+			&y_rng,
+			&z_rng,
+			&size_rng,
+			&part_rng,
+			&positions_it,
+			&point_sizes_it,
+			&texcoords_it,
+			this
+		]{
+			sge::renderer::vector4 starting_position =
+				sge::renderer::vector4(
+					x_rng(),
+					y_rng(),
+					z_rng(),
+					1.0f);
 
-		sge::renderer::scalar const flake_size =
-			size_rng();
+			sge::renderer::scalar const flake_size =
+				size_rng();
 
-		(*point_sizes_it++).set<vf::point_size>(
-			vf::point_size::packed_type(
-				flake_size));
+			(*point_sizes_it++).set<vf::point_size>(
+				vf::point_size::packed_type(
+					flake_size));
 
-		(*positions_it++).set<vf::position>(
-			starting_position);
+			(*positions_it++).set<vf::position>(
+				starting_position);
 
-		sge::renderer::vector2 const new_texcoord(
-			static_cast<sge::renderer::scalar>(
-				part_rng()) *
-			tile_size_.get(),
-			0.0f);
+			sge::renderer::vector2 const new_texcoord(
+				static_cast<sge::renderer::scalar>(
+					part_rng()) *
+				tile_size_.get(),
+				0.0f);
 
-		(*texcoords_it++).set<vf::texcoord>(
-			new_texcoord);
-	}
+			(*texcoords_it++).set<vf::texcoord>(
+				new_texcoord);
+		}
+	);
 }

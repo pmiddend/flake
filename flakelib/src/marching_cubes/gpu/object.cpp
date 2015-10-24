@@ -253,9 +253,9 @@ flakelib::marching_cubes::gpu::object::render(
 			);
 
 			FCPPT_ASSERT_PRE(
-				_positions_buffer->size()
+				_positions_buffer->linear_size()
 				==
-				normals_buffer->size()
+				normals_buffer->linear_size()
 			);
 
 			sge::renderer::vertex::scoped_buffer
@@ -268,7 +268,7 @@ flakelib::marching_cubes::gpu::object::render(
 
 			FCPPT_ASSERT_PRE(
 				vertex_count_.get() % 3u == 0u &&
-				vertex_count_.get() <= _positions_buffer->size().get());
+				vertex_count_.get() <= _positions_buffer->linear_size());
 
 			_context.render_nonindexed(
 				sge::renderer::vertex::first(
@@ -300,7 +300,7 @@ flakelib::marching_cubes::gpu::object::resize_gl_buffers()
 			)
 			{
 				return
-					vertex_count_.get() < _buffer->size().get();
+					vertex_count_.get() < _buffer->linear_size();
 			}
 		)
 	)
