@@ -583,8 +583,14 @@ flake::tests::flakes::update()
 	flakelib::duration const
 		raw_delta(
 			0.25f *
-			sge::timer::elapsed_and_reset<flakelib::duration>(
-				delta_timer_)),
+			std::chrono::duration_cast<
+				flakelib::duration
+			>(
+				sge::timer::elapsed_and_reset(
+					delta_timer_
+				)
+			)
+		),
 		delta(
 			boost::rational_cast<flakelib::duration::rep>(
 				this->current_multiplier().get()) *

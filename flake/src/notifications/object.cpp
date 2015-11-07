@@ -72,8 +72,14 @@ void
 flake::notifications::object::update()
 {
 	flakelib::duration const delta(
-		sge::timer::elapsed_and_reset<flakelib::duration>(
-			second_timer_));
+		std::chrono::duration_cast<
+			flakelib::duration
+		>(
+			sge::timer::elapsed_and_reset(
+				second_timer_
+			)
+		)
+	);
 
 	for(
 		message_sequence::iterator it =
