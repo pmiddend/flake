@@ -720,10 +720,13 @@ flake::tests::flakes::key_down_callback(
 	case sge::input::key::code::_1:
 		current_flake_count_ =
 			std::max(
-				static_cast<flake::volume::flakes::count::value_type>(
-					1),
-				static_cast<flake::volume::flakes::count::value_type>(
-					current_flake_count_.get() / 2u));
+				flake::volume::flakes::count{
+					1u
+				},
+				flake::volume::flakes::count{
+					current_flake_count_.get() / 2u
+				}
+			);
 
 		this->post_notification(
 			flake::notifications::text(
@@ -734,9 +737,11 @@ flake::tests::flakes::key_down_callback(
 	case sge::input::key::code::_2:
 		current_flake_count_ =
 			std::min(
-				flakes_.maximum_count().get(),
-				static_cast<flake::volume::flakes::count::value_type>(
-					current_flake_count_.get() * 2u));
+				flakes_.maximum_count(),
+				flake::volume::flakes::count{
+					current_flake_count_.get() * 2u
+				}
+			);
 
 		this->post_notification(
 			flake::notifications::text(

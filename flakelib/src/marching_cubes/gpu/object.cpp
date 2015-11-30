@@ -2,6 +2,7 @@
 #include <flakelib/buffer_pool/volume_lock_impl.hpp>
 #include <flakelib/marching_cubes/gpu/manager.hpp>
 #include <flakelib/marching_cubes/gpu/object.hpp>
+#include <flakelib/marching_cubes/gpu/vertex_count.hpp>
 #include <flakelib/marching_cubes/vf/format.hpp>
 #include <flakelib/scan/object.hpp>
 #include <flakelib/volume/unique_uint_buffer_lock.hpp>
@@ -180,10 +181,11 @@ flakelib::marching_cubes::gpu::object::update(
 	// readback total number of vertices
 	// The +3 here? I don't know :(
 	vertex_count_ =
-		this->sum_last_elements(
-			summed_vertices_for_voxel->value(),
-			flakelib::linear::uint_view(
-				vertices_for_voxel->value().buffer()))+3u;
+		flakelib::marching_cubes::gpu::vertex_count{
+			this->sum_last_elements(
+				summed_vertices_for_voxel->value(),
+				flakelib::linear::uint_view(
+					vertices_for_voxel->value().buffer()))+3u};
 
 	this->resize_gl_buffers();
 
