@@ -24,6 +24,7 @@
 #include <sge/renderer/vertex/scoped_buffer.hpp>
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <fcppt/const.hpp>
+#include <fcppt/make_ref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/maybe.hpp>
 #include <fcppt/maybe_void.hpp>
@@ -209,11 +210,18 @@ flakelib::marching_cubes::gpu::object::update(
 
 	manager_.generate_triangles(
 		flakelib::marching_cubes::gpu::normals_buffer(
-			*normals_buffer),
+			fcppt::make_ref(
+				*normals_buffer
+			)
+		),
 		flakelib::marching_cubes::gpu::positions_buffer(
-			*positions_buffer),
+			fcppt::make_ref(
+				*positions_buffer
+			)
+		),
 		flakelib::marching_cubes::gpu::compacted_voxel_occupation_view(
-				compacted_voxel_occupation->value()),
+			compacted_voxel_occupation->value()
+		),
 		flakelib::marching_cubes::gpu::summed_vertices_for_voxel_view(
 			flakelib::volume::uint_view(
 				summed_vertices_for_voxel->value().buffer(),

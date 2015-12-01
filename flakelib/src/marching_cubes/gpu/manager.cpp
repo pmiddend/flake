@@ -407,23 +407,23 @@ flakelib::marching_cubes::gpu::manager::generate_triangles(
 {
 	generate_triangles_kernel_->buffer_argument(
 		"positions",
-		_positions_buffer.get());
+		_positions_buffer.get().get());
 
 	generate_triangles_kernel_->numerical_argument(
 		"positions_size",
 		sge::opencl::kernel::numeric_type(
 			static_cast<cl_uint>(
-				_positions_buffer.get().byte_size().get() / (4u*sizeof(cl_float)))));
+				_positions_buffer.get().get().byte_size().get() / (4u*sizeof(cl_float)))));
 
 	generate_triangles_kernel_->buffer_argument(
 		"normals",
-		_normals_buffer.get());
+		_normals_buffer.get().get());
 
 	generate_triangles_kernel_->numerical_argument(
 		"normals_size",
 		sge::opencl::kernel::numeric_type(
 			static_cast<cl_uint>(
-				_positions_buffer.get().byte_size().get() / (4u*sizeof(cl_float)))));
+				_positions_buffer.get().get().byte_size().get() / (4u*sizeof(cl_float)))));
 
 	flakelib::volume::unique_float4_buffer_lock gradient(
 		gradient_.update(
