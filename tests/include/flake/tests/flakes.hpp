@@ -41,7 +41,7 @@
 #include <awl/main/exit_code.hpp>
 #include <awl/main/function_context_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/optional.hpp>
+#include <fcppt/optional/object.hpp>
 #include <fcppt/unique_ptr.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/signal/auto_connection.hpp>
@@ -103,7 +103,7 @@ private:
 	flakelib::marching_cubes::cpu::object marching_cubes_manager_;
 	flake::volume::snow_cover::object snow_cover_;
 	typedef
-	fcppt::optional<
+	fcppt::optional::object<
 		fcppt::unique_ptr<
 			flake::volume::snow_cover::parallel_update
 		>

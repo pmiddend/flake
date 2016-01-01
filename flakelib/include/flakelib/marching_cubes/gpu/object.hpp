@@ -19,7 +19,7 @@
 #include <sge/renderer/context/core_fwd.hpp>
 #include <sge/renderer/vertex/buffer_unique_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/optional.hpp>
+#include <fcppt/optional/object.hpp>
 #include <fcppt/unique_ptr.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/preprocessor/disable_gcc_warning.hpp>
@@ -75,7 +75,7 @@ private:
 	flakelib::marching_cubes::gpu::grid_size_shift const grid_size_shift_;
 	flakelib::marching_cubes::iso_level iso_level_;
 	typedef
-	fcppt::optional<
+	fcppt::optional::object<
 		sge::renderer::vertex::buffer_unique_ptr
 	>
 	optional_vertex_buffer_ptr;
@@ -83,7 +83,7 @@ private:
 	optional_vertex_buffer_ptr normals_buffer_;
 
 	typedef
-	fcppt::optional<
+	fcppt::optional::object<
 		fcppt::unique_ptr<
 			sge::opencl::memory_object::buffer
 		>
@@ -93,7 +93,7 @@ private:
 	optional_positions_buffer positions_buffer_cl_;
 
 	typedef
-	fcppt::optional<
+	fcppt::optional::object<
 		fcppt::unique_ptr<
 			sge::opencl::memory_object::buffer
 		>

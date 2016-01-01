@@ -43,9 +43,9 @@
 #include <sge/sprite/roles/size.hpp>
 #include <sge/sprite/roles/texture0.hpp>
 #include <sge/texture/part_raw_ref.hpp>
-#include <fcppt/from_optional.hpp>
+#include <fcppt/optional/from.hpp>
 #include <fcppt/make_shared_ptr.hpp>
-#include <fcppt/maybe_void.hpp>
+#include <fcppt/optional/maybe_void.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/cast/int_to_float_fun.hpp>
 #include <fcppt/cast/size_fun.hpp>
@@ -154,7 +154,7 @@ flake::planar::monitor::arrows::arrows(
 		sprite_box_,
 		sge::rucksack::alignment::left_or_top);
 
-	fcppt::maybe_void(
+	fcppt::optional::maybe_void(
 		_optional_texture,
 		[
 			this
@@ -233,7 +233,7 @@ flake::planar::monitor::arrows::render(
 void
 flake::planar::monitor::arrows::update()
 {
-	fcppt::maybe_void(
+	fcppt::optional::maybe_void(
 		sprite_,
 		[
 			this
@@ -289,7 +289,7 @@ flake::planar::monitor::arrows::render_font(
 	sge::renderer::state::ffp::transform::object_unique_ptr const projection_state(
 		child::parent().renderer().create_transform_state(
 			sge::renderer::state::ffp::transform::parameters(
-				fcppt::from_optional(
+				fcppt::optional::from(
 					_projection,
 					[
 						this
@@ -339,7 +339,7 @@ flake::planar::monitor::arrows::render_arrows(
 		*vb_);
 
 	child::parent().arrow_projection(
-		fcppt::from_optional(
+		fcppt::optional::from(
 			_projection,
 			[
 				this

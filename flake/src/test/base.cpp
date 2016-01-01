@@ -58,8 +58,8 @@
 #include <fcppt/exception.hpp>
 #include <fcppt/format.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/maybe.hpp>
-#include <fcppt/optional_impl.hpp>
+#include <fcppt/optional/maybe.hpp>
+#include <fcppt/optional/object_impl.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/to_std_string.hpp>
 #include <fcppt/assert/unreachable_message.hpp>
@@ -514,7 +514,7 @@ flake::test::base::key_callback(
 	)
 	{
 		if(
-			fcppt::maybe(
+			fcppt::optional::maybe(
 				feature.optional_key_code(),
 				fcppt::const_(
 					false

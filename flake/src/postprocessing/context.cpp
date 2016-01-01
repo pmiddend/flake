@@ -31,7 +31,7 @@
 #include <sge/viewport/manager.hpp>
 #include <fcppt/make_cref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/optional_assign.hpp>
+#include <fcppt/optional/assign.hpp>
 #include <fcppt/assert/optional_error.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_map.hpp>
@@ -219,7 +219,7 @@ flake::postprocessing::context::viewport_callback()
 		4u;
 
 	sge::renderer::texture::planar_unique_ptr const &texture0(
-		fcppt::optional_assign(
+		fcppt::optional::assign(
 			downsampled_texture_0_,
 			renderer_.create_planar_texture(
 				sge::renderer::texture::planar_parameters(
@@ -246,7 +246,7 @@ flake::postprocessing::context::viewport_callback()
 						sge::renderer::texture::capabilities::render_target})));
 
 	sge::renderer::texture::planar_unique_ptr const &rendering_result(
-		fcppt::optional_assign(
+		fcppt::optional::assign(
 			rendering_result_texture_,
 			renderer_.create_planar_texture(
 				sge::renderer::texture::planar_parameters(
@@ -268,7 +268,7 @@ flake::postprocessing::context::viewport_callback()
 			*texture0));
 
 	sge::renderer::target::offscreen_unique_ptr const &offscreen_target(
-		fcppt::optional_assign(
+		fcppt::optional::assign(
 			offscreen_target_,
 			sge::renderer::target::from_texture(
 				renderer_,
@@ -281,7 +281,7 @@ flake::postprocessing::context::viewport_callback()
 				*texture0));
 
 	sge::renderer::depth_stencil_buffer::surface_unique_ptr const &depth_stencil(
-		fcppt::optional_assign(
+		fcppt::optional::assign(
 			depth_stencil_surface_,
 			renderer_.create_depth_stencil_surface(
 				sge::renderer::depth_stencil_buffer::surface_parameters(

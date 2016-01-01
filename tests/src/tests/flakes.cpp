@@ -39,7 +39,7 @@
 #include <sge/timer/reset_when_expired.hpp>
 #include <fcppt/insert_to_fcppt_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/maybe_void.hpp>
+#include <fcppt/optional/maybe_void.hpp>
 #include <fcppt/strong_typedef_output.hpp>
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/cast/size_fun.hpp>
@@ -653,7 +653,7 @@ flake::tests::flakes::update()
 				boundary_buffer_->value()),
 			current_flake_count_);
 
-		fcppt::maybe_void(
+		fcppt::optional::maybe_void(
 			snow_cover_parallel_update_,
 			[
 				this

@@ -9,7 +9,7 @@
 #include <fcppt/exception.hpp>
 #include <fcppt/from_std_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/optional_impl.hpp>
+#include <fcppt/optional/object_impl.hpp>
 #include <fcppt/algorithm/contains.hpp>
 #include <fcppt/algorithm/shortest_levenshtein.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>

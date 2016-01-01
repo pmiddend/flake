@@ -29,7 +29,7 @@
 #include <sge/sprite/roles/size.hpp>
 #include <sge/sprite/roles/texture0.hpp>
 #include <sge/texture/part_raw_ref.hpp>
-#include <fcppt/from_optional.hpp>
+#include <fcppt/optional/from.hpp>
 #include <fcppt/make_shared_ptr.hpp>
 #include <fcppt/cast/size_fun.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
@@ -163,7 +163,7 @@ flake::planar::monitor::texture::render(
 		projection_state(
 			child::parent().renderer().create_transform_state(
 				sge::renderer::state::ffp::transform::parameters(
-					fcppt::from_optional(
+					fcppt::optional::from(
 						_projection,
 						[
 							this

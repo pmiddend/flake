@@ -13,11 +13,11 @@
 #include <sge/opencl/memory_object/scoped_objects.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <fcppt/const.hpp>
-#include <fcppt/from_optional.hpp>
+#include <fcppt/optional/from.hpp>
 #include <fcppt/from_std_string.hpp>
 #include <fcppt/make_int_range_count.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/optional.hpp>
+#include <fcppt/optional/object.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/container/raw_vector.hpp>
@@ -300,7 +300,7 @@ flakelib::volume::conversion::object::binvox_file_to_buffer(
 
 	std::cerr << "binvox: First line is correct\n";
 
-	fcppt::optional<std::size_t> optional_dimension;
+	fcppt::optional::object<std::size_t> optional_dimension;
 	while(!optional_dimension.has_value())
 	{
 		if(!std::getline(input_file,line))
@@ -360,7 +360,7 @@ flakelib::volume::conversion::object::binvox_file_to_buffer(
 					FCPPT_TEXT("\": Dimension is not equal on all axes"));
 
 		optional_dimension =
-			fcppt::optional<std::size_t>(
+			fcppt::optional::object<std::size_t>(
 				dims[0]);
 	}
 
@@ -434,7 +434,7 @@ flakelib::volume::conversion::object::binvox_file_to_buffer(
 
 	sge::opencl::dim3 const real_grid_size(
 		dimension,
-		fcppt::from_optional(_optional_height, fcppt::const_(dimension)),
+		fcppt::optional::from(_optional_height, fcppt::const_(dimension)),
 		dimension);
 
 	flakelib::volume::unique_float_buffer_lock result(

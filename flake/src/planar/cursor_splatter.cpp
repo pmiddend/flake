@@ -13,7 +13,7 @@
 #include <sge/renderer/vector3.hpp>
 #include <sge/renderer/device/core.hpp>
 #include <sge/renderer/target/onscreen.hpp>
-#include <fcppt/maybe_void.hpp>
+#include <fcppt/optional/maybe_void.hpp>
 #include <fcppt/cast/float_to_int_fun.hpp>
 #include <fcppt/cast/int_to_float_fun.hpp>
 #include <fcppt/cast/size_fun.hpp>
@@ -182,7 +182,7 @@ flake::planar::cursor_splatter::left_mouse_target(
 	flakelib::planar::float_view const &_f)
 {
 	optional_left_mouse_target_ =
-		fcppt::optional<flakelib::planar::float_view>(
+		fcppt::optional::object<flakelib::planar::float_view>(
 			_f);
 }
 
@@ -191,7 +191,7 @@ flake::planar::cursor_splatter::right_mouse_target(
 	flakelib::planar::float_view const &_f)
 {
 	optional_right_mouse_target_ =
-		fcppt::optional<flakelib::planar::float_view>(
+		fcppt::optional::object<flakelib::planar::float_view>(
 			_f);
 }
 
@@ -199,7 +199,7 @@ void
 flake::planar::cursor_splatter::update(
 	flakelib::duration const &_delta)
 {
-	fcppt::maybe_void(
+	fcppt::optional::maybe_void(
 		last_cursor_position_,
 		[
 			this,
@@ -208,7 +208,7 @@ flake::planar::cursor_splatter::update(
 			sge::input::cursor::position const _last_cursor_position
 		)
 		{
-			fcppt::maybe_void(
+			fcppt::optional::maybe_void(
 				optional_left_mouse_target_,
 				[
 					this,
@@ -226,7 +226,7 @@ flake::planar::cursor_splatter::update(
 				}
 			);
 
-			fcppt::maybe_void(
+			fcppt::optional::maybe_void(
 				optional_right_mouse_target_,
 				[
 					this,

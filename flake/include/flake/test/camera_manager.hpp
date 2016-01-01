@@ -12,7 +12,7 @@
 #include <sge/parse/json/object_fwd.hpp>
 #include <sge/viewport/manager_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/optional.hpp>
+#include <fcppt/optional/object.hpp>
 #include <fcppt/unique_ptr.hpp>
 
 
@@ -48,7 +48,7 @@ private:
 	sge::camera::perspective_projection_from_viewport perspective_projection_from_viewport_;
 
 	typedef
-	fcppt::optional<
+	fcppt::optional::object<
 		fcppt::unique_ptr<
 			sge::camera::tracking::json::interval_exporter
 		>

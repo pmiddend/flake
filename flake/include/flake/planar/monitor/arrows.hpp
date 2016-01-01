@@ -19,7 +19,7 @@
 #include <sge/rucksack/widget/dummy.hpp>
 #include <sge/sprite/object_decl.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/optional.hpp>
+#include <fcppt/optional/object.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
@@ -84,7 +84,7 @@ private:
 	sge::renderer::vertex::buffer_unique_ptr const vb_;
 	sge::opencl::memory_object::buffer cl_vb_;
 	typedef
-	fcppt::optional<
+	fcppt::optional::object<
 		dummy_sprite::object
 	>
 	optional_dummy_sprite;

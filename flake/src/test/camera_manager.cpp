@@ -14,7 +14,7 @@
 #include <sge/parse/json/path.hpp>
 #include <sge/parse/json/value.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/maybe_void.hpp>
+#include <fcppt/optional/maybe_void.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/unique_ptr_to_base.hpp>
@@ -154,7 +154,7 @@ flake::test::camera_manager::update(
 	if
 		(recording_
 	)
-		fcppt::maybe_void(
+		fcppt::optional::maybe_void(
 			exporter_,
 			[](
 				auto const &_exporter

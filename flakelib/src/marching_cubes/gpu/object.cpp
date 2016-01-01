@@ -26,9 +26,9 @@
 #include <fcppt/const.hpp>
 #include <fcppt/make_ref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/maybe.hpp>
-#include <fcppt/maybe_void.hpp>
-#include <fcppt/optional_assign.hpp>
+#include <fcppt/optional/maybe.hpp>
+#include <fcppt/optional/maybe_void.hpp>
+#include <fcppt/optional/assign.hpp>
 #include <fcppt/assert/optional_error.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_container.hpp>
@@ -247,7 +247,7 @@ void
 flakelib::marching_cubes::gpu::object::render(
 	sge::renderer::context::core &_context)
 {
-	fcppt::maybe_void(
+	fcppt::optional::maybe_void(
 		positions_buffer_,
 		[
 			&_context,
@@ -298,7 +298,7 @@ flakelib::marching_cubes::gpu::object::resize_gl_buffers()
 		return;
 
 	if(
-		fcppt::maybe(
+		fcppt::optional::maybe(
 			positions_buffer_,
 			fcppt::const_(
 				false
@@ -321,7 +321,7 @@ flakelib::marching_cubes::gpu::object::resize_gl_buffers()
 			2u * vertex_count_.get()));
 
 	sge::renderer::vertex::buffer_unique_ptr const &positions_buffer(
-		fcppt::optional_assign(
+		fcppt::optional::assign(
 			positions_buffer_,
 			manager_.renderer().create_vertex_buffer(
 				sge::renderer::vertex::buffer_parameters(
@@ -335,7 +335,7 @@ flakelib::marching_cubes::gpu::object::resize_gl_buffers()
 					sge::renderer::resource_flags_field::null()))));
 
 	sge::renderer::vertex::buffer_unique_ptr const &normals_buffer(
-		fcppt::optional_assign(
+		fcppt::optional::assign(
 			normals_buffer_,
 			manager_.renderer().create_vertex_buffer(
 				sge::renderer::vertex::buffer_parameters(
