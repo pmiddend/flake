@@ -35,7 +35,6 @@
 #include <sge/sprite/process/default_geometry_options.hpp>
 #include <sge/sprite/process/with_options.hpp>
 #include <fcppt/make_cref.hpp>
-#include <fcppt/optional/maybe.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_map.hpp>
@@ -44,6 +43,7 @@
 #include <fcppt/math/dim/output.hpp>
 #include <fcppt/math/matrix/identity.hpp>
 #include <fcppt/math/vector/null.hpp>
+#include <fcppt/optional/maybe.hpp>
 
 
 flake::planar::monitor::parent::parent(

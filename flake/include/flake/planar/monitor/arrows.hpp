@@ -19,10 +19,10 @@
 #include <sge/rucksack/widget/dummy.hpp>
 #include <sge/sprite/object_decl.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/optional/object.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
+#include <fcppt/optional/object.hpp>
 
 
 namespace flake

@@ -58,8 +58,6 @@
 #include <fcppt/exception.hpp>
 #include <fcppt/format.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/optional/maybe.hpp>
-#include <fcppt/optional/object_impl.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/to_std_string.hpp>
 #include <fcppt/assert/unreachable_message.hpp>
@@ -71,6 +69,8 @@
 #include <fcppt/log/location.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/contents.hpp>
+#include <fcppt/optional/maybe.hpp>
+#include <fcppt/optional/object_impl.hpp>
 #include <fcppt/signal/connection.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <chrono>

@@ -21,9 +21,9 @@
 #include <sge/renderer/vertex/count.hpp>
 #include <sge/renderer/vertex/declaration_unique_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/optional/object_impl.hpp>
 #include <fcppt/unique_ptr_impl.hpp>
 #include <fcppt/container/raw_vector.hpp>
+#include <fcppt/optional/object_impl.hpp>
 
 
 namespace flakelib

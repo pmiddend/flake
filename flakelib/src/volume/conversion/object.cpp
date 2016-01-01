@@ -13,11 +13,9 @@
 #include <sge/opencl/memory_object/scoped_objects.hpp>
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <fcppt/const.hpp>
-#include <fcppt/optional/from.hpp>
 #include <fcppt/from_std_string.hpp>
 #include <fcppt/make_int_range_count.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/optional/object.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/container/raw_vector.hpp>
@@ -25,6 +23,8 @@
 #include <fcppt/math/dim/contents.hpp>
 #include <fcppt/math/dim/is_quadratic.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
+#include <fcppt/optional/from.hpp>
+#include <fcppt/optional/object.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <cstddef>

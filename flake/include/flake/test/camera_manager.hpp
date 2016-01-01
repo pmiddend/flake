@@ -12,8 +12,8 @@
 #include <sge/parse/json/object_fwd.hpp>
 #include <sge/viewport/manager_fwd.hpp>
 #include <fcppt/noncopyable.hpp>
-#include <fcppt/optional/object.hpp>
 #include <fcppt/unique_ptr.hpp>
+#include <fcppt/optional/object.hpp>
 
 
 namespace flake

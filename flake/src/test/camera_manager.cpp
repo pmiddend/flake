@@ -14,11 +14,11 @@
 #include <sge/parse/json/path.hpp>
 #include <sge/parse/json/value.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/optional/maybe_void.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/unique_ptr_to_base.hpp>
 #include <fcppt/math/deg_to_rad.hpp>
+#include <fcppt/optional/maybe_void.hpp>
 #include <fcppt/signal/connection.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <functional>
