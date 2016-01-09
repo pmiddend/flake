@@ -29,6 +29,7 @@
 #include <sge/renderer/texture/mipmap/off.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters.hpp>
+#include <fcppt/make_ref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/string.hpp>
 #include <fcppt/text.hpp>
@@ -195,7 +196,8 @@ flake::tests::buoyancy::buoyancy(
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("velocity-grid-scale")))),
 		flake::planar::monitor::optional_background_texture(
-			*boundary_texture_)),
+			fcppt::make_ref(
+				*boundary_texture_))),
 	smoke_density_texture_(
 		monitor_parent_,
 		flake::planar::monitor::name(

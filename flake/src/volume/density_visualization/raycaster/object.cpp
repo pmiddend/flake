@@ -53,6 +53,7 @@
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <sge/shader/scoped_pair.hpp>
 #include <fcppt/make_cref.hpp>
+#include <fcppt/make_ref.hpp>
 #include <fcppt/assign/make_map.hpp>
 #include <fcppt/cast/int_to_float_fun.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
@@ -222,7 +223,8 @@ flake::volume::density_visualization::raycaster::object::object(
 		shader_,
 		renderer_,
 		sge::shader::parameter::planar_texture::optional_value(
-			*texture_))
+			fcppt::make_ref(
+				*texture_)))
 {
 	sge::renderer::vertex::scoped_lock vblock(
 		*vertex_buffer_,

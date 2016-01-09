@@ -8,6 +8,7 @@
 #include <sge/renderer/state/core/sampler/filter/trilinear.hpp>
 #include <sge/renderer/texture/planar.hpp>
 #include <sge/shader/load_edited_string.hpp>
+#include <fcppt/make_ref.hpp>
 #include <fcppt/math/matrix/identity.hpp>
 
 
@@ -45,7 +46,8 @@ flake::volume::snow_cover::object::object(
 		shader_,
 		_renderer,
 		sge::shader::parameter::planar_texture::optional_value(
-			*steep_texture_)),
+			fcppt::make_ref(
+				*steep_texture_))),
 	flat_texture_parameter_(
 		shader_.pixel_program(),
 		sge::shader::parameter::name(
@@ -54,7 +56,8 @@ flake::volume::snow_cover::object::object(
 		shader_,
 		_renderer,
 		sge::shader::parameter::planar_texture::optional_value(
-			*flat_texture_)),
+			fcppt::make_ref(
+				*flat_texture_))),
 	mvp_parameter_(
 		shader_.vertex_program(),
 		sge::shader::parameter::name(

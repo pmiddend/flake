@@ -44,6 +44,7 @@
 #include <sge/shader/load_edited_string.hpp>
 #include <sge/shader/scoped_pair.hpp>
 #include <fcppt/make_cref.hpp>
+#include <fcppt/make_ref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/algorithm/repeat.hpp>
 #include <fcppt/math/matrix/identity.hpp>
@@ -216,7 +217,8 @@ flake::volume::flakes::manager::manager(
 		shader_,
 		renderer_,
 		sge::shader::parameter::planar_texture::optional_value(
-			*texture_)),
+			fcppt::make_ref(
+				*texture_))),
 	cl_positions_buffer_(),
 	cl_point_sizes_buffer_()
 {

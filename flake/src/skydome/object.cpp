@@ -43,6 +43,7 @@
 #include <sge/renderer/vf/dynamic/make_part_index.hpp>
 #include <sge/shader/scoped_pair.hpp>
 #include <fcppt/make_cref.hpp>
+#include <fcppt/make_ref.hpp>
 #include <fcppt/assign/make_map.hpp>
 #include <fcppt/math/pi.hpp>
 #include <fcppt/math/twopi.hpp>
@@ -58,7 +59,7 @@
 
 namespace
 {
-sge::renderer::vector3 const
+sge::renderer::vector3
 sphere_point(
 	sge::renderer::scalar const radius,
 	sge::renderer::scalar const lat,
@@ -157,7 +158,11 @@ flake::skydome::object::object(
 		shader_,
 		renderer_,
 		sge::shader::parameter::planar_texture::optional_value(
-			*texture_)),
+			fcppt::make_ref(
+				*texture_
+			)
+		)
+	),
 	texture_state_(
 		renderer_.create_sampler_state(
 			sge::renderer::state::core::sampler::parameters(

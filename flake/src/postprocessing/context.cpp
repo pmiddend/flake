@@ -30,7 +30,9 @@
 #include <sge/viewport/manage_callback.hpp>
 #include <sge/viewport/manager.hpp>
 #include <fcppt/make_cref.hpp>
+#include <fcppt/make_ref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/reference_wrapper_to_base.hpp>
 #include <fcppt/assert/optional_error.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_map.hpp>
@@ -261,11 +263,13 @@ flake::postprocessing::context::viewport_callback()
 
 	finalize_input_texture_parameter_.set(
 		sge::shader::parameter::planar_texture::optional_value(
-			*rendering_result));
+			fcppt::make_ref(
+				*rendering_result)));
 
 	finalize_blurred_texture_parameter_.set(
 		sge::shader::parameter::planar_texture::optional_value(
-			*texture0));
+			fcppt::make_ref(
+				*texture0)));
 
 	sge::renderer::target::offscreen_unique_ptr const &offscreen_target(
 		fcppt::optional::assign(
@@ -290,7 +294,8 @@ flake::postprocessing::context::viewport_callback()
 
 	offscreen_target->depth_stencil_surface(
 		sge::renderer::depth_stencil_buffer::optional_surface_ref(
-			*depth_stencil));
+			fcppt::make_ref(
+				*depth_stencil)));
 }
 
 void
@@ -301,9 +306,18 @@ flake::postprocessing::context::switch_downsampled_target_texture(
 		offscreen_downsampled_target_
 	)->color_surface(
 		sge::renderer::color_buffer::optional_surface_ref(
-			_new_texture.level(
-				sge::renderer::texture::mipmap::level(
-					0u))),
+			fcppt::reference_wrapper_to_base<
+				sge::renderer::color_buffer::surface
+			>(
+				fcppt::make_ref(
+					_new_texture.level(
+						sge::renderer::texture::mipmap::level(
+							0u
+						)
+					)
+				)
+			)
+		),
 		sge::renderer::target::surface_index(
 			0u));
 
@@ -330,9 +344,18 @@ flake::postprocessing::context::switch_target_texture(
 		offscreen_target_
 	)->color_surface(
 		sge::renderer::color_buffer::optional_surface_ref(
-			_new_texture.level(
-				sge::renderer::texture::mipmap::level(
-					0u))),
+			fcppt::reference_wrapper_to_base<
+				sge::renderer::color_buffer::surface
+			>(
+				fcppt::make_ref(
+					_new_texture.level(
+						sge::renderer::texture::mipmap::level(
+							0u
+						)
+					)
+				)
+			)
+		),
 		sge::renderer::target::surface_index(
 			0u));
 
@@ -365,8 +388,9 @@ flake::postprocessing::context::downsample()
 
 	downsample_input_texture_parameter_.set(
 		sge::shader::parameter::planar_texture::optional_value(
-			*FCPPT_ASSERT_OPTIONAL_ERROR(
-				rendering_result_texture_)));
+			fcppt::make_ref(
+				*FCPPT_ASSERT_OPTIONAL_ERROR(
+					rendering_result_texture_))));
 
 	sge::shader::scoped_pair scoped_shader(
 		scoped_block.get(),
@@ -398,8 +422,9 @@ flake::postprocessing::context::blur_h()
 
 	blur_h_input_texture_parameter_.set(
 		sge::shader::parameter::planar_texture::optional_value(
-			*FCPPT_ASSERT_OPTIONAL_ERROR(
-				downsampled_texture_0_)));
+			fcppt::make_ref(
+				*FCPPT_ASSERT_OPTIONAL_ERROR(
+					downsampled_texture_0_))));
 
 	sge::shader::scoped_pair scoped_shader(
 		scoped_block.get(),
@@ -431,8 +456,9 @@ flake::postprocessing::context::blur_v()
 
 	blur_v_input_texture_parameter_.set(
 		sge::shader::parameter::planar_texture::optional_value(
-			*FCPPT_ASSERT_OPTIONAL_ERROR(
-				downsampled_texture_1_)));
+			fcppt::make_ref(
+				*FCPPT_ASSERT_OPTIONAL_ERROR(
+					downsampled_texture_1_))));
 
 	sge::shader::scoped_pair scoped_shader(
 		scoped_block.get(),
