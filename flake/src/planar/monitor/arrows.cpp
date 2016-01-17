@@ -44,7 +44,7 @@
 #include <sge/sprite/roles/texture0.hpp>
 #include <sge/texture/part_raw_ref.hpp>
 #include <fcppt/make_shared_ptr.hpp>
-#include <fcppt/reference_wrapper_impl.hpp>
+#include <fcppt/reference_impl.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/cast/int_to_float_fun.hpp>
 #include <fcppt/cast/size_fun.hpp>
@@ -160,7 +160,7 @@ flake::planar::monitor::arrows::arrows(
 		[
 			this
 		](
-			fcppt::reference_wrapper<
+			fcppt::reference<
 				sge::renderer::texture::planar
 			> const _texture
 		)

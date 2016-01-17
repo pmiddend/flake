@@ -32,7 +32,7 @@
 #include <fcppt/make_cref.hpp>
 #include <fcppt/make_ref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/reference_wrapper_to_base.hpp>
+#include <fcppt/reference_to_base.hpp>
 #include <fcppt/assert/optional_error.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/assign/make_map.hpp>
@@ -306,7 +306,7 @@ flake::postprocessing::context::switch_downsampled_target_texture(
 		offscreen_downsampled_target_
 	)->color_surface(
 		sge::renderer::color_buffer::optional_surface_ref(
-			fcppt::reference_wrapper_to_base<
+			fcppt::reference_to_base<
 				sge::renderer::color_buffer::surface
 			>(
 				fcppt::make_ref(
@@ -344,7 +344,7 @@ flake::postprocessing::context::switch_target_texture(
 		offscreen_target_
 	)->color_surface(
 		sge::renderer::color_buffer::optional_surface_ref(
-			fcppt::reference_wrapper_to_base<
+			fcppt::reference_to_base<
 				sge::renderer::color_buffer::surface
 			>(
 				fcppt::make_ref(
