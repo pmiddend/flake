@@ -33,12 +33,12 @@ typedef        flakelib::marching_cubes::cpu::scalar real  ;
 /** \struct Vertex "MarchingCubes.h" MarchingCubes
  * Position and normal of a vertex
  * \brief vertex structure
- * \param x X coordinate
- * \param y Y coordinate
- * \param z Z coordinate
- * \param nx X component of the normal
- * \param ny Y component of the normal
- * \param nz Z component of the normal
+ * \var x X coordinate
+ * \var y Y coordinate
+ * \var z Z coordinate
+ * \var nx X component of the normal
+ * \var ny Y component of the normal
+ * \var nz Z component of the normal
  */
 typedef struct
 {
@@ -51,9 +51,9 @@ typedef struct
 /** \struct Triangle "MarchingCubes.h" MarchingCubes
  * Indices of the oriented triange vertices
  * \brief triangle structure
- * \param v1 First vertex index
- * \param v2 Second vertex index
- * \param v3 Third vertex index
+ * \var v1 First vertex index
+ * \var v2 Second vertex index
+ * \var v3 Third vertex index
  */
 typedef struct
 {
@@ -112,9 +112,9 @@ public :
 
   /**
    * changes the size of the grid
-   * \param size_x width  of the grid
-   * \param size_y depth  of the grid
-   * \param size_z height of the grid
+   * \param size_x_param width  of the grid
+   * \param size_y_param depth  of the grid
+   * \param size_z_param height of the grid
    */
   inline void set_resolution( const int size_x_param, const int size_y_param, const int size_z_param ) { _size_x = size_x_param ;  _size_y = size_y_param ;  _size_z = size_z_param ; }
   /**
@@ -168,7 +168,7 @@ public :
    * Main algorithm : must be called after init_all
    * \param iso isovalue
    */
-  void run( real iso = (real)0.0 ) ;
+  void run( real iso = static_cast<real>(0.0) ) ;
 
 protected :
   /** tesselates one cube */

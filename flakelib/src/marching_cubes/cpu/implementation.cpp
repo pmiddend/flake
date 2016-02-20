@@ -18,13 +18,14 @@
 #include <flakelib/marching_cubes/cpu/implementation.hpp>
 #include "LookUpTable.h"
 #include <stdio.h>
+#include <cmath>
 
 // step size of the arrays of vertices and triangles
 #define ALLOC_SIZE 65536
 
 //_____________________________________________________________________________
 // print cube for debug
-void MarchingCubes::print_cube() { printf( "\t%f %f %f %f %f %f %f %f\n", _cube[0], _cube[1], _cube[2], _cube[3], _cube[4], _cube[5], _cube[6], _cube[7]) ; }
+void MarchingCubes::print_cube() {std::cout << '\t' << _cube[0] << ' ' << _cube[1] << ' ' << _cube[2] << ' ' << _cube[3] << ' ' << _cube[4] << ' ' << _cube[5] << ' ' << _cube[6] << ' ' << _cube[7] << '\n' ; }
 //_____________________________________________________________________________
 
 
@@ -89,7 +90,7 @@ void MarchingCubes::run( real iso )
       _cube[p] = get_data( _i+((p^(p>>1))&1), _j+((p>>1)&1), _k+((p>>2)&1) ) - iso ;
 	  // WTF?
       //if( fabs( _cube[p] ) < FLT_EPSILON ) _cube[p] = FLT_EPSILON ;
-      if( fabs( _cube[p] ) < static_cast<real>(FLT_EPSILON) ) _cube[p] = static_cast<real>(FLT_EPSILON) ;
+      if( std::abs( _cube[p] ) < static_cast<real>(FLT_EPSILON) ) _cube[p] = static_cast<real>(FLT_EPSILON) ;
       if( _cube[p] > 0 ) _lut_entry = static_cast<uchar>(_lut_entry + (1 << p)) ;
     }
 /*
@@ -208,10 +209,10 @@ void MarchingCubes::compute_intersection_points( real iso )
     if( _k < _size_z - 1 ) _cube[4] = get_data( _i , _j ,_k+1) - iso ;
     else                   _cube[4] = _cube[0] ;
 
-    if( fabs( _cube[0] ) < static_cast<real>(FLT_EPSILON) ) _cube[0] = static_cast<real>(FLT_EPSILON) ;
-    if( fabs( _cube[1] ) < static_cast<real>(FLT_EPSILON) ) _cube[1] = static_cast<real>(FLT_EPSILON) ;
-    if( fabs( _cube[3] ) < static_cast<real>(FLT_EPSILON) ) _cube[3] = static_cast<real>(FLT_EPSILON) ;
-    if( fabs( _cube[4] ) < static_cast<real>(FLT_EPSILON) ) _cube[4] = static_cast<real>(FLT_EPSILON) ;
+    if( std::abs( _cube[0] ) < static_cast<real>(FLT_EPSILON) ) _cube[0] = static_cast<real>(FLT_EPSILON) ;
+    if( std::abs( _cube[1] ) < static_cast<real>(FLT_EPSILON) ) _cube[1] = static_cast<real>(FLT_EPSILON) ;
+    if( std::abs( _cube[3] ) < static_cast<real>(FLT_EPSILON) ) _cube[3] = static_cast<real>(FLT_EPSILON) ;
+    if( std::abs( _cube[4] ) < static_cast<real>(FLT_EPSILON) ) _cube[4] = static_cast<real>(FLT_EPSILON) ;
 
     if( _cube[0] < 0 )
     {
@@ -252,7 +253,7 @@ bool MarchingCubes::test_face( schar face )
   default : printf( "Invalid face code %d\n", face ) ;  print_cube() ;  A = B = C = D = 0 ;
   };
 
-  if( fabs( A*C - B*D ) < static_cast<real>(FLT_EPSILON) )
+  if( std::abs( A*C - B*D ) < static_cast<real>(FLT_EPSILON) )
     return face >= 0 ;
   return face * A * ( A*C - B*D ) >= 0  ;  // face and A invert signs
 }
@@ -886,15 +887,15 @@ int MarchingCubes::add_x_vertex( )
 
   real u = ( _cube[0] ) / ( _cube[0] - _cube[1] ) ;
 
-  vert_param->x      = (real)_i+u;
-  vert_param->y      = (real) _j ;
-  vert_param->z      = (real) _k ;
+  vert_param->x      = static_cast<real>(_i)+u ;
+  vert_param->y      = static_cast<real>(_j) ;
+  vert_param->z      = static_cast<real>(_k) ;
 
   vert_param->nx = (1-u)*get_x_grad(_i,_j,_k) + u*get_x_grad(_i+1,_j,_k) ;
   vert_param->ny = (1-u)*get_y_grad(_i,_j,_k) + u*get_y_grad(_i+1,_j,_k) ;
   vert_param->nz = (1-u)*get_z_grad(_i,_j,_k) + u*get_z_grad(_i+1,_j,_k) ;
 
-  u = (real) sqrt( vert_param->nx * vert_param->nx + vert_param->ny * vert_param->ny +vert_param->nz * vert_param->nz ) ;
+  u = std::sqrt( vert_param->nx * vert_param->nx + vert_param->ny * vert_param->ny +vert_param->nz * vert_param->nz ) ;
   if( u > 0 )
   {
     vert_param->nx /= u ;
@@ -915,15 +916,15 @@ int MarchingCubes::add_y_vertex( )
 
   real u = ( _cube[0] ) / ( _cube[0] - _cube[3] ) ;
 
-  vert_param->x      = (real) _i ;
-  vert_param->y      = (real)_j+u;
-  vert_param->z      = (real) _k ;
+  vert_param->x      = static_cast<real>(_i) ;
+  vert_param->y      = static_cast<real>(_j)+u ;
+  vert_param->z      = static_cast<real>(_k) ;
 
   vert_param->nx = (1-u)*get_x_grad(_i,_j,_k) + u*get_x_grad(_i,_j+1,_k) ;
   vert_param->ny = (1-u)*get_y_grad(_i,_j,_k) + u*get_y_grad(_i,_j+1,_k) ;
   vert_param->nz = (1-u)*get_z_grad(_i,_j,_k) + u*get_z_grad(_i,_j+1,_k) ;
 
-  u = (real) sqrt( vert_param->nx * vert_param->nx + vert_param->ny * vert_param->ny +vert_param->nz * vert_param->nz ) ;
+  u = std::sqrt( vert_param->nx * vert_param->nx + vert_param->ny * vert_param->ny +vert_param->nz * vert_param->nz ) ;
   if( u > 0 )
   {
     vert_param->nx /= u ;
@@ -943,15 +944,15 @@ int MarchingCubes::add_z_vertex( )
 
   real u = ( _cube[0] ) / ( _cube[0] - _cube[4] ) ;
 
-  vert_param->x      = (real) _i ;
-  vert_param->y      = (real) _j ;
-  vert_param->z      = (real)_k+u;
+  vert_param->x      = static_cast<real>(_i) ;
+  vert_param->y      = static_cast<real>(_j) ;
+  vert_param->z      = static_cast<real>(_k)+u ;
 
   vert_param->nx = (1-u)*get_x_grad(_i,_j,_k) + u*get_x_grad(_i,_j,_k+1) ;
   vert_param->ny = (1-u)*get_y_grad(_i,_j,_k) + u*get_y_grad(_i,_j,_k+1) ;
   vert_param->nz = (1-u)*get_z_grad(_i,_j,_k) + u*get_z_grad(_i,_j,_k+1) ;
 
-  u = (real) sqrt( vert_param->nx * vert_param->nx + vert_param->ny * vert_param->ny +vert_param->nz * vert_param->nz ) ;
+  u = std::sqrt( vert_param->nx * vert_param->nx + vert_param->ny * vert_param->ny +vert_param->nz * vert_param->nz ) ;
   if( u > 0 )
   {
     vert_param->nx /= u ;
@@ -1004,7 +1005,7 @@ int MarchingCubes::add_c_vertex( )
   vert_param->y  /= u ;
   vert_param->z  /= u ;
 
-  u = (real) sqrt( vert_param->nx * vert_param->nx + vert_param->ny * vert_param->ny +vert_param->nz * vert_param->nz ) ;
+  u = std::sqrt( vert_param->nx * vert_param->nx + vert_param->ny * vert_param->ny +vert_param->nz * vert_param->nz ) ;
   if( u > 0 )
   {
     vert_param->nx /= u ;
