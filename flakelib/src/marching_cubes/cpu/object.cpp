@@ -87,6 +87,7 @@ volume_index(
 			_position.w()];
 }
 
+#if 0
 bool
 filled_with_snow(
 	flakelib::marching_cubes::cpu::scalar const _snow)
@@ -425,6 +426,7 @@ apply_stability_conditions_whole_view(
 		}
 	}
 }
+#endif
 }
 
 flakelib::marching_cubes::cpu::object::object(
@@ -859,6 +861,7 @@ flakelib::marching_cubes::cpu::object::fill_index_buffer()
 	if(!implementation_->ntrigs())
 		return;
 
+/*
 	typedef
 	sge::renderer::index::format_32
 	index_format;
@@ -869,7 +872,6 @@ flakelib::marching_cubes::cpu::object::fill_index_buffer()
 				implementation_->ntrigs()) *
 			3u);
 
-/*
 	if(
 		!index_buffer_ ||
 		index_buffer_->size() < index_buffer_size_)

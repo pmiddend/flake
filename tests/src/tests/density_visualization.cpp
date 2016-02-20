@@ -243,12 +243,7 @@ flake::tests::density_visualization::update()
 				sge::timer::elapsed_and_reset(
 					delta_timer_
 				)
-			),
-		delta =
-			boost::rational_cast<flakelib::duration::rep>(
-				this->current_multiplier().get()) *
-			raw_delta;
-
+			);
 	camera_.update(
 		10.0f * raw_delta);
 

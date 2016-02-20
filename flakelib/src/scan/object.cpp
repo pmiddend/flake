@@ -28,8 +28,6 @@ const cl_uint WORKGROUP_SIZE = 512u;
 // Common definitions
 ////////////////////////////////////////////////////////////////////////////////
 const cl_uint MAX_BATCH_ELEMENTS = 64u * 1048576u;
-const cl_uint MIN_SHORT_ARRAY_SIZE = 4u;
-const cl_uint MAX_SHORT_ARRAY_SIZE = 4u * WORKGROUP_SIZE;
 const cl_uint MIN_LARGE_ARRAY_SIZE = 8u * WORKGROUP_SIZE;
 const cl_uint MAX_LARGE_ARRAY_SIZE = 4u * WORKGROUP_SIZE * WORKGROUP_SIZE;
 

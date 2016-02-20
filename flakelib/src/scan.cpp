@@ -97,10 +97,10 @@ flakelib::scan::scanExclusiveLocal1(
     cl_int ciErrNum;
     size_t localWorkSize, globalWorkSize;
 
-    ciErrNum  = clSetKernelArg(ckScanExclusiveLocal1.impl(), 0, sizeof(cl_mem), (void *)&d_Dst);
-    ciErrNum |= clSetKernelArg(ckScanExclusiveLocal1.impl(), 1, sizeof(cl_mem), (void *)&d_Src);
+    ciErrNum  = clSetKernelArg(ckScanExclusiveLocal1.impl(), 0, sizeof(cl_mem), &d_Dst);
+    ciErrNum |= clSetKernelArg(ckScanExclusiveLocal1.impl(), 1, sizeof(cl_mem), &d_Src);
     ciErrNum |= clSetKernelArg(ckScanExclusiveLocal1.impl(), 2, 2 * WORKGROUP_SIZE * sizeof(cl_uint), NULL);
-    ciErrNum |= clSetKernelArg(ckScanExclusiveLocal1.impl(), 3, sizeof(cl_uint), (void *)&size);
+    ciErrNum |= clSetKernelArg(ckScanExclusiveLocal1.impl(), 3, sizeof(cl_uint), &size);
     FCPPT_ASSERT_ERROR(
 	    ciErrNum == CL_SUCCESS);
 
@@ -161,12 +161,12 @@ flakelib::scan::scanExclusiveLocal2(
     size_t localWorkSize, globalWorkSize;
 
     cl_uint elements = n * size;
-    ciErrNum  = clSetKernelArg(ckScanExclusiveLocal2.impl(), 0, sizeof(cl_mem), (void *)&d_Buffer);
-    ciErrNum |= clSetKernelArg(ckScanExclusiveLocal2.impl(), 1, sizeof(cl_mem), (void *)&d_Dst);
-    ciErrNum |= clSetKernelArg(ckScanExclusiveLocal2.impl(), 2, sizeof(cl_mem), (void *)&d_Src);
+    ciErrNum  = clSetKernelArg(ckScanExclusiveLocal2.impl(), 0, sizeof(cl_mem), &d_Buffer);
+    ciErrNum |= clSetKernelArg(ckScanExclusiveLocal2.impl(), 1, sizeof(cl_mem), &d_Dst);
+    ciErrNum |= clSetKernelArg(ckScanExclusiveLocal2.impl(), 2, sizeof(cl_mem), &d_Src);
     ciErrNum |= clSetKernelArg(ckScanExclusiveLocal2.impl(), 3, 2 * WORKGROUP_SIZE * sizeof(cl_uint), NULL);
-    ciErrNum |= clSetKernelArg(ckScanExclusiveLocal2.impl(), 4, sizeof(cl_uint), (void *)&elements);
-    ciErrNum |= clSetKernelArg(ckScanExclusiveLocal2.impl(), 5, sizeof(cl_uint), (void *)&size);
+    ciErrNum |= clSetKernelArg(ckScanExclusiveLocal2.impl(), 4, sizeof(cl_uint), &elements);
+    ciErrNum |= clSetKernelArg(ckScanExclusiveLocal2.impl(), 5, sizeof(cl_uint), &size);
     FCPPT_ASSERT_ERROR(
 	    ciErrNum == CL_SUCCESS);
 
@@ -188,8 +188,8 @@ flakelib::scan::uniformUpdate(
     cl_int ciErrNum;
     size_t localWorkSize, globalWorkSize;
 
-    ciErrNum  = clSetKernelArg(ckUniformUpdate.impl(), 0, sizeof(cl_mem), (void *)&d_Dst);
-    ciErrNum |= clSetKernelArg(ckUniformUpdate.impl(), 1, sizeof(cl_mem), (void *)&d_Buffer);
+    ciErrNum  = clSetKernelArg(ckUniformUpdate.impl(), 0, sizeof(cl_mem), &d_Dst);
+    ciErrNum |= clSetKernelArg(ckUniformUpdate.impl(), 1, sizeof(cl_mem), &d_Buffer);
     FCPPT_ASSERT_ERROR(
 	    ciErrNum == CL_SUCCESS);
 
