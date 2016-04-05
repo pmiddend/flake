@@ -28,7 +28,6 @@
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/assert/optional_error.hpp>
 #include <fcppt/assert/pre.hpp>
-#include <fcppt/assign/make_container.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/log2.hpp>
 #include <fcppt/math/dim/comparison.hpp>
@@ -204,9 +203,11 @@ flakelib::marching_cubes::gpu::object::update(
 
 	sge::opencl::memory_object::scoped_objects scoped_vb(
 		command_queue_,
-		fcppt::assign::make_container<sge::opencl::memory_object::base_ref_sequence>
-			(positions_buffer.get_pointer())
-			(normals_buffer.get_pointer()));
+		sge::opencl::memory_object::base_ref_sequence{
+			positions_buffer.get_pointer(),
+			normals_buffer.get_pointer()
+		}
+	);
 
 	manager_.generate_triangles(
 		flakelib::marching_cubes::gpu::normals_buffer(

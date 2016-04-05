@@ -40,7 +40,6 @@
 #include <fcppt/insert_to_fcppt_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
 #include <fcppt/strong_typedef_output.hpp>
-#include <fcppt/assign/make_container.hpp>
 #include <fcppt/cast/size_fun.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/deg_to_rad.hpp>
@@ -84,37 +83,38 @@ flake::tests::flakes::flakes(
 			FCPPT_TEXT("flake: Flakes test")),
 		flake::test::json_identifier(
 			FCPPT_TEXT("flakes")),
-		fcppt::assign::make_container<test::feature_sequence>
-			(test::feature(
+		test::feature_sequence{
+			test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("arrows")),
 				sge::input::key::optional_code(
-					sge::input::key::code::f1)))
-			(test::feature(
+					sge::input::key::code::f1)),
+			test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("snowcover")),
 				sge::input::key::optional_code(
-					sge::input::key::code::f3)))
-			(test::feature(
+					sge::input::key::code::f3)),
+			test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("models")),
 				sge::input::key::optional_code(
-					sge::input::key::code::f4)))
-			(test::feature(
+					sge::input::key::code::f4)),
+			test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("wireframe")),
 				sge::input::key::optional_code(
-					sge::input::key::code::f5)))
-			(test::feature(
+					sge::input::key::code::f5)),
+			test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("marchingcubes")),
 				sge::input::key::optional_code(
-					sge::input::key::code::f6)))
-			(test::feature(
+					sge::input::key::code::f6)),
+			test::feature(
 				test::json_identifier(
 					FCPPT_TEXT("flakes")),
 				sge::input::key::optional_code(
-					sge::input::key::code::f2))),
+					sge::input::key::code::f2))
+		},
 		sge::systems::cursor_option_field{
 			sge::systems::cursor_option::exclusive}),
 	simulation_size_(

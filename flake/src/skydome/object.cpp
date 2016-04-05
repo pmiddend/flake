@@ -44,7 +44,6 @@
 #include <sge/shader/scoped_pair.hpp>
 #include <fcppt/make_cref.hpp>
 #include <fcppt/make_ref.hpp>
-#include <fcppt/assign/make_map.hpp>
 #include <fcppt/math/pi.hpp>
 #include <fcppt/math/twopi.hpp>
 #include <fcppt/math/matrix/arithmetic.hpp>
@@ -367,11 +366,15 @@ flake::skydome::object::render(
 
 	sge::renderer::state::core::sampler::scoped scoped_address_mode(
 		_context,
-		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
-			(
+		sge::renderer::state::core::sampler::const_object_ref_map{
+			sge::renderer::state::core::sampler::const_object_ref_map::value_type{
 				texture_parameter_.stage(),
 				fcppt::make_cref(
-					*texture_state_)));
+					*texture_state_
+				)
+			}
+		}
+	);
 
 	_context.render_indexed(
 		*index_buffer_,

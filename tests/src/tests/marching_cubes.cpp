@@ -34,7 +34,6 @@
 #include <sge/renderer/texture/mipmap/all_levels.hpp>
 #include <sge/timer/elapsed_and_reset.hpp>
 #include <sge/timer/parameters.hpp>
-#include <fcppt/assign/make_container.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/math/deg_to_rad.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
@@ -71,17 +70,18 @@ flake::tests::marching_cubes::marching_cubes(
 			FCPPT_TEXT("flake: marching_cubes test")),
 		flake::test::json_identifier(
 			FCPPT_TEXT("marching-cubes")),
-		fcppt::assign::make_container<flake::test::feature_sequence>
-			(flake::test::feature(
+		flake::test::feature_sequence{
+			flake::test::feature(
 			 	flake::test::json_identifier(
 					FCPPT_TEXT("wireframe")),
 				sge::input::key::optional_code(
-					sge::input::key::code::f2)))
-			(flake::test::feature(
+					sge::input::key::code::f2)),
+			flake::test::feature(
 			 	flake::test::json_identifier(
 					FCPPT_TEXT("frameupdate")),
 				sge::input::key::optional_code(
-					sge::input::key::code::f3))),
+					sge::input::key::code::f3))
+		},
 		sge::systems::cursor_option_field{
 			sge::systems::cursor_option::exclusive}),
 	simulation_size_(

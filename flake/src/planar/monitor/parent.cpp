@@ -37,7 +37,6 @@
 #include <fcppt/make_cref.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
-#include <fcppt/assign/make_map.hpp>
 #include <fcppt/math/dim/comparison.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/dim/output.hpp>
@@ -191,14 +190,19 @@ flake::planar::monitor::parent::render(
 	sge::renderer::context::ffp &_context,
 	monitor::optional_projection const &_opt_projection)
 {
-	sge::renderer::state::core::sampler::scoped const scoped_filter(
+	sge::renderer::state::core::sampler::scoped const scoped_filter{
 		_context,
-		fcppt::assign::make_map<sge::renderer::state::core::sampler::const_object_ref_map>
-		(
-			sge::renderer::texture::stage(
-				0u),
-			fcppt::make_cref(
-				*point_sampler_)));
+		sge::renderer::state::core::sampler::const_object_ref_map{
+			sge::renderer::state::core::sampler::const_object_ref_map::value_type{
+				sge::renderer::texture::stage(
+					0u
+				),
+				fcppt::make_cref(
+					*point_sampler_
+				)
+			}
+		}
+	};
 
 	fcppt::optional::maybe(
 		_opt_projection,

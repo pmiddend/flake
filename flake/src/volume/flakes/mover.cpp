@@ -7,7 +7,6 @@
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/scoped_objects.hpp>
 #include <fcppt/make_unique_ptr.hpp>
-#include <fcppt/assign/make_container.hpp>
 #include <fcppt/math/dim/output.hpp>
 
 
@@ -170,11 +169,13 @@ flake::volume::flakes::mover::update(
 			static_cast<cl_uint>(
 				_velocity.get().size().w())));
 
-	sge::opencl::memory_object::scoped_objects scoped_vb(
+	sge::opencl::memory_object::scoped_objects scoped_vb{
 		move_kernel_->command_queue(),
-		fcppt::assign::make_container<sge::opencl::memory_object::base_ref_sequence>
-			(&positions_.get().buffer())
-			(&point_sizes_.get().buffer()));
+		sge::opencl::memory_object::base_ref_sequence{
+			&positions_.get().buffer(),
+			&point_sizes_.get().buffer()
+		}
+	};
 
 	move_kernel_->enqueue_automatic(
 		sge::opencl::command_queue::global_dim1(
