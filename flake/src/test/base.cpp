@@ -111,7 +111,7 @@ flake::test::base::run()
 				this->renderer().onscreen_target().viewport().get().size()
 			)
 			!=
-			0u
+			0
 		)
 		{
 			this->render(
