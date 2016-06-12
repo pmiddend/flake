@@ -61,9 +61,7 @@ add_definitions(
 find_package(
 	OpenCL REQUIRED)
 include_directories(
-	${OpenCL_INCLUDE_DIR})
-add_definitions(
-	${OpenCL_DEFINITIONS})
+	${OpenCL_INCLUDE_DIRS})
 # OpenCL end
 
 # OpenGL begin

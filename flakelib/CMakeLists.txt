@@ -360,7 +360,7 @@ function(
 		${fcppt_filesystem_TARGET}
 		${awl_TARGET}
 		${sge_TARGETS}
-		${OPENCL_LIBRARIES}
+		${OpenCL_LIBRARIES}
 		${OPENGL_gl_LIBRARY}
 		${Boost_LIBRARIES})
 
