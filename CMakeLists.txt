@@ -48,6 +48,10 @@ endif()
 find_package(
 	fcppt REQUIRED)
 
+# FIXME
+find_package(
+	majutsu REQUIRED)
+
 # cg begin
 find_package(
 	Cg REQUIRED)
