@@ -52,6 +52,10 @@ find_package(
 find_package(
 	majutsu REQUIRED)
 
+# FIXME
+find_package(
+	mizuiro REQUIRED)
+
 # cg begin
 find_package(
 	Cg REQUIRED)
