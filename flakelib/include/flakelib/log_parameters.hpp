@@ -1,15 +1,20 @@
 #ifndef FLAKELIB_LOG_PARAMETERS_HPP_INCLUDED
 #define FLAKELIB_LOG_PARAMETERS_HPP_INCLUDED
 
-#include <fcppt/log/location_fwd.hpp>
+#include <flakelib/symbol.hpp>
+#include <fcppt/log/name_fwd.hpp>
 #include <fcppt/log/parameters.hpp>
+
 
 namespace flakelib
 {
+
+FLAKELIB_SYMBOL
 fcppt::log::parameters
 log_parameters(
-	fcppt::log::location const &);
+	fcppt::log::name const &
+);
+
 }
 
 #endif
-

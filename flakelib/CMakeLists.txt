@@ -45,8 +45,6 @@ set(
 	flakelib/include/flakelib/duration.hpp
 	flakelib/include/flakelib/exception.hpp
 	flakelib/include/flakelib/linear/uint_view.hpp
-	flakelib/include/flakelib/log.hpp
-	flakelib/include/flakelib/log_context.hpp
 	flakelib/include/flakelib/log_location.hpp
 	flakelib/include/flakelib/log_parameters.hpp
 	flakelib/include/flakelib/map_key_sequence.hpp
@@ -223,8 +221,6 @@ set(
 	flakelib/src/cl/program_context.cpp
 	flakelib/src/console_percent_bar.cpp
 	flakelib/src/exception.cpp
-	flakelib/src/log.cpp
-	flakelib/src/log_context.cpp
 	flakelib/src/log_location.cpp
 	flakelib/src/log_parameters.cpp
 	flakelib/src/marching_cubes/cpu/implementation.cpp

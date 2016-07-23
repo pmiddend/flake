@@ -10,6 +10,8 @@
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/log/context_fwd.hpp>
+#include <fcppt/log/object.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/filesystem/path.hpp>
 #include <map>
@@ -31,6 +33,7 @@ public:
 	// just one queue everywhere, that's not a problem.
 	FLAKELIB_SYMBOL
 	program(
+		fcppt::log::context &,
 		sge::opencl::command_queue::object &,
 		boost::filesystem::path const &,
 		flakelib::cl::compiler_flags const &);
@@ -51,6 +54,7 @@ private:
 	std::map<std::string,cl::kernel_parameters>
 	kernel_name_to_parameters;
 
+	fcppt::log::object log_;
 	sge::opencl::command_queue::object &command_queue_;
 	sge::opencl::program::object program_;
 	kernel_name_to_parameters kernel_name_to_parameters_;

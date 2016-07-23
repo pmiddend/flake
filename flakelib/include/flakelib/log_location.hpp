@@ -1,13 +1,15 @@
 #ifndef FLAKELIB_LOG_LOCATION_HPP_INCLUDED
 #define FLAKELIB_LOG_LOCATION_HPP_INCLUDED
 
-#include <fcppt/log/location_fwd.hpp>
+#include <flakelib/symbol.hpp>
+#include <fcppt/log/location.hpp>
 
 
 namespace flakelib
 {
 
-fcppt::log::location const
+FLAKELIB_SYMBOL
+fcppt::log::location
 log_location();
 
 }

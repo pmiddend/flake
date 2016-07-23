@@ -103,6 +103,7 @@ flakelib::marching_cubes::gpu::manager::manager(
 			&num_vert_table,
 			&num_vert_table_error_code_)),
 	program_(
+		_program_context.log_context(),
 		_program_context.command_queue(),
 		flakelib::media_path_from_string(
 			FCPPT_TEXT("kernels/marching_cubes/main.cl")),

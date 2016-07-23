@@ -325,6 +325,7 @@ flake::tests::flakes::flakes(
 		sge::scenic::scene::prefer_cg_context(
 			true)),
 	scene_(
+		this->log_context(),
 		scene_manager_,
 		this->viewport_manager(),
 		camera_manager_.camera(),

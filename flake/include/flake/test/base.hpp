@@ -46,6 +46,7 @@
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/unique_ptr.hpp>
 #include <fcppt/config/platform.hpp>
+#include <fcppt/log/context_fwd.hpp>
 #include <fcppt/signal/auto_connection.hpp>
 #include <fcppt/symbol/class.hpp>
 #include <fcppt/config/external_begin.hpp>
@@ -89,6 +90,9 @@ protected:
 
 	sge::parse::json::object const &
 	configuration() const;
+
+	fcppt::log::context &
+	log_context();
 
 	sge::renderer::device::ffp &
 	renderer();

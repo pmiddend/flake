@@ -18,6 +18,7 @@ flakelib::planar::simulation::stam::buissnesq::object::object(
 	buissnesq::ambient_temperature const &_ambient_temperature)
 :
 	program_(
+		_program_context.log_context(),
 		_program_context.command_queue(),
 		flakelib::media_path_from_string(
 			FCPPT_TEXT("kernels/flakelib/planar/buissnesq.cl")),

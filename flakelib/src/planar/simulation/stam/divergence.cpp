@@ -20,6 +20,7 @@ flakelib::planar::simulation::stam::divergence::divergence(
 	buffer_pool_(
 		_buffer_pool),
 	program_(
+		_program_context.log_context(),
 		_program_context.command_queue(),
 		flakelib::media_path_from_string(
 			FCPPT_TEXT("kernels/flakelib/planar/divergence.cl")),

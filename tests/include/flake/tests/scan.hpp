@@ -11,6 +11,7 @@
 #include <sge/parse/json/object.hpp>
 #include <awl/main/exit_code.hpp>
 #include <awl/main/function_context_fwd.hpp>
+#include <fcppt/log/context.hpp>
 
 
 namespace flake
@@ -31,6 +32,7 @@ public:
 
 	~scan();
 private:
+	fcppt::log::context log_context_;
 	sge::opencl::single_device_system::object opencl_system_;
 	sge::parse::json::object json_configuration_;
 	flakelib::cl::program_context program_context_;

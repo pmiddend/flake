@@ -171,6 +171,7 @@ target_link_libraries(
 	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
 	${fcppt_filesystem_TARGET}
+	${fcppt_log_TARGET}
 	${Cg_LIBRARIES}
 	${awl_TARGET}
 	${OPENCL_LIBRARIES}
@@ -200,6 +201,7 @@ target_link_libraries(
 	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
 	${fcppt_filesystem_TARGET}
+	${fcppt_log_TARGET}
 	${awl_TARGET}
 	${OPENGL_gl_LIBRARY}
 	${OPENCL_LIBRARIES}

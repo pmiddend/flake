@@ -4,7 +4,8 @@
 #include <flake/test/update_features_from_json.hpp>
 #include <flake/test/information/manager.hpp>
 #include <flake/time_modifier/object.hpp>
-#include <flakelib/log.hpp>
+#include <flakelib/log_location.hpp>
+#include <flakelib/log_parameters.hpp>
 #include <flakelib/buffer_pool/object.hpp>
 #include <flakelib/cl/cflags.hpp>
 #include <flakelib/cl/compiler_flags.hpp>
@@ -17,7 +18,6 @@
 #include <sge/input/keyboard/device.hpp>
 #include <sge/input/keyboard/key_callback.hpp>
 #include <sge/input/keyboard/key_event.hpp>
-#include <sge/log/global_context.hpp>
 #include <sge/media/all_extensions.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/opencl/single_device_system/parameters.hpp>
@@ -65,8 +65,10 @@
 #include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/io/cerr.hpp>
 #include <fcppt/log/_.hpp>
+#include <fcppt/log/context_fwd.hpp>
 #include <fcppt/log/debug.hpp>
-#include <fcppt/log/location.hpp>
+#include <fcppt/log/name.hpp>
+#include <fcppt/log/object.hpp>
 #include <fcppt/math/box/object_impl.hpp>
 #include <fcppt/math/dim/contents.hpp>
 #include <fcppt/optional/maybe.hpp>
@@ -217,6 +219,7 @@ flake::test::base::base(
 			this->renderer())),
 	opencl_system_(
 		fcppt::make_unique_ptr<sge::opencl::single_device_system::object>(
+			systems_->log_context(),
 			sge::opencl::single_device_system::parameters()
 				.renderer(
 					this->renderer())
@@ -224,6 +227,7 @@ flake::test::base::base(
 					true))),
 	program_context_(
 		fcppt::make_unique_ptr<flakelib::cl::program_context>(
+			systems_->log_context(),
 			this->opencl_system().command_queue(),
 			flakelib::cl::compiler_flags(
 				flakelib::cl::cflags()+
@@ -313,8 +317,18 @@ flake::test::base::base(
 	dump_this_frame_(
 		false)
 {
+	fcppt::log::object log{
+		systems_->log_context(),
+		flakelib::log_location(),
+		flakelib::log_parameters(
+			fcppt::log::name{
+				FCPPT_TEXT("test")
+			}
+		)
+	};
+
 	FCPPT_LOG_DEBUG(
-		flakelib::log(),
+		log,
 		fcppt::log::_
 			<< FCPPT_TEXT("Program initialized, OpenCL compiler flags are:\n\n")
 			<< fcppt::from_std_string(program_context_->compiler_flags().get()));
@@ -341,6 +355,13 @@ flake::test::base::configuration() const
 {
 	return
 		local_configuration_;
+}
+
+fcppt::log::context &
+flake::test::base::log_context()
+{
+	return
+		systems_->log_context();
 }
 
 sge::renderer::device::ffp &

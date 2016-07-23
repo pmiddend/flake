@@ -30,6 +30,7 @@ flake::planar::conversion::object::object(
 	command_queue_(
 		_program_context.command_queue()),
 	program_(
+		_program_context.log_context(),
 		_program_context.command_queue(),
 		flake::media_path_from_string(
 			FCPPT_TEXT("kernels/flake/planar/vertex_buffer_conversions.cl")),

@@ -24,6 +24,7 @@ flake::volume::flakes::mover::mover(
 	flakelib::marching_cubes::iso_level const &_iso_level)
 :
 	program_(
+		_program_context.log_context(),
 		_program_context.command_queue(),
 		flake::media_path_from_string(
 			FCPPT_TEXT("kernels/flake/flakes/mover.cl")),

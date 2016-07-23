@@ -1,5 +1,6 @@
 #include <flakelib/exception.hpp>
-#include <flakelib/log.hpp>
+#include <flakelib/log_location.hpp>
+#include <flakelib/log_parameters.hpp>
 #include <flakelib/map_key_sequence.hpp>
 #include <flakelib/cl/kernel.hpp>
 #include <flakelib/cl/program.hpp>
@@ -9,12 +10,15 @@
 #include <fcppt/exception.hpp>
 #include <fcppt/from_std_string.hpp>
 #include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/text.hpp>
 #include <fcppt/algorithm/contains.hpp>
 #include <fcppt/algorithm/shortest_levenshtein.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
 #include <fcppt/io/stream_to_string.hpp>
 #include <fcppt/log/_.hpp>
+#include <fcppt/log/context_fwd.hpp>
 #include <fcppt/log/debug.hpp>
+#include <fcppt/log/name.hpp>
 #include <fcppt/optional/object_impl.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/next_prior.hpp>
@@ -27,13 +31,24 @@
 
 
 flakelib::cl::program::program(
+	fcppt::log::context &_log_context,
 	sge::opencl::command_queue::object &_command_queue,
 	boost::filesystem::path const &_file_path,
 	flakelib::cl::compiler_flags const &_compiler_flags)
 :
+	log_{
+		_log_context,
+		flakelib::log_location(),
+		flakelib::log_parameters(
+			fcppt::log::name{
+				FCPPT_TEXT("cl::program")
+			}
+		)
+	},
 	command_queue_(
 		_command_queue),
 	program_(
+		_log_context,
 		_command_queue.context(),
 		sge::opencl::program::file_to_source_string_sequence(
 			_file_path),
@@ -59,7 +74,7 @@ flakelib::cl::program::program(
 	}
 
 	FCPPT_LOG_DEBUG(
-		flakelib::log(),
+		log_,
 		fcppt::log::_
 			<< FCPPT_TEXT("Parsing OpenCL program: ")
 			<< fcppt::filesystem::path_to_string(_file_path));
@@ -78,7 +93,7 @@ flakelib::cl::program::program(
 	}
 
 	FCPPT_LOG_DEBUG(
-		flakelib::log(),
+		log_,
 		fcppt::log::_
 			<< FCPPT_TEXT("Program successfully parsed!"));
 }
@@ -173,7 +188,7 @@ flakelib::cl::program::fill_kernel_name_to_parameters(
 	}
 
 	FCPPT_LOG_DEBUG(
-		flakelib::log(),
+		log_,
 		fcppt::log::_
 			<< FCPPT_TEXT("Extracted ")
 			<< kernel_name_positions.size()
@@ -195,7 +210,7 @@ flakelib::cl::program::fill_kernel_name_to_parameters(
 	}
 
 	FCPPT_LOG_DEBUG(
-		flakelib::log(),
+		log_,
 		fcppt::log::_
 			<< FCPPT_TEXT("Extracted ")
 			<< kernel_argument_positions.size()
@@ -234,7 +249,7 @@ flakelib::cl::program::fill_kernel_name_to_parameters(
 					on_closing_brace - after_opening_brace)));
 
 		FCPPT_LOG_DEBUG(
-			flakelib::log(),
+			log_,
 			fcppt::log::_
 				<< FCPPT_TEXT("Extracted kernel name: ")
 				<< fcppt::from_std_string(kernel_name));
@@ -305,7 +320,7 @@ flakelib::cl::program::fill_kernel_name_to_parameters(
 						argument_on_closing_brace - argument_after_opening_brace));
 
 			FCPPT_LOG_DEBUG(
-				flakelib::log(),
+				log_,
 				fcppt::log::_
 					<< FCPPT_TEXT("Extracted kernel argument: ")
 					<< fcppt::from_std_string(kernel_argument_name));

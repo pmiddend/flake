@@ -17,6 +17,7 @@
 #include <sge/parse/json/object.hpp>
 #include <awl/main/exit_code.hpp>
 #include <awl/main/function_context_fwd.hpp>
+#include <fcppt/log/context.hpp>
 
 
 namespace flake
@@ -37,6 +38,7 @@ public:
 
 	~solipsistic();
 private:
+	fcppt::log::context log_context_;
 	sge::opencl::single_device_system::object opencl_system_;
 	sge::parse::json::object json_configuration_;
 	flakelib::volume::grid_size const simulation_size_;

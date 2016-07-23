@@ -28,6 +28,9 @@
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
+#include <fcppt/log/enabled_levels.hpp>
+#include <fcppt/log/level.hpp>
+#include <fcppt/log/setting.hpp>
 #include <fcppt/math/deg_to_rad.hpp>
 #include <fcppt/math/dim/object_impl.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
@@ -53,7 +56,15 @@ FLAKE_CATCH_STATEMENTS
 flake::tests::solipsistic::solipsistic(
 	awl::main::function_context const &)
 :
+	log_context_{
+		fcppt::log::setting{
+			fcppt::log::enabled_levels(
+				fcppt::log::level::debug
+			)
+		}
+	},
 	opencl_system_(
+		log_context_,
 		sge::opencl::single_device_system::parameters()
 			.prefer_gpu(
 				true)),
@@ -68,6 +79,7 @@ flake::tests::solipsistic::solipsistic(
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("tests/solipsistic/simulation-size")))),
 	program_context_(
+		log_context_,
 		opencl_system_.command_queue(),
 		flakelib::cl::compiler_flags(
 			flakelib::cl::cflags()+

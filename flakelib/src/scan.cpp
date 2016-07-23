@@ -7,6 +7,7 @@
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
 #include <fcppt/assert/error.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
+#include <fcppt/log/context_fwd.hpp>
 
 
 namespace
@@ -45,11 +46,13 @@ cl_uint factorRadix2(cl_uint& log2L, cl_uint L)
 }
 
 flakelib::scan::scan(
+	fcppt::log::context &_log_context,
 	flakelib::cl::program_context const &_program_context)
 :
 	command_queue_(
 		_program_context.command_queue()),
 	program_(
+		_log_context,
 		command_queue_.context(),
 		sge::opencl::program::file_to_source_string_sequence(
 			flakelib::media_path_from_string(

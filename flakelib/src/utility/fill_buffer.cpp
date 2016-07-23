@@ -11,6 +11,7 @@ flakelib::utility::fill_buffer::fill_buffer(
 	cl::program_context const &_program_context)
 :
 	program_(
+		_program_context.log_context(),
 		_program_context.command_queue(),
 		flakelib::media_path_from_string(
 			FCPPT_TEXT("kernels/flakelib/utility/fill_buffer.cl")),

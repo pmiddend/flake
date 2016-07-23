@@ -8,6 +8,7 @@
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/program/object.hpp>
 #include <fcppt/noncopyable.hpp>
+#include <fcppt/log/context_fwd.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <cstddef>
 #include <fcppt/config/external_end.hpp>
@@ -20,8 +21,8 @@ class scan
 FCPPT_NONCOPYABLE(
 	scan);
 public:
-	explicit
 	scan(
+		fcppt::log::context &,
 		flakelib::cl::program_context const &);
 
 	std::size_t
