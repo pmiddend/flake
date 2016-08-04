@@ -28,6 +28,7 @@
 #include <fcppt/assign/make_container.hpp>
 #include <fcppt/container/bitfield/object_impl.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
+#include <fcppt/log/default_level_streams.hpp>
 #include <fcppt/log/enabled_levels.hpp>
 #include <fcppt/log/level.hpp>
 #include <fcppt/log/setting.hpp>
@@ -61,7 +62,8 @@ flake::tests::solipsistic::solipsistic(
 			fcppt::log::enabled_levels(
 				fcppt::log::level::debug
 			)
-		}
+		},
+		fcppt::log::default_level_streams()
 	},
 	opencl_system_(
 		log_context_,
