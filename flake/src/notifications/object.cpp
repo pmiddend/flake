@@ -126,7 +126,7 @@ flake::notifications::object::render(
 			viewport_rect.size()
 		)
 		==
-		0u
+		0
 	)
 		return;
 
