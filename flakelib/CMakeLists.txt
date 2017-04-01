@@ -288,12 +288,9 @@ fcppt_generate_symbol_header(
 		FLAKELIB
 )
 
-fcppt_utils_install_data_dir(
-	INSTALL_DATA_DIR)
-
 set(
 	INSTALL_MEDIA_DIR
-	${INSTALL_DATA_DIR}/flakelib_media)
+	${FCPPT_UTILS_INSTALL_DATA_DIR}/flakelib_media)
 
 include(
 	SGECustomPath
@@ -303,7 +300,7 @@ sge_config_add_custom_path(
 	flakelib
 	flakelib_media
 	${CMAKE_SOURCE_DIR}/flakelib/flakelib_media
-	${INSTALL_MEDIA_DIR}
+	${CMAKE_INSTALL_PREFIX}/${INSTALL_MEDIA_DIR}
 	MEDIA_PATH_INCLUDES
 )
 
@@ -375,7 +372,7 @@ function(
 		TARGETS
 		${TARGETNAME}
 		DESTINATION
-		${INSTALL_LIBRARY_DIR})
+		${CMAKE_INSTALL_LIBDIR})
 endfunction()
 
 if(

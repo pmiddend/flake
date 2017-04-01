@@ -1,12 +1,21 @@
 cmake_minimum_required(
-  VERSION
-  2.8.12)
+	VERSION
+	2.8.12)
 
 project(
-  flake)
+	flake)
+
+include(
+	GNUInstallDirs)
+
+find_package(
+	fcppt REQUIRED)
 
 include(
 	FcpptCMakeUtils)
+
+find_package(
+	awl REQUIRED)
 
 include(
 	AwlMainGenerator)
@@ -45,21 +54,9 @@ if(MSVC)
 		/wd4626)
 endif()
 
-find_package(
-	fcppt REQUIRED)
-
 # FIXME
 find_package(
 	mizuiro REQUIRED)
-
-# cg begin
-find_package(
-	Cg REQUIRED)
-include_directories(
-	${Cg_INCLUDE_DIR})
-add_definitions(
-	${Cg_DEFINITIONS})
-# cg end
 
 # OpenCL begin
 find_package(
@@ -74,9 +71,6 @@ find_package(
 include_directories(
 	${OPENGL_INCLUDE_DIR})
 # OpenGL end
-
-find_package(
-	awl REQUIRED)
 
 find_package(
 	sge REQUIRED COMPONENTS
@@ -112,6 +106,15 @@ find_package(
 	plugin
 	audio
 )
+
+# cg begin
+find_package(
+	Cg REQUIRED)
+include_directories(
+	${Cg_INCLUDE_DIR})
+add_definitions(
+	${Cg_DEFINITIONS})
+# cg end
 
 fcppt_utils_static_shared()
 

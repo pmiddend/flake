@@ -188,12 +188,9 @@ fcppt_utils_append_source_dir_and_make_groups(
 	"${FLAKE_FILES}"
 	FLAKE_FILES_ABS)
 
-fcppt_utils_install_data_dir(
-	INSTALL_DATA_DIR)
-
 set(
 	INSTALL_MEDIA_DIR
-	${INSTALL_DATA_DIR}/flake_media)
+	${FCPPT_UTILS_INSTALL_DATA_DIR}/flake_media)
 
 find_package(
 	FcpptThreads
@@ -224,7 +221,7 @@ sge_config_add_custom_path(
 	flake
 	flake_media
 	${CMAKE_SOURCE_DIR}/flake/flake_media
-	${INSTALL_MEDIA_DIR}
+	${CMAKE_INSTALL_PREFIX}/${INSTALL_MEDIA_DIR}
 	MEDIA_PATH_INCLUDES
 )
 
@@ -289,7 +286,7 @@ function(
 		TARGETS
 		${TARGETNAME}
 		DESTINATION
-		${INSTALL_LIBRARY_DIR})
+		${CMAKE_INSTALL_LIBDIR})
 endfunction()
 
 if(

@@ -36,7 +36,7 @@ install(
 	TARGETS
 	tests_vorticity
 	DESTINATION
-	${INSTALL_BINARY_DIR})
+	${CMAKE_INSTALL_BINDIR})
 # vorticity end
 
 # buoyancy begin
@@ -65,7 +65,7 @@ install(
 	TARGETS
 	tests_buoyancy
 	DESTINATION
-	${INSTALL_BINARY_DIR})
+	${CMAKE_INSTALL_BINDIR})
 # buoyancy end
 #
 # flakes begin
@@ -94,7 +94,7 @@ install(
 	TARGETS
 	tests_flakes
 	DESTINATION
-	${INSTALL_BINARY_DIR})
+	${CMAKE_INSTALL_BINDIR})
 # flakes end
 #
 ## marching_cubes begin
@@ -123,7 +123,7 @@ install(
 	TARGETS
 	tests_marching_cubes
 	DESTINATION
-	${INSTALL_BINARY_DIR})
+	${CMAKE_INSTALL_BINDIR})
 ## marching_cubes end
 #
 ## density_visualization begin
@@ -152,7 +152,7 @@ install(
 	TARGETS
 	tests_density_visualization
 	DESTINATION
-	${INSTALL_BINARY_DIR})
+	${CMAKE_INSTALL_BINDIR})
 ## density_visualization end
 #
 #
@@ -183,7 +183,7 @@ install(
 	TARGETS
 	tests_solipsistic
 	DESTINATION
-	${INSTALL_BINARY_DIR})
+	${CMAKE_INSTALL_BINDIR})
 ## solipsistic end
 #
 ## scan begin
@@ -213,5 +213,5 @@ install(
 	TARGETS
 	tests_scan
 	DESTINATION
-	${INSTALL_BINARY_DIR})
+	${CMAKE_INSTALL_BINDIR})
 # scan end
