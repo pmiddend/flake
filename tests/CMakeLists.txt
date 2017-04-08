@@ -21,6 +21,7 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	tests_vorticity
+	PRIVATE
 	${flakelib_TARGET}
 	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
@@ -50,6 +51,7 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	tests_buoyancy
+	PRIVATE
 	${flakelib_TARGET}
 	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
@@ -79,6 +81,7 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	tests_flakes
+	PRIVATE
 	${flakelib_TARGET}
 	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
@@ -108,6 +111,7 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	tests_marching_cubes
+	PRIVATE
 	${flakelib_TARGET}
 	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
@@ -137,6 +141,7 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	tests_density_visualization
+	PRIVATE
 	${flakelib_TARGET}
 	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
@@ -167,6 +172,7 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	tests_solipsistic
+	PRIVATE
 	${flakelib_TARGET}
 	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
@@ -197,6 +203,7 @@ fcppt_utils_set_target_compiler_flags(
 
 target_link_libraries(
 	tests_scan
+	PRIVATE
 	${flakelib_TARGET}
 	${flakelib_helper_library_TARGET}
 	${fcppt_core_TARGET}
