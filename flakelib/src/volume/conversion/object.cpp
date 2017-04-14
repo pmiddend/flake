@@ -15,15 +15,20 @@
 #include <fcppt/const.hpp>
 #include <fcppt/from_std_string.hpp>
 #include <fcppt/make_int_range_count.hpp>
+#include <fcppt/make_ref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/reference_to_base.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
-#include <fcppt/container/raw_vector.hpp>
+#include <fcppt/cast/to_unsigned.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
+#include <fcppt/io/buffer.hpp>
+#include <fcppt/io/read_chars.hpp>
 #include <fcppt/math/dim/contents.hpp>
 #include <fcppt/math/dim/is_quadratic.hpp>
 #include <fcppt/math/vector/object_impl.hpp>
 #include <fcppt/optional/from.hpp>
+#include <fcppt/optional/to_exception.hpp>
 #include <fcppt/optional/object.hpp>
 #include <fcppt/config/external_begin.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -65,7 +70,14 @@ flakelib::volume::conversion::object::to_arrow_vb(
         sge::opencl::memory_object::base_ref_sequence mem_objects;
 
 	mem_objects.push_back(
-		&_output);
+		fcppt::reference_to_base<
+        		sge::opencl::memory_object::base
+		>(
+			fcppt::make_ref(
+				_output
+			)
+		)
+	);
 
         sge::opencl::memory_object::scoped_objects scoped_vb(
 		to_arrow_vb_kernel_->command_queue(),
@@ -129,7 +141,14 @@ flakelib::volume::conversion::object::float_view_to_flat_volume_texture(
 	sge::opencl::memory_object::base_ref_sequence mem_objects;
 
 	mem_objects.push_back(
-		&_output);
+		fcppt::reference_to_base<
+        		sge::opencl::memory_object::base
+		>(
+			fcppt::make_ref(
+				_output
+			)
+		)
+	);
 
 	sge::opencl::memory_object::scoped_objects scoped_vb(
 		float_view_to_flat_volume_texture_kernel_->command_queue(),
@@ -409,19 +428,32 @@ flakelib::volume::conversion::object::binvox_file_to_buffer(
 		current_position,
 		std::ios_base::beg);
 
-	typedef
-	fcppt::container::raw_vector<unsigned char>
-	byte_sequence;
-
-	byte_sequence data_section(
-		static_cast<byte_sequence::size_type>(
-			end_position - current_position));
-
-	input_file.read(
-		reinterpret_cast<char *>(
-			data_section.data()),
-		static_cast<std::streamsize>(
-			data_section.size()));
+	fcppt::io::buffer const data_section(
+		fcppt::optional::to_exception(
+			fcppt::io::read_chars(
+				input_file,
+				fcppt::cast::to_unsigned(
+					end_position
+					-
+					current_position
+				)
+			),
+			[
+				&_path
+			]{
+				return
+					flakelib::exception{
+						FCPPT_TEXT("Couldn't load \"")
+						+
+						fcppt::filesystem::path_to_string(
+							_path
+						)
+						+
+						FCPPT_TEXT("\". File too short.")
+					};
+			}
+		)
+	);
 
 	std::cerr << "binvox: Read the data segment: " << data_section.size() << " bytes\n";
 
@@ -460,7 +492,7 @@ flakelib::volume::conversion::object::binvox_file_to_buffer(
 		0u;
 
 	for(
-		byte_sequence::size_type
+		fcppt::io::buffer::size_type
 			input_index =
 				0u;
 		input_index != data_section.size();

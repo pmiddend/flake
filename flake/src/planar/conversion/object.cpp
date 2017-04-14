@@ -14,6 +14,8 @@
 #include <sge/opencl/memory_object/image/planar.hpp>
 #include <sge/opencl/program/build_parameters.hpp>
 #include <sge/opencl/program/file_to_source_string_sequence.hpp>
+#include <fcppt/make_ref.hpp>
+#include <fcppt/reference_to_base.hpp>
 #include <fcppt/text.hpp>
 #include <fcppt/assert/pre.hpp>
 #include <fcppt/filesystem/path_to_string.hpp>
@@ -79,7 +81,14 @@ flake::planar::conversion::object::to_arrow_vb(
 
 	sge::opencl::memory_object::base_ref_sequence mem_objects;
 	mem_objects.push_back(
-		&_vb);
+		fcppt::reference_to_base<
+			sge::opencl::memory_object::base
+		>(
+			fcppt::make_ref(
+				_vb
+			)
+		)
+	);
 
 	sge::opencl::memory_object::scoped_objects scoped_vb(
 		command_queue_,
@@ -224,7 +233,14 @@ flake::planar::conversion::object::scalar_to_texture(
 
 	sge::opencl::memory_object::base_ref_sequence mem_objects;
 	mem_objects.push_back(
-		&_texture);
+		fcppt::reference_to_base<
+			sge::opencl::memory_object::base
+		>(
+			fcppt::make_ref(
+				_texture
+			)
+		)
+	);
 
 	sge::opencl::memory_object::scoped_objects scoped_vb(
 		command_queue_,

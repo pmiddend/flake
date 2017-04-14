@@ -6,7 +6,9 @@
 #include <flakelib/cl/program_context.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
 #include <sge/opencl/memory_object/scoped_objects.hpp>
+#include <fcppt/make_ref.hpp>
 #include <fcppt/make_unique_ptr.hpp>
+#include <fcppt/reference_to_base.hpp>
 #include <fcppt/math/dim/output.hpp>
 
 
@@ -195,7 +197,14 @@ flake::volume::flakes::mover::initialize_velocities(
 {
 	sge::opencl::memory_object::base_ref_sequence mem_objects;
 	mem_objects.push_back(
-		&point_sizes_.get().buffer());
+		fcppt::reference_to_base<
+			sge::opencl::memory_object::base
+		>(
+			fcppt::make_ref(
+				point_sizes_.get().buffer()
+			)
+		)
+	);
 
 	sge::opencl::memory_object::scoped_objects scoped_vb(
 		move_kernel_->command_queue(),

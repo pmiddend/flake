@@ -22,8 +22,10 @@
 #include <sge/renderer/vertex/declaration_unique_ptr.hpp>
 #include <fcppt/noncopyable.hpp>
 #include <fcppt/unique_ptr_impl.hpp>
-#include <fcppt/container/raw_vector.hpp>
 #include <fcppt/optional/object_impl.hpp>
+#include <fcppt/config/external_begin.hpp>
+#include <vector>
+#include <fcppt/config/external_end.hpp>
 
 
 namespace flakelib
@@ -81,19 +83,27 @@ public:
 	~object();
 private:
 	typedef
-	fcppt::container::raw_vector<flakelib::marching_cubes::cpu::scalar>
+	std::vector<
+		flakelib::marching_cubes::cpu::scalar
+	>
 	real_sequence;
 
 	typedef
-	fcppt::container::raw_vector<sge::renderer::scalar>
+	std::vector<
+		sge::renderer::scalar
+	>
 	renderer_scalar_sequence;
 
 	typedef
-	fcppt::container::raw_vector<cl_float>
+	std::vector<
+		cl_float
+	>
 	cl_float_sequence;
 
 	typedef
-	fcppt::container::raw_vector<sge::renderer::index::i32>
+	std::vector<
+		sge::renderer::index::i32
+	>
 	index_sequence;
 
 	sge::renderer::device::core &renderer_;
