@@ -1,11 +1,11 @@
 #include <flakelib/buffer/planar_view.hpp>
 #include <flakelib/cl/planar_image_view_to_float_buffer.hpp>
-#include <sge/image/mizuiro_color.hpp>
 #include <sge/image/color/format.hpp>
 #include <sge/image/color/l8_format.hpp>
 #include <sge/image/color/r32f_format.hpp>
+#include <sge/image/view/basic_format.hpp>
+#include <sge/image/view/mizuiro_type.hpp>
 #include <sge/image2d/algorithm/copy_and_convert.hpp>
-#include <sge/image2d/view/const_element.hpp>
 #include <sge/image2d/view/const_object.hpp>
 #include <sge/image2d/view/make.hpp>
 #include <sge/image2d/view/object.hpp>
@@ -15,6 +15,8 @@
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/event/object.hpp>
 #include <sge/opencl/memory_object/buffer.hpp>
+#include <mizuiro/const_tag.hpp>
+#include <mizuiro/nonconst_tag.hpp>
 #include <mizuiro/color/object_impl.hpp>
 #include <mizuiro/color/channel/luminance.hpp>
 #include <mizuiro/color/channel/red.hpp>
@@ -69,11 +71,23 @@ flakelib::cl::planar_image_view_to_float_buffer(
 		sge::opencl::event::sequence());
 
 	typedef
-	sge::image2d::view::const_element<sge::image::color::l8_format>::type
+	sge::image::view::mizuiro_type<
+		sge::image::view::basic_format<
+			2,
+			sge::image::color::l8_format
+		>,
+		mizuiro::const_tag
+	>
 	l8_view_type;
 
 	typedef
-	sge::image2d::view::element<sge::image::color::r32f_format>::type
+	sge::image::view::mizuiro_type<
+		sge::image::view::basic_format<
+			2,
+			sge::image::color::r32f_format
+		>,
+		mizuiro::nonconst_tag
+	>
 	r32f_view_type;
 
 	l8_view_type const l8_view =

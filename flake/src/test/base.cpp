@@ -281,7 +281,11 @@ flake::test::base::base(
 				sge::parse::json::string_to_path(
 					FCPPT_TEXT("tests/information-font-size"))),
 			this->renderer(),
-			sge::image::color::predef::white())),
+			sge::image::color::any::object{
+				sge::image::color::predef::white()
+			}
+		)
+	),
 	memory_consumption_information_(
 		*information_manager_,
 		information::identifier(

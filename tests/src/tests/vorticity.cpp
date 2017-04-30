@@ -11,10 +11,10 @@
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/camera/ortho_freelook/parameters.hpp>
 #include <sge/image/color/predef.hpp>
-#include <sge/image/view/const_object.hpp>
+#include <sge/image/color/any/object.hpp>
+#include <sge/image2d/view/const_object.hpp>
 #include <sge/image2d/file.hpp>
 #include <sge/image2d/load_exn.hpp>
-#include <sge/image2d/view/const_elements_wrapper.hpp>
 #include <sge/image2d/view/size.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
 #include <sge/parse/json/find_and_convert_member.hpp>
@@ -153,7 +153,11 @@ flake::tests::vorticity::vorticity(
 			sge::parse::json::string_to_path(
 				FCPPT_TEXT("monitor-font-size"))),
 		flake::planar::monitor::font_color(
-			sge::image::color::predef::black())),
+			sge::image::color::any::object{
+				sge::image::color::predef::black()
+			}
+		)
+	),
 	planar_converter_(
 		this->program_context()),
 	velocity_arrows_(
@@ -409,7 +413,11 @@ flake::tests::vorticity::render(
 	_context.clear(
 		sge::renderer::clear::parameters()
 			.back_buffer(
-				sge::image::color::predef::grey()));
+				sge::image::color::any::object{
+					sge::image::color::predef::grey()
+				}
+			)
+	);
 
 	monitor_parent_.render(
 		_context,

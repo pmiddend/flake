@@ -13,6 +13,7 @@
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/image/color/predef.hpp>
+#include <sge/image/color/any/object.hpp>
 #include <sge/input/key/code.hpp>
 #include <sge/input/key/optional_code.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
@@ -512,7 +513,10 @@ flake::tests::flakes::render(
 	_context.clear(
 		sge::renderer::clear::parameters()
 			.back_buffer(
-				sge::image::color::predef::grey())
+				sge::image::color::any::object{
+					sge::image::color::predef::grey()
+				}
+			)
 			.depth_buffer(
 				sge::renderer::clear::depth_buffer_value(
 					1.0f)));

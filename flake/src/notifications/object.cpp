@@ -9,7 +9,6 @@
 #include <sge/font/align_h/right.hpp>
 #include <sge/font/align_h/variant.hpp>
 #include <sge/font/draw/static_text.hpp>
-#include <sge/image/color/predef.hpp>
 #include <sge/image/color/rgba8.hpp>
 #include <sge/image/color/any/object.hpp>
 #include <sge/image/color/init/alpha.hpp>

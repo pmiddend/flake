@@ -8,7 +8,6 @@
 #include <sge/font/text_parameters.hpp>
 #include <sge/font/align_h/left.hpp>
 #include <sge/font/align_h/variant.hpp>
-#include <sge/image/color/predef.hpp>
 #include <sge/opencl/memory_object/flags_field.hpp>
 #include <sge/renderer/resource_flags_field.hpp>
 #include <sge/renderer/device/ffp.hpp>

@@ -15,6 +15,7 @@
 #include <sge/camera/matrix_conversion/world.hpp>
 #include <sge/camera/matrix_conversion/world_projection.hpp>
 #include <sge/image/color/predef.hpp>
+#include <sge/image/color/any/object.hpp>
 #include <sge/input/key/code.hpp>
 #include <sge/input/key/optional_code.hpp>
 #include <sge/opencl/single_device_system/object.hpp>
@@ -313,7 +314,10 @@ flake::tests::marching_cubes::render(
 	_context.clear(
 		sge::renderer::clear::parameters()
 			.back_buffer(
-				sge::image::color::predef::black())
+				sge::image::color::any::object{
+					sge::image::color::predef::black()
+				}
+			)
 			.depth_buffer(
 				sge::renderer::clear::depth_buffer_value(
 					1.0f)));

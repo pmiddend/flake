@@ -11,7 +11,6 @@
 #include <sge/camera/coordinate_system/identity.hpp>
 #include <sge/camera/first_person/parameters.hpp>
 #include <sge/charconv/utf8_file_to_fcppt_string_exn.hpp>
-#include <sge/image/color/predef.hpp>
 #include <sge/opencl/command_queue/map_flags.hpp>
 #include <sge/opencl/command_queue/scoped_buffer_mapping.hpp>
 #include <sge/opencl/event/object.hpp>
