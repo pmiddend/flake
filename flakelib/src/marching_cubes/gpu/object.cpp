@@ -74,9 +74,9 @@ flakelib::marching_cubes::gpu::object::object(
 	grid_size_shift_(
 		flakelib::cl::uint4(
 			0u,
-			grid_size_log2_[0],
+			grid_size_log2_.w(),
 			static_cast<cl_uint>(
-				grid_size_log2_[0]+grid_size_log2_[1]),
+				grid_size_log2_.w()+grid_size_log2_.h()),
 			0u)),
 	iso_level_(
 		_iso_level),

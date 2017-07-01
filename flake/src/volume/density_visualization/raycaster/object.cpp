@@ -269,15 +269,15 @@ flake::volume::density_visualization::raycaster::object::object(
 					0.0f,
 					0.0f);
 
-				res[x] =
+				res.get_unsafe(x) =
 					static_cast<sge::renderer::scalar>(
 						(side > x) ? b : a);
 
-				res[x == 0u ? 1u : 0u] =
+				res.get_unsafe(x == 0u ? 1u : 0u) =
 					static_cast<sge::renderer::scalar>(
 						y);
 
-				res[x == 2u ? 1u : 2u] =
+				res.get_unsafe(x == 2u ? 1u : 2u) =
 					static_cast<sge::renderer::scalar>(
 						z);
 
